@@ -1932,9 +1932,10 @@
             this.label_Impressum_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_Impressum_Text.Location = new System.Drawing.Point(100, 272);
             this.label_Impressum_Text.Name = "label_Impressum_Text";
-            this.label_Impressum_Text.Size = new System.Drawing.Size(304, 288);
+            this.label_Impressum_Text.Size = new System.Drawing.Size(304, 48);
             this.label_Impressum_Text.TabIndex = 1;
-            this.label_Impressum_Text.Text = resources.GetString("label_Impressum_Text.Text");
+            this.label_Impressum_Text.Text = "Christian Stockinger [christian.stockinger@kit.edu]\r\nMatthias Pöschl [matthias.po" +
+    "eschl@gmail.com]\r\nThorsten Stein [thorsten.stein@kit.edu]";
             // 
             // pictureBox_Impressum_KITLogo
             // 

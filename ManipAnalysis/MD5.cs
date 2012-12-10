@@ -20,6 +20,7 @@ namespace ManipAnalysis
             buffer = md5.ComputeHash(fs);
             fs.Close();
             md5.Clear();
+
             string hash = Convert.ToBase64String(buffer);
 
             return hash;

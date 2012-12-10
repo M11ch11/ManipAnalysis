@@ -15,6 +15,7 @@ namespace ManipAnalysis
 
         static Logger()
         {
+
             theLogBox = new ListBox();
             theLogBox.FormattingEnabled = true;
             theLogBox.HorizontalScrollbar = true;
