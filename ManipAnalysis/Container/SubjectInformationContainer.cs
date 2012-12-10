@@ -8,8 +8,7 @@ namespace ManipAnalysis
     public class SubjectInformationContainer
     {
         public int id;
-        public string subject_name;
-        public string subject_id;
+        public string subject_name,subject_id;
 
         public SubjectInformationContainer(int _id, string _subject_name, string _subject_id)
         {
