@@ -1,0 +1,29 @@
+
+DECLARE @tblNames TABLE(id int);
+WITH temp AS 
+(
+SELECT
+		*,
+		ROW_NUMBER() OVER(PARTITION BY subject_id,study_id,group_id,is_catch_trial_id,szenario_id,szenario_trial_number_id,target_id,target_trial_number_id,measure_file_id,trial_information_id ORDER BY id) AS rowNum
+FROM
+		_trial
+)
+INSERT
+		@tblNames
+SELECT
+		id
+FROM
+		temp
+WHERE
+		rowNum > 1
+DELETE
+FROM
+	_trial
+WHERE
+	id IN
+	(
+		SELECT
+				id
+		FROM
+				@tblNames
+	)
