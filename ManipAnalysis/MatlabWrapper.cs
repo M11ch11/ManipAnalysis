@@ -41,6 +41,7 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
             myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
             myMatlabInterface.Execute("set(gca,'YLim',[" + yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'YLimMode', 'manual','XLim',[" + xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'XLimMode', 'manual');");
+            myMatlabInterface.Execute("set(gca, 'Layer','top');");
         }
 
         public void createTrajectoryFigure(MLApp.MLApp myMatlabInterface, string figureName)

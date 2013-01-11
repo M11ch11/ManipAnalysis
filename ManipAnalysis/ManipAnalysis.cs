@@ -647,43 +647,43 @@ namespace ManipAnalysis
                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                     {
                         case "Vector correlation":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Mean perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Sign":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Sign":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length ratio":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Enclosed area":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "RMSE":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
                     }
 
@@ -1748,7 +1748,8 @@ namespace ManipAnalysis
 
                                         lock (myDataContainter)
                                         {
-                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.position_status == 1).Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
+                                            DateTime startTime = myDataContainter.measureDataFiltered.Where(t => t.position_status == 0).OrderBy(t => t.time_stamp).Last().time_stamp;
+                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.position_status <= 1).Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t =>t.time_stamp >= startTime).OrderBy(t => t.time_stamp));
                                             tempVelocityDataEnum = new List<VelocityDataContainer>(myDataContainter.velocityDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
                                         }
                                         if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
@@ -1756,42 +1757,53 @@ namespace ManipAnalysis
                                             int trimThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
                                             List<VelocityDataContainer> tempVelocityDataEnumCropped = new List<VelocityDataContainer>();
 
-                                            if (trimThreshold != -1)
+                                            if (trimThreshold > 0)
                                             {
                                                 double velocityCropThreshold = tempVelocityDataEnum.Max(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2))) / 100.0 * trimThreshold;
                                                 
                                                 if (tempVelocityDataEnum.Where(t => t.position_status == 0).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) > velocityCropThreshold) > 0)
                                                 {
-                                                    DateTime startTime = tempVelocityDataEnum.Find(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) > velocityCropThreshold).time_stamp;
+                                                    DateTime startTime = tempVelocityDataEnum.Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) > velocityCropThreshold).OrderBy(t => t.time_stamp).First().time_stamp;
                                                     tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status == 0).Where(t=> t.time_stamp >= startTime));
                                                 }
                                                 tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status == 1));
 
-                                                if (tempVelocityDataEnum.Where(t => t.position_status == 2).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold) > 0)
+                                                if (tempVelocityDataEnum.Where(t => t.position_status > 1).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold) > 0)
                                                 {
-                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 2).First(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).time_stamp;
-                                                    tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => t.time_stamp <= stopTime));
+                                                    VelocityDataContainer stopTimeContainer = tempVelocityDataEnum.Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First();
+                                                    
+                                                    if (stopTimeContainer.position_status == 2)
+                                                    {
+                                                        tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => t.time_stamp <= stopTimeContainer.time_stamp));
+                                                    }
+                                                    else if (stopTimeContainer.position_status == 3)
+                                                    {
+                                                        DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 2).Where(t => t.time_stamp > stopTimeContainer.time_stamp).OrderBy(t=>t.time_stamp).First().time_stamp;
+                                                        tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => t.time_stamp <= stopTime));
+                                                    }
                                                 }
-                                                else
+                                                else 
                                                 {
-                                                    tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1));
+                                                    tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).OrderBy(t => t.time_stamp));
                                                 }
-                                                tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
                                             }
-                                            else
+                                            else if (trimThreshold < 0)
                                             {
                                                 if(tempVelocityDataEnum.Exists(t => t.position_status == 3))
                                                 {
-                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.GetRange(0,tempVelocityDataEnum.IndexOf(tempVelocityDataEnum.FindLast(t => t.position_status == 3)));
-                                                    tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
+                                                    DateTime stopTime = tempVelocityDataEnum.OrderBy(t => t.time_stamp).ToList().FindLast(t => t.position_status == 3).time_stamp;
+                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.time_stamp <= stopTime).ToList();
                                                 }
                                                 else
                                                 {
-                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status < 2).ToList();
-                                                    tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
+                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status < 2).ToList();                                                    
                                                 }
                                             }
-
+                                            else if (trimThreshold == 0)
+                                            {
+                                                tempVelocityDataEnumCropped = tempVelocityDataEnum;
+                                            }
+                                            tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
 
                                             int tempTargetNumber = tempFilteredDataEnum.Select(t => t.target_number).ElementAt(0);
                                             int tempTargetTrialNumber = tempFilteredDataEnum.Select(t => t.target_trial_number).ElementAt(0);

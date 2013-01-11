@@ -117,6 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label_Impressum_Text.Text" xml:space="preserve">
+    <value>Institute of Sports and Sports Science
+BioMotion Center
+
+Engler-Bunte-Ring 15
+76131 Karlsruhe
+Germany
+
+Christian Stockinger [christian.stockinger@kit.edu]
+Matthias Pöschl [matthias.poeschl@gmail.com]
+Thorsten Stein [thorsten.stein@kit.edu]
+
+Rev.: 11.01.2013</value>
+  </data>
   <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
