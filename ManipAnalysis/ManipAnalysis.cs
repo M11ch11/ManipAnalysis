@@ -628,87 +628,63 @@ namespace ManipAnalysis
 
                     myMatlabInterface.PutWorkspaceData("data", "base", data);
 
+                    double[,] dataStdPlot = null;
+                    double[,] dataPlot = null;
+
                     if (meanCounter > 1)
                     {
-                        myMatlabInterface.Execute("dataMean = mean(transpose(data));");
-                        myMatlabInterface.Execute("dataStd = std(transpose(data));");
-                        double[,] dataMean = myMatlabInterface.GetVariable("dataMean", "base");
-                        double[,] dataStd = myMatlabInterface.GetVariable("dataStd", "base");
-
-                        switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
-                        {
-                            case "Vector correlation":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Vector correlation plot", "[Trial]", "[Correlation]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Perpendicular distance 300ms - Abs":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Perpendicular distance after 300ms abs plot", "[Trial]", "[m]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Mean perpendicular distance - Abs":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Mean perpendicular distance abs plot", "[Trial]", "[m]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Max perpendicular distance - Abs":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Max perpendicular distance abs plot", "[Trial]", "[m]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Perpendicular distance 300ms - Sign":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Perpendicular distance after 300ms sign plot", "[Trial]", "[m]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Max perpendicular distance - Sign":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Max perpendicular distance sign plot", "[Trial]", "[m]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Trajectory length abs":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Trajectory length abs plot", "[Trial]", "[Ratio]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Trajectory length ratio":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Trajectory length ratio plot", "[Trial]", "[Ratio]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "Enclosed area":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "Enclosed area plot", "[Trial]", "[m²]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-
-                            case "RMSE":
-                                myMatlabWrapper.createFigure(myMatlabInterface, "RMSE plot", "[Trial]", "[RMSE]");
-                                myMatlabInterface.Execute("set(gca,'YLim',[min(dataMean(:)-dataStd(:)) max(dataMean(:)+dataStd(:))],'YLimMode', 'manual','XLim',[1 length(dataMean)],'XLimMode', 'manual');");
-                                break;
-                        }
-
-                        if (checkBox_DescriptiveStatistic1_PlotErrorbars.Checked)
-                        {
-                            myMatlabInterface.Execute("patch([[1:1:length(dataMean)], [length(dataMean):-1:1]],[dataMean(:)-dataStd(:); flipud(dataMean(:)+dataStd(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
-                        }
-
-                        myMatlabInterface.Execute("plot(dataMean);");
-
-                        if (checkBox_DescriptiveStatistic1_PlotFit.Checked)
-                        {
-                            myMatlabInterface.Execute("plot(fit(transpose([1:1:length(dataMean)]),transpose(dataMean),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "'));");
-                        }
+                        myMatlabInterface.Execute("dataPlot = mean(transpose(data));");
+                        myMatlabInterface.Execute("dataStdPlot = std(transpose(data));");    
+                        dataStdPlot = myMatlabInterface.GetVariable("dataStdPlot", "base");
                     }
                     else
                     {
-                        myMatlabWrapper.createFigure(myMatlabInterface, comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() + " plot", "[Trial]", "[" + comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() + "]");
-                        myMatlabInterface.Execute("plot(data);");
+                        myMatlabInterface.Execute("dataPlot = data;");
+                    }
 
-                        if (checkBox_DescriptiveStatistic1_PlotFit.Checked)
-                        {
-                            myMatlabInterface.Execute("plot(fit(transpose([1:1:length(data)]),data,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "'));");
-                        }
+                    dataPlot = myMatlabInterface.GetVariable("dataPlot", "base");
+                   
+                    switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
+                    {
+                        case "Vector correlation":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Perpendicular distance 300ms - Abs":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Mean perpendicular distance - Abs":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Max perpendicular distance - Abs":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Perpendicular distance 300ms - Sign":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Max perpendicular distance - Sign":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Trajectory length abs":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Trajectory length ratio":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "Enclosed area":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
+
+                        case "RMSE":
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),dataPlot,'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            break;
                     }
 
                     myMatlabInterface.Execute("clear all;");

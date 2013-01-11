@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MLApp;
+using System.Globalization;
 
 namespace ManipAnalysis
 {
@@ -16,6 +17,30 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("hold all");
             myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
             myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
+        }
+
+        public void createStatisticFigure(MLApp.MLApp myMatlabInterface, string figureName, string dataVar, string fitVar, string stdVar, string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
+        {
+            myMatlabInterface.Execute("figure");
+            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            myMatlabInterface.Execute("grid on");
+            myMatlabInterface.Execute("hold all");
+            
+            if (stdVar != null && plotErrorBars)
+            {
+                myMatlabInterface.Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" + dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar + "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
+            }
+
+            myMatlabInterface.Execute("plot(" + dataVar + ");");
+
+            if (fitVar != null && plotFit)
+            {
+                myMatlabInterface.Execute("plot(" + fitVar + ");");
+            }
+
+            myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
+            myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
+            myMatlabInterface.Execute("set(gca,'YLim',[" + yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'YLimMode', 'manual','XLim',[" + xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'XLimMode', 'manual');");
         }
 
         public void createTrajectoryFigure(MLApp.MLApp myMatlabInterface, string figureName)
