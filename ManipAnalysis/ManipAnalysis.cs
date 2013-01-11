@@ -1480,10 +1480,10 @@ namespace ManipAnalysis
                                             
                                             int maxIndex = diffXYZ.IndexOf(diffXYZ.Max());
 
-                                            if (Math.Abs(diffXYZ.ElementAt(maxIndex) - diffXYZ.ElementAt(maxIndex - 1)) > 3) //Math.Abs(diffXYZ.ElementAt(maxIndex + 1) - diffXYZ.ElementAt(maxIndex + 2)) > 3 &&
+                                            if (Math.Abs(diffXYZ.ElementAt(maxIndex) - diffXYZ.ElementAt(maxIndex - 1)) > 3)
                                             {                                                
                                                 MeasureDataContainer errorEntry = tempRawData.ElementAt(maxIndex + 1);
-                                                Logger.writeToLog("Error at time-stamp \"" + errorEntry.time_stamp.ToString("hh:mm:ss.fffffff") + "\" in file \"" + filename + "\"");
+                                                Logger.writeToLog("Fixed error at time-stamp \"" + errorEntry.time_stamp.ToString("hh:mm:ss.fffffff") + "\" in file \"" + filename + "\"");
                                                 tempRawData.RemoveAt(maxIndex + 1);
                                                 errorDetected = true;
                                             }
@@ -1747,11 +1747,13 @@ namespace ManipAnalysis
                                         List<VelocityDataContainer> tempVelocityDataEnum;
 
                                         lock (myDataContainter)
-                                        {
-                                            DateTime startTime = myDataContainter.measureDataFiltered.Where(t => t.position_status == 0).OrderBy(t => t.time_stamp).Last().time_stamp;
-                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.position_status <= 1).Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t =>t.time_stamp >= startTime).OrderBy(t => t.time_stamp));
+                                        {                                            
+                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t => t.position_status == 1).OrderBy(t => t.time_stamp));
+                                            tempFilteredDataEnum.Insert(0, myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t => t.position_status == 0).OrderBy(t => t.time_stamp).Last());
+
                                             tempVelocityDataEnum = new List<VelocityDataContainer>(myDataContainter.velocityDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
                                         }
+
                                         if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
                                         {
                                             int trimThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
@@ -1770,7 +1772,7 @@ namespace ManipAnalysis
 
                                                 if (tempVelocityDataEnum.Where(t => t.position_status > 1).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold) > 0)
                                                 {
-                                                    VelocityDataContainer stopTimeContainer = tempVelocityDataEnum.Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First();
+                                                    VelocityDataContainer stopTimeContainer = tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First();
                                                     
                                                     if (stopTimeContainer.position_status == 2)
                                                     {
@@ -1786,6 +1788,8 @@ namespace ManipAnalysis
                                                 {
                                                     tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).OrderBy(t => t.time_stamp));
                                                 }
+
+                                                tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
                                             }
                                             else if (trimThreshold < 0)
                                             {
@@ -1798,12 +1802,10 @@ namespace ManipAnalysis
                                                 {
                                                     tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status < 2).ToList();                                                    
                                                 }
+
+                                                tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
                                             }
-                                            else if (trimThreshold == 0)
-                                            {
-                                                tempVelocityDataEnumCropped = tempVelocityDataEnum;
-                                            }
-                                            tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
+                                            
 
                                             int tempTargetNumber = tempFilteredDataEnum.Select(t => t.target_number).ElementAt(0);
                                             int tempTargetTrialNumber = tempFilteredDataEnum.Select(t => t.target_trial_number).ElementAt(0);
