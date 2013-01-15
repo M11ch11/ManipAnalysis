@@ -2667,12 +2667,10 @@ namespace ManipAnalysis
                 enableTabPages(false);
                 writeProgressInfo("Fixing broken Trials...");
 
-                List<object[]> faultyTrialInformationTemp = mySQLWrapper.getFaultyTrialInformation();
+                List<object[]> faultyTrialInformation = mySQLWrapper.getFaultyTrialInformation();
 
-                if (faultyTrialInformationTemp != null)
+                if (faultyTrialInformation != null)
                 {
-                    List<object[]> faultyTrialInformation = faultyTrialInformationTemp.Where(t => !Convert.ToBoolean(t[2])).ToList();
-
                     if (faultyTrialInformation.Count == 0)
                     {
                         Logger.writeToLog("Trials already fixed!");
@@ -2687,7 +2685,7 @@ namespace ManipAnalysis
                             }
                             setProgressBarValue((100.0 / faultyTrialInformation.Count) * trialIDCounter);
 
-                            int[] trialFixInformation = mySQLWrapper.getFaultyTrialFixInformation(Convert.ToInt32(faultyTrialInformation[trialIDCounter][1]), Convert.ToInt32(faultyTrialInformation[trialIDCounter][8]));
+                            int[] trialFixInformation = mySQLWrapper.getFaultyTrialFixInformation(Convert.ToInt32(faultyTrialInformation[trialIDCounter][1]), Convert.ToInt32(faultyTrialInformation[trialIDCounter][7]));
 
                             DataSet upperStatisticDataSet = mySQLWrapper.getStatisticDataSet(trialFixInformation[0]);
                             DataSet lowerStatisticDataSet = mySQLWrapper.getStatisticDataSet(trialFixInformation[1]);
@@ -2718,6 +2716,10 @@ namespace ManipAnalysis
                                                             );
                         }
                     }
+                }
+                else
+                {
+                    Logger.writeToLog("Trials already fixed!");
                 }
                 setProgressBarValue(0);
                 writeProgressInfo("Ready");
