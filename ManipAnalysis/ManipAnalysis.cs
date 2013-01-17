@@ -1778,24 +1778,23 @@ namespace ManipAnalysis
                                                 }
                                                 // Debug Christian, can be deleted!
                                                 else
-                                                {
-                                                    
+                                                {                                                    
                                                     debugCounterZero++;
                                                 }
-                                                //
+                                                // ---------------------------------
                                                 tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status == 1));
                                                 
                                                 if (tempVelocityDataEnum.Where(t => t.position_status == 2).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold) > 0)
                                                 {
-                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First().time_stamp;
+                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 2).Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First().time_stamp;
                                                     tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => t.time_stamp <= stopTime));                                                    
                                                 }
                                                 else 
                                                 {
                                                     if (tempVelocityDataEnum.Exists(t => t.position_status == 3))
                                                     {
-                                                        DateTime stopTime = tempVelocityDataEnum.OrderBy(t => t.time_stamp).ToList().FindLast(t => t.position_status == 3).time_stamp;
-                                                        tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.time_stamp <= stopTime).ToList();
+                                                        DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 3).OrderBy(t => t.time_stamp).Last().time_stamp;
+                                                        tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.time_stamp <= stopTime));
                                                     }
                                                     // Debug Christian, can be deleted!
                                                     else
@@ -1803,7 +1802,7 @@ namespace ManipAnalysis
                                                         debugCounterThree++;
                                                     }
                                                     debugCounterTwo++;
-                                                    //
+                                                    // ---------------------------------
                                                 }
 
                                                 tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
@@ -1812,7 +1811,7 @@ namespace ManipAnalysis
                                             {
                                                 if(tempVelocityDataEnum.Exists(t => t.position_status == 3))
                                                 {
-                                                    DateTime stopTime = tempVelocityDataEnum.OrderBy(t => t.time_stamp).ToList().FindLast(t => t.position_status == 3).time_stamp;
+                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 3).OrderBy(t => t.time_stamp).Last().time_stamp;
                                                     tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status > 0).Where(t => t.time_stamp <= stopTime).ToList();
                                                 }
                                                 else
