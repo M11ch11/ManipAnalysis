@@ -126,7 +126,8 @@ namespace ManipAnalysis
                 for (int i = 0; i < filesList.Count; i++)
                 {
                     FileInfo fi = filesList[i];
-                    if (fi.Name.Count(t => t == '-') == 6)
+                    //if (fi.Name.Count(t => t == '-') == 5)  // Study 1
+                    if (fi.Name.Count(t => t == '-') == 6)    // Study 2
                     {
                         string tempFileHash = MD5.computeHash(fi.FullName);
 
@@ -2553,79 +2554,86 @@ namespace ManipAnalysis
                         {
                             if ((measureDataSet.Tables[0].Rows.Count == velocityDataSet.Tables[0].Rows.Count) && (velocityDataSet.Tables[0].Rows.Count == baselineDataSet.Tables[0].Rows.Count))
                             {
-                                int sampleCount = measureDataSet.Tables[0].Rows.Count;
-
-                                double[,] measureData = new double[sampleCount, 3];
-                                double[,] velocityData = new double[sampleCount, 3];
-                                double[,] baselineData = new double[sampleCount, 6];
-                                double[] timeStamp = new double[sampleCount];
-
-                                for (int i = 0; i < sampleCount; i++)
+                                try
                                 {
-                                    timeStamp[i] = Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+                                    int sampleCount = measureDataSet.Tables[0].Rows.Count;
 
-                                    measureData[i, 0] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
-                                    measureData[i, 1] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
-                                    measureData[i, 2] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+                                    double[,] measureData = new double[sampleCount, 3];
+                                    double[,] velocityData = new double[sampleCount, 3];
+                                    double[,] baselineData = new double[sampleCount, 6];
+                                    double[] timeStamp = new double[sampleCount];
 
-                                    velocityData[i, 0] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
-                                    velocityData[i, 1] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
-                                    velocityData[i, 2] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+                                    for (int i = 0; i < sampleCount; i++)
+                                    {
+                                        timeStamp[i] = Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
 
-                                    baselineData[i, 0] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_x"]);
-                                    baselineData[i, 1] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_y"]);
-                                    baselineData[i, 2] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_z"]);
-                                    baselineData[i, 3] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_x"]);
-                                    baselineData[i, 4] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_y"]);
-                                    baselineData[i, 5] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_z"]);
+                                        measureData[i, 0] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
+                                        measureData[i, 1] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
+                                        measureData[i, 2] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+
+                                        velocityData[i, 0] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
+                                        velocityData[i, 1] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
+                                        velocityData[i, 2] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+
+                                        baselineData[i, 0] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_x"]);
+                                        baselineData[i, 1] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_y"]);
+                                        baselineData[i, 2] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_z"]);
+                                        baselineData[i, 3] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_x"]);
+                                        baselineData[i, 4] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_y"]);
+                                        baselineData[i, 5] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_z"]);
+                                    }
+
+                                    List<double> tempTimeList = timeStamp.ToList();
+                                    int time300msIndex = tempTimeList.IndexOf(tempTimeList.OrderBy(d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks))).ElementAt(0));
+
+                                    myMatlabInterface.PutWorkspaceData("targetNumber", "base", targetNumber);
+                                    myMatlabInterface.PutWorkspaceData("time300msIndex", "base", time300msIndex);
+                                    myMatlabInterface.PutWorkspaceData("measureData", "base", measureData);
+                                    myMatlabInterface.PutWorkspaceData("velocityData", "base", velocityData);
+                                    myMatlabInterface.PutWorkspaceData("baselineData", "base", baselineData);
+
+                                    myMatlabInterface.Execute("vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
+                                    myMatlabInterface.Execute("enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
+                                    myMatlabInterface.Execute("length_abs = trajectLength(measureData(:,1),measureData(:,3));");
+                                    myMatlabInterface.Execute("length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
+                                    myMatlabInterface.Execute("distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    myMatlabInterface.Execute("distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    myMatlabInterface.Execute("distance300msAbs = distanceAbs(time300msIndex);");
+                                    myMatlabInterface.Execute("distance300msSign = distanceSign(time300msIndex);");
+                                    myMatlabInterface.Execute("meanDistanceAbs = mean(distanceAbs);");
+                                    myMatlabInterface.Execute("maxDistanceAbs = max(distanceAbs);");
+                                    myMatlabInterface.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                    myMatlabInterface.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                    myMatlabInterface.Execute("rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
+
+                                    double vector_correlation = myMatlabInterface.GetVariable("vector_correlation", "base");
+                                    double enclosed_area = myMatlabInterface.GetVariable("enclosed_area", "base");
+                                    double length_abs = myMatlabInterface.GetVariable("length_abs", "base");
+                                    double length_ratio = myMatlabInterface.GetVariable("length_ratio", "base");
+                                    double distance300msAbs = myMatlabInterface.GetVariable("distance300msAbs", "base");
+                                    double distance300msSign = myMatlabInterface.GetVariable("distance300msSign", "base");
+                                    double meanDistanceAbs = myMatlabInterface.GetVariable("meanDistanceAbs", "base");
+                                    double maxDistanceAbs = myMatlabInterface.GetVariable("maxDistanceAbs", "base");
+                                    double maxDistanceSign = myMatlabInterface.GetVariable("maxDistanceSign", "base");
+                                    double rmse = myMatlabInterface.GetVariable("rmse", "base");
+
+                                    int statisticDataID = mySQLWrapper.insertStatisticData(
+                                                                                            trialInfo[0],
+                                                                                            vector_correlation,
+                                                                                            length_abs,length_ratio,
+                                                                                            distance300msAbs,
+                                                                                            maxDistanceAbs,
+                                                                                            meanDistanceAbs,
+                                                                                            distance300msSign,
+                                                                                            maxDistanceSign,
+                                                                                            enclosed_area,
+                                                                                            rmse
+                                                                                            );                                                                                      
+                                }                                                  
+                                catch(Exception statisticException)
+                                {
+                                    Logger.writeToLog("Error in Statistic calculation: " + statisticException.ToString());
                                 }
-
-                                List<double> tempTimeList = timeStamp.ToList();
-                                int time300msIndex = tempTimeList.IndexOf(tempTimeList.OrderBy(d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks))).ElementAt(0));
-
-                                myMatlabInterface.PutWorkspaceData("targetNumber", "base", targetNumber);
-                                myMatlabInterface.PutWorkspaceData("time300msIndex", "base", time300msIndex);
-                                myMatlabInterface.PutWorkspaceData("measureData", "base", measureData);
-                                myMatlabInterface.PutWorkspaceData("velocityData", "base", velocityData);
-                                myMatlabInterface.PutWorkspaceData("baselineData", "base", baselineData);
-
-                                myMatlabInterface.Execute("vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
-                                myMatlabInterface.Execute("enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
-                                myMatlabInterface.Execute("length_abs = trajectLength(measureData(:,1),measureData(:,3));");
-                                myMatlabInterface.Execute("length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
-                                myMatlabInterface.Execute("distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
-                                myMatlabInterface.Execute("distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
-                                myMatlabInterface.Execute("distance300msAbs = distanceAbs(time300msIndex);");
-                                myMatlabInterface.Execute("distance300msSign = distanceSign(time300msIndex);");
-                                myMatlabInterface.Execute("meanDistanceAbs = mean(distanceAbs);");
-                                myMatlabInterface.Execute("maxDistanceAbs = max(distanceAbs);");
-                                myMatlabInterface.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                myMatlabInterface.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                myMatlabInterface.Execute("rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
-
-                                double vector_correlation = myMatlabInterface.GetVariable("vector_correlation", "base");
-                                double enclosed_area = myMatlabInterface.GetVariable("enclosed_area", "base");
-                                double length_abs = myMatlabInterface.GetVariable("length_abs", "base");
-                                double length_ratio = myMatlabInterface.GetVariable("length_ratio", "base");
-                                double distance300msAbs = myMatlabInterface.GetVariable("distance300msAbs", "base");
-                                double distance300msSign = myMatlabInterface.GetVariable("distance300msSign", "base");
-                                double meanDistanceAbs = myMatlabInterface.GetVariable("meanDistanceAbs", "base");
-                                double maxDistanceAbs = myMatlabInterface.GetVariable("maxDistanceAbs", "base");
-                                double maxDistanceSign = myMatlabInterface.GetVariable("maxDistanceSign", "base");
-                                double rmse = myMatlabInterface.GetVariable("rmse", "base");
-
-                                int statisticDataID = mySQLWrapper.insertStatisticData(
-                                                                                        trialInfo[0],
-                                                                                        vector_correlation,
-                                                                                        length_abs,length_ratio,
-                                                                                        distance300msAbs,
-                                                                                        maxDistanceAbs,
-                                                                                        meanDistanceAbs,
-                                                                                        distance300msSign,
-                                                                                        maxDistanceSign,
-                                                                                        enclosed_area,
-                                                                                        rmse                                                                                        
-                                                                                      );
                             }
                             else
                             {

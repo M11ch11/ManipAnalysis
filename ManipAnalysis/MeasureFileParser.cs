@@ -41,7 +41,22 @@ namespace ManipAnalysis
             filenameInfoString = filenameInfoString.Remove(filenameInfoString.IndexOf(".csv"));
             string[] filenameInfoStringArray = filenameInfoString.Split('-');
 
-            if (filenameInfoStringArray.Count() == 7)
+            /*
+            if (filenameInfoStringArray.Count() == 6)   // Study 1
+            {
+                dataContainer.measureFileHash = MD5.computeHash(measureFilePath);
+                dataContainer.studyName = "Study 1";
+                dataContainer.szenarioName = filenameInfoStringArray[0].Trim();
+                dataContainer.groupName = filenameInfoStringArray[5].Trim();
+                dataContainer.subjectName = filenameInfoStringArray[4].Trim();
+                dataContainer.subjectID = filenameInfoStringArray[3].Trim();
+                dataContainer.measureFileCreationDate = filenameInfoStringArray[1];
+                dataContainer.measureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
+
+                retVal = true;
+            }
+            */
+            if (filenameInfoStringArray.Count() == 7)   // Study 2
             {
                 dataContainer.measureFileHash = MD5.computeHash(measureFilePath);
                 dataContainer.studyName = filenameInfoStringArray[3].Trim();
@@ -53,7 +68,7 @@ namespace ManipAnalysis
                 dataContainer.measureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
 
                 retVal = true;
-            }
+            }          
 
             return retVal;
         }
@@ -108,7 +123,9 @@ namespace ManipAnalysis
                     expectedTargetTrialCount = 25;
                 }
 
-                string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus";
+                //string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
+                string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus";   // Study 2 
+                
 
                 if (checkHeader == measureFileReader.ReadLine())
                 {
@@ -164,7 +181,9 @@ namespace ManipAnalysis
                                                             -1,
                                                             Convert.ToInt32(measureFileLine[16]),
                                                             Convert.ToBoolean(measureFileLine[17]),
-                                                            Convert.ToInt32(measureFileLine[18])
+                                                            //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
+                                                            Convert.ToInt32(measureFileLine[18])  //Study 2
+                                                            
                                                         ));                             
                             }
                         }
