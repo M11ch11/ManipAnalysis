@@ -29,22 +29,29 @@ namespace ManipAnalysis
 
         public ManipAnalysis()
         {
-            Controls.Add(Logger.theLogBox);
+            try
+            {
+                Controls.Add(Logger.theLogBox);
 
-            myMatlabInterface = new MLApp.MLApp();
-            mySQLWrapper = new SqlWrapper(this);
-            myMatlabWrapper = new MatlabWrapper();
+                myMatlabInterface = new MLApp.MLApp();
+                mySQLWrapper = new SqlWrapper(this);
+                myMatlabWrapper = new MatlabWrapper();
 
-            myMatlabInterface.Execute("clear all");
-            myMatlabInterface.Execute("cd '" + Application.StartupPath + "\\MatlabFiles\\'");
-            myMatlabInterface.Visible = 0;
-            InitializeComponent();
+                myMatlabInterface.Execute("clear all");
+                myMatlabInterface.Execute("cd '" + Application.StartupPath + "\\MatlabFiles\\'");
+                myMatlabInterface.Visible = 0;
+                InitializeComponent();
 
-            checkBox_Start_ManualMode.Enabled = false;
-            tabControl.TabPages.Remove(tabPage_VisualizationExport);
-            tabControl.TabPages.Remove(tabPage_ImportCalculations);
-            tabControl.TabPages.Remove(tabPage_Debug);
-            comboBox_Start_SQL_Server.SelectedIndex = 0;
+                checkBox_Start_ManualMode.Enabled = false;
+                tabControl.TabPages.Remove(tabPage_VisualizationExport);
+                tabControl.TabPages.Remove(tabPage_ImportCalculations);
+                tabControl.TabPages.Remove(tabPage_Debug);
+                comboBox_Start_SQL_Server.SelectedIndex = 0;
+            }
+            catch(Exception ex)                
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void button_OpenMeasureFiles_Click(object sender, EventArgs e)
