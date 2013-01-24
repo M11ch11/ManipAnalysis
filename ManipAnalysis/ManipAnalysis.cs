@@ -175,8 +175,15 @@ namespace ManipAnalysis
 
         private void ManipAnalysis_FormClosed(object sender, FormClosedEventArgs e)
         {
-            myMatlabInterface.Quit();
             mySQLWrapper.closeSqlConnection();
+            try
+            {
+                myMatlabInterface.Quit();                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void button_StatisticPlots_SzenarioMeanTime_Click(object sender, EventArgs e)
@@ -191,22 +198,26 @@ namespace ManipAnalysis
             DataSet meanTimeDataSet = mySQLWrapper.getMeanTimeDataSet(study, group, szenario, subject.id, turnDateTime);
 
             myMatlabWrapper.createFigure(myMatlabInterface, "Mean time plot", "[Target]", "Movement time [s]");
-            myMatlabInterface.Execute("set(gca,'YGrid','on','XTick',1:1:16,'XTickLabel',1:1:16);");
+            myMatlabInterface.Execute("set(gca,'YGrid','on','XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
 
-            List<TimeSpan> meanTimeList = new List<TimeSpan>();
-            List<TimeSpan> meanTimeStdList = new List<TimeSpan>();
+            List<double> meanTimeList = new List<double>();
+            List<double> meanTimeStdList = new List<double>();
             List<int> targetList = new List<int>();
 
             foreach (DataRow row in meanTimeDataSet.Tables[0].Rows)
             {
-                meanTimeList.Add(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time"])));
-                meanTimeStdList.Add(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time_std"])));
+                meanTimeList.Add(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time"])).TotalSeconds);
+                meanTimeStdList.Add(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time_std"])).TotalSeconds);
                 targetList.Add(Convert.ToInt32(row["target_number"]));
             }
 
+            meanTimeList.Add(meanTimeList.Average());
+            meanTimeStdList.Add(meanTimeStdList.Average());
+            targetList.Add(17);
+
             myMatlabInterface.PutWorkspaceData("target", "base", targetList.ToArray());
-            myMatlabInterface.PutWorkspaceData("meanTime", "base", meanTimeList.Select(t => t.TotalSeconds).ToArray());
-            myMatlabInterface.PutWorkspaceData("meanTimeStd", "base", meanTimeStdList.Select(t => t.TotalSeconds).ToArray());
+            myMatlabInterface.PutWorkspaceData("meanTime", "base", meanTimeList.ToArray());
+            myMatlabInterface.PutWorkspaceData("meanTimeStd", "base", meanTimeStdList.ToArray());
             myMatlabInterface.Execute("errorbar(target, meanTime, meanTimeStd, 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
 
             myMatlabInterface.Execute("clear all");
@@ -319,7 +330,7 @@ namespace ManipAnalysis
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
             SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            myMatlabWrapper.createTrajectoryFigure(myMatlabInterface, "Baseline plot");
+            myMatlabWrapper.createTrajectoryFigure(myMatlabInterface, "Trajectory baseline plot");
             myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
 
             DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
@@ -655,7 +666,7 @@ namespace ManipAnalysis
                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                     {
                         case "Vector correlation":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.3, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Abs":
@@ -2036,7 +2047,7 @@ namespace ManipAnalysis
                                                 tempVelocityDataNormalisedEnum = new List<VelocityDataContainer>(myDataContainter.velocityDataNormalized.Where(t => t.target_number == threadTargets.ElementAt(targetCount)).OrderBy(t => t.time_stamp));
                                             }
 
-                                            int[] tempSzenarioTrialNumbers = tempNormalisedDataEnum.Select(t => t.szenario_trial_number).OrderBy(t => t).Distinct().ToArray();
+                                            int[] tempSzenarioTrialNumbers = tempNormalisedDataEnum.Where(t => t.target_trial_number > 1).Select(t => t.szenario_trial_number).OrderBy(t => t).Distinct().ToArray();
                                             int measureDataCount = tempNormalisedDataEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(0)).Count();
 
                                             double[] positionCartesianX = new double[measureDataCount];
@@ -3062,7 +3073,8 @@ namespace ManipAnalysis
                     }
                     else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                     {
-                        myMatlabWrapper.createFigure(myMatlabInterface, "Velocity plot", "[Samples]", "Velocity [m/s]");
+                        //myMatlabWrapper.createFigure(myMatlabInterface, "Velocity plot", "[Samples]", "Velocity [m/s]");
+                        myMatlabWrapper.createVelocityFigure(myMatlabInterface, "Velocity plot", 101);
                     }
 
                     int counter = 0;
@@ -3673,7 +3685,7 @@ namespace ManipAnalysis
                                     + DateTime.Now.Minute.ToString("00")
                                     + "-"
                                     + comboBox_BaselineMeantime_Subject.SelectedItem.ToString()
-                                    + "-baseline-data";
+                                    + "trajectory-baseline-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -3851,6 +3863,121 @@ namespace ManipAnalysis
                 tabControl.TabPages.Add(tabPage_Impressum);
             }
             checkBox_Start_ManualMode.Enabled = true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
+            string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
+            string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
+            SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+
+            myMatlabWrapper.createVelocityFigure(myMatlabInterface, "Velocity baseline plot", 101);
+            myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
+
+            DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+
+            List<object[]> baselineData = new List<object[]>();
+
+            foreach (DataRow row in baseline.Tables[0].Rows)
+            {
+                baselineData.Add(new object[] { Convert.ToDouble(row["baseline_velocity_x"]), Convert.ToDouble(row["baseline_velocity_z"]), Convert.ToInt32(row["target_number"]) });
+            }
+
+            int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
+
+            for (int i = 0; i < targetNumberArray.Length; i++)
+            {
+                double[] tempXZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2))).ToArray();
+                myMatlabInterface.PutWorkspaceData("XZ", "base", tempXZ);
+                myMatlabInterface.Execute("plot(XZ,'LineWidth',2)");
+            }
+
+            myMatlabInterface.Execute("clear all");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Reset();
+            saveFileDialog.Title = "Save trajectory / velocity file";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".csv";
+            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                    + "."
+                                    + DateTime.Now.Month.ToString("00")
+                                    + "."
+                                    + DateTime.Now.Day.ToString("00")
+                                    + "-"
+                                    + DateTime.Now.Hour.ToString("00")
+                                    + "."
+                                    + DateTime.Now.Minute.ToString("00")
+                                    + "-"
+                                    + comboBox_BaselineMeantime_Subject.SelectedItem.ToString()
+                                    + "-velocity-baseline-data";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
+                string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
+                string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
+                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+
+                DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+
+                List<object[]> baselineData = new List<object[]>();
+
+                foreach (DataRow row in baseline.Tables[0].Rows)
+                {
+                    baselineData.Add(new object[] { Convert.ToDouble(row["baseline_velocity_x"]), Convert.ToDouble(row["baseline_velocity_z"]), Convert.ToInt32(row["target_number"]) });
+                }
+
+                int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
+
+                List<string> cache = new List<string>();
+                cache.Add("Study;Group;Szenario;Subject;Target;DataPoint;VelocityX;VelocityZ;VelocityXZ");
+
+                for (int i = 0; i < targetNumberArray.Length; i++)
+                {
+                    double[] tempX = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[0])).ToArray();
+                    double[] tempZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[1])).ToArray();
+                    double[] tempXZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2))).ToArray();
+
+                    for (int j = 0; j < tempX.Length; j++)
+                    {
+                        cache.Add(
+                                    study
+                                    + ";"
+                                    + group
+                                    + ";"
+                                    + szenario
+                                    + ";"
+                                    + subject
+                                    + ";"
+                                    + targetNumberArray[i]
+                                    + ";"
+                                    + j
+                                    + ";"
+                                    + DoubleConverter.ToExactString(tempX[j])
+                                    + ";"
+                                    + DoubleConverter.ToExactString(tempZ[j])
+                                    );
+                    }
+                }
+
+                FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+
+                for (int i = 0; i < cache.Count(); i++)
+                {
+                    dataFileWriter.WriteLine(cache[i]);
+                }
+
+                dataFileWriter.Close();
+                dataFileStream.Close();
+            }
         }
     }
 }

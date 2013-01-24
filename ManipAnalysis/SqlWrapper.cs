@@ -113,7 +113,7 @@ namespace ManipAnalysis
 
             sqlCmd.Parameters.Clear();
             sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT name FROM master..sysdatabases WHERE name LIKE 'ManipData%';";
+            sqlCmd.CommandText = "SELECT name FROM master..sysdatabases WHERE name LIKE 'Study%';";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)

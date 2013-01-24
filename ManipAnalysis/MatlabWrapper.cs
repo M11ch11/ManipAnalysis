@@ -60,6 +60,18 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
         }
 
+        public void createVelocityFigure(MLApp.MLApp myMatlabInterface, string figureName, int sampleCount)
+        {
+            myMatlabInterface.Execute("figure");
+            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            myMatlabInterface.Execute("grid on");
+            myMatlabInterface.Execute("hold all");
+            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.6]);");
+            myMatlabInterface.Execute("axis manual;");
+            myMatlabInterface.Execute("xlabel('[Samples]');");
+            myMatlabInterface.Execute("ylabel('Velocity [m/s]');");
+        }
+
         public void drawTargets(MLApp.MLApp myMatlabInterface, double diameter, double radius, double centerX, double centerY)
         {
             myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(0)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(0)) * " + radius.ToString().Replace(',', '.') + ");");

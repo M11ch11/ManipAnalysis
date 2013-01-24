@@ -114,7 +114,7 @@
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_BaselineMeantime = new System.Windows.Forms.TabPage();
-            this.button_BaselineMeantime_ExportBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantime_ExportTrajectoryBaseline = new System.Windows.Forms.Button();
             this.button_BaselineMeantime_ExportSzenarioMeanTimes = new System.Windows.Forms.Button();
             this.label_BaselineMeantime_Turn = new System.Windows.Forms.Label();
             this.comboBox_BaselineMeantime_Turn = new System.Windows.Forms.ComboBox();
@@ -126,7 +126,7 @@
             this.comboBox_BaselineMeantime_Subject = new System.Windows.Forms.ComboBox();
             this.comboBox_BaselineMeantime_Study = new System.Windows.Forms.ComboBox();
             this.comboBox_BaselineMeantime_Szenario = new System.Windows.Forms.ComboBox();
-            this.button_BaselineMeantime_PlotBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantime_PlotTrajectoryBaseline = new System.Windows.Forms.Button();
             this.button_BaselineMeantime_PlotSzenarioMeanTimes = new System.Windows.Forms.Button();
             this.tabPage_ImportCalculations = new System.Windows.Forms.TabPage();
             this.groupBox_Import_VelocityCropping = new System.Windows.Forms.GroupBox();
@@ -197,6 +197,8 @@
             this.checkBox_PauseThread = new System.Windows.Forms.CheckBox();
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
+            this.button_BaselineMeantime_ExportVelocityBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantime_PlotVelocityBaseline = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -248,7 +250,7 @@
             // button_Start_SelectDatabase
             // 
             this.button_Start_SelectDatabase.Enabled = false;
-            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(136, 123);
+            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(290, 123);
             this.button_Start_SelectDatabase.Name = "button_Start_SelectDatabase";
             this.button_Start_SelectDatabase.Size = new System.Drawing.Size(90, 23);
             this.button_Start_SelectDatabase.TabIndex = 21;
@@ -266,7 +268,7 @@
             "localhost"});
             this.comboBox_Start_Database.Location = new System.Drawing.Point(6, 125);
             this.comboBox_Start_Database.Name = "comboBox_Start_Database";
-            this.comboBox_Start_Database.Size = new System.Drawing.Size(124, 21);
+            this.comboBox_Start_Database.Size = new System.Drawing.Size(278, 21);
             this.comboBox_Start_Database.TabIndex = 20;
             // 
             // label1
@@ -287,7 +289,7 @@
             "localhost"});
             this.comboBox_Start_SQL_Server.Location = new System.Drawing.Point(6, 85);
             this.comboBox_Start_SQL_Server.Name = "comboBox_Start_SQL_Server";
-            this.comboBox_Start_SQL_Server.Size = new System.Drawing.Size(124, 21);
+            this.comboBox_Start_SQL_Server.Size = new System.Drawing.Size(278, 21);
             this.comboBox_Start_SQL_Server.TabIndex = 18;
             // 
             // label_Start_SQL_Server
@@ -301,7 +303,7 @@
             // 
             // button_Start_ChangeSQlServerConnection
             // 
-            this.button_Start_ChangeSQlServerConnection.Location = new System.Drawing.Point(136, 83);
+            this.button_Start_ChangeSQlServerConnection.Location = new System.Drawing.Point(290, 83);
             this.button_Start_ChangeSQlServerConnection.Name = "button_Start_ChangeSQlServerConnection";
             this.button_Start_ChangeSQlServerConnection.Size = new System.Drawing.Size(90, 23);
             this.button_Start_ChangeSQlServerConnection.TabIndex = 16;
@@ -1178,7 +1180,9 @@
             // 
             // tabPage_BaselineMeantime
             // 
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportVelocityBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotVelocityBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportTrajectoryBaseline);
             this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportSzenarioMeanTimes);
             this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Turn);
             this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Turn);
@@ -1190,7 +1194,7 @@
             this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Subject);
             this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Study);
             this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Szenario);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotTrajectoryBaseline);
             this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotSzenarioMeanTimes);
             this.tabPage_BaselineMeantime.Location = new System.Drawing.Point(4, 22);
             this.tabPage_BaselineMeantime.Name = "tabPage_BaselineMeantime";
@@ -1201,21 +1205,21 @@
             this.tabPage_BaselineMeantime.UseVisualStyleBackColor = true;
             this.tabPage_BaselineMeantime.Enter += new System.EventHandler(this.tabPage_BaselineMeantime_Enter);
             // 
-            // button_BaselineMeantime_ExportBaseline
+            // button_BaselineMeantime_ExportTrajectoryBaseline
             // 
-            this.button_BaselineMeantime_ExportBaseline.Location = new System.Drawing.Point(197, 147);
-            this.button_BaselineMeantime_ExportBaseline.Name = "button_BaselineMeantime_ExportBaseline";
-            this.button_BaselineMeantime_ExportBaseline.Size = new System.Drawing.Size(116, 23);
-            this.button_BaselineMeantime_ExportBaseline.TabIndex = 43;
-            this.button_BaselineMeantime_ExportBaseline.Text = "Export baselines";
-            this.button_BaselineMeantime_ExportBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_ExportBaseline_Click);
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.Name = "button_BaselineMeantime_ExportTrajectoryBaseline";
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.TabIndex = 43;
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.Text = "Export trajectory baselines";
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_ExportTrajectoryBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_ExportBaseline_Click);
             // 
             // button_BaselineMeantime_ExportSzenarioMeanTimes
             // 
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(197, 176);
+            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(170, 205);
             this.button_BaselineMeantime_ExportSzenarioMeanTimes.Name = "button_BaselineMeantime_ExportSzenarioMeanTimes";
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
             this.button_BaselineMeantime_ExportSzenarioMeanTimes.TabIndex = 42;
             this.button_BaselineMeantime_ExportSzenarioMeanTimes.Text = "Export mean times";
             this.button_BaselineMeantime_ExportSzenarioMeanTimes.UseVisualStyleBackColor = true;
@@ -1320,21 +1324,21 @@
             this.comboBox_BaselineMeantime_Szenario.TabIndex = 32;
             this.comboBox_BaselineMeantime_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantime_Szenario_SelectedIndexChanged);
             // 
-            // button_BaselineMeantime_PlotBaseline
+            // button_BaselineMeantime_PlotTrajectoryBaseline
             // 
-            this.button_BaselineMeantime_PlotBaseline.Location = new System.Drawing.Point(66, 147);
-            this.button_BaselineMeantime_PlotBaseline.Name = "button_BaselineMeantime_PlotBaseline";
-            this.button_BaselineMeantime_PlotBaseline.Size = new System.Drawing.Size(116, 23);
-            this.button_BaselineMeantime_PlotBaseline.TabIndex = 31;
-            this.button_BaselineMeantime_PlotBaseline.Text = "Plot baselines";
-            this.button_BaselineMeantime_PlotBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotBaseline.Click += new System.EventHandler(this.button_PlotBaseline_Click);
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.Location = new System.Drawing.Point(15, 147);
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.Name = "button_BaselineMeantime_PlotTrajectoryBaseline";
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.TabIndex = 31;
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.Text = "Plot trajectory baselines";
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_PlotTrajectoryBaseline.Click += new System.EventHandler(this.button_PlotBaseline_Click);
             // 
             // button_BaselineMeantime_PlotSzenarioMeanTimes
             // 
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(66, 176);
+            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(15, 205);
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.Name = "button_BaselineMeantime_PlotSzenarioMeanTimes";
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.TabIndex = 22;
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.Text = "Plot mean times";
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.UseVisualStyleBackColor = true;
@@ -1996,6 +2000,26 @@
             this.button_ClearLog.UseVisualStyleBackColor = true;
             this.button_ClearLog.Click += new System.EventHandler(this.button_ClearLog_Click);
             // 
+            // button_BaselineMeantime_ExportVelocityBaseline
+            // 
+            this.button_BaselineMeantime_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
+            this.button_BaselineMeantime_ExportVelocityBaseline.Name = "button_BaselineMeantime_ExportVelocityBaseline";
+            this.button_BaselineMeantime_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_ExportVelocityBaseline.TabIndex = 45;
+            this.button_BaselineMeantime_ExportVelocityBaseline.Text = "Export velocity baselines";
+            this.button_BaselineMeantime_ExportVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button_BaselineMeantime_PlotVelocityBaseline
+            // 
+            this.button_BaselineMeantime_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
+            this.button_BaselineMeantime_PlotVelocityBaseline.Name = "button_BaselineMeantime_PlotVelocityBaseline";
+            this.button_BaselineMeantime_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_PlotVelocityBaseline.TabIndex = 44;
+            this.button_BaselineMeantime_PlotVelocityBaseline.Text = "Plot velocity baselines";
+            this.button_BaselineMeantime_PlotVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button2_Click);
+            // 
             // ManipAnalysis
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2094,7 +2118,7 @@
         private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Subject;
         private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Study;
         private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Szenario;
-        private System.Windows.Forms.Button button_BaselineMeantime_PlotBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantime_PlotTrajectoryBaseline;
         private System.Windows.Forms.Button button_BaselineMeantime_PlotSzenarioMeanTimes;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowCatchTrials;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Turns;
@@ -2189,7 +2213,7 @@
         private System.Windows.Forms.ComboBox comboBox_TrajectoryVelocity_IndividualMean;
         private System.Windows.Forms.ComboBox comboBox_TrajectoryVelocity_TrajectoryVelocity;
         private System.Windows.Forms.Button button_TrajectoryVelocity_Export;
-        private System.Windows.Forms.Button button_BaselineMeantime_ExportBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantime_ExportTrajectoryBaseline;
         private System.Windows.Forms.Button button_BaselineMeantime_ExportSzenarioMeanTimes;
         private System.Windows.Forms.Label label_BaselineMeantime_Turn;
         private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Turn;
@@ -2212,6 +2236,8 @@
         private System.Windows.Forms.Button button_Start_SelectDatabase;
         private System.Windows.Forms.ComboBox comboBox_Start_Database;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button_BaselineMeantime_ExportVelocityBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantime_PlotVelocityBaseline;
     }
 }
 
