@@ -1,5 +1,3 @@
-USE ["DataBaseName"];
-
 CREATE TABLE dbo._velocity_data_normalized (
   id         int IDENTITY NOT NULL, 
   trial_id   int NOT NULL, 

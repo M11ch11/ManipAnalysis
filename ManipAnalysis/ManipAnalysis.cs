@@ -261,11 +261,11 @@ namespace ManipAnalysis
             MessageBoxButtons buttons = MessageBoxButtons.YesNo;
             DialogResult result;
 
-            result = MessageBox.Show("Are you really sure you want to wipe all data and initialise the Database?", "Really?", buttons);
+            result = MessageBox.Show("Are you really sure you want to initialise the Database?", "Really?", buttons);
 
             if (result == DialogResult.Yes)
             {
-                mySQLWrapper.executeSqlFile("SQL\\createTables.sql");
+                mySQLWrapper.initializeDatabase();
             }
         }
 

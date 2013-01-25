@@ -1,5 +1,3 @@
-USE ["DataBaseName"];
-
 /****** Object:  StoredProcedure [dbo].[changeGroupID]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
@@ -17,10 +15,6 @@ BEGIN
 	UPDATE _szenario_mean_time SET group_id = @newGroupID WHERE group_id = @oldGroupID;
 	DELETE FROM _group WHERE id = @oldGroupID;
 END
-
-
-
-
 
 
 GO

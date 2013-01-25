@@ -161,20 +161,54 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public void executeSqlFile(string filename)
+        private void executeSqlFile(string filename)
         {
             sqlCmd.Parameters.Clear();
-            FileInfo file = new FileInfo(filename);
-            string script = file.OpenText().ReadToEnd();
-            sqlCmd.CommandText = script;
+            sqlCmd.CommandType = CommandType.Text;
+            List<string> cmds = new List<string>();
+
+            if (File.Exists(filename))
+            {
+                TextReader tr = new StreamReader(filename);
+                string line = "";
+                string cmd = "";
+
+                while ((line = tr.ReadLine()) != null)
+                {
+                    if (line.Trim().ToUpper() == "GO")
+                    {
+                        cmds.Add(cmd);
+                        cmd = "";
+                    }
+                    else
+                    {
+                        cmd += line + "\r\n";
+                    }
+                }
+                if (cmd.Length > 0)
+                {
+                    cmds.Add(cmd);
+                    cmd = "";
+                }
+                tr.Close();
+            }
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    openSqlConnection();                    
+                    
+                    if (cmds.Count > 0)
+                    {
+                        for (int i = 0; i < cmds.Count; i++)
+                        {
+                            sqlCmd.CommandText = cmds[i];
+                            sqlCmd.ExecuteNonQuery();
+                        }
+                    }
+
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
@@ -195,6 +229,12 @@ namespace ManipAnalysis
                     }
                 }
             }
+        }
+
+        public void initializeDatabase()
+        {
+            executeSqlFile("SQL-Files\\SQL-Tables.sql");
+            executeSqlFile("SQL-Files\\SQL-FunctionsProcedures.sql");
         }
 
         public void cleanOrphanedEntries()
