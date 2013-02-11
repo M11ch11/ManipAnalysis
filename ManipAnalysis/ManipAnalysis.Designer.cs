@@ -114,6 +114,8 @@
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_BaselineMeantime = new System.Windows.Forms.TabPage();
+            this.button_BaselineMeantime_ExportVelocityBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantime_PlotVelocityBaseline = new System.Windows.Forms.Button();
             this.button_BaselineMeantime_ExportTrajectoryBaseline = new System.Windows.Forms.Button();
             this.button_BaselineMeantime_ExportSzenarioMeanTimes = new System.Windows.Forms.Button();
             this.label_BaselineMeantime_Turn = new System.Windows.Forms.Label();
@@ -197,8 +199,6 @@
             this.checkBox_PauseThread = new System.Windows.Forms.CheckBox();
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_ExportVelocityBaseline = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_PlotVelocityBaseline = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1205,6 +1205,26 @@
             this.tabPage_BaselineMeantime.UseVisualStyleBackColor = true;
             this.tabPage_BaselineMeantime.Enter += new System.EventHandler(this.tabPage_BaselineMeantime_Enter);
             // 
+            // button_BaselineMeantime_ExportVelocityBaseline
+            // 
+            this.button_BaselineMeantime_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
+            this.button_BaselineMeantime_ExportVelocityBaseline.Name = "button_BaselineMeantime_ExportVelocityBaseline";
+            this.button_BaselineMeantime_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_ExportVelocityBaseline.TabIndex = 45;
+            this.button_BaselineMeantime_ExportVelocityBaseline.Text = "Export velocity baselines";
+            this.button_BaselineMeantime_ExportVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button_BaselineMeantime_PlotVelocityBaseline
+            // 
+            this.button_BaselineMeantime_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
+            this.button_BaselineMeantime_PlotVelocityBaseline.Name = "button_BaselineMeantime_PlotVelocityBaseline";
+            this.button_BaselineMeantime_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantime_PlotVelocityBaseline.TabIndex = 44;
+            this.button_BaselineMeantime_PlotVelocityBaseline.Text = "Plot velocity baselines";
+            this.button_BaselineMeantime_PlotVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button2_Click);
+            // 
             // button_BaselineMeantime_ExportTrajectoryBaseline
             // 
             this.button_BaselineMeantime_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
@@ -1388,7 +1408,7 @@
             this.textBox_Import_PercentPeakVelocity.Name = "textBox_Import_PercentPeakVelocity";
             this.textBox_Import_PercentPeakVelocity.Size = new System.Drawing.Size(22, 20);
             this.textBox_Import_PercentPeakVelocity.TabIndex = 10;
-            this.textBox_Import_PercentPeakVelocity.Text = "1";
+            this.textBox_Import_PercentPeakVelocity.Text = "10";
             this.textBox_Import_PercentPeakVelocity.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // button_Import_ClearMeasureFileList
@@ -1999,26 +2019,6 @@
             this.button_ClearLog.Text = "Clear log";
             this.button_ClearLog.UseVisualStyleBackColor = true;
             this.button_ClearLog.Click += new System.EventHandler(this.button_ClearLog_Click);
-            // 
-            // button_BaselineMeantime_ExportVelocityBaseline
-            // 
-            this.button_BaselineMeantime_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
-            this.button_BaselineMeantime_ExportVelocityBaseline.Name = "button_BaselineMeantime_ExportVelocityBaseline";
-            this.button_BaselineMeantime_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_ExportVelocityBaseline.TabIndex = 45;
-            this.button_BaselineMeantime_ExportVelocityBaseline.Text = "Export velocity baselines";
-            this.button_BaselineMeantime_ExportVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button_BaselineMeantime_PlotVelocityBaseline
-            // 
-            this.button_BaselineMeantime_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
-            this.button_BaselineMeantime_PlotVelocityBaseline.Name = "button_BaselineMeantime_PlotVelocityBaseline";
-            this.button_BaselineMeantime_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_PlotVelocityBaseline.TabIndex = 44;
-            this.button_BaselineMeantime_PlotVelocityBaseline.Text = "Plot velocity baselines";
-            this.button_BaselineMeantime_PlotVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button2_Click);
             // 
             // ManipAnalysis
             // 

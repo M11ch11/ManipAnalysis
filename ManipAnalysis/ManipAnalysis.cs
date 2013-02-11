@@ -1731,9 +1731,12 @@ namespace ManipAnalysis
                                             }
 
                                             myMatlabInterface.Execute("clear time_stamp" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocity_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocity_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocity_z" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("velocity_x" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("velocity_y" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("velocity_z" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("clear position_cartesian_x" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("clear position_cartesian_y" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("clear position_cartesian_z" + threadTrials.ElementAt(i));
                                         }
                                     }
                                 }));
@@ -1846,6 +1849,7 @@ namespace ManipAnalysis
                                             int tempTargetTrialNumber = tempFilteredDataEnum.Select(t => t.target_trial_number).ElementAt(0);
                                             int tempSzenarioTrialNumber = tempFilteredDataEnum.Select(t => t.szenario_trial_number).ElementAt(0);
                                             bool tempIsCatchTrial = tempFilteredDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
+                                            List<string> errorList = new List<string>();
                                            
                                             myMatlabInterface.PutWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
 
@@ -1875,31 +1879,30 @@ namespace ManipAnalysis
 
                                             ///
 
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceActualX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceActualY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceActualZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar1_" + threadTrials.ElementAt(i) + ", forceActualX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar2_" + threadTrials.ElementAt(i) + ", forceActualY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar3_" + threadTrials.ElementAt(i) + ", forceActualZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                                                                                                
+                                            myMatlabInterface.Execute("[errorvar4_" + threadTrials.ElementAt(i) + ", forceNominalX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar5_" + threadTrials.ElementAt(i) + ", forceNominalY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar6_" + threadTrials.ElementAt(i) + ", forceNominalZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                                                                                                 
+                                            myMatlabInterface.Execute("[errorvar7_" + threadTrials.ElementAt(i) + ", forceMomentX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar8_" + threadTrials.ElementAt(i) + ", forceMomentY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar9_" + threadTrials.ElementAt(i) + ", forceMomentZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
 
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceNominalX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceNominalY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceNominalZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceMomentX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceMomentY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", forceMomentZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", positionCartesianX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", positionCartesianY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", positionCartesianZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", positionStatus" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionStatus" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar10_" + threadTrials.ElementAt(i) + ", positionCartesianX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar11_" + threadTrials.ElementAt(i) + ", positionCartesianY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar12_" + threadTrials.ElementAt(i) + ", positionCartesianZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                                                                  
+                                            myMatlabInterface.Execute("[errorvar13_" + threadTrials.ElementAt(i) + ", positionStatus" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionStatus" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                                                                  
+                                            myMatlabInterface.Execute("[errorvar14_" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar15_" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabInterface.Execute("[errorvar16_" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
 
                                             ///
-                                            string errorvar = myMatlabInterface.GetVariable("errorvar" + threadTrials.ElementAt(i), "base");
-
+                                           
                                             double[,] measure_data_time = myMatlabInterface.GetVariable("newMeasureTime" + threadTrials.ElementAt(i), "base");
                                             double[,] velocity_data_time = myMatlabInterface.GetVariable("newVelocityTime" + threadTrials.ElementAt(i), "base");
 
@@ -1970,14 +1973,21 @@ namespace ManipAnalysis
                                                 }
                                             }
 
-                                            if (errorvar != "" && errorvar != null)
+                                            for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
                                             {
-                                                Logger.writeToLog(errorvar + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber);
+                                                errorList.Add(Convert.ToString(myMatlabInterface.GetVariable("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i), "base")));
+                                                myMatlabInterface.Execute("clear errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
                                             }
 
-                                            myMatlabInterface.Execute("clear errorvar" + threadTrials.ElementAt(i));
+                                            if(errorList.Where(t => t != "" && t != null).Count() > 0)
+                                            {
+                                                Logger.writeToLog(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
+                                            }
+                                            
 
                                             myMatlabInterface.Execute("clear newMeasureTime" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("clear measure_data_time" + threadTrials.ElementAt(i));
+                                            myMatlabInterface.Execute("clear velocity_data_time" + threadTrials.ElementAt(i));
 
                                             myMatlabInterface.Execute("clear forceActualX" + threadTrials.ElementAt(i));
                                             myMatlabInterface.Execute("clear forceActualY" + threadTrials.ElementAt(i));

@@ -44,34 +44,34 @@ normalizedData = zeros(localNewSampleCount,nData);  % allocation for normalized 
 if nTime ~= nData % Check for dimension errors
 	errorvar = [errorvar 'Dimension Error!'];
 	disp('Dimension Error!')
-
-end
-if (max(diff(inputTime))/10000) > 20   % Checks if the maximum difference between time increments is smaller than 20ms
+	normalizedData = NaN;
+elseif (max(diff(inputTime))/10000) > 20   % Checks if the maximum difference between time increments is smaller than 20ms
 										% Note: BioMotionBot data is recorded at a frequency of approx. 200Hz
 	errorvar = [errorvar ['Difference between time increments too high! ( ' num2str(max(diff(inputTime))/10000) ' ms )']];
 	disp (errorvar)   
-end
-
-dt = mean(abs(diff(inputTime))); % Gets the mean difference between time ticks = mean frequency
-
-t0 = inputTime(1);
-tEnd = inputTime(nTime);
-
-deltaInputTime = nTime/localNewSampleCount;
-tp = (t0:(dt*deltaInputTime):tEnd)';
-
-while(length(tp) ~= newSampleCount)	% Checks if the normalized time array 'tp' has the required length. If it doesn't, it will be recalculated.
-    if length(tp) < newSampleCount	
-        localNewSampleCount = localNewSampleCount + 1;
-    else
-        localNewSampleCount = localNewSampleCount - 1;
-    end
+	normalizedData = NaN;
+else
+	dt = mean(abs(diff(inputTime))); % Gets the mean difference between time ticks = mean frequency
+	
+	t0 = inputTime(1);
+	tEnd = inputTime(nTime);
 	
 	deltaInputTime = nTime/localNewSampleCount;
 	tp = (t0:(dt*deltaInputTime):tEnd)';
+	
+	while(length(tp) ~= newSampleCount)	% Checks if the normalized time array 'tp' has the required length. If it doesn't, it will be recalculated.
+	    if length(tp) < newSampleCount	
+	        localNewSampleCount = localNewSampleCount + 1;
+	    else
+	        localNewSampleCount = localNewSampleCount - 1;
+	    end
+		
+		deltaInputTime = nTime/localNewSampleCount;
+		tp = (t0:(dt*deltaInputTime):tEnd)';
+	end
+	
+	normalizedTime = tp;
+	
+	% Time Normalization
+	normalizedData = interp1(inputTime, inputData, tp, 'spline');
 end
-
-normalizedTime = tp;
-
-% Time Normalization
-normalizedData = interp1(inputTime, inputData, tp, 'spline');
