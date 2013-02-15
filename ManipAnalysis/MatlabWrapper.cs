@@ -19,6 +19,19 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
         }
 
+        public void createMeanTimeFigure(MLApp.MLApp myMatlabInterface)
+        {
+            myMatlabInterface.Execute("figure");
+            myMatlabInterface.Execute("set(gcf,'Name','Mean time plot','NumberTitle','off');");
+            myMatlabInterface.Execute("grid on");
+            myMatlabInterface.Execute("hold all");
+            myMatlabInterface.Execute("xlabel('[Target]');");
+            myMatlabInterface.Execute("ylabel('Movement time [s]');");
+            myMatlabInterface.Execute("axis([0 18 0.2 1.4]);");
+            myMatlabInterface.Execute("axis manual;");
+            myMatlabInterface.Execute("set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
+        }
+
         public void createStatisticFigure(MLApp.MLApp myMatlabInterface, string figureName, string dataVar, string fitVar, string stdVar, string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
         {
             myMatlabInterface.Execute("figure");
@@ -66,7 +79,7 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
             myMatlabInterface.Execute("grid on");
             myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.6]);");
+            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.4]);");
             myMatlabInterface.Execute("axis manual;");
             myMatlabInterface.Execute("xlabel('[Samples]');");
             myMatlabInterface.Execute("ylabel('Velocity [m/s]');");

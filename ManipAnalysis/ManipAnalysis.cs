@@ -197,9 +197,8 @@ namespace ManipAnalysis
 
             DataSet meanTimeDataSet = mySQLWrapper.getMeanTimeDataSet(study, group, szenario, subject.id, turnDateTime);
 
-            myMatlabWrapper.createFigure(myMatlabInterface, "Mean time plot", "[Target]", "Movement time [s]");
-            myMatlabInterface.Execute("set(gca,'YGrid','on','XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
-
+            myMatlabWrapper.createMeanTimeFigure(myMatlabInterface);            
+            
             List<double> meanTimeList = new List<double>();
             List<double> meanTimeStdList = new List<double>();
             List<int> targetList = new List<int>();
@@ -666,7 +665,7 @@ namespace ManipAnalysis
                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                     {
                         case "Vector correlation":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.3, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Abs":
@@ -1850,32 +1849,32 @@ namespace ManipAnalysis
                                             int tempSzenarioTrialNumber = tempFilteredDataEnum.Select(t => t.szenario_trial_number).ElementAt(0);
                                             bool tempIsCatchTrial = tempFilteredDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
                                             List<string> errorList = new List<string>();
-                                           
-                                            myMatlabInterface.PutWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceActualX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_actual_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceActualY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_actual_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceActualZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_actual_z).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceNominalX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceNominalY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceActualX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceActualY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_y).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceActualZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceMomentX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_moment_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceMomentY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_moment_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.force_moment_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceNominalX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceNominalY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_z).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceMomentX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceMomentY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("positionStatus" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => Convert.ToDouble(t.position_status)).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_y).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("positionStatus" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.position_status)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("velocityX" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.Select(t => t.velocity_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("velocityY" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.Select(t => t.velocity_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("velocityZ" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.Select(t => t.velocity_z).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
+
+                                            myMatlabInterface.PutWorkspaceData("velocityX" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_x).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("velocityY" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_y).ToArray());
+                                            myMatlabInterface.PutWorkspaceData("velocityZ" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_z).ToArray());
 
                                             ///
 
@@ -1900,6 +1899,19 @@ namespace ManipAnalysis
                                             myMatlabInterface.Execute("[errorvar14_" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                             myMatlabInterface.Execute("[errorvar15_" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                             myMatlabInterface.Execute("[errorvar16_" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+
+                                            ///
+
+                                            for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
+                                            {
+                                                errorList.Add(Convert.ToString(myMatlabInterface.GetVariable("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i), "base")));
+                                                myMatlabInterface.Execute("clear errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
+                                            }
+
+                                            if (errorList.Where(t => t != "" && t != null).Count() > 0)
+                                            {
+                                                Logger.writeToLog(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
+                                            }
 
                                             ///
                                            
@@ -1972,18 +1984,6 @@ namespace ManipAnalysis
                                                                                     ));
                                                 }
                                             }
-
-                                            for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
-                                            {
-                                                errorList.Add(Convert.ToString(myMatlabInterface.GetVariable("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i), "base")));
-                                                myMatlabInterface.Execute("clear errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
-                                            }
-
-                                            if(errorList.Where(t => t != "" && t != null).Count() > 0)
-                                            {
-                                                Logger.writeToLog(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
-                                            }
-                                            
 
                                             myMatlabInterface.Execute("clear newMeasureTime" + threadTrials.ElementAt(i));
                                             myMatlabInterface.Execute("clear measure_data_time" + threadTrials.ElementAt(i));

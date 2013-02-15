@@ -35,7 +35,7 @@
 function [errorvar, normalizedData, normalizedTime] = timeNorm(inputData, inputTime, newSampleCount)
 
 errorvar = '';
-localNewSampleCount = newSampleCount + 1 ;
+localNewSampleCount = newSampleCount + 1.0;
 
 [mData, nData] = size(inputData);           % dimension of input data matrix
 normalizedData = zeros(localNewSampleCount,nData);  % allocation for normalized data
@@ -44,12 +44,14 @@ normalizedData = zeros(localNewSampleCount,nData);  % allocation for normalized 
 if nTime ~= nData % Check for dimension errors
 	errorvar = [errorvar 'Dimension Error!'];
 	disp('Dimension Error!')
-	normalizedData = NaN;
-elseif (max(diff(inputTime))/10000) > 20   % Checks if the maximum difference between time increments is smaller than 20ms
+	normalizedData = 0;
+    normalizedTime = 0;
+elseif (max(diff(inputTime))/10000) > 25   % Checks if the maximum difference between time increments is smaller than 25ms
 										% Note: BioMotionBot data is recorded at a frequency of approx. 200Hz
 	errorvar = [errorvar ['Difference between time increments too high! ( ' num2str(max(diff(inputTime))/10000) ' ms )']];
 	disp (errorvar)   
-	normalizedData = NaN;
+	normalizedData = 0;
+    normalizedTime = 0;
 else
 	dt = mean(abs(diff(inputTime))); % Gets the mean difference between time ticks = mean frequency
 	
@@ -61,9 +63,9 @@ else
 	
 	while(length(tp) ~= newSampleCount)	% Checks if the normalized time array 'tp' has the required length. If it doesn't, it will be recalculated.
 	    if length(tp) < newSampleCount	
-	        localNewSampleCount = localNewSampleCount + 1;
+	        localNewSampleCount = localNewSampleCount + 0.1;
 	    else
-	        localNewSampleCount = localNewSampleCount - 1;
+	        localNewSampleCount = localNewSampleCount - 0.1;
 	    end
 		
 		deltaInputTime = nTime/localNewSampleCount;
