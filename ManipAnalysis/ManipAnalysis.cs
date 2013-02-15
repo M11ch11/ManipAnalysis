@@ -3083,7 +3083,6 @@ namespace ManipAnalysis
                     }
                     else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                     {
-                        //myMatlabWrapper.createFigure(myMatlabInterface, "Velocity plot", "[Samples]", "Velocity [m/s]");
                         myMatlabWrapper.createVelocityFigure(myMatlabInterface, "Velocity plot", 101);
                     }
 
@@ -3105,8 +3104,19 @@ namespace ManipAnalysis
 
                                 foreach (DataRow row in measureDataSet.Tables[0].Rows)
                                 {
-                                    measureData_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                    measureData_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (checkBox_TrajectoryVelocity_IgnoreCatchTrials.Checked)
+                                    {
+                                        if (Convert.ToInt32(row["is_catch_trial"]) == 0)
+                                        {
+                                            measureData_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                            measureData_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        measureData_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                        measureData_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    }
                                 }
 
                                 myMatlabInterface.PutWorkspaceData("X", "base", measureData_x.ToArray());
@@ -3122,7 +3132,17 @@ namespace ManipAnalysis
 
                                 foreach (DataRow row in velocityDataSet.Tables[0].Rows)
                                 {
-                                    velocityData_xz.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                    if (checkBox_TrajectoryVelocity_IgnoreCatchTrials.Checked)
+                                    {
+                                        if (Convert.ToInt32(row["is_catch_trial"]) == 0)
+                                        {
+                                            velocityData_xz.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        velocityData_xz.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                    }                                    
                                 }
 
                                 myMatlabInterface.PutWorkspaceData("XZ", "base", velocityData_xz.ToArray());

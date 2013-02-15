@@ -79,7 +79,7 @@ namespace ManipAnalysis
             myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
             myMatlabInterface.Execute("grid on");
             myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.4]);");
+            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.5]);");
             myMatlabInterface.Execute("axis manual;");
             myMatlabInterface.Execute("xlabel('[Samples]');");
             myMatlabInterface.Execute("ylabel('Velocity [m/s]');");

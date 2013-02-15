@@ -1363,7 +1363,10 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT	* FROM	_measure_data_normalized WHERE	trial_id = @trialID
+	SELECT _measure_data_normalized.*, _is_catch_trial.is_catch_trial
+	FROM (_measure_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
+			INNER JOIN _is_catch_trial ON _trial.is_catch_trial_id = _is_catch_trial.id) 
+	WHERE _measure_data_normalized.trial_id = @trialID
 )
 
 
@@ -1663,5 +1666,8 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT * FROM _velocity_data_normalized WHERE trial_id = @trialID
+	SELECT _velocity_data_normalized.*, _is_catch_trial.is_catch_trial
+	FROM (_velocity_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
+			INNER JOIN _is_catch_trial ON _trial.is_catch_trial_id = _is_catch_trial.id) 
+	WHERE _velocity_data_normalized.trial_id = @trialID
 )

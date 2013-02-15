@@ -160,7 +160,7 @@ namespace ManipAnalysis
                                     measureFileLine = measureFileReader.ReadLine().Split(new string[] { ", " }, StringSplitOptions.None);
                                 }
                             }
-
+                            
                             if (Convert.ToInt32(measureFileLine[16]) <= expectedSzenarioTrialCount)
                             {
                                 dataContainer.measureDataRaw.Add(new MeasureDataContainer(
