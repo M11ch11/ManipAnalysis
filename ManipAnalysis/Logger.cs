@@ -24,7 +24,7 @@ namespace ManipAnalysis
             theLogBox.Name = "listBox_Log";
             theLogBox.ScrollAlwaysVisible = true;
             theLogBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            theLogBox.Size = new System.Drawing.Size(422, 576);
+            theLogBox.Size = new System.Drawing.Size(422, 610);
             theLogBox.TabIndex = 6;
         }
 

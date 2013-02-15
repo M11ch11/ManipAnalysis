@@ -42,6 +42,7 @@
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
             this.tabPage_TrajectoryVelocity = new System.Windows.Forms.TabPage();
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials = new System.Windows.Forms.CheckBox();
             this.button_TrajectoryVelocity_Export = new System.Windows.Forms.Button();
             this.comboBox_TrajectoryVelocity_IndividualMean = new System.Windows.Forms.ComboBox();
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity = new System.Windows.Forms.ComboBox();
@@ -199,7 +200,6 @@
             this.checkBox_PauseThread = new System.Windows.Forms.CheckBox();
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -243,7 +243,7 @@
             this.tabPage_Start.Controls.Add(this.label_Start_ManipAnalysis);
             this.tabPage_Start.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Start.Name = "tabPage_Start";
-            this.tabPage_Start.Size = new System.Drawing.Size(733, 572);
+            this.tabPage_Start.Size = new System.Drawing.Size(733, 598);
             this.tabPage_Start.TabIndex = 9;
             this.tabPage_Start.Text = "Start";
             this.tabPage_Start.UseVisualStyleBackColor = true;
@@ -393,9 +393,19 @@
             this.tabPage_TrajectoryVelocity.UseVisualStyleBackColor = true;
             this.tabPage_TrajectoryVelocity.Enter += new System.EventHandler(this.tabPage_TrajectoryVelocity_Enter);
             // 
+            // checkBox_TrajectoryVelocity_IgnoreCatchTrials
+            // 
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Location = new System.Drawing.Point(71, 540);
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Name = "checkBox_TrajectoryVelocity_IgnoreCatchTrials";
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Size = new System.Drawing.Size(110, 17);
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.TabIndex = 52;
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Text = "Ignore catch trials";
+            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.UseVisualStyleBackColor = true;
+            // 
             // button_TrajectoryVelocity_Export
             // 
-            this.button_TrajectoryVelocity_Export.Location = new System.Drawing.Point(593, 506);
+            this.button_TrajectoryVelocity_Export.Location = new System.Drawing.Point(593, 534);
             this.button_TrajectoryVelocity_Export.Name = "button_TrajectoryVelocity_Export";
             this.button_TrajectoryVelocity_Export.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_Export.TabIndex = 51;
@@ -409,7 +419,7 @@
             this.comboBox_TrajectoryVelocity_IndividualMean.Items.AddRange(new object[] {
             "Individual",
             "Mean"});
-            this.comboBox_TrajectoryVelocity_IndividualMean.Location = new System.Drawing.Point(471, 479);
+            this.comboBox_TrajectoryVelocity_IndividualMean.Location = new System.Drawing.Point(471, 507);
             this.comboBox_TrajectoryVelocity_IndividualMean.Name = "comboBox_TrajectoryVelocity_IndividualMean";
             this.comboBox_TrajectoryVelocity_IndividualMean.Size = new System.Drawing.Size(116, 21);
             this.comboBox_TrajectoryVelocity_IndividualMean.TabIndex = 50;
@@ -420,7 +430,7 @@
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Items.AddRange(new object[] {
             "Trajectory",
             "Velocity"});
-            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Location = new System.Drawing.Point(471, 508);
+            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Location = new System.Drawing.Point(471, 536);
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Name = "comboBox_TrajectoryVelocity_TrajectoryVelocity";
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Size = new System.Drawing.Size(116, 21);
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.TabIndex = 49;
@@ -441,7 +451,7 @@
             this.listBox_TrajectoryVelocity_Targets.Name = "listBox_TrajectoryVelocity_Targets";
             this.listBox_TrajectoryVelocity_Targets.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Targets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_Targets.Size = new System.Drawing.Size(150, 95);
+            this.listBox_TrajectoryVelocity_Targets.Size = new System.Drawing.Size(150, 108);
             this.listBox_TrajectoryVelocity_Targets.Sorted = true;
             this.listBox_TrajectoryVelocity_Targets.TabIndex = 45;
             // 
@@ -468,7 +478,7 @@
             // 
             // button_TrajectoryVelocity_AddAll
             // 
-            this.button_TrajectoryVelocity_AddAll.Location = new System.Drawing.Point(227, 506);
+            this.button_TrajectoryVelocity_AddAll.Location = new System.Drawing.Point(227, 534);
             this.button_TrajectoryVelocity_AddAll.Name = "button_TrajectoryVelocity_AddAll";
             this.button_TrajectoryVelocity_AddAll.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_AddAll.TabIndex = 39;
@@ -478,7 +488,7 @@
             // 
             // button_TrajectoryVelocity_Plot
             // 
-            this.button_TrajectoryVelocity_Plot.Location = new System.Drawing.Point(593, 477);
+            this.button_TrajectoryVelocity_Plot.Location = new System.Drawing.Point(593, 505);
             this.button_TrajectoryVelocity_Plot.Name = "button_TrajectoryVelocity_Plot";
             this.button_TrajectoryVelocity_Plot.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_Plot.TabIndex = 37;
@@ -488,7 +498,7 @@
             // 
             // button_TrajectoryVelocity_ClearAll
             // 
-            this.button_TrajectoryVelocity_ClearAll.Location = new System.Drawing.Point(349, 506);
+            this.button_TrajectoryVelocity_ClearAll.Location = new System.Drawing.Point(349, 534);
             this.button_TrajectoryVelocity_ClearAll.Name = "button_TrajectoryVelocity_ClearAll";
             this.button_TrajectoryVelocity_ClearAll.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_ClearAll.TabIndex = 36;
@@ -498,7 +508,7 @@
             // 
             // button_TrajectoryVelocity_ClearSelected
             // 
-            this.button_TrajectoryVelocity_ClearSelected.Location = new System.Drawing.Point(349, 477);
+            this.button_TrajectoryVelocity_ClearSelected.Location = new System.Drawing.Point(349, 505);
             this.button_TrajectoryVelocity_ClearSelected.Name = "button_TrajectoryVelocity_ClearSelected";
             this.button_TrajectoryVelocity_ClearSelected.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_ClearSelected.TabIndex = 35;
@@ -512,13 +522,13 @@
             this.listBox_TrajectoryVelocity_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_TrajectoryVelocity_SelectedTrials.Name = "listBox_TrajectoryVelocity_SelectedTrials";
             this.listBox_TrajectoryVelocity_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(489, 459);
+            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(489, 485);
             this.listBox_TrajectoryVelocity_SelectedTrials.Sorted = true;
             this.listBox_TrajectoryVelocity_SelectedTrials.TabIndex = 34;
             // 
             // button_TrajectoryVelocity_AddSelected
             // 
-            this.button_TrajectoryVelocity_AddSelected.Location = new System.Drawing.Point(227, 477);
+            this.button_TrajectoryVelocity_AddSelected.Location = new System.Drawing.Point(227, 505);
             this.button_TrajectoryVelocity_AddSelected.Name = "button_TrajectoryVelocity_AddSelected";
             this.button_TrajectoryVelocity_AddSelected.Size = new System.Drawing.Size(116, 23);
             this.button_TrajectoryVelocity_AddSelected.TabIndex = 33;
@@ -574,7 +584,7 @@
             // listBox_TrajectoryVelocity_Trials
             // 
             this.listBox_TrajectoryVelocity_Trials.FormattingEnabled = true;
-            this.listBox_TrajectoryVelocity_Trials.Location = new System.Drawing.Point(71, 418);
+            this.listBox_TrajectoryVelocity_Trials.Location = new System.Drawing.Point(71, 431);
             this.listBox_TrajectoryVelocity_Trials.Name = "listBox_TrajectoryVelocity_Trials";
             this.listBox_TrajectoryVelocity_Trials.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
@@ -665,7 +675,7 @@
             // 
             this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.AutoSize = true;
             this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled = false;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(71, 532);
+            this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(71, 540);
             this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Name = "checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly";
             this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Size = new System.Drawing.Size(126, 17);
             this.checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.TabIndex = 25;
@@ -676,7 +686,7 @@
             // checkBox_DescriptiveStatistic1_PlotFit
             // 
             this.checkBox_DescriptiveStatistic1_PlotFit.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(634, 528);
+            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(683, 509);
             this.checkBox_DescriptiveStatistic1_PlotFit.Name = "checkBox_DescriptiveStatistic1_PlotFit";
             this.checkBox_DescriptiveStatistic1_PlotFit.Size = new System.Drawing.Size(37, 17);
             this.checkBox_DescriptiveStatistic1_PlotFit.TabIndex = 24;
@@ -685,15 +695,15 @@
             // 
             // textBox_DescriptiveStatistic1_FitEquation
             // 
-            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(634, 479);
+            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(634, 507);
             this.textBox_DescriptiveStatistic1_FitEquation.Name = "textBox_DescriptiveStatistic1_FitEquation";
-            this.textBox_DescriptiveStatistic1_FitEquation.Size = new System.Drawing.Size(82, 20);
+            this.textBox_DescriptiveStatistic1_FitEquation.Size = new System.Drawing.Size(48, 20);
             this.textBox_DescriptiveStatistic1_FitEquation.TabIndex = 23;
             this.textBox_DescriptiveStatistic1_FitEquation.Text = "exp2";
             // 
             // button_DescriptiveStatistic1_ExportData
             // 
-            this.button_DescriptiveStatistic1_ExportData.Location = new System.Drawing.Point(553, 506);
+            this.button_DescriptiveStatistic1_ExportData.Location = new System.Drawing.Point(553, 534);
             this.button_DescriptiveStatistic1_ExportData.Name = "button_DescriptiveStatistic1_ExportData";
             this.button_DescriptiveStatistic1_ExportData.Size = new System.Drawing.Size(75, 23);
             this.button_DescriptiveStatistic1_ExportData.TabIndex = 22;
@@ -716,7 +726,7 @@
             // checkBox_DescriptiveStatistic1_ShowCatchTrials
             // 
             this.checkBox_DescriptiveStatistic1_ShowCatchTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Location = new System.Drawing.Point(71, 509);
+            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Location = new System.Drawing.Point(71, 517);
             this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic1_ShowCatchTrials";
             this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
             this.checkBox_DescriptiveStatistic1_ShowCatchTrials.TabIndex = 20;
@@ -736,7 +746,7 @@
             // checkBox_DescriptiveStatistic1_PlotErrorbars
             // 
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(634, 505);
+            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(634, 540);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Name = "checkBox_DescriptiveStatistic1_PlotErrorbars";
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Size = new System.Drawing.Size(68, 17);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.TabIndex = 17;
@@ -745,7 +755,7 @@
             // 
             // button_DescriptiveStatistic1_AddAll
             // 
-            this.button_DescriptiveStatistic1_AddAll.Location = new System.Drawing.Point(227, 506);
+            this.button_DescriptiveStatistic1_AddAll.Location = new System.Drawing.Point(227, 534);
             this.button_DescriptiveStatistic1_AddAll.Name = "button_DescriptiveStatistic1_AddAll";
             this.button_DescriptiveStatistic1_AddAll.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic1_AddAll.TabIndex = 16;
@@ -768,7 +778,7 @@
             "Trajectory length abs",
             "Trajectory length ratio",
             "Vector correlation"});
-            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 479);
+            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 507);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(160, 21);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Sorted = true;
@@ -776,7 +786,7 @@
             // 
             // button_DescriptiveStatistic1_PlotMeanStd
             // 
-            this.button_DescriptiveStatistic1_PlotMeanStd.Location = new System.Drawing.Point(471, 506);
+            this.button_DescriptiveStatistic1_PlotMeanStd.Location = new System.Drawing.Point(471, 534);
             this.button_DescriptiveStatistic1_PlotMeanStd.Name = "button_DescriptiveStatistic1_PlotMeanStd";
             this.button_DescriptiveStatistic1_PlotMeanStd.Size = new System.Drawing.Size(76, 23);
             this.button_DescriptiveStatistic1_PlotMeanStd.TabIndex = 14;
@@ -786,7 +796,7 @@
             // 
             // button_DescriptiveStatistic1_ClearAll
             // 
-            this.button_DescriptiveStatistic1_ClearAll.Location = new System.Drawing.Point(349, 506);
+            this.button_DescriptiveStatistic1_ClearAll.Location = new System.Drawing.Point(349, 534);
             this.button_DescriptiveStatistic1_ClearAll.Name = "button_DescriptiveStatistic1_ClearAll";
             this.button_DescriptiveStatistic1_ClearAll.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic1_ClearAll.TabIndex = 13;
@@ -796,7 +806,7 @@
             // 
             // button_DescriptiveStatistic1_ClearSelected
             // 
-            this.button_DescriptiveStatistic1_ClearSelected.Location = new System.Drawing.Point(349, 477);
+            this.button_DescriptiveStatistic1_ClearSelected.Location = new System.Drawing.Point(349, 505);
             this.button_DescriptiveStatistic1_ClearSelected.Name = "button_DescriptiveStatistic1_ClearSelected";
             this.button_DescriptiveStatistic1_ClearSelected.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic1_ClearSelected.TabIndex = 12;
@@ -810,13 +820,13 @@
             this.listBox_DescriptiveStatistic1_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_DescriptiveStatistic1_SelectedTrials.Name = "listBox_DescriptiveStatistic1_SelectedTrials";
             this.listBox_DescriptiveStatistic1_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic1_SelectedTrials.Size = new System.Drawing.Size(489, 459);
+            this.listBox_DescriptiveStatistic1_SelectedTrials.Size = new System.Drawing.Size(489, 485);
             this.listBox_DescriptiveStatistic1_SelectedTrials.Sorted = true;
             this.listBox_DescriptiveStatistic1_SelectedTrials.TabIndex = 11;
             // 
             // button_DescriptiveStatistic1_AddSelected
             // 
-            this.button_DescriptiveStatistic1_AddSelected.Location = new System.Drawing.Point(227, 477);
+            this.button_DescriptiveStatistic1_AddSelected.Location = new System.Drawing.Point(227, 505);
             this.button_DescriptiveStatistic1_AddSelected.Name = "button_DescriptiveStatistic1_AddSelected";
             this.button_DescriptiveStatistic1_AddSelected.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic1_AddSelected.TabIndex = 10;
@@ -876,7 +886,7 @@
             this.listBox_DescriptiveStatistic1_Trials.Name = "listBox_DescriptiveStatistic1_Trials";
             this.listBox_DescriptiveStatistic1_Trials.ScrollAlwaysVisible = true;
             this.listBox_DescriptiveStatistic1_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic1_Trials.Size = new System.Drawing.Size(150, 186);
+            this.listBox_DescriptiveStatistic1_Trials.Size = new System.Drawing.Size(150, 199);
             this.listBox_DescriptiveStatistic1_Trials.Sorted = true;
             this.listBox_DescriptiveStatistic1_Trials.TabIndex = 4;
             // 
@@ -959,7 +969,7 @@
             // 
             this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.AutoSize = true;
             this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled = false;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(71, 532);
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(71, 540);
             this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Name = "checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly";
             this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Size = new System.Drawing.Size(126, 17);
             this.checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.TabIndex = 44;
@@ -969,7 +979,7 @@
             // 
             // button_DescriptiveStatistic2_CalculateMeanValues
             // 
-            this.button_DescriptiveStatistic2_CalculateMeanValues.Location = new System.Drawing.Point(471, 506);
+            this.button_DescriptiveStatistic2_CalculateMeanValues.Location = new System.Drawing.Point(471, 534);
             this.button_DescriptiveStatistic2_CalculateMeanValues.Name = "button_DescriptiveStatistic2_CalculateMeanValues";
             this.button_DescriptiveStatistic2_CalculateMeanValues.Size = new System.Drawing.Size(160, 23);
             this.button_DescriptiveStatistic2_CalculateMeanValues.TabIndex = 43;
@@ -992,7 +1002,7 @@
             // checkBox_DescriptiveStatistic2_ShowCatchTrials
             // 
             this.checkBox_DescriptiveStatistic2_ShowCatchTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Location = new System.Drawing.Point(71, 509);
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Location = new System.Drawing.Point(71, 517);
             this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic2_ShowCatchTrials";
             this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
             this.checkBox_DescriptiveStatistic2_ShowCatchTrials.TabIndex = 41;
@@ -1011,7 +1021,7 @@
             // 
             // button_DescriptiveStatistic2_AddAll
             // 
-            this.button_DescriptiveStatistic2_AddAll.Location = new System.Drawing.Point(227, 506);
+            this.button_DescriptiveStatistic2_AddAll.Location = new System.Drawing.Point(227, 534);
             this.button_DescriptiveStatistic2_AddAll.Name = "button_DescriptiveStatistic2_AddAll";
             this.button_DescriptiveStatistic2_AddAll.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic2_AddAll.TabIndex = 38;
@@ -1034,7 +1044,7 @@
             "Trajectory length abs",
             "Trajectory length ratio",
             "Vector correlation"});
-            this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(471, 479);
+            this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(471, 507);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Name = "comboBox_DescriptiveStatistic2_DataTypeSelect";
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Size = new System.Drawing.Size(160, 21);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Sorted = true;
@@ -1042,7 +1052,7 @@
             // 
             // button_DescriptiveStatistic2_ClearAll
             // 
-            this.button_DescriptiveStatistic2_ClearAll.Location = new System.Drawing.Point(349, 506);
+            this.button_DescriptiveStatistic2_ClearAll.Location = new System.Drawing.Point(349, 534);
             this.button_DescriptiveStatistic2_ClearAll.Name = "button_DescriptiveStatistic2_ClearAll";
             this.button_DescriptiveStatistic2_ClearAll.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic2_ClearAll.TabIndex = 35;
@@ -1052,7 +1062,7 @@
             // 
             // button_DescriptiveStatistic2_ClearSelected
             // 
-            this.button_DescriptiveStatistic2_ClearSelected.Location = new System.Drawing.Point(349, 477);
+            this.button_DescriptiveStatistic2_ClearSelected.Location = new System.Drawing.Point(349, 505);
             this.button_DescriptiveStatistic2_ClearSelected.Name = "button_DescriptiveStatistic2_ClearSelected";
             this.button_DescriptiveStatistic2_ClearSelected.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic2_ClearSelected.TabIndex = 34;
@@ -1066,13 +1076,13 @@
             this.listBox_DescriptiveStatistic2_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_DescriptiveStatistic2_SelectedTrials.Name = "listBox_DescriptiveStatistic2_SelectedTrials";
             this.listBox_DescriptiveStatistic2_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic2_SelectedTrials.Size = new System.Drawing.Size(489, 459);
+            this.listBox_DescriptiveStatistic2_SelectedTrials.Size = new System.Drawing.Size(489, 485);
             this.listBox_DescriptiveStatistic2_SelectedTrials.Sorted = true;
             this.listBox_DescriptiveStatistic2_SelectedTrials.TabIndex = 33;
             // 
             // button_DescriptiveStatistic2_AddSelected
             // 
-            this.button_DescriptiveStatistic2_AddSelected.Location = new System.Drawing.Point(227, 477);
+            this.button_DescriptiveStatistic2_AddSelected.Location = new System.Drawing.Point(227, 505);
             this.button_DescriptiveStatistic2_AddSelected.Name = "button_DescriptiveStatistic2_AddSelected";
             this.button_DescriptiveStatistic2_AddSelected.Size = new System.Drawing.Size(116, 23);
             this.button_DescriptiveStatistic2_AddSelected.TabIndex = 32;
@@ -1132,7 +1142,7 @@
             this.listBox_DescriptiveStatistic2_Trials.Name = "listBox_DescriptiveStatistic2_Trials";
             this.listBox_DescriptiveStatistic2_Trials.ScrollAlwaysVisible = true;
             this.listBox_DescriptiveStatistic2_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic2_Trials.Size = new System.Drawing.Size(150, 186);
+            this.listBox_DescriptiveStatistic2_Trials.Size = new System.Drawing.Size(150, 199);
             this.listBox_DescriptiveStatistic2_Trials.Sorted = true;
             this.listBox_DescriptiveStatistic2_Trials.TabIndex = 26;
             // 
@@ -1201,7 +1211,7 @@
             this.tabPage_BaselineMeantime.Location = new System.Drawing.Point(4, 22);
             this.tabPage_BaselineMeantime.Name = "tabPage_BaselineMeantime";
             this.tabPage_BaselineMeantime.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_BaselineMeantime.Size = new System.Drawing.Size(719, 545);
+            this.tabPage_BaselineMeantime.Size = new System.Drawing.Size(719, 560);
             this.tabPage_BaselineMeantime.TabIndex = 0;
             this.tabPage_BaselineMeantime.Text = "Baseline / Mean time";
             this.tabPage_BaselineMeantime.UseVisualStyleBackColor = true;
@@ -1379,7 +1389,7 @@
             this.tabPage_ImportCalculations.Location = new System.Drawing.Point(4, 22);
             this.tabPage_ImportCalculations.Name = "tabPage_ImportCalculations";
             this.tabPage_ImportCalculations.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_ImportCalculations.Size = new System.Drawing.Size(733, 572);
+            this.tabPage_ImportCalculations.Size = new System.Drawing.Size(733, 598);
             this.tabPage_ImportCalculations.TabIndex = 0;
             this.tabPage_ImportCalculations.Text = "Import / Calculations";
             this.tabPage_ImportCalculations.UseVisualStyleBackColor = true;
@@ -1637,7 +1647,7 @@
             this.tabPage_Debug.Controls.Add(this.button_Debug_ShowMatlabWindow);
             this.tabPage_Debug.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Debug.Name = "tabPage_Debug";
-            this.tabPage_Debug.Size = new System.Drawing.Size(733, 572);
+            this.tabPage_Debug.Size = new System.Drawing.Size(733, 598);
             this.tabPage_Debug.TabIndex = 5;
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
@@ -1947,7 +1957,7 @@
             this.tabPage_Impressum.Controls.Add(this.pictureBox_Impressum_KITLogo);
             this.tabPage_Impressum.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Impressum.Name = "tabPage_Impressum";
-            this.tabPage_Impressum.Size = new System.Drawing.Size(733, 572);
+            this.tabPage_Impressum.Size = new System.Drawing.Size(733, 598);
             this.tabPage_Impressum.TabIndex = 11;
             this.tabPage_Impressum.Text = "Impressum";
             this.tabPage_Impressum.UseVisualStyleBackColor = true;
@@ -2021,16 +2031,6 @@
             this.button_ClearLog.Text = "Clear log";
             this.button_ClearLog.UseVisualStyleBackColor = true;
             this.button_ClearLog.Click += new System.EventHandler(this.button_ClearLog_Click);
-            // 
-            // checkBox_TrajectoryVelocity_IgnoreCatchTrials
-            // 
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Location = new System.Drawing.Point(71, 532);
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Name = "checkBox_TrajectoryVelocity_IgnoreCatchTrials";
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Size = new System.Drawing.Size(110, 17);
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.TabIndex = 52;
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.Text = "Ignore catch trials";
-            this.checkBox_TrajectoryVelocity_IgnoreCatchTrials.UseVisualStyleBackColor = true;
             // 
             // ManipAnalysis
             // 
