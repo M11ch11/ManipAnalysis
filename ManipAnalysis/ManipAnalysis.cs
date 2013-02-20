@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using MLApp;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Reflection;
 using System.Globalization;
@@ -19,38 +17,93 @@ namespace ManipAnalysis
 {
     public partial class ManipAnalysis : Form
     {
-        private MLApp.MLApp myMatlabInterface;
         private SqlWrapper mySQLWrapper;
         private MatlabWrapper myMatlabWrapper;
+        private SplashScreen splash;
 
         private delegate void myTabControlCallback(bool enable);
         private delegate void myProgressBarCallback(double value);
         private delegate void myProgressLabelCallback(string text);
+        private delegate void myLogBoxCallbackAddString(string text);
+        private delegate void myLogBoxCallbackAddStringArray(string[] textArray);
+        private delegate string[] myLogBoxCallbackGetText();
+        private delegate void myLogBoxCallbackClearItems();
 
         public ManipAnalysis()
         {
+            splash = new SplashScreen();
+            splash.Show();      
+
             try
             {
-                Controls.Add(Logger.theLogBox);
-
-                myMatlabInterface = new MLApp.MLApp();
                 mySQLWrapper = new SqlWrapper(this);
-                myMatlabWrapper = new MatlabWrapper();
-
-                myMatlabInterface.Execute("clear all");
-                myMatlabInterface.Execute("cd '" + Application.StartupPath + "\\MatlabFiles\\'");
-                myMatlabInterface.Visible = 0;
-                InitializeComponent();
-
-                checkBox_Start_ManualMode.Enabled = false;
-                tabControl.TabPages.Remove(tabPage_VisualizationExport);
-                tabControl.TabPages.Remove(tabPage_ImportCalculations);
-                tabControl.TabPages.Remove(tabPage_Debug);
-                comboBox_Start_SQL_Server.SelectedIndex = 0;
+                myMatlabWrapper = new MatlabWrapper(this);                   
             }
             catch(Exception ex)                
             {
                 MessageBox.Show(ex.ToString());
+            }
+
+            InitializeComponent();
+
+            checkBox_Start_ManualMode.Enabled = false;
+            tabControl.TabPages.Remove(tabPage_VisualizationExport);
+            tabControl.TabPages.Remove(tabPage_ImportCalculations);
+            tabControl.TabPages.Remove(tabPage_Debug);
+            comboBox_Start_SQL_Server.SelectedIndex = 0;
+
+            splash.Close();
+        }
+
+        public void writeToLogBox(string text)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new myLogBoxCallbackAddString(writeToLogBox), text);
+            }
+            else
+            {
+                listBox_LogBox.Items.Add(text);                
+            }     
+        }
+
+        public void writeToLogBox(string[] textArray)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new myLogBoxCallbackAddStringArray(writeToLogBox), textArray);
+            }
+            else
+            {
+                listBox_LogBox.Items.Add(textArray);
+            }
+        }
+
+        public string[] getLogBoxText()
+        {
+            string[] retVal = null;
+
+            if (InvokeRequired)
+            {
+                BeginInvoke(new myLogBoxCallbackGetText(getLogBoxText));
+            }
+            else
+            {
+                retVal = listBox_LogBox.Items.Cast<string>().ToArray();
+            }
+
+            return retVal;
+        }
+
+        public void clearLogBox()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new myLogBoxCallbackClearItems(clearLogBox));
+            }
+            else
+            {
+                listBox_LogBox.Items.Clear();
             }
         }
 
@@ -91,7 +144,7 @@ namespace ManipAnalysis
 
             if (!isValid)
             {
-                Logger.writeToLog("One or more filenames are invalid!");
+                writeToLogBox("One or more filenames are invalid!");
             }
         }
 
@@ -151,7 +204,7 @@ namespace ManipAnalysis
 
                 if (!isValid)
                 {
-                    Logger.writeToLog("One or more filenames are invalid!");
+                    writeToLogBox("One or more filenames are invalid!");
                 }
             }
         }
@@ -178,7 +231,7 @@ namespace ManipAnalysis
             mySQLWrapper.closeSqlConnection();
             try
             {
-                myMatlabInterface.Quit();                
+                            
             }
             catch (Exception ex)
             {
@@ -197,7 +250,7 @@ namespace ManipAnalysis
 
             DataSet meanTimeDataSet = mySQLWrapper.getMeanTimeDataSet(study, group, szenario, subject.id, turnDateTime);
 
-            myMatlabWrapper.createMeanTimeFigure(myMatlabInterface);            
+            myMatlabWrapper.createMeanTimeFigure();            
             
             List<double> meanTimeList = new List<double>();
             List<double> meanTimeStdList = new List<double>();
@@ -214,29 +267,22 @@ namespace ManipAnalysis
             meanTimeStdList.Add(meanTimeStdList.Average());
             targetList.Add(17);
 
-            myMatlabInterface.PutWorkspaceData("target", "base", targetList.ToArray());
-            myMatlabInterface.PutWorkspaceData("meanTime", "base", meanTimeList.ToArray());
-            myMatlabInterface.PutWorkspaceData("meanTimeStd", "base", meanTimeStdList.ToArray());
-            myMatlabInterface.Execute("errorbar(target, meanTime, meanTimeStd, 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
+            myMatlabWrapper.setWorkspaceData("target", targetList.ToArray());
+            myMatlabWrapper.setWorkspaceData("meanTime", meanTimeList.ToArray());
+            myMatlabWrapper.setWorkspaceData("meanTimeStd", meanTimeStdList.ToArray());
+            myMatlabWrapper.plotMeanTimeErrorBar("target", "meanTime", "meanTimeStd");
 
-            myMatlabInterface.Execute("clear all");
+            myMatlabWrapper.clearWorkspace();            
         }
 
         private void button_ShowMatlabWindow_Click(object sender, EventArgs e)
         {
-            if (Convert.ToBoolean(myMatlabInterface.Visible))
-            {
-                myMatlabInterface.Visible = 0;
-            }
-            else
-            {
-                myMatlabInterface.Visible = 1;
-            }
+            myMatlabWrapper.toggleShowCommandWindow();
         }
 
         private void button_ShowMatlabWorkspace_Click(object sender, EventArgs e)
         {
-            myMatlabInterface.Execute("workspace");
+            myMatlabWrapper.showWorkspaceWindow();
         }
 
         private void checkBox_ManualMode_CheckedChanged(object sender, EventArgs e)
@@ -290,7 +336,7 @@ namespace ManipAnalysis
                 }
                 catch
                 {
-                    Logger.writeToLog("SQL-Server not reachable!");
+                    writeToLogBox("SQL-Server not reachable!");
                     checkBox_Start_ManualMode.Enabled = false;
                     tabControl.TabPages.Remove(tabPage_VisualizationExport);
                     tabControl.TabPages.Remove(tabPage_ImportCalculations);
@@ -305,7 +351,7 @@ namespace ManipAnalysis
             if (_serverAvailable)
             {
                 mySQLWrapper.setSqlServer(comboBox_Start_SQL_Server.Text);
-                Logger.writeToLog("Connected to SQL-Server.");
+                writeToLogBox("Connected to SQL-Server.");
                 comboBox_Start_Database.Items.AddRange(mySQLWrapper.getDatabases());
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
@@ -329,8 +375,8 @@ namespace ManipAnalysis
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
             SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            myMatlabWrapper.createTrajectoryFigure(myMatlabInterface, "Trajectory baseline plot");
-            myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
+            myMatlabWrapper.createTrajectoryFigure("Trajectory baseline plot");
+            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
 
             DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
 
@@ -347,12 +393,13 @@ namespace ManipAnalysis
             {
                 double[] tempX = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[0])).ToArray();
                 double[] tempZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[1])).ToArray();
-                myMatlabInterface.PutWorkspaceData("X", "base", tempX);
-                myMatlabInterface.PutWorkspaceData("Z", "base", tempZ);
-                myMatlabInterface.Execute("plot(X,Z,'Color','black','LineWidth',2)");
+
+                myMatlabWrapper.setWorkspaceData("X", tempX);
+                myMatlabWrapper.setWorkspaceData("Z", tempZ);
+                myMatlabWrapper.plot("X", "Z", "black", 2);
             }
 
-            myMatlabInterface.Execute("clear all");
+            myMatlabWrapper.clearWorkspace();
         }
 
         private void enableTabPages(bool enable)
@@ -572,7 +619,7 @@ namespace ManipAnalysis
                 {
                     if (!trialList.SequenceEqual(temp.Trials))
                     {
-                        Logger.writeToLog("Trial selections are not equal!");
+                        writeToLogBox("Trial selections are not equal!");
                         isValid = false;
                         break;
                     }
@@ -644,68 +691,68 @@ namespace ManipAnalysis
                         }
                     }
 
-                    myMatlabInterface.PutWorkspaceData("data", "base", data);
+                    myMatlabWrapper.setWorkspaceData("data", data);
 
                     double[,] dataStdPlot = null;
                     double[,] dataPlot = null;
 
                     if (meanCounter > 1)
                     {
-                        myMatlabInterface.Execute("dataPlot = mean(transpose(data));");
-                        myMatlabInterface.Execute("dataStdPlot = std(transpose(data));");    
-                        dataStdPlot = myMatlabInterface.GetVariable("dataStdPlot", "base");
+                        myMatlabWrapper.execute("dataPlot = mean(transpose(data));");
+                        myMatlabWrapper.execute("dataStdPlot = std(transpose(data));");    
+                        dataStdPlot = myMatlabWrapper.getWorkspaceData("dataStdPlot");
                     }
                     else
                     {
-                        myMatlabInterface.Execute("dataPlot = data;");
+                        myMatlabWrapper.execute("dataPlot = data;");
                     }
 
-                    dataPlot = myMatlabInterface.GetVariable("dataPlot", "base");
+                    dataPlot = myMatlabWrapper.getWorkspaceData("dataPlot");
                    
                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                     {
                         case "Vector correlation":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Mean perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Sign":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Sign":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length abs":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length ratio":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Enclosed area":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "RMSE":
-                            myMatlabWrapper.createStatisticFigure(myMatlabInterface, "Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            myMatlabWrapper.createStatisticFigure("Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
                     }
 
-                    myMatlabInterface.Execute("clear all;");
+                    myMatlabWrapper.clearWorkspace();
                 }
             }
             writeProgressInfo("Ready");
@@ -779,9 +826,9 @@ namespace ManipAnalysis
                                                 Convert.ToString(Convert.ToInt32(faultyTrialInfo[i][8]))
                                               });
                 }
-                Logger.writeToLog("------------------------------------------------------- Faulty trial list -------------------------------------------------------");
-                Logger.writeToLog(cache.OrderBy(t => t[4]).Select(t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5]).ToArray());
-                Logger.writeToLog("---------------------------------------------------------------------------------------------------------------------------------");
+                writeToLogBox("------------------------------------------------------- Faulty trial list -------------------------------------------------------");
+                writeToLogBox(cache.OrderBy(t => t[4]).Select(t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5]).ToArray());
+                writeToLogBox("---------------------------------------------------------------------------------------------------------------------------------");
             }
         }
 
@@ -1099,13 +1146,13 @@ namespace ManipAnalysis
                     if (trialListCounter > 1)
                     {
 
-                        myMatlabInterface.PutWorkspaceData("data", "base", data);
+                        myMatlabWrapper.setWorkspaceData("data", data);
 
-                        myMatlabInterface.Execute("dataMean = mean(data);");
-                        myMatlabInterface.Execute("dataStd = std(data);");
+                        myMatlabWrapper.execute("dataMean = mean(data);");
+                        myMatlabWrapper.execute("dataStd = std(data);");
 
-                        dataMean = myMatlabInterface.GetVariable("dataMean", "base");
-                        dataStd = myMatlabInterface.GetVariable("dataStd", "base");
+                        dataMean = myMatlabWrapper.getWorkspaceData("dataMean");
+                        dataStd = myMatlabWrapper.getWorkspaceData("dataStd");
                     }
                     else
                     {
@@ -1148,7 +1195,7 @@ namespace ManipAnalysis
                     meanDataFileWriter.Close();
                     meanDataFileStream.Close();
 
-                    myMatlabInterface.Execute("clear all;");
+                    myMatlabWrapper.clearWorkspace();
                 }
             }
             writeProgressInfo("Ready");
@@ -1189,7 +1236,7 @@ namespace ManipAnalysis
                     {
                         if (!trialList.SequenceEqual(temp.Trials))
                         {
-                            Logger.writeToLog("Trial selections are not equal!");
+                            writeToLogBox("Trial selections are not equal!");
                             isValid = false;
                             break;
                         }
@@ -1264,17 +1311,17 @@ namespace ManipAnalysis
                             }
                         }
 
-                        myMatlabInterface.PutWorkspaceData("data", "base", data);
+                        myMatlabWrapper.setWorkspaceData("data", data);
 
                         double[,] dataMean;
                         double[,] dataStd;
 
                         if (meanCounter > 1)
                         {
-                            myMatlabInterface.Execute("dataMean = mean(transpose(data));");
-                            myMatlabInterface.Execute("dataStd = std(transpose(data));");
-                            dataMean = myMatlabInterface.GetVariable("dataMean", "base");
-                            dataStd = myMatlabInterface.GetVariable("dataStd", "base");
+                            myMatlabWrapper.execute("dataMean = mean(transpose(data));");
+                            myMatlabWrapper.execute("dataStd = std(transpose(data));");
+                            dataMean = myMatlabWrapper.getWorkspaceData("dataMean");
+                            dataStd = myMatlabWrapper.getWorkspaceData("dataStd");
                         }
                         else
                         {
@@ -1327,7 +1374,7 @@ namespace ManipAnalysis
                         meanDataFileWriter.Close();
                         meanDataFileStream.Close();
 
-                        myMatlabInterface.Execute("clear all;");
+                        myMatlabWrapper.clearWorkspace();
                     }
                 }
             }
@@ -1405,7 +1452,7 @@ namespace ManipAnalysis
                     if (!mySQLWrapper.checkIfMeasureFileHashExists(tempFileHash))
                     {
                         DataContainer myDataContainter = new DataContainer();
-                        MeasureFileParser myParser = new MeasureFileParser(myDataContainter);
+                        MeasureFileParser myParser = new MeasureFileParser(myDataContainter, this);
 
                         if (myParser.parseFile(filename))
                         {
@@ -1506,7 +1553,7 @@ namespace ManipAnalysis
                                             if (Math.Abs(diffXYZ.ElementAt(maxIndex) - diffXYZ.ElementAt(maxIndex - 1)) > 3)
                                             {                                                
                                                 MeasureDataContainer errorEntry = tempRawData.ElementAt(maxIndex + 1);
-                                                Logger.writeToLog("Fixed error at time-stamp \"" + errorEntry.time_stamp.ToString("hh:mm:ss.fffffff") + "\" in file \"" + filename + "\"");
+                                                writeToLogBox("Fixed error at time-stamp \"" + errorEntry.time_stamp.ToString("hh:mm:ss.fffffff") + "\" in file \"" + filename + "\"");
                                                 tempRawData.RemoveAt(maxIndex + 1);
                                                 errorDetected = true;
                                             }
@@ -1537,10 +1584,10 @@ namespace ManipAnalysis
                             int cutoffFreq = Convert.ToInt32(textBox_Import_CutoffFreq.Text);
                             int velocityCuttingThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
 
-                            myMatlabInterface.PutWorkspaceData("filterOrder", "base", Convert.ToDouble(filterOrder));
-                            myMatlabInterface.PutWorkspaceData("cutoffFreq", "base", Convert.ToDouble(cutoffFreq));
-                            myMatlabInterface.PutWorkspaceData("samplesPerSecond", "base", Convert.ToDouble(samplesPerSecond));
-                            myMatlabInterface.Execute("[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
+                            myMatlabWrapper.setWorkspaceData("filterOrder",Convert.ToDouble(filterOrder));
+                            myMatlabWrapper.setWorkspaceData("cutoffFreq", Convert.ToDouble(cutoffFreq));
+                            myMatlabWrapper.setWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+                            myMatlabWrapper.execute("[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
 
                             for (int core = 0; core < Environment.ProcessorCount; core++)
                             {
@@ -1566,54 +1613,54 @@ namespace ManipAnalysis
                                             bool tempIsCatchTrial = tempRawDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
                                             int[] tempPositionStatus = tempRawDataEnum.Select(t => t.position_status).ToArray();
 
-                                            myMatlabInterface.PutWorkspaceData("force_actual_x" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_actual_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_actual_y" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_actual_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_actual_z" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_actual_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_actual_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_actual_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_actual_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_nominal_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_nominal_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("force_moment_x" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_moment_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_moment_y" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_moment_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("force_moment_z" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.force_moment_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_moment_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_moment_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("force_moment_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), "base", tempRawDataEnum.Select(t => t.position_cartesian_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_z).ToArray());
 
-                                            myMatlabInterface.Execute("force_actual_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_actual_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_actual_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_z" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_actual_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_x" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_actual_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_y" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_actual_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_z" + threadTrials.ElementAt(i) + ");");
 
-                                            myMatlabInterface.Execute("force_nominal_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_nominal_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_nominal_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_z" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_nominal_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_x" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_nominal_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_y" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_nominal_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_z" + threadTrials.ElementAt(i) + ");");
 
-                                            myMatlabInterface.Execute("force_moment_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_moment_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("force_moment_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_z" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_moment_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_x" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_moment_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_y" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("force_moment_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_z" + threadTrials.ElementAt(i) + ");");
 
-                                            myMatlabInterface.Execute("position_cartesian_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("position_cartesian_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabInterface.Execute("position_cartesian_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_z" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("position_cartesian_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_x" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("position_cartesian_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_y" + threadTrials.ElementAt(i) + ");");
+                                            myMatlabWrapper.execute("position_cartesian_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_z" + threadTrials.ElementAt(i) + ");");
 
 
-                                            double[,] force_actual_x = myMatlabInterface.GetVariable("force_actual_x" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_actual_y = myMatlabInterface.GetVariable("force_actual_y" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_actual_z = myMatlabInterface.GetVariable("force_actual_z" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_actual_x = myMatlabWrapper.getWorkspaceData("force_actual_x" + threadTrials.ElementAt(i));
+                                            double[,] force_actual_y = myMatlabWrapper.getWorkspaceData("force_actual_y" + threadTrials.ElementAt(i));
+                                            double[,] force_actual_z = myMatlabWrapper.getWorkspaceData("force_actual_z" + threadTrials.ElementAt(i));
 
-                                            double[,] force_nominal_x = myMatlabInterface.GetVariable("force_nominal_x" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_nominal_y = myMatlabInterface.GetVariable("force_nominal_y" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_nominal_z = myMatlabInterface.GetVariable("force_nominal_z" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_nominal_x = myMatlabWrapper.getWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i));
+                                            double[,] force_nominal_y = myMatlabWrapper.getWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i));
+                                            double[,] force_nominal_z = myMatlabWrapper.getWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i));
 
-                                            double[,] force_moment_x = myMatlabInterface.GetVariable("force_moment_x" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_moment_y = myMatlabInterface.GetVariable("force_moment_y" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_moment_z = myMatlabInterface.GetVariable("force_moment_z" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_moment_x = myMatlabWrapper.getWorkspaceData("force_moment_x" + threadTrials.ElementAt(i));
+                                            double[,] force_moment_y = myMatlabWrapper.getWorkspaceData("force_moment_y" + threadTrials.ElementAt(i));
+                                            double[,] force_moment_z = myMatlabWrapper.getWorkspaceData("force_moment_z" + threadTrials.ElementAt(i));
 
-                                            double[,] position_cartesian_x = myMatlabInterface.GetVariable("position_cartesian_x" + threadTrials.ElementAt(i), "base");
-                                            double[,] position_cartesian_y = myMatlabInterface.GetVariable("position_cartesian_y" + threadTrials.ElementAt(i), "base");
-                                            double[,] position_cartesian_z = myMatlabInterface.GetVariable("position_cartesian_z" + threadTrials.ElementAt(i), "base");
+                                            double[,] position_cartesian_x = myMatlabWrapper.getWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
+                                            double[,] position_cartesian_y = myMatlabWrapper.getWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
+                                            double[,] position_cartesian_z = myMatlabWrapper.getWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
 
 
                                             for (int j = 0; j < force_actual_x.Length; j++)
@@ -1643,21 +1690,21 @@ namespace ManipAnalysis
                                                 }
                                             }
 
-                                            myMatlabInterface.Execute("clear force_actual_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_actual_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_actual_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_actual_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_actual_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_actual_z" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear force_nominal_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_nominal_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_nominal_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear force_moment_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_moment_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear force_moment_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_moment_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_moment_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("force_moment_z" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear position_cartesian_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear position_cartesian_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear position_cartesian_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
                                         }
                                     }
                                 }));
@@ -1672,7 +1719,7 @@ namespace ManipAnalysis
                             {
                                 t.Join();
                             }
-                            myMatlabInterface.Execute("clear all");
+                            myMatlabWrapper.clearWorkspace();
                             multiCoreThreads.Clear();
 
                             #endregion Butterworth Filter
@@ -1697,21 +1744,21 @@ namespace ManipAnalysis
                                         }
                                         if (tempFilteredDataEnum.Count > 0)
                                         {                                            
-                                            myMatlabInterface.PutWorkspaceData("time_stamp" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.Select(t => t.position_cartesian_z).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("sampleRate", "base", (1.0 / Convert.ToDouble(textBox_Import_SamplesPerSec.Text)));
+                                            myMatlabWrapper.setWorkspaceData("time_stamp" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("sampleRate", (1.0 / Convert.ToDouble(textBox_Import_SamplesPerSec.Text)));
 
-                                            myMatlabInterface.Execute("time_stamp" + threadTrials.ElementAt(i) + " = time_stamp" + threadTrials.ElementAt(i) + "(1:end-1) +  (diff(time_stamp" + threadTrials.ElementAt(i) + ") ./ 2);");
-                                            myMatlabInterface.Execute("velocity_x" + threadTrials.ElementAt(i) + " = diff(position_cartesian_x" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
-                                            myMatlabInterface.Execute("velocity_y" + threadTrials.ElementAt(i) + " = diff(position_cartesian_y" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
-                                            myMatlabInterface.Execute("velocity_z" + threadTrials.ElementAt(i) + " = diff(position_cartesian_z" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
+                                            myMatlabWrapper.execute("time_stamp" + threadTrials.ElementAt(i) + " = time_stamp" + threadTrials.ElementAt(i) + "(1:end-1) +  (diff(time_stamp" + threadTrials.ElementAt(i) + ") ./ 2);");
+                                            myMatlabWrapper.execute("velocity_x" + threadTrials.ElementAt(i) + " = diff(position_cartesian_x" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
+                                            myMatlabWrapper.execute("velocity_y" + threadTrials.ElementAt(i) + " = diff(position_cartesian_y" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
+                                            myMatlabWrapper.execute("velocity_z" + threadTrials.ElementAt(i) + " = diff(position_cartesian_z" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
 
-                                            double[,] time_stamp = myMatlabInterface.GetVariable("time_stamp" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_x = myMatlabInterface.GetVariable("velocity_x" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_y = myMatlabInterface.GetVariable("velocity_y" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_z = myMatlabInterface.GetVariable("velocity_z" + threadTrials.ElementAt(i), "base");                                            
+                                            double[,] time_stamp = myMatlabWrapper.getWorkspaceData("time_stamp" + threadTrials.ElementAt(i));
+                                            double[,] velocity_x = myMatlabWrapper.getWorkspaceData("velocity_x" + threadTrials.ElementAt(i));
+                                            double[,] velocity_y = myMatlabWrapper.getWorkspaceData("velocity_y" + threadTrials.ElementAt(i));
+                                            double[,] velocity_z = myMatlabWrapper.getWorkspaceData("velocity_z" + threadTrials.ElementAt(i));                                            
 
                                             for (int j = 0; j < velocity_x.Length; j++)
                                             {
@@ -1729,13 +1776,13 @@ namespace ManipAnalysis
                                                 }
                                             }
 
-                                            myMatlabInterface.Execute("clear time_stamp" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("velocity_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("velocity_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("velocity_z" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear position_cartesian_x" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear position_cartesian_y" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear position_cartesian_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("time_stamp" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocity_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocity_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocity_z" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
                                         }
                                     }
                                 }));
@@ -1750,7 +1797,7 @@ namespace ManipAnalysis
                             {
                                 t.Join();
                             }
-                            myMatlabInterface.Execute("clear all");
+                            myMatlabWrapper.clearWorkspace();
                             multiCoreThreads.Clear();
 
                             #endregion
@@ -1765,7 +1812,7 @@ namespace ManipAnalysis
                                 multiCoreThreads.Add(new Thread(delegate()
                                 {
                                     List<int> threadTrials = new List<int>(_threadTrials);
-                                    myMatlabInterface.PutWorkspaceData("newSampleCount", "base", Convert.ToDouble(textBox_Import_NewSampleCount.Text));
+                                    myMatlabWrapper.setWorkspaceData("newSampleCount", Convert.ToDouble(textBox_Import_NewSampleCount.Text));
 
                                     for (int i = 0; i < threadTrials.Count(); i++)
                                     {
@@ -1850,95 +1897,95 @@ namespace ManipAnalysis
                                             bool tempIsCatchTrial = tempFilteredDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
                                             List<string> errorList = new List<string>();
 
-                                            myMatlabInterface.PutWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceActualX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceActualY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceActualZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceActualX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceActualY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceActualZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceNominalX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceNominalY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceNominalX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceNominalY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("forceMomentX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceMomentY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceMomentX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceMomentY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_z).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("positionStatus" + threadTrials.ElementAt(i), "base", tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.position_status)).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("positionStatus" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.position_status)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
 
-                                            myMatlabInterface.PutWorkspaceData("velocityX" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_x).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("velocityY" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_y).ToArray());
-                                            myMatlabInterface.PutWorkspaceData("velocityZ" + threadTrials.ElementAt(i), "base", tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_z).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("velocityX" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_x).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("velocityY" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_y).ToArray());
+                                            myMatlabWrapper.setWorkspaceData("velocityZ" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_z).ToArray());
 
                                             ///
 
-                                            myMatlabInterface.Execute("[errorvar1_" + threadTrials.ElementAt(i) + ", forceActualX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar2_" + threadTrials.ElementAt(i) + ", forceActualY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar3_" + threadTrials.ElementAt(i) + ", forceActualZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar1_" + threadTrials.ElementAt(i) + ", forceActualX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar2_" + threadTrials.ElementAt(i) + ", forceActualY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar3_" + threadTrials.ElementAt(i) + ", forceActualZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                                                                                                 
-                                            myMatlabInterface.Execute("[errorvar4_" + threadTrials.ElementAt(i) + ", forceNominalX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar5_" + threadTrials.ElementAt(i) + ", forceNominalY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar6_" + threadTrials.ElementAt(i) + ", forceNominalZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar4_" + threadTrials.ElementAt(i) + ", forceNominalX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar5_" + threadTrials.ElementAt(i) + ", forceNominalY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar6_" + threadTrials.ElementAt(i) + ", forceNominalZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                                                                                                  
-                                            myMatlabInterface.Execute("[errorvar7_" + threadTrials.ElementAt(i) + ", forceMomentX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar8_" + threadTrials.ElementAt(i) + ", forceMomentY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar9_" + threadTrials.ElementAt(i) + ", forceMomentZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar7_" + threadTrials.ElementAt(i) + ", forceMomentX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar8_" + threadTrials.ElementAt(i) + ", forceMomentY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar9_" + threadTrials.ElementAt(i) + ", forceMomentZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
 
-                                            myMatlabInterface.Execute("[errorvar10_" + threadTrials.ElementAt(i) + ", positionCartesianX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar11_" + threadTrials.ElementAt(i) + ", positionCartesianY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar12_" + threadTrials.ElementAt(i) + ", positionCartesianZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar10_" + threadTrials.ElementAt(i) + ", positionCartesianX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar11_" + threadTrials.ElementAt(i) + ", positionCartesianY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar12_" + threadTrials.ElementAt(i) + ", positionCartesianZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                                                                   
-                                            myMatlabInterface.Execute("[errorvar13_" + threadTrials.ElementAt(i) + ", positionStatus" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionStatus" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar13_" + threadTrials.ElementAt(i) + ", positionStatus" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionStatus" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
                                                                                   
-                                            myMatlabInterface.Execute("[errorvar14_" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar15_" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabInterface.Execute("[errorvar16_" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar14_" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar15_" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
+                                            myMatlabWrapper.execute("[errorvar16_" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
 
                                             ///
 
                                             for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
                                             {
-                                                errorList.Add(Convert.ToString(myMatlabInterface.GetVariable("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i), "base")));
-                                                myMatlabInterface.Execute("clear errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
+                                                errorList.Add(Convert.ToString(myMatlabWrapper.getWorkspaceData("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i))));
+                                                myMatlabWrapper.clearWorkspaceData("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
                                             }
 
                                             if (errorList.Where(t => t != "" && t != null).Count() > 0)
                                             {
-                                                Logger.writeToLog(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
+                                                writeToLogBox(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
                                             }
 
                                             ///
                                            
-                                            double[,] measure_data_time = myMatlabInterface.GetVariable("newMeasureTime" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_data_time = myMatlabInterface.GetVariable("newVelocityTime" + threadTrials.ElementAt(i), "base");
+                                            double[,] measure_data_time = myMatlabWrapper.getWorkspaceData("newMeasureTime" + threadTrials.ElementAt(i));
+                                            double[,] velocity_data_time = myMatlabWrapper.getWorkspaceData("newVelocityTime" + threadTrials.ElementAt(i));
 
-                                            double[,] force_actual_x = myMatlabInterface.GetVariable("forceActualX" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_actual_y = myMatlabInterface.GetVariable("forceActualY" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_actual_z = myMatlabInterface.GetVariable("forceActualZ" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_actual_x = myMatlabWrapper.getWorkspaceData("forceActualX" + threadTrials.ElementAt(i));
+                                            double[,] force_actual_y = myMatlabWrapper.getWorkspaceData("forceActualY" + threadTrials.ElementAt(i));
+                                            double[,] force_actual_z = myMatlabWrapper.getWorkspaceData("forceActualZ" + threadTrials.ElementAt(i));
 
-                                            double[,] force_nominal_x = myMatlabInterface.GetVariable("forceNominalX" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_nominal_y = myMatlabInterface.GetVariable("forceNominalY" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_nominal_z = myMatlabInterface.GetVariable("forceNominalZ" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_nominal_x = myMatlabWrapper.getWorkspaceData("forceNominalX" + threadTrials.ElementAt(i));
+                                            double[,] force_nominal_y = myMatlabWrapper.getWorkspaceData("forceNominalY" + threadTrials.ElementAt(i));
+                                            double[,] force_nominal_z = myMatlabWrapper.getWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i));
 
-                                            double[,] force_moment_x = myMatlabInterface.GetVariable("forceMomentX" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_moment_y = myMatlabInterface.GetVariable("forceMomentY" + threadTrials.ElementAt(i), "base");
-                                            double[,] force_moment_z = myMatlabInterface.GetVariable("forceMomentZ" + threadTrials.ElementAt(i), "base");
+                                            double[,] force_moment_x = myMatlabWrapper.getWorkspaceData("forceMomentX" + threadTrials.ElementAt(i));
+                                            double[,] force_moment_y = myMatlabWrapper.getWorkspaceData("forceMomentY" + threadTrials.ElementAt(i));
+                                            double[,] force_moment_z = myMatlabWrapper.getWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i));
 
-                                            double[,] position_cartesian_x = myMatlabInterface.GetVariable("positionCartesianX" + threadTrials.ElementAt(i), "base");
-                                            double[,] position_cartesian_y = myMatlabInterface.GetVariable("positionCartesianY" + threadTrials.ElementAt(i), "base");
-                                            double[,] position_cartesian_z = myMatlabInterface.GetVariable("positionCartesianZ" + threadTrials.ElementAt(i), "base");
+                                            double[,] position_cartesian_x = myMatlabWrapper.getWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i));
+                                            double[,] position_cartesian_y = myMatlabWrapper.getWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i));
+                                            double[,] position_cartesian_z = myMatlabWrapper.getWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i));
 
-                                            double[,] position_status = myMatlabInterface.GetVariable("positionStatus" + threadTrials.ElementAt(i), "base");
+                                            double[,] position_status = myMatlabWrapper.getWorkspaceData("positionStatus" + threadTrials.ElementAt(i));
 
-                                            double[,] velocity_x = myMatlabInterface.GetVariable("velocityX" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_y = myMatlabInterface.GetVariable("velocityY" + threadTrials.ElementAt(i), "base");
-                                            double[,] velocity_z = myMatlabInterface.GetVariable("velocityZ" + threadTrials.ElementAt(i), "base");
+                                            double[,] velocity_x = myMatlabWrapper.getWorkspaceData("velocityX" + threadTrials.ElementAt(i));
+                                            double[,] velocity_y = myMatlabWrapper.getWorkspaceData("velocityY" + threadTrials.ElementAt(i));
+                                            double[,] velocity_z = myMatlabWrapper.getWorkspaceData("velocityZ" + threadTrials.ElementAt(i));
 
                                             ///
 
@@ -1985,33 +2032,33 @@ namespace ManipAnalysis
                                                 }
                                             }
 
-                                            myMatlabInterface.Execute("clear newMeasureTime" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear measure_data_time" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocity_data_time" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("newMeasureTime" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("measure_data_time" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear forceActualX" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceActualY" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceActualZ" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceActualX" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceActualY" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceActualZ" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear forceNominalX" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceNominalY" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceNominalZ" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceNominalX" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceNominalY" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear forceMomentX" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceMomentY" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear forceMomentZ" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceMomentX" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceMomentY" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear positionCartesianX" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear positionCartesianY" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear positionCartesianZ" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear positionStatus" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("positionStatus" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear newVelocityTime" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("newVelocityTime" + threadTrials.ElementAt(i));
 
-                                            myMatlabInterface.Execute("clear velocityX" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocityY" + threadTrials.ElementAt(i));
-                                            myMatlabInterface.Execute("clear velocityZ" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocityX" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocityY" + threadTrials.ElementAt(i));
+                                            myMatlabWrapper.clearWorkspaceData("velocityZ" + threadTrials.ElementAt(i));
                                         }
                                     }
                                 }));
@@ -2026,7 +2073,7 @@ namespace ManipAnalysis
                             {
                                 t.Join();
                             }
-                            myMatlabInterface.Execute("clear all");
+                            myMatlabWrapper.clearWorkspace();
                             multiCoreThreads.Clear();
 
                             #endregion
@@ -2165,11 +2212,11 @@ namespace ManipAnalysis
 
                                         TimeSpan meanTime = new TimeSpan(meanTimeStdArray.Sum() / meanTimeStdArray.Length);
 
-                                        myMatlabInterface.PutWorkspaceData("timeArray" + threadTargets.ElementAt(targetCount), "base", meanTimeStdArray);
-                                        myMatlabInterface.Execute("meanTimeStd" + threadTargets.ElementAt(targetCount) + " = int64(std(double(timeArray" + threadTargets.ElementAt(targetCount) + ")));");
-                                        TimeSpan meanTimeStd = new TimeSpan(myMatlabInterface.GetVariable("meanTimeStd" + threadTargets.ElementAt(targetCount), "base"));
-                                        myMatlabInterface.Execute("clear timeArray" + threadTargets.ElementAt(targetCount));
-                                        myMatlabInterface.Execute("clear meanTimeStd" + threadTargets.ElementAt(targetCount));
+                                        myMatlabWrapper.setWorkspaceData("timeArray" + threadTargets.ElementAt(targetCount), meanTimeStdArray);
+                                        myMatlabWrapper.execute("meanTimeStd" + threadTargets.ElementAt(targetCount) + " = int64(std(double(timeArray" + threadTargets.ElementAt(targetCount) + ")));");
+                                        TimeSpan meanTimeStd = new TimeSpan(myMatlabWrapper.getWorkspaceData("meanTimeStd" + threadTargets.ElementAt(targetCount)));
+                                        myMatlabWrapper.clearWorkspaceData("timeArray" + threadTargets.ElementAt(targetCount));
+                                        myMatlabWrapper.clearWorkspaceData("meanTimeStd" + threadTargets.ElementAt(targetCount));
 
 
                                         lock (myDataContainter)
@@ -2194,7 +2241,7 @@ namespace ManipAnalysis
                             {
                                 t.Join();
                             }
-                            myMatlabInterface.Execute("clear all");
+                            myMatlabWrapper.clearWorkspace();
                             multiCoreThreads.Clear();
 
                             #endregion
@@ -2528,7 +2575,7 @@ namespace ManipAnalysis
                         }
                         else
                         {
-                            Logger.writeToLog("Fehler beim einlesen der Datei \"" + filename +  "\"");
+                            writeToLogBox("Fehler beim einlesen der Datei \"" + filename + "\"");
                         }
                     }
                 }
@@ -2536,9 +2583,9 @@ namespace ManipAnalysis
                 writeProgressInfo("Ready");
                 enableTabPages(true);
 
-                Logger.writeToLog("Counted " + debugCounterZero + " events where velocity threshold in PositionsStatus 0 wasn't exceeded.");
-                Logger.writeToLog("Counted " + debugCounterTwo + " events where velocity threshold in PositionsStatus 2 wasn't undershot,");
-                Logger.writeToLog("of wich " + debugCounterTwo + " times a PositionsStatus 3 was not found.");
+                writeToLogBox("Counted " + debugCounterZero + " events where velocity threshold in PositionsStatus 0 wasn't exceeded.");
+                writeToLogBox("Counted " + debugCounterTwo + " events where velocity threshold in PositionsStatus 2 wasn't undershot,");
+                writeToLogBox("of wich " + debugCounterTwo + " times a PositionsStatus 3 was not found.");
                 ThreadManager.remove(newThread);
             });
             ThreadManager.pushBack(newThread);
@@ -2614,36 +2661,36 @@ namespace ManipAnalysis
                                     List<double> tempTimeList = timeStamp.ToList();
                                     int time300msIndex = tempTimeList.IndexOf(tempTimeList.OrderBy(d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks))).ElementAt(0));
 
-                                    myMatlabInterface.PutWorkspaceData("targetNumber", "base", targetNumber);
-                                    myMatlabInterface.PutWorkspaceData("time300msIndex", "base", time300msIndex);
-                                    myMatlabInterface.PutWorkspaceData("measureData", "base", measureData);
-                                    myMatlabInterface.PutWorkspaceData("velocityData", "base", velocityData);
-                                    myMatlabInterface.PutWorkspaceData("baselineData", "base", baselineData);
+                                    myMatlabWrapper.setWorkspaceData("targetNumber", targetNumber);
+                                    myMatlabWrapper.setWorkspaceData("time300msIndex", time300msIndex);
+                                    myMatlabWrapper.setWorkspaceData("measureData", measureData);
+                                    myMatlabWrapper.setWorkspaceData("velocityData", velocityData);
+                                    myMatlabWrapper.setWorkspaceData("baselineData", baselineData);
 
-                                    myMatlabInterface.Execute("vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
-                                    myMatlabInterface.Execute("enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
-                                    myMatlabInterface.Execute("length_abs = trajectLength(measureData(:,1),measureData(:,3));");
-                                    myMatlabInterface.Execute("length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
-                                    myMatlabInterface.Execute("distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
-                                    myMatlabInterface.Execute("distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
-                                    myMatlabInterface.Execute("distance300msAbs = distanceAbs(time300msIndex);");
-                                    myMatlabInterface.Execute("distance300msSign = distanceSign(time300msIndex);");
-                                    myMatlabInterface.Execute("meanDistanceAbs = mean(distanceAbs);");
-                                    myMatlabInterface.Execute("maxDistanceAbs = max(distanceAbs);");
-                                    myMatlabInterface.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                    myMatlabInterface.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                    myMatlabInterface.Execute("rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
+                                    myMatlabWrapper.execute("vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
+                                    myMatlabWrapper.execute("enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
+                                    myMatlabWrapper.execute("length_abs = trajectLength(measureData(:,1),measureData(:,3));");
+                                    myMatlabWrapper.execute("length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
+                                    myMatlabWrapper.execute("distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    myMatlabWrapper.execute("distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    myMatlabWrapper.execute("distance300msAbs = distanceAbs(time300msIndex);");
+                                    myMatlabWrapper.execute("distance300msSign = distanceSign(time300msIndex);");
+                                    myMatlabWrapper.execute("meanDistanceAbs = mean(distanceAbs);");
+                                    myMatlabWrapper.execute("maxDistanceAbs = max(distanceAbs);");
+                                    myMatlabWrapper.execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                    myMatlabWrapper.execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                    myMatlabWrapper.execute("rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
 
-                                    double vector_correlation = myMatlabInterface.GetVariable("vector_correlation", "base");
-                                    double enclosed_area = myMatlabInterface.GetVariable("enclosed_area", "base");
-                                    double length_abs = myMatlabInterface.GetVariable("length_abs", "base");
-                                    double length_ratio = myMatlabInterface.GetVariable("length_ratio", "base");
-                                    double distance300msAbs = myMatlabInterface.GetVariable("distance300msAbs", "base");
-                                    double distance300msSign = myMatlabInterface.GetVariable("distance300msSign", "base");
-                                    double meanDistanceAbs = myMatlabInterface.GetVariable("meanDistanceAbs", "base");
-                                    double maxDistanceAbs = myMatlabInterface.GetVariable("maxDistanceAbs", "base");
-                                    double maxDistanceSign = myMatlabInterface.GetVariable("maxDistanceSign", "base");
-                                    double rmse = myMatlabInterface.GetVariable("rmse", "base");
+                                    double vector_correlation = myMatlabWrapper.getWorkspaceData("vector_correlation");
+                                    double enclosed_area = myMatlabWrapper.getWorkspaceData("enclosed_area");
+                                    double length_abs = myMatlabWrapper.getWorkspaceData("length_abs");
+                                    double length_ratio = myMatlabWrapper.getWorkspaceData("length_ratio");
+                                    double distance300msAbs = myMatlabWrapper.getWorkspaceData("distance300msAbs");
+                                    double distance300msSign = myMatlabWrapper.getWorkspaceData("distance300msSign");
+                                    double meanDistanceAbs = myMatlabWrapper.getWorkspaceData("meanDistanceAbs");
+                                    double maxDistanceAbs = myMatlabWrapper.getWorkspaceData("maxDistanceAbs");
+                                    double maxDistanceSign = myMatlabWrapper.getWorkspaceData("maxDistanceSign");
+                                    double rmse = myMatlabWrapper.getWorkspaceData("rmse");
 
                                     int statisticDataID = mySQLWrapper.insertStatisticData(
                                                                                             trialInfo[0],
@@ -2660,24 +2707,24 @@ namespace ManipAnalysis
                                 }                                                  
                                 catch(Exception statisticException)
                                 {
-                                    Logger.writeToLog("Error in Statistic calculation: " + statisticException.ToString());
+                                    writeToLogBox("Error in Statistic calculation: " + statisticException.ToString());
                                 }
                             }
                             else
                             {
-                                Logger.writeToLog("TrialID: " + trialInfo[0] + " - Data not normalised!");
+                                writeToLogBox("TrialID: " + trialInfo[0] + " - Data not normalised!");
                             }
-                            myMatlabInterface.Execute("clear all");
+                            myMatlabWrapper.clearWorkspace();
                         }
                         else
                         {
-                            Logger.writeToLog("TrialID: " + trialInfo[0] + " - No matching baseline found!");
+                            writeToLogBox("TrialID: " + trialInfo[0] + " - No matching baseline found!");
                         }
                     }
                 }
                 else
                 {
-                    Logger.writeToLog("Statistics already calculated!");
+                    writeToLogBox("Statistics already calculated!");
                 }
                 setProgressBarValue(0);
                 writeProgressInfo("Ready");
@@ -2708,7 +2755,7 @@ namespace ManipAnalysis
                 {
                     if (faultyTrialInformation.Count == 0)
                     {
-                        Logger.writeToLog("Trials already fixed!");
+                        writeToLogBox("Trials already fixed!");
                     }
                     else
                     {
@@ -2754,7 +2801,7 @@ namespace ManipAnalysis
                 }
                 else
                 {
-                    Logger.writeToLog("Trials already fixed!");
+                    writeToLogBox("Trials already fixed!");
                 }
                 setProgressBarValue(0);
                 writeProgressInfo("Ready");
@@ -2798,7 +2845,7 @@ namespace ManipAnalysis
                 FileStream logFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
                 StreamWriter logFileWriter = new StreamWriter(logFileStream);
 
-                string[] logText = Logger.getLogText();
+                string[] logText = getLogBoxText();
                 for (int i = 0; i < logText.Length; i++)
                 {
                     logFileWriter.WriteLine(logText[i]);
@@ -2812,7 +2859,7 @@ namespace ManipAnalysis
 
         private void button_ClearLog_Click(object sender, EventArgs e)
         {
-            Logger.clearLogBox();
+            clearLogBox();
         }
 
         private void tabPage_TrajectoryVelocity_Enter(object sender, EventArgs e)
@@ -3078,12 +3125,12 @@ namespace ManipAnalysis
                 {
                     if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                     {
-                        myMatlabWrapper.createTrajectoryFigure(myMatlabInterface, "XZ-Plot");
-                        myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
+                        myMatlabWrapper.createTrajectoryFigure("XZ-Plot");
+                        myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
                     }
                     else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                     {
-                        myMatlabWrapper.createVelocityFigure(myMatlabInterface, "Velocity plot", 101);
+                        myMatlabWrapper.createVelocityFigure("Velocity plot", 101);
                     }
 
                     int counter = 0;
@@ -3119,9 +3166,9 @@ namespace ManipAnalysis
                                     }
                                 }
 
-                                myMatlabInterface.PutWorkspaceData("X", "base", measureData_x.ToArray());
-                                myMatlabInterface.PutWorkspaceData("Z", "base", measureData_z.ToArray());
-                                myMatlabInterface.Execute("plot(X,Z,'Color','black','LineWidth',2)");
+                                myMatlabWrapper.setWorkspaceData("X", measureData_x.ToArray());
+                                myMatlabWrapper.setWorkspaceData("Z", measureData_z.ToArray());
+                                myMatlabWrapper.plot("X", "Z", "black", 2);
                             }
 
                             else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
@@ -3145,8 +3192,8 @@ namespace ManipAnalysis
                                     }                                    
                                 }
 
-                                myMatlabInterface.PutWorkspaceData("XZ", "base", velocityData_xz.ToArray());
-                                myMatlabInterface.Execute("plot(XZ,'Color','black','LineWidth',2)");
+                                myMatlabWrapper.setWorkspaceData("XZ", velocityData_xz.ToArray());
+                                myMatlabWrapper.plot("X", "Z", "black", 2);
                             }
                         }
                     }
@@ -3158,18 +3205,18 @@ namespace ManipAnalysis
 
                     if (tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray()).Distinct(new ArrayComparer()).ToList().Count() > 1)
                     {
-                        Logger.writeToLog("Trial selections are not equal!");
+                        writeToLogBox("Trial selections are not equal!");
                     }
                     else
                     {
                         if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                         {
-                            myMatlabWrapper.createTrajectoryFigure(myMatlabInterface, "XZ-Plot");
-                            myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
+                            myMatlabWrapper.createTrajectoryFigure("XZ-Plot");
+                            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
                         }
                         else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                         {
-                            myMatlabWrapper.createFigure(myMatlabInterface, "Velocity plot", "[Samples]", "Velocity [m/s]");
+                            myMatlabWrapper.createFigure("Velocity plot", "[Samples]", "Velocity [m/s]");
                         }
 
                         int[] targetArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Target).Distinct().ToArray();
@@ -3252,9 +3299,9 @@ namespace ManipAnalysis
                                     data_z[i] /= meanCounter;
                                 }
 
-                                myMatlabInterface.PutWorkspaceData("X", "base", data_x.ToArray());
-                                myMatlabInterface.PutWorkspaceData("Z", "base", data_z.ToArray());
-                                myMatlabInterface.Execute("plot(X,Z,'Color','black','LineWidth',2)");
+                                myMatlabWrapper.setWorkspaceData("X", data_x.ToArray());
+                                myMatlabWrapper.setWorkspaceData("Z", data_z.ToArray());
+                                myMatlabWrapper.plot("X", "Z", "black", 2);
                             }
                             else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                             {
@@ -3263,18 +3310,18 @@ namespace ManipAnalysis
                                     data_x[i] /= meanCounter;
                                 }
 
-                                myMatlabInterface.PutWorkspaceData("X", "base", data_x.ToArray());
-                                myMatlabInterface.Execute("plot(X,'Color','black','LineWidth',2)");
+                                myMatlabWrapper.setWorkspaceData("X", data_x.ToArray());
+                                myMatlabWrapper.plot("X", "black", 2);
                             }
                         }
                     }
                 }
 
-                myMatlabInterface.Execute("clear all");
+                myMatlabWrapper.clearWorkspace();
             }
             else
             {
-                Logger.writeToLog("Please add data to plot!");
+                writeToLogBox("Please add data to plot!");
             }
             setProgressBarValue(0);
             writeProgressInfo("Ready");
@@ -3504,7 +3551,7 @@ namespace ManipAnalysis
 
                         if (tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray()).Distinct(new ArrayComparer()).ToList().Count() > 1)
                         {
-                            Logger.writeToLog("Trial selections are not equal!");
+                            writeToLogBox("Trial selections are not equal!");
                         }
                         else
                         {
@@ -3684,11 +3731,11 @@ namespace ManipAnalysis
                         }
                     }
 
-                    myMatlabInterface.Execute("clear all");
+                    myMatlabWrapper.clearWorkspace();
                 }
                 else
                 {
-                    Logger.writeToLog("Please add data to export!");
+                    writeToLogBox("Please add data to export!");
                 }
             }
             writeProgressInfo("Ready");
@@ -3902,8 +3949,8 @@ namespace ManipAnalysis
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
             SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            myMatlabWrapper.createVelocityFigure(myMatlabInterface, "Velocity baseline plot", 101);
-            myMatlabWrapper.drawTargets(myMatlabInterface, 0.005, 0.1, 0, 0);
+            myMatlabWrapper.createVelocityFigure("Velocity baseline plot", 101);
+            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
 
             DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
 
@@ -3919,11 +3966,11 @@ namespace ManipAnalysis
             for (int i = 0; i < targetNumberArray.Length; i++)
             {
                 double[] tempXZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2))).ToArray();
-                myMatlabInterface.PutWorkspaceData("XZ", "base", tempXZ);
-                myMatlabInterface.Execute("plot(XZ,'LineWidth',2)");
+                myMatlabWrapper.setWorkspaceData("XZ", tempXZ);
+                myMatlabWrapper.plot("XZ",2);
             }
 
-            myMatlabInterface.Execute("clear all");
+            myMatlabWrapper.clearWorkspace();
         }
 
         private void button1_Click(object sender, EventArgs e)

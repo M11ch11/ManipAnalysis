@@ -15,16 +15,16 @@ namespace ManipAnalysis
     {
         SqlConnection sqlCon;
         SqlCommand sqlCmd;
-        ManipAnalysis mainWindow;
+        ManipAnalysis myManipAnalysisGUI;
 
         string SQL_server;
         string SQL_database;
         string SQL_username;
         string SQL_password;
 
-        public SqlWrapper(ManipAnalysis _mainWindow)
+        public SqlWrapper(ManipAnalysis _myManipAnalysisGUI)
         {
-            mainWindow = _mainWindow;
+            myManipAnalysisGUI = _myManipAnalysisGUI;
 
             SQL_server = "localhost";
             SQL_database = "master";
@@ -66,7 +66,7 @@ namespace ManipAnalysis
             {
                 _isOpen = false;
 
-                mainWindow.writeProgressInfo("Opening SQL-Connection...");
+                myManipAnalysisGUI.writeProgressInfo("Opening SQL-Connection...");
 
                 try
                 {
@@ -75,18 +75,18 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     _isOpen = false;
                 }
 
 
                 if (_isOpen)
                 {
-                    mainWindow.writeProgressInfo("Ready.");
+                    myManipAnalysisGUI.writeProgressInfo("Ready.");
                 }
                 else
                 {
-                    mainWindow.writeProgressInfo("SQL-Connection failed!");
+                    myManipAnalysisGUI.writeProgressInfo("SQL-Connection failed!");
                 }
             }
             return _isOpen;
@@ -102,7 +102,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -213,7 +213,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -256,7 +256,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -294,7 +294,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -333,7 +333,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -372,7 +372,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -411,7 +411,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -450,7 +450,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -499,11 +499,11 @@ namespace ManipAnalysis
                                 {
                                     if (i > 0)
                                     {
-                                        Logger.writeToLog("Trial " + SqlRdr.GetInt32(0) + " has NULL values as id.");
+                                        myManipAnalysisGUI.writeToLogBox("Trial " + SqlRdr.GetInt32(0) + " has NULL values as id.");
                                     }
                                     else
                                     {
-                                        Logger.writeToLog("There are NULL values.");
+                                        myManipAnalysisGUI.writeToLogBox("There are NULL values.");
                                     }
                                     hasNullValues = true;
                                 }
@@ -531,7 +531,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     sqlCmd.Cancel();
                     executeTryCounter--;
                     if (executeTryCounter == 0)
@@ -596,7 +596,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -649,7 +649,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -701,7 +701,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -746,7 +746,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -799,7 +799,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -844,7 +844,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -889,7 +889,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -938,7 +938,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -986,7 +986,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1034,7 +1034,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1083,7 +1083,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1130,7 +1130,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1176,7 +1176,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1222,7 +1222,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1268,7 +1268,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1315,7 +1315,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1361,7 +1361,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1407,7 +1407,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1453,7 +1453,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1499,7 +1499,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1549,7 +1549,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1625,7 +1625,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1701,7 +1701,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1777,7 +1777,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1833,7 +1833,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1889,7 +1889,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -1957,7 +1957,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2023,7 +2023,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2071,7 +2071,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2129,7 +2129,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2191,7 +2191,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2249,7 +2249,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2288,7 +2288,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2325,7 +2325,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2362,7 +2362,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2399,7 +2399,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2436,7 +2436,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2480,7 +2480,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2534,7 +2534,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2589,7 +2589,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2645,7 +2645,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2702,7 +2702,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2762,7 +2762,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2821,7 +2821,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2878,7 +2878,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
@@ -2937,7 +2937,7 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    Logger.writeToLog(ex.ToString());
+                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {

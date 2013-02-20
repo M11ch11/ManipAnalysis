@@ -200,6 +200,7 @@
             this.checkBox_PauseThread = new System.Windows.Forms.CheckBox();
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
+            this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -2032,11 +2033,20 @@
             this.button_ClearLog.UseVisualStyleBackColor = true;
             this.button_ClearLog.Click += new System.EventHandler(this.button_ClearLog_Click);
             // 
+            // listBox_LogBox
+            // 
+            this.listBox_LogBox.FormattingEnabled = true;
+            this.listBox_LogBox.Location = new System.Drawing.Point(748, 25);
+            this.listBox_LogBox.Name = "listBox_LogBox";
+            this.listBox_LogBox.Size = new System.Drawing.Size(422, 602);
+            this.listBox_LogBox.TabIndex = 9;
+            // 
             // ManipAnalysis
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1172, 664);
+            this.Controls.Add(this.listBox_LogBox);
             this.Controls.Add(this.button_ClearLog);
             this.Controls.Add(this.label_Log);
             this.Controls.Add(this.checkBox_PauseThread);
@@ -2045,6 +2055,7 @@
             this.Controls.Add(this.progressBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ManipAnalysis";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ManipAnalysis";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ManipAnalysis_FormClosed);
             this.tabControl.ResumeLayout(false);
@@ -2251,6 +2262,7 @@
         private System.Windows.Forms.Button button_BaselineMeantime_ExportVelocityBaseline;
         private System.Windows.Forms.Button button_BaselineMeantime_PlotVelocityBaseline;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_IgnoreCatchTrials;
+        private System.Windows.Forms.ListBox listBox_LogBox;
     }
 }
 

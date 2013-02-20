@@ -11,9 +11,11 @@ namespace ManipAnalysis
     {
         string measureFilePath;
         DataContainer dataContainer;
+        ManipAnalysis myManipAnalysisGUI;
 
-        public MeasureFileParser(DataContainer _container)
+        public MeasureFileParser(DataContainer _container, ManipAnalysis _myManipAnalysisGUI)
         {
+            myManipAnalysisGUI = _myManipAnalysisGUI;
             dataContainer = _container;
         }
 
@@ -189,7 +191,7 @@ namespace ManipAnalysis
                         }
                         else
                         {
-                            Logger.writeToLog("Measure file line error: invalid column count");
+                            //("Measure file line error: invalid column count");
                             retVal = false;
                         }                        
                     }
@@ -198,13 +200,13 @@ namespace ManipAnalysis
                     int realTrialCount = dataContainer.measureDataRaw.Select(t => t.szenario_trial_number).Distinct().Count();
                     if ((maxTrialCount != expectedSzenarioTrialCount) || (realTrialCount != expectedSzenarioTrialCount))
                     {
-                        Logger.writeToLog("Trial count error: expected " + expectedSzenarioTrialCount + " trials but " + realTrialCount + " were found.");
+                        myManipAnalysisGUI.writeToLogBox("Trial count error: expected " + expectedSzenarioTrialCount + " trials but " + realTrialCount + " were found.");
                         retVal = false;
                     }
                 }
                 else
                 {
-                    Logger.writeToLog("Error in measure file header.");
+                    myManipAnalysisGUI.writeToLogBox("Error in measure file header.");
                     retVal = false;
                 }
                 measureFileReader.Close();
@@ -230,7 +232,7 @@ namespace ManipAnalysis
                     }
                     else
                     {
-                        Logger.writeToLog("Target Trial number incorrect.");
+                        myManipAnalysisGUI.writeToLogBox("Target Trial number incorrect.");
                         retVal = false;
                     }
                 }
