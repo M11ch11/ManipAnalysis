@@ -63,7 +63,7 @@ namespace ManipAnalysis
             }
             else
             {
-                listBox_LogBox.Items.Add(text);                
+                listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + text);
             }     
         }
 
@@ -75,7 +75,18 @@ namespace ManipAnalysis
             }
             else
             {
-                listBox_LogBox.Items.Add(textArray);
+                
+                for (int i = 0; i < textArray.Length; i++)
+                {
+                    if (i == 0)
+                    {
+                        listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + textArray[0]);
+                    }
+                    else
+                    {
+                        listBox_LogBox.Items.Add(textArray[i]);
+                    }
+                }
             }
         }
 
