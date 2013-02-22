@@ -1,182 +1,200 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MLApp;
 using System.Globalization;
 using System.Windows.Forms;
 
 namespace ManipAnalysis
 {
-    class MatlabWrapper
+    internal class MatlabWrapper
     {
-        private MLApp.MLApp myMatlabInterface;
-        private ManipAnalysis myManipAnalysisGUI;
+        private readonly MLApp.MLApp _myMatlabInterface;
 
-        public MatlabWrapper(ManipAnalysis _myManipAnalysisGUI)
+        public MatlabWrapper()
         {
-            myManipAnalysisGUI = _myManipAnalysisGUI;
-
-            myMatlabInterface = new MLApp.MLApp();
-            myMatlabInterface.Visible = 0;
-            clearWorkspace();
-            navigateToPath(Application.StartupPath + "\\MatlabFiles\\");
-        }        
-
-        public void execute(string command)
-        {
-            myMatlabInterface.Execute(command);
+            _myMatlabInterface = new MLApp.MLApp {Visible = 0};
+            ClearWorkspace();
+            NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
         }
 
-        public void createFigure(string figureName, string xAxisLabel, string yAxisLabel)
+        public void Execute(string command)
         {
-            myMatlabInterface.Execute("figure");
-            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
-            myMatlabInterface.Execute("grid on");
-            myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
-            myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
+            _myMatlabInterface.Execute(command);
         }
 
-        public void createMeanTimeFigure()
+        public void CreateFigure(string figureName, string xAxisLabel, string yAxisLabel)
         {
-            myMatlabInterface.Execute("figure");
-            myMatlabInterface.Execute("set(gcf,'Name','Mean time plot','NumberTitle','off');");
-            myMatlabInterface.Execute("grid on");
-            myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("xlabel('[Target]');");
-            myMatlabInterface.Execute("ylabel('Movement time [s]');");
-            myMatlabInterface.Execute("axis([0 18 0.2 1.4]);");
-            myMatlabInterface.Execute("axis manual;");
-            myMatlabInterface.Execute("set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
+            _myMatlabInterface.Execute("figure");
+            _myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            _myMatlabInterface.Execute("grid on");
+            _myMatlabInterface.Execute("hold all");
+            _myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
+            _myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
         }
 
-        public void createStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar, string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
+        public void CreateMeanTimeFigure()
         {
-            myMatlabInterface.Execute("figure");
-            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
-            myMatlabInterface.Execute("grid on");
-            myMatlabInterface.Execute("hold all");
-            
+            _myMatlabInterface.Execute("figure");
+            _myMatlabInterface.Execute("set(gcf,'Name','Mean time plot','NumberTitle','off');");
+            _myMatlabInterface.Execute("grid on");
+            _myMatlabInterface.Execute("hold all");
+            _myMatlabInterface.Execute("xlabel('[Target]');");
+            _myMatlabInterface.Execute("ylabel('Movement time [s]');");
+            _myMatlabInterface.Execute("axis([0 18 0.2 1.4]);");
+            _myMatlabInterface.Execute("axis manual;");
+            _myMatlabInterface.Execute(
+                "set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
+        }
+
+        public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
+                                          string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit,
+                                          double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
+        {
+            _myMatlabInterface.Execute("figure");
+            _myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            _myMatlabInterface.Execute("grid on");
+            _myMatlabInterface.Execute("hold all");
+
             if (stdVar != null && plotErrorBars)
             {
-                myMatlabInterface.Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" + dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar + "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
+                _myMatlabInterface.Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" +
+                                           dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar +
+                                           "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
             }
 
-            myMatlabInterface.Execute("plot(" + dataVar + ");");
+            _myMatlabInterface.Execute("plot(" + dataVar + ");");
 
             if (fitVar != null && plotFit)
             {
-                myMatlabInterface.Execute("plot(" + fitVar + ");");
+                _myMatlabInterface.Execute("plot(" + fitVar + ");");
             }
 
-            myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
-            myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
-            myMatlabInterface.Execute("set(gca,'YLim',[" + yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'YLimMode', 'manual','XLim',[" + xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'XLimMode', 'manual');");
-            myMatlabInterface.Execute("set(gca, 'Layer','top');");
+            _myMatlabInterface.Execute("xlabel('" + xAxisLabel + "');");
+            _myMatlabInterface.Execute("ylabel('" + yAxisLabel + "');");
+            _myMatlabInterface.Execute("set(gca,'YLim',[" +
+                                       yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                                       yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
+                                       "],'YLimMode', 'manual','XLim',[" +
+                                       xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                                       xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
+                                       "],'XLimMode', 'manual');");
+            _myMatlabInterface.Execute("set(gca, 'Layer','top');");
         }
 
-        public void createTrajectoryFigure(string figureName)
+        public void CreateTrajectoryFigure(string figureName)
         {
-            myMatlabInterface.Execute("figure");
-            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
-            myMatlabInterface.Execute("grid on");
-            myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("axis([-0.13 0.13 -0.13 0.13]);");
-            myMatlabInterface.Execute("axis manual;");
-            myMatlabInterface.Execute("xlabel('Displacement [m]');");
-            myMatlabInterface.Execute("ylabel('Displacement [m]');");
-            myMatlabInterface.Execute("set(gca,'YDir','rev'); ");
-            myMatlabInterface.Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
-            myMatlabInterface.Execute("set(gca, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
-            myMatlabInterface.Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+            _myMatlabInterface.Execute("figure");
+            _myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            _myMatlabInterface.Execute("grid on");
+            _myMatlabInterface.Execute("hold all");
+            _myMatlabInterface.Execute("axis([-0.13 0.13 -0.13 0.13]);");
+            _myMatlabInterface.Execute("axis manual;");
+            _myMatlabInterface.Execute("xlabel('Displacement [m]');");
+            _myMatlabInterface.Execute("ylabel('Displacement [m]');");
+            _myMatlabInterface.Execute("set(gca,'YDir','rev'); ");
+            _myMatlabInterface.Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
+            _myMatlabInterface.Execute("set(gca, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
+            _myMatlabInterface.Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
         }
 
-        public void createVelocityFigure(string figureName, int sampleCount)
+        public void CreateVelocityFigure(string figureName, int sampleCount)
         {
-            myMatlabInterface.Execute("figure");
-            myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
-            myMatlabInterface.Execute("grid on");
-            myMatlabInterface.Execute("hold all");
-            myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.5]);");
-            myMatlabInterface.Execute("axis manual;");
-            myMatlabInterface.Execute("xlabel('[Samples]');");
-            myMatlabInterface.Execute("ylabel('Velocity [m/s]');");
+            _myMatlabInterface.Execute("figure");
+            _myMatlabInterface.Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+            _myMatlabInterface.Execute("grid on");
+            _myMatlabInterface.Execute("hold all");
+            _myMatlabInterface.Execute("axis([1 " + sampleCount + " 0 0.5]);");
+            _myMatlabInterface.Execute("axis manual;");
+            _myMatlabInterface.Execute("xlabel('[Samples]');");
+            _myMatlabInterface.Execute("ylabel('Velocity [m/s]');");
         }
 
-        public void drawTargets(double diameter, double radius, double centerX, double centerY)
+        public void DrawTargets(double diameter, double radius, double centerX, double centerY)
         {
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(0)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(0)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(45)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(45)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(90)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(90)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(135)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(135)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(180)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(180)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(225)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(225)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(270)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(270)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", cos(degtorad(315)) * " + radius.ToString().Replace(',', '.') + ", sin(degtorad(315)) * " + radius.ToString().Replace(',', '.') + ");");
-            myMatlabInterface.Execute("drawCircle(" + diameter.ToString().Replace(',', '.') + ", " + centerX.ToString().Replace(',', '.') + ", " + centerY.ToString().Replace(',', '.') + ");");
+            string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString +
+                                       ", sin(degtorad(0)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString +
+                                       ", sin(degtorad(45)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString +
+                                       ", sin(degtorad(90)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString +
+                                       ", sin(degtorad(135)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString +
+                                       ", sin(degtorad(180)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString +
+                                       ", sin(degtorad(225)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString +
+                                       ", sin(degtorad(270)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
+                                       ", sin(degtorad(315)) * " + radiusString + ");");
+            _myMatlabInterface.Execute("drawCircle(" + diameterString + ", " +
+                                       centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
+                                       centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
         }
 
-        public void clearWorkspace()
+        public void ClearWorkspace()
         {
-            myMatlabInterface.Execute("clear all");
+            _myMatlabInterface.Execute("clear all");
         }
 
-        public void navigateToPath(string path)
+        private void NavigateToPath(string path)
         {
-            myMatlabInterface.Execute("cd '" + path +"'");
+            _myMatlabInterface.Execute("cd '" + path + "'");
         }
 
-        public void toggleShowCommandWindow()
+        public void ToggleShowCommandWindow()
         {
-            if (Convert.ToBoolean(myMatlabInterface.Visible))
+            if (Convert.ToBoolean(_myMatlabInterface.Visible))
             {
-                myMatlabInterface.Visible = 0;
+                _myMatlabInterface.Visible = 0;
             }
             else
             {
-                myMatlabInterface.Visible = 1;
+                _myMatlabInterface.Visible = 1;
             }
         }
 
-        public void showWorkspaceWindow()
+        public void ShowWorkspaceWindow()
         {
-            myMatlabInterface.Execute("workspace");
+            _myMatlabInterface.Execute("workspace");
         }
 
-        public void setWorkspaceData(string name, object variable)
+        public void SetWorkspaceData(string name, object variable)
         {
-            myMatlabInterface.PutWorkspaceData(name, "base", variable);
+            _myMatlabInterface.PutWorkspaceData(name, "base", variable);
         }
 
-        public dynamic getWorkspaceData(string name)
+        public dynamic GetWorkspaceData(string name)
         {
-            return myMatlabInterface.GetVariable(name, "base");
+            return _myMatlabInterface.GetVariable(name, "base");
         }
 
-        public void clearWorkspaceData(string name)
+        public void ClearWorkspaceData(string name)
         {
-            myMatlabInterface.Execute("clear " + name);
+            _myMatlabInterface.Execute("clear " + name);
         }
 
-        public void plotMeanTimeErrorBar(string xVar, string yVar, string stdVar)
+        public void PlotMeanTimeErrorBar(string xVar, string yVar, string stdVar)
         {
-            myMatlabInterface.Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar + ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
+            _myMatlabInterface.Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar +
+                                       ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
         }
 
-        public void plot(string xVar, string yVar, string color, int lineWidth)
+        public void Plot(string xVar, string yVar, string color, int lineWidth)
         {
-            myMatlabInterface.Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
+            _myMatlabInterface.Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," + lineWidth +
+                                       ")");
         }
 
-        public void plot(string xVar, int lineWidth)
+        public void Plot(string xVar, int lineWidth)
         {
-            myMatlabInterface.Execute("plot(" + xVar + ",'LineWidth'," + lineWidth + ")");
+            _myMatlabInterface.Execute("plot(" + xVar + ",'LineWidth'," + lineWidth + ")");
         }
 
-        public void plot(string xVar, string color, int lineWidth)
+        public void Plot(string xVar, string color, int lineWidth)
         {
-            myMatlabInterface.Execute("plot(" + xVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
-        }        
+            _myMatlabInterface.Execute("plot(" + xVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
+        }
     }
 }

@@ -1,47 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
-namespace ManipAnalysis
+namespace ManipAnalysis.Container
 {
-    class TrajectoryVelocityPlotContainer
+    internal class TrajectoryVelocityPlotContainer
     {
+        private readonly string _group;
+        private readonly string _study;
+        private readonly SubjectInformationContainer _subject;
+        private readonly string _szenario;
+        private readonly int _target;
+        private readonly List<int> _trials;
+        private readonly int _turn;
 
-        string study, szenario, group;
-        SubjectInformationContainer subject;
-        int turn, target;
-        List<int> trials;
-
-        public TrajectoryVelocityPlotContainer(string _study, string _group, string _szenario, SubjectInformationContainer _subject, string _turn, string _target, string[] _trials)
+        public TrajectoryVelocityPlotContainer(string study, string group, string szenario,
+                                               SubjectInformationContainer subject, string turn, string target,
+                                               IEnumerable<string> trials)
         {
-            study = _study;
-            group = _group;
-            szenario = _szenario;
-            subject = _subject;
-            turn = Convert.ToInt32(_turn.Substring(5, 1));
-            target = Convert.ToInt32(_target.Substring(7, 2));
+            _study = study;
+            _group = group;
+            _szenario = szenario;
+            _subject = subject;
+            _turn = Convert.ToInt32(turn.Substring(5, 1));
+            _target = Convert.ToInt32(target.Substring(7, 2));
 
-            trials = new List<int>();
+            _trials = new List<int>();
 
-            foreach (string trial in _trials)
+            foreach (string trial in trials)
             {
-                trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
+                _trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
             }
         }
 
-        public bool updateTrajectoryVelocityPlotContainer(string _study, string _group, string _szenario, SubjectInformationContainer _subject, string _turn, string _target, string[] _trials)
+        public List<int> Trials
+        {
+            get { return _trials; }
+        }
+
+        public string Study
+        {
+            get { return _study; }
+        }
+
+        public string Group
+        {
+            get { return _group; }
+        }
+
+        public string Szenario
+        {
+            get { return _szenario; }
+        }
+
+        public SubjectInformationContainer Subject
+        {
+            get { return _subject; }
+        }
+
+        public int Turn
+        {
+            get { return _turn; }
+        }
+
+        public int Target
+        {
+            get { return _target; }
+        }
+
+        public bool UpdateTrajectoryVelocityPlotContainer(string study, string group, string szenario,
+                                                          SubjectInformationContainer subject, string turn,
+                                                          string target, IEnumerable<string> trials)
         {
             bool retval = false;
 
-            if ((study == _study) && (group == _group) && (szenario == _szenario) && (subject.id == _subject.id) && (subject.subject_id == _subject.subject_id) && (subject.subject_name == _subject.subject_name) && (turn == Convert.ToInt32(_turn.Substring(5, 1))) && (target == Convert.ToInt32(_target.Substring(7, 2))))
+            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.ID == subject.ID) &&
+                (_subject.SubjectID == subject.SubjectID) && (_subject.SubjectName == subject.SubjectName) &&
+                (_turn == Convert.ToInt32(turn.Substring(5, 1))) && (_target == Convert.ToInt32(target.Substring(7, 2))))
             {
-                foreach (string trial in _trials)
+                foreach (string trial in trials)
                 {
                     int temp = Convert.ToInt32(trial.Substring(6, 3));
-                    if (!trials.Contains(temp))
+                    if (!_trials.Contains(temp))
                     {
-                        trials.Add(temp);
+                        _trials.Add(temp);
                     }
                 }
                 retval = true;
@@ -50,95 +93,54 @@ namespace ManipAnalysis
             return retval;
         }
 
-        public List<int> Trials
-        {
-            get { return trials; }
-            set { trials = value; }
-        }
-
-        public string Study
-        {
-            get { return study; }
-            set { study = value; }
-        }
-
-        public string Group
-        {
-            get { return group; }
-            set { group = value; }
-        }
-
-        public string Szenario
-        {
-            get { return szenario; }
-            set { szenario = value; }
-        }
-
-        public SubjectInformationContainer Subject
-        {
-            get { return subject; }
-            set { subject = value; }
-        }
-
-        public int Turn
-        {
-            get { return turn; }
-            set { turn = value; }
-        }
-
-        public int Target
-        {
-            get { return target; }
-            set { target = value; }
-        }
-
         public override string ToString()
         {
-            trials.Sort();
-            string retVal = study + " - " + group + " - " + szenario + " - " + subject + " - Turn " + turn + " - Target " + target.ToString("00") + " - Trial(s) ";
+            _trials.Sort();
+            string retVal = _study + " - " + _group + " - " + _szenario + " - " + _subject + " - Turn " + _turn +
+                            " - Target " + _target.ToString("00") + " - Trial(s) ";
 
-            retVal += trials[0].ToString();
+            retVal += _trials[0];
             int tempCounter = 0;
-            for (int i = 1; i < trials.Count(); i++)
+            for (int i = 1; i < _trials.Count(); i++)
             {
-                if (trials[i - 1] != trials[i] - 1)
+                if (_trials[i - 1] != _trials[i] - 1)
                 {
-                    if ((tempCounter+1) != i)
+                    if ((tempCounter + 1) != i)
                     {
-                        retVal += "-" + trials[i - 1].ToString();
+                        retVal += "-" + _trials[i - 1];
                     }
-                    retVal += "/" + trials[i].ToString();
+                    retVal += "/" + _trials[i];
                     tempCounter = i;
                 }
-                else if (i == trials.Count() - 1)
+                else if (i == _trials.Count() - 1)
                 {
-                    retVal += "-" + trials[i].ToString();
+                    retVal += "-" + _trials[i];
                 }
             }
 
             return retVal;
         }
 
-        public string getTrialsString()
+        public string GetTrialsString()
         {
-            trials.Sort();
-            string retVal = trials[0].ToString();
+            _trials.Sort();
+            string retVal = _trials[0].ToString(CultureInfo.InvariantCulture);
 
             int tempCounter = 0;
-            for (int i = 1; i < trials.Count(); i++)
+            for (int i = 1; i < _trials.Count(); i++)
             {
-                if (trials[i - 1] != trials[i] - 1)
+                if (_trials[i - 1] != _trials[i] - 1)
                 {
                     if ((tempCounter + 1) != i)
                     {
-                        retVal += "-" + trials[i - 1].ToString();
+                        retVal += "-" + _trials[i - 1];
                     }
-                    retVal += "/" + trials[i].ToString();
+                    retVal += "/" + _trials[i];
                     tempCounter = i;
                 }
-                else if (i == trials.Count() - 1)
+                else if (i == _trials.Count() - 1)
                 {
-                    retVal += "-" + trials[i].ToString();
+                    retVal += "-" + _trials[i];
                 }
             }
 

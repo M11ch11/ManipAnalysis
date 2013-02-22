@@ -1,46 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
-namespace ManipAnalysis
+namespace ManipAnalysis.Container
 {
-    class StatisticPlotContainer
+    internal class StatisticPlotContainer
     {
+        private readonly string _group;
+        private readonly string _study;
+        private readonly SubjectInformationContainer _subject;
+        private readonly string _szenario;
+        private readonly List<int> _trials;
+        private readonly string _turn;
 
-        string study, szenario, group, turn;
-        SubjectInformationContainer subject;
-        List<int> trials;
-
-        public StatisticPlotContainer(string _study, string _group, string _szenario, SubjectInformationContainer _subject, string _turn, string[] _trials)
+        public StatisticPlotContainer(string study, string group, string szenario, SubjectInformationContainer subject,
+                                      string turn, IEnumerable<string> trials)
         {
-            study = _study;
-            group = _group;
-            szenario = _szenario;
-            subject = _subject;
-            turn = _turn;
-            
-            trials = new List<int>();
+            _study = study;
+            _group = group;
+            _szenario = szenario;
+            _subject = subject;
+            _turn = turn;
 
-            foreach (string trial in _trials)
+            _trials = new List<int>();
+
+            foreach (string trial in trials)
             {
-                trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
+                _trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
             }
         }
 
-        public bool updateStatisticPlotContainer(string _study, string _group, string _szenario, SubjectInformationContainer _subject, string _turn, string[] _trials)
+        public List<int> Trials
+        {
+            get { return _trials; }
+        }
+
+        public string Study
+        {
+            get { return _study; }
+        }
+
+        public string Group
+        {
+            get { return _group; }
+        }
+
+        public string Szenario
+        {
+            get { return _szenario; }
+        }
+
+        public SubjectInformationContainer Subject
+        {
+            get { return _subject; }
+        }
+
+        public string Turn
+        {
+            get { return _turn; }
+        }
+
+        public bool UpdateStatisticPlotContainer(string study, string group, string szenario,
+                                                 SubjectInformationContainer subject, string turn,
+                                                 IEnumerable<string> trials)
         {
             bool retval = false;
 
-            if ((study == _study) && (group == _group) && (szenario == _szenario) && (subject.id == _subject.id) && (subject.subject_id == _subject.subject_id) && (subject.subject_name == _subject.subject_name) && (turn == _turn))
+            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.ID == subject.ID) &&
+                (_subject.SubjectID == subject.SubjectID) && (_subject.SubjectName == subject.SubjectName) &&
+                (_turn == turn))
             {
-                foreach (string trial in _trials)
+                foreach (string trial in trials)
                 {
                     int temp = Convert.ToInt32(trial.Substring(6, 3));
-                    if (!trials.Contains(temp))
+                    if (!_trials.Contains(temp))
                     {
-                        trials.Add(temp);
-
+                        _trials.Add(temp);
                     }
                 }
                 retval = true;
@@ -49,89 +85,54 @@ namespace ManipAnalysis
             return retval;
         }
 
-        public List<int> Trials
-        {
-            get { return trials; }
-            set { trials = value; }
-        }
-
-        public string Study
-        {
-            get { return study; }
-            set { study = value; }
-        }
-
-        public string Group
-        {
-            get { return group; }
-            set { group = value; }
-        }
-
-        public string Szenario
-        {
-            get { return szenario; }
-            set { szenario = value; }
-        }
-
-        public SubjectInformationContainer Subject
-        {
-            get { return subject; }
-            set { subject = value; }
-        }
-
-        public string Turn
-        {
-            get { return turn; }
-            set { turn = value; }
-        }
-
         public override string ToString()
         {
-            trials.Sort();
-            string retVal = study + " - " + group + " - " + szenario + " - " + subject + " - " + turn + " - Trials ";
+            _trials.Sort();
+            string retVal = _study + " - " + _group + " - " + _szenario + " - " + _subject + " - " + _turn +
+                            " - Trials ";
 
-            retVal += trials[0].ToString();
+            retVal += _trials[0];
             int tempCounter = 0;
-            for (int i = 1; i < trials.Count(); i++)
+            for (int i = 1; i < _trials.Count(); i++)
             {
-                if (trials[i - 1] != trials[i] - 1)
+                if (_trials[i - 1] != _trials[i] - 1)
                 {
-                    if ((tempCounter+1) != i)
+                    if ((tempCounter + 1) != i)
                     {
-                        retVal += "-" + trials[i - 1].ToString();
+                        retVal += "-" + _trials[i - 1];
                     }
-                    retVal += "/" + trials[i].ToString();
+                    retVal += "/" + _trials[i];
                     tempCounter = i;
                 }
-                else if (i == trials.Count() - 1)
+                else if (i == _trials.Count() - 1)
                 {
-                    retVal += "-" + trials[i].ToString();
+                    retVal += "-" + _trials[i];
                 }
             }
 
             return retVal;
         }
 
-        public string getTrialsString()
+        public string GetTrialsString()
         {
-            trials.Sort();
-            string retVal = trials[0].ToString();
+            _trials.Sort();
+            string retVal = _trials[0].ToString(CultureInfo.InvariantCulture);
 
             int tempCounter = 0;
-            for (int i = 1; i < trials.Count(); i++)
+            for (int i = 1; i < _trials.Count(); i++)
             {
-                if (trials[i - 1] != trials[i] - 1)
+                if (_trials[i - 1] != _trials[i] - 1)
                 {
                     if ((tempCounter + 1) != i)
                     {
-                        retVal += "-" + trials[i - 1].ToString();
+                        retVal += "-" + _trials[i - 1];
                     }
-                    retVal += "/" + trials[i].ToString();
+                    retVal += "/" + _trials[i];
                     tempCounter = i;
                 }
-                else if (i == trials.Count() - 1)
+                else if (i == _trials.Count() - 1)
                 {
-                    retVal += "-" + trials[i].ToString();
+                    retVal += "-" + _trials[i];
                 }
             }
 

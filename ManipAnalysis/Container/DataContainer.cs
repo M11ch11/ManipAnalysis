@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace ManipAnalysis
+namespace ManipAnalysis.Container
 {
-    class DataContainer
+    internal class DataContainer
     {
-        public string measureFileHash;
-        public string measureFileCreationDate;
-        public string measureFileCreationTime;
+        public List<BaselineDataContainer> BaselineData;
+        public string GroupName;
+        public readonly List<MeasureDataContainer> MeasureDataFiltered = new List<MeasureDataContainer>();
+        public readonly List<MeasureDataContainer> MeasureDataNormalized = new List<MeasureDataContainer>();
+        public readonly List<MeasureDataContainer> MeasureDataRaw = new List<MeasureDataContainer>();
+        public string MeasureFileCreationDate;
+        public string MeasureFileCreationTime;
+        public string MeasureFileHash;
 
-        public string studyName;
-        public string szenarioName;
-        public string groupName;
-        public string subjectName;
-        public string subjectID;
+        public string StudyName;
+        public string SubjectID;
+        public string SubjectName;
+        public readonly List<SzenarioMeanTimeDataContainer> SzenarioMeanTimeData = new List<SzenarioMeanTimeDataContainer>();
+        public string SzenarioName;
 
-        public List<MeasureDataContainer> measureDataRaw = new List<MeasureDataContainer>();
-        public List<MeasureDataContainer> measureDataFiltered = new List<MeasureDataContainer>();
-        public List<MeasureDataContainer> measureDataNormalized = new List<MeasureDataContainer>();
-        public List<VelocityDataContainer> velocityDataFiltered = new List<VelocityDataContainer>();
-        public List<VelocityDataContainer> velocityDataNormalized = new List<VelocityDataContainer>();
-        public List<SzenarioMeanTimeDataContainer> szenarioMeanTimeData = new List<SzenarioMeanTimeDataContainer>();
-
-        public List<BaselineDataContainer> baselineData = null;
-
+        public readonly List<VelocityDataContainer> VelocityDataFiltered = new List<VelocityDataContainer>();
+        public readonly List<VelocityDataContainer> VelocityDataNormalized = new List<VelocityDataContainer>();
     }
 }

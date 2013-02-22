@@ -1,45 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
-using System.Threading;
-using System.Reflection;
-using System.Globalization;
-using System.Net;
+using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
+using ManipAnalysis.Container;
 
 namespace ManipAnalysis
 {
     public partial class ManipAnalysis : Form
     {
-        private SqlWrapper mySQLWrapper;
-        private MatlabWrapper myMatlabWrapper;
-        private SplashScreen splash;
-
-        private delegate void myTabControlCallback(bool enable);
-        private delegate void myProgressBarCallback(double value);
-        private delegate void myProgressLabelCallback(string text);
-        private delegate void myLogBoxCallbackAddString(string text);
-        private delegate void myLogBoxCallbackAddStringArray(string[] textArray);
-        private delegate string[] myLogBoxCallbackGetText();
-        private delegate void myLogBoxCallbackClearItems();
+        private readonly MatlabWrapper _myMatlabWrapper;
+        private readonly SqlWrapper _mySqlWrapper;
 
         public ManipAnalysis()
         {
-            splash = new SplashScreen();
-            splash.Show();      
+            var splash = new SplashScreen();
+            splash.Show();
 
             try
             {
-                mySQLWrapper = new SqlWrapper(this);
-                myMatlabWrapper = new MatlabWrapper(this);                   
+                _mySqlWrapper = new SqlWrapper(this);
+                _myMatlabWrapper = new MatlabWrapper();
             }
-            catch(Exception ex)                
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -55,27 +42,29 @@ namespace ManipAnalysis
             splash.Close();
         }
 
-        public void writeToLogBox(string text)
+        public void WriteToLogBox(string text)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new myLogBoxCallbackAddString(writeToLogBox), text);
+                BeginInvoke(new LogBoxCallbackAddString(WriteToLogBox), text);
             }
             else
             {
                 listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + text);
-            }     
+            }
         }
 
-        public void writeToLogBox(string[] textArray)
+        private void WriteToLogBox(string[] textArray)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new myLogBoxCallbackAddStringArray(writeToLogBox), textArray);
+                if (textArray != null)
+                {
+                    BeginInvoke(new LogBoxCallbackAddStringArray(WriteToLogBox), textArray);
+                }
             }
             else
             {
-                
                 for (int i = 0; i < textArray.Length; i++)
                 {
                     if (i == 0)
@@ -90,13 +79,13 @@ namespace ManipAnalysis
             }
         }
 
-        public string[] getLogBoxText()
+        private string[] GetLogBoxText()
         {
             string[] retVal = null;
 
             if (InvokeRequired)
             {
-                BeginInvoke(new myLogBoxCallbackGetText(getLogBoxText));
+                BeginInvoke(new LogBoxCallbackGetText(GetLogBoxText));
             }
             else
             {
@@ -106,11 +95,11 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public void clearLogBox()
+        private void ClearLogBox()
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new myLogBoxCallbackClearItems(clearLogBox));
+                BeginInvoke(new LogBoxCallbackClearItems(ClearLogBox));
             }
             else
             {
@@ -120,16 +109,16 @@ namespace ManipAnalysis
 
         private void button_OpenMeasureFiles_Click(object sender, EventArgs e)
         {
+            bool isValid = true;
+
             openFileDialog.Reset();
             openFileDialog.Multiselect = true;
-            openFileDialog.Title = "Select measure-file(s)";
+            openFileDialog.Title = @"Select measure-file(s)";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            openFileDialog.Filter = "MeasureData-files (*.csv)|*.csv";
+            openFileDialog.Filter = @"MeasureData-files (*.csv)|*.csv";
             openFileDialog.ShowDialog();
 
-            List<FileInfo> filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
-
-            bool isValid = true;
+            var filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
 
             filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
             filesList.RemoveAll(t => (t.Name.Contains("Szenario00")));
@@ -140,9 +129,9 @@ namespace ManipAnalysis
             {
                 if (filesList[i].Name.Count(t => t == '-') == 6)
                 {
-                    string tempFileHash = MD5.computeHash(filesList[i].FullName);
+                    string tempFileHash = Md5.ComputeHash(filesList[i].FullName);
 
-                    if (!mySQLWrapper.checkIfMeasureFileHashExists(tempFileHash))
+                    if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                     {
                         listBox_Import_SelectedMeasureFiles.Items.Add(filesList[i].FullName);
                     }
@@ -155,7 +144,7 @@ namespace ManipAnalysis
 
             if (!isValid)
             {
-                writeToLogBox("One or more filenames are invalid!");
+                WriteToLogBox("One or more filenames are invalid!");
             }
         }
 
@@ -164,17 +153,16 @@ namespace ManipAnalysis
             folderBrowserDialog.Reset();
             folderBrowserDialog.ShowDialog();
 
-            List<DirectoryInfo> directoriesList = new List<DirectoryInfo>(); ;
-            List<FileInfo> filesList = new List<FileInfo>();
-            DirectoryInfo rootDir;
+            var directoriesList = new List<DirectoryInfo>();
+            var filesList = new List<FileInfo>();
 
             string path = folderBrowserDialog.SelectedPath;
 
             if (path != "")
             {
-                rootDir = new DirectoryInfo(path);
+                var rootDir = new DirectoryInfo(path);
 
-                getSubDirectories(ref directoriesList, rootDir);
+                GetSubDirectories(ref directoriesList, rootDir);
 
                 for (int i = 0; i < directoriesList.Count; i++)
                 {
@@ -182,10 +170,7 @@ namespace ManipAnalysis
 
                     FileInfo[] files = di.GetFiles("*.csv");
 
-                    if (files != null)
-                    {
-                        filesList.AddRange(files);
-                    }
+                    filesList.AddRange(files);
                 }
                 directoriesList.Clear();
                 filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
@@ -198,11 +183,11 @@ namespace ManipAnalysis
                 {
                     FileInfo fi = filesList[i];
                     //if (fi.Name.Count(t => t == '-') == 5)  // Study 1
-                    if (fi.Name.Count(t => t == '-') == 6)    // Study 2
+                    if (fi.Name.Count(t => t == '-') == 6) // Study 2
                     {
-                        string tempFileHash = MD5.computeHash(fi.FullName);
+                        string tempFileHash = Md5.ComputeHash(fi.FullName);
 
-                        if (!mySQLWrapper.checkIfMeasureFileHashExists(tempFileHash))
+                        if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                         {
                             listBox_Import_SelectedMeasureFiles.Items.Add(fi.FullName);
                         }
@@ -215,34 +200,16 @@ namespace ManipAnalysis
 
                 if (!isValid)
                 {
-                    writeToLogBox("One or more filenames are invalid!");
-                }
-            }
-        }
-
-        private void getSubDirectories(ref List<DirectoryInfo> directoriesList, DirectoryInfo rootDir)
-        {
-            directoriesList.Add(rootDir);
-            DirectoryInfo[] dirs = rootDir.GetDirectories();
-
-            if (dirs != null)
-            {
-                directoriesList.AddRange(dirs);
-
-                for (int i = 0; i < dirs.Count(); i++)
-                {
-                    DirectoryInfo di = dirs[i];
-                    getSubDirectories(ref directoriesList, di);
+                    WriteToLogBox("One or more filenames are invalid!");
                 }
             }
         }
 
         private void ManipAnalysis_FormClosed(object sender, FormClosedEventArgs e)
         {
-            mySQLWrapper.closeSqlConnection();
+            _mySqlWrapper.CloseSqlConnection();
             try
             {
-                            
             }
             catch (Exception ex)
             {
@@ -255,17 +222,17 @@ namespace ManipAnalysis
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+            var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
             int turn = Convert.ToInt32(comboBox_BaselineMeantime_Turn.SelectedItem.ToString().Substring("Turn".Length));
-            DateTime turnDateTime = mySQLWrapper.getTurnDateTime(study, group, szenario, subject.id, turn);
+            DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject.ID, turn);
 
-            DataSet meanTimeDataSet = mySQLWrapper.getMeanTimeDataSet(study, group, szenario, subject.id, turnDateTime);
+            DataSet meanTimeDataSet = _mySqlWrapper.GetMeanTimeDataSet(study, group, szenario, subject.ID, turnDateTime);
 
-            myMatlabWrapper.createMeanTimeFigure();            
-            
-            List<double> meanTimeList = new List<double>();
-            List<double> meanTimeStdList = new List<double>();
-            List<int> targetList = new List<int>();
+            _myMatlabWrapper.CreateMeanTimeFigure();
+
+            var meanTimeList = new List<double>();
+            var meanTimeStdList = new List<double>();
+            var targetList = new List<int>();
 
             foreach (DataRow row in meanTimeDataSet.Tables[0].Rows)
             {
@@ -278,22 +245,22 @@ namespace ManipAnalysis
             meanTimeStdList.Add(meanTimeStdList.Average());
             targetList.Add(17);
 
-            myMatlabWrapper.setWorkspaceData("target", targetList.ToArray());
-            myMatlabWrapper.setWorkspaceData("meanTime", meanTimeList.ToArray());
-            myMatlabWrapper.setWorkspaceData("meanTimeStd", meanTimeStdList.ToArray());
-            myMatlabWrapper.plotMeanTimeErrorBar("target", "meanTime", "meanTimeStd");
+            _myMatlabWrapper.SetWorkspaceData("target", targetList.ToArray());
+            _myMatlabWrapper.SetWorkspaceData("meanTime", meanTimeList.ToArray());
+            _myMatlabWrapper.SetWorkspaceData("meanTimeStd", meanTimeStdList.ToArray());
+            _myMatlabWrapper.PlotMeanTimeErrorBar("target", "meanTime", "meanTimeStd");
 
-            myMatlabWrapper.clearWorkspace();            
+            _myMatlabWrapper.ClearWorkspace();
         }
 
         private void button_ShowMatlabWindow_Click(object sender, EventArgs e)
         {
-            myMatlabWrapper.toggleShowCommandWindow();
+            _myMatlabWrapper.ToggleShowCommandWindow();
         }
 
         private void button_ShowMatlabWorkspace_Click(object sender, EventArgs e)
         {
-            myMatlabWrapper.showWorkspaceWindow();
+            _myMatlabWrapper.ShowWorkspaceWindow();
         }
 
         private void checkBox_ManualMode_CheckedChanged(object sender, EventArgs e)
@@ -314,26 +281,26 @@ namespace ManipAnalysis
 
         private void button_Debug_InitialiseDatabase_Click(object sender, EventArgs e)
         {
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            DialogResult result;
+            const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-            result = MessageBox.Show("Are you really sure you want to initialise the Database?", "Really?", buttons);
+            DialogResult result = MessageBox.Show(@"Are you really sure you want to initialise the Database?",
+                                                  @"Really?", buttons);
 
             if (result == DialogResult.Yes)
             {
-                mySQLWrapper.initializeDatabase();
+                _mySqlWrapper.InitializeDatabase();
             }
         }
 
         private void button_ChangeSQlServerConnection_Click(object sender, EventArgs e)
         {
-            bool _serverAvailable = false;
+            bool serverAvailable = false;
             comboBox_Start_Database.Items.Clear();
 
-            using (TcpClient tcp = new TcpClient())
+            using (var tcp = new TcpClient())
             {
                 IAsyncResult ar = tcp.BeginConnect(comboBox_Start_SQL_Server.Text, 1433, null, null);
-                System.Threading.WaitHandle wh = ar.AsyncWaitHandle;
+                WaitHandle wh = ar.AsyncWaitHandle;
                 try
                 {
                     if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2), false))
@@ -343,11 +310,11 @@ namespace ManipAnalysis
                     }
 
                     tcp.EndConnect(ar);
-                    _serverAvailable = true;
+                    serverAvailable = true;
                 }
                 catch
                 {
-                    writeToLogBox("SQL-Server not reachable!");
+                    WriteToLogBox("SQL-Server not reachable!");
                     checkBox_Start_ManualMode.Enabled = false;
                     tabControl.TabPages.Remove(tabPage_VisualizationExport);
                     tabControl.TabPages.Remove(tabPage_ImportCalculations);
@@ -359,15 +326,14 @@ namespace ManipAnalysis
                 }
             }
 
-            if (_serverAvailable)
+            if (serverAvailable)
             {
-                mySQLWrapper.setSqlServer(comboBox_Start_SQL_Server.Text);
-                writeToLogBox("Connected to SQL-Server.");
-                comboBox_Start_Database.Items.AddRange(mySQLWrapper.getDatabases());
+                _mySqlWrapper.SetSqlServer(comboBox_Start_SQL_Server.Text);
+                WriteToLogBox("Connected to SQL-Server.");
+                comboBox_Start_Database.Items.AddRange(_mySqlWrapper.GetDatabases());
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
                 button_Start_SelectDatabase.Enabled = true;
-                
             }
             else
             {
@@ -384,41 +350,48 @@ namespace ManipAnalysis
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+            var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            myMatlabWrapper.createTrajectoryFigure("Trajectory baseline plot");
-            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
+            _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
+            _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
-            DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+            DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject.ID);
 
-            List<object[]> baselineData = new List<object[]>();
-
-            foreach (DataRow row in baseline.Tables[0].Rows)
-            {
-                baselineData.Add(new object[] { Convert.ToDouble(row["baseline_position_cartesian_x"]), Convert.ToDouble(row["baseline_position_cartesian_z"]), Convert.ToInt32(row["target_number"]) });
-            }
+            List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
+                                           select new object[]
+                                               {
+                                                   Convert.ToDouble(row["baseline_position_cartesian_x"]),
+                                                   Convert.ToDouble(row["baseline_position_cartesian_z"]),
+                                                   Convert.ToInt32(row["target_number"])
+                                               }).ToList();
 
             int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
 
             for (int i = 0; i < targetNumberArray.Length; i++)
             {
-                double[] tempX = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[0])).ToArray();
-                double[] tempZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[1])).ToArray();
+                double[] tempX =
+                    baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                .Select(t => Convert.ToDouble(t[0]))
+                                .ToArray();
+                double[] tempZ =
+                    baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                .Select(t => Convert.ToDouble(t[1]))
+                                .ToArray();
 
-                myMatlabWrapper.setWorkspaceData("X", tempX);
-                myMatlabWrapper.setWorkspaceData("Z", tempZ);
-                myMatlabWrapper.plot("X", "Z", "black", 2);
+                _myMatlabWrapper.SetWorkspaceData("X", tempX);
+                _myMatlabWrapper.SetWorkspaceData("Z", tempZ);
+                _myMatlabWrapper.Plot("X", "Z", "black", 2);
             }
 
-            myMatlabWrapper.clearWorkspace();
+            _myMatlabWrapper.ClearWorkspace();
         }
 
-        private void enableTabPages(bool enable)
+        private void EnableTabPages(bool enable)
         {
             if (tabControl.InvokeRequired)
             {
-                myTabControlCallback _enableTabPages = new myTabControlCallback(enableTabPages);
-                tabControl.Invoke(_enableTabPages, new object[] { enable });
+                TabControlCallback enableTabPages = EnableTabPages;
+                tabControl.Invoke(enableTabPages, new object[] {enable});
             }
             else
             {
@@ -426,12 +399,12 @@ namespace ManipAnalysis
             }
         }
 
-        private void setProgressBarValue(double value)
+        private void SetProgressBarValue(double value)
         {
             if (progressBar.InvokeRequired)
             {
-                myProgressBarCallback _setProgressBarValue = new myProgressBarCallback(setProgressBarValue);
-                progressBar.Invoke(_setProgressBarValue, new object[] { value });
+                ProgressBarCallback setProgressBarValue = SetProgressBarValue;
+                progressBar.Invoke(setProgressBarValue, new object[] {value});
             }
             else
             {
@@ -439,12 +412,12 @@ namespace ManipAnalysis
             }
         }
 
-        public void writeProgressInfo(string text)
+        public void WriteProgressInfo(string text)
         {
             if (label_ProgressInfo.InvokeRequired)
             {
-                myProgressLabelCallback _writeProgressInfo = new myProgressLabelCallback(writeProgressInfo);
-                label_ProgressInfo.Invoke(_writeProgressInfo, new object[] { text });
+                ProgressLabelCallback writeProgressInfo = WriteProgressInfo;
+                label_ProgressInfo.Invoke(writeProgressInfo, new object[] {text});
             }
             else
             {
@@ -460,7 +433,8 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic1_Turns.Items.Clear();
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
-            string[] groupNames = mySQLWrapper.getGroupNames(comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString());
+            string[] groupNames =
+                _mySqlWrapper.GetGroupNames(comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString());
             if (groupNames != null)
             {
                 listBox_DescriptiveStatistic1_Groups.Items.AddRange(groupNames);
@@ -480,10 +454,11 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
 
-                string[] szenarioIntersect = mySQLWrapper.getSzenarioNames(study, groups[0]);
+                string[] szenarioIntersect = _mySqlWrapper.GetSzenarioNames(study, groups[0]);
                 for (int i = 1; i < groups.Length; i++)
                 {
-                    szenarioIntersect = szenarioIntersect.Intersect(mySQLWrapper.getSzenarioNames(study, groups[i])).ToArray();
+                    szenarioIntersect =
+                        szenarioIntersect.Intersect(_mySqlWrapper.GetSzenarioNames(study, groups[i])).ToArray();
                 }
 
                 comboBox_DescriptiveStatistic1_Szenario.Items.AddRange(szenarioIntersect);
@@ -503,7 +478,11 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                listBox_DescriptiveStatistic1_Subjects.Items.AddRange(mySQLWrapper.getSubjectInformations(study, groups[i], szenario).ToArray());
+                if (_mySqlWrapper != null)
+                {
+                    listBox_DescriptiveStatistic1_Subjects.Items.AddRange(
+                        _mySqlWrapper.GetSubjectInformations(study, groups[i], szenario).ToArray());
+                }
             }
             listBox_DescriptiveStatistic1_Subjects.SelectedIndex = 0;
         }
@@ -516,14 +495,17 @@ namespace ManipAnalysis
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-            int[] subjectIDs = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().Select(t => t.id).ToArray();
+            int[] subjectIDs =
+                listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>()
+                                                      .Select(t => t.ID)
+                                                      .ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
             {
                 for (int j = 0; j < subjectIDs.Length; j++)
                 {
-                    string[] tempTurnString = mySQLWrapper.getTurns(study, groups[i], szenario, subjectIDs[j]);
+                    string[] tempTurnString = _mySqlWrapper.GetTurns(study, groups[i], szenario, subjectIDs[j]);
 
                     if (tempTurnString != null)
                     {
@@ -538,7 +520,12 @@ namespace ManipAnalysis
                     }
                 }
             }
-            listBox_DescriptiveStatistic1_Turns.Items.AddRange(turnIntersect);
+
+            if (turnIntersect != null)
+            {
+                listBox_DescriptiveStatistic1_Turns.Items.AddRange(turnIntersect);
+            }
+
             listBox_DescriptiveStatistic1_Turns.SelectedIndex = 0;
         }
 
@@ -551,9 +538,14 @@ namespace ManipAnalysis
             bool showCatchTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
             bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
 
-            string[] szenarioTrialNames = mySQLWrapper.getSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly);
+            string[] szenarioTrialNames = _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials,
+                                                                          showCatchTrialsExclusivly);
 
-            listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames);
+            if (szenarioTrialNames != null)
+            {
+                listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames);
+            }
+
             listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;
         }
 
@@ -564,7 +556,8 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -574,30 +567,38 @@ namespace ManipAnalysis
                     {
                         foreach (string turn in turns)
                         {
-                            if (mySQLWrapper.getTurns(study, group, szenario, subject.id) != null)
+                            if (_mySqlWrapper.GetTurns(study, group, szenario, subject.ID) != null)
                             {
                                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                                 {
                                     bool canBeUpdated = false;
-                                    foreach (StatisticPlotContainer temp in listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                                    foreach (
+                                        StatisticPlotContainer temp in
+                                            listBox_DescriptiveStatistic1_SelectedTrials.Items)
                                     {
-                                        if (temp.updateStatisticPlotContainer(study, group, szenario, subject, turn, trials))
+                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
+                                                                              trials))
                                         {
-                                            typeof(ListBox).InvokeMember("RefreshItems",
-                                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                            null, listBox_DescriptiveStatistic1_SelectedTrials, new object[] { });
+                                            typeof (ListBox).InvokeMember("RefreshItems",
+                                                                          BindingFlags.NonPublic | BindingFlags.Instance |
+                                                                          BindingFlags.InvokeMethod,
+                                                                          null,
+                                                                          listBox_DescriptiveStatistic1_SelectedTrials,
+                                                                          new object[] {});
                                             canBeUpdated = true;
                                         }
                                     }
 
                                     if (!canBeUpdated)
                                     {
-                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
+                                            new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                     }
                                 }
                                 else
                                 {
-                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
+                                        new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                 }
                             }
                         }
@@ -610,7 +611,8 @@ namespace ManipAnalysis
         {
             while (listBox_DescriptiveStatistic1_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_DescriptiveStatistic1_SelectedTrials.Items.Remove(listBox_DescriptiveStatistic1_SelectedTrials.SelectedItem);
+                listBox_DescriptiveStatistic1_SelectedTrials.Items.Remove(
+                    listBox_DescriptiveStatistic1_SelectedTrials.SelectedItem);
             }
         }
 
@@ -621,33 +623,43 @@ namespace ManipAnalysis
 
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Getting data...");
+            WriteProgressInfo("Getting data...");
             if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
             {
                 bool isValid = true;
-                List<int> trialList = listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(0).Trials;
-                foreach (StatisticPlotContainer temp in listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                List<int> trialList =
+                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                .ElementAt(0)
+                                                                .Trials;
+
+                if (
+                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                .Any(temp => !trialList.SequenceEqual(temp.Trials)))
                 {
-                    if (!trialList.SequenceEqual(temp.Trials))
-                    {
-                        writeToLogBox("Trial selections are not equal!");
-                        isValid = false;
-                        break;
-                    }
+                    WriteToLogBox("Trial selections are not equal!");
+                    isValid = false;
                 }
 
                 if (isValid)
                 {
                     int meanCounter;
-                    double[,] data = new double[trialList.Count, listBox_DescriptiveStatistic1_SelectedTrials.Items.Count];
+                    var data = new double[trialList.Count,listBox_DescriptiveStatistic1_SelectedTrials.Items.Count];
 
-                    for (meanCounter = 0; meanCounter < listBox_DescriptiveStatistic1_SelectedTrials.Items.Count; meanCounter++)
+                    for (meanCounter = 0;
+                         meanCounter < listBox_DescriptiveStatistic1_SelectedTrials.Items.Count;
+                         meanCounter++)
                     {
-                        setProgressBarValue((100.0 / listBox_DescriptiveStatistic1_SelectedTrials.Items.Count) * meanCounter);
-                        StatisticPlotContainer temp = listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(meanCounter);
+                        SetProgressBarValue((100.0/listBox_DescriptiveStatistic1_SelectedTrials.Items.Count)*meanCounter);
+                        StatisticPlotContainer temp =
+                            listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                        .ElementAt(meanCounter);
 
-                        DateTime turn = mySQLWrapper.getTurnDateTime(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
-                        DataSet statisticDataSet = mySQLWrapper.getStatisticDataSet(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, turn);
+                        DateTime turn = _mySqlWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
+                                                                      temp.Subject.ID,
+                                                                      Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
+                        DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(temp.Study, temp.Group,
+                                                                                     temp.Szenario, temp.Subject.ID,
+                                                                                     turn);
 
                         int trialListCounter = 0;
                         foreach (DataRow row in statisticDataSet.Tables[0].Rows)
@@ -658,35 +670,43 @@ namespace ManipAnalysis
                                 switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                                 {
                                     case "Vector correlation":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["velocity_vector_correlation"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["velocity_vector_correlation"]);
                                         break;
 
                                     case "Perpendicular distance 300ms - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
                                         break;
 
                                     case "Mean perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
                                         break;
 
                                     case "Max perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
                                         break;
 
                                     case "Perpendicular distance 300ms - Sign":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
                                         break;
 
                                     case "Max perpendicular distance - Sign":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
                                         break;
 
                                     case "Trajectory length abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_abs"]);
                                         break;
 
                                     case "Trajectory length ratio":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
                                         break;
 
                                     case "Enclosed area":
@@ -702,72 +722,130 @@ namespace ManipAnalysis
                         }
                     }
 
-                    myMatlabWrapper.setWorkspaceData("data", data);
-
-                    double[,] dataStdPlot = null;
-                    double[,] dataPlot = null;
+                    _myMatlabWrapper.SetWorkspaceData("data", data);
 
                     if (meanCounter > 1)
                     {
-                        myMatlabWrapper.execute("dataPlot = mean(transpose(data));");
-                        myMatlabWrapper.execute("dataStdPlot = std(transpose(data));");    
-                        dataStdPlot = myMatlabWrapper.getWorkspaceData("dataStdPlot");
+                        _myMatlabWrapper.Execute("dataPlot = mean(transpose(data));");
+                        _myMatlabWrapper.Execute("dataStdPlot = std(transpose(data));");
+                        _myMatlabWrapper.GetWorkspaceData("dataStdPlot");
                     }
                     else
                     {
-                        myMatlabWrapper.execute("dataPlot = data;");
+                        _myMatlabWrapper.Execute("dataPlot = data;");
                     }
 
-                    dataPlot = myMatlabWrapper.getWorkspaceData("dataPlot");
-                   
+                    double[,] dataPlot = _myMatlabWrapper.GetWorkspaceData("dataPlot");
+
                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                     {
                         case "Vector correlation":
-                            myMatlabWrapper.createStatisticFigure("Velocity Vector Correlation plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Velocity Vector Correlation", 1, dataPlot.Length, 0.5, 0.9, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]",
+                                                                   "Velocity Vector Correlation", 1, dataPlot.Length,
+                                                                   0.5, 0.9,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Abs":
-                            myMatlabWrapper.createStatisticFigure("PD300 abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("PD300 abs plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "PD300 [m]", 1,
+                                                                   dataPlot.Length, 0, 0.05,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Mean perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure("MeanPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MeanPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "MeanPD [m]", 1,
+                                                                   dataPlot.Length, 0, 0.05,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Abs":
-                            myMatlabWrapper.createStatisticFigure("MaxPD abs plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, 0, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("MaxPD abs plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "MaxPD [m]", 1,
+                                                                   dataPlot.Length, 0, 0.05,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Perpendicular distance 300ms - Sign":
-                            myMatlabWrapper.createStatisticFigure("PD300 sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "PD300 [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("PD300 sign plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "PD300 [m]", 1,
+                                                                   dataPlot.Length, -0.05, 0.05,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Max perpendicular distance - Sign":
-                            myMatlabWrapper.createStatisticFigure("MaxPD sign plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "MaxPD [m]", 1, dataPlot.Length, -0.05, 0.05, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("MaxPD sign plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "MaxPD [m]", 1,
+                                                                   dataPlot.Length, -0.05, 0.05,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length abs":
-                            myMatlabWrapper.createStatisticFigure("Trajectory Length plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1, dataPlot.Length, 0.07, 0.2, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("Trajectory Length plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "Trajectory Length [m]", 1,
+                                                                   dataPlot.Length, 0.07, 0.2,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Trajectory length ratio":
-                            myMatlabWrapper.createStatisticFigure("Trajectory Length Ratio plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Trajectory Length Ratio", 1, dataPlot.Length, 0.2, 1.8, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("Trajectory Length Ratio plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "Trajectory Length Ratio",
+                                                                   1, dataPlot.Length, 0.2, 1.8,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "Enclosed area":
-                            myMatlabWrapper.createStatisticFigure("Enclosed area plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1, dataPlot.Length, 0, 0.002, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("Enclosed area plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "Enclosed Area [m²]", 1,
+                                                                   dataPlot.Length, 0, 0.002,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
 
                         case "RMSE":
-                            myMatlabWrapper.createStatisticFigure("Root Mean Square Error plot", "dataPlot", "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" + textBox_DescriptiveStatistic1_FitEquation.Text + "')", "dataStdPlot", "[Trial]", "Root Mean Square Error", 1, dataPlot.Length, 0, 0.1, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                            _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   textBox_DescriptiveStatistic1_FitEquation.Text + "')",
+                                                                   "dataStdPlot", "[Trial]", "Root Mean Square Error", 1,
+                                                                   dataPlot.Length, 0, 0.1,
+                                                                   checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                                                                   checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
                             break;
                     }
 
-                    myMatlabWrapper.clearWorkspace();
+                    _myMatlabWrapper.ClearWorkspace();
                 }
             }
-            writeProgressInfo("Ready");
-            setProgressBarValue(0);
+            WriteProgressInfo("Ready");
+            SetProgressBarValue(0);
         }
 
         private void button_StatisticPlots_AddAll_Click(object sender, EventArgs e)
@@ -777,7 +855,8 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.Items.Cast<string>().ToArray();
 
@@ -787,30 +866,38 @@ namespace ManipAnalysis
                     {
                         foreach (string turn in turns)
                         {
-                            if (mySQLWrapper.getTurns(study, group, szenario, subject.id) != null)
+                            if (_mySqlWrapper.GetTurns(study, group, szenario, subject.ID) != null)
                             {
                                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                                 {
                                     bool canBeUpdated = false;
-                                    foreach (StatisticPlotContainer temp in listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                                    foreach (
+                                        StatisticPlotContainer temp in
+                                            listBox_DescriptiveStatistic1_SelectedTrials.Items)
                                     {
-                                        if (temp.updateStatisticPlotContainer(study, group, szenario, subject, turn, trials))
+                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
+                                                                              trials))
                                         {
-                                            typeof(ListBox).InvokeMember("RefreshItems",
-                                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                            null, listBox_DescriptiveStatistic1_SelectedTrials, new object[] { });
+                                            typeof (ListBox).InvokeMember("RefreshItems",
+                                                                          BindingFlags.NonPublic | BindingFlags.Instance |
+                                                                          BindingFlags.InvokeMethod,
+                                                                          null,
+                                                                          listBox_DescriptiveStatistic1_SelectedTrials,
+                                                                          new object[] {});
                                             canBeUpdated = true;
                                         }
                                     }
 
                                     if (!canBeUpdated)
                                     {
-                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
+                                            new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                     }
                                 }
                                 else
                                 {
-                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
+                                        new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                 }
                             }
                         }
@@ -821,25 +908,25 @@ namespace ManipAnalysis
 
         private void button_showFaultyTrials_Click(object sender, EventArgs e)
         {
-            List<object[]> faultyTrialInfo = mySQLWrapper.getFaultyTrialInformation();
+            List<object[]> faultyTrialInfo = _mySqlWrapper.GetFaultyTrialInformation();
 
             if (faultyTrialInfo != null)
             {
-                List<string[]> cache = new List<string[]>();
-                for (int i = 0; i < faultyTrialInfo.Count; i++)
-                {
-                    cache.Add(new string[]{
-                                                Convert.ToString(faultyTrialInfo[i][3]),
-                                                Convert.ToString(faultyTrialInfo[i][4]),
-                                                Convert.ToString(faultyTrialInfo[i][6]),
-                                                Convert.ToString(faultyTrialInfo[i][5]),
-                                                Convert.ToString(Convert.ToDateTime(faultyTrialInfo[i][7])),
-                                                Convert.ToString(Convert.ToInt32(faultyTrialInfo[i][8]))
-                                              });
-                }
-                writeToLogBox("------------------------------------------------------- Faulty trial list -------------------------------------------------------");
-                writeToLogBox(cache.OrderBy(t => t[4]).Select(t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5]).ToArray());
-                writeToLogBox("---------------------------------------------------------------------------------------------------------------------------------");
+                List<string[]> cache = faultyTrialInfo.Select(t => new string[]
+                    {
+                        Convert.ToString(t[3]), Convert.ToString(t[4]), Convert.ToString(t[6]), Convert.ToString(t[5]),
+                        Convert.ToString(Convert.ToDateTime(t[7])), Convert.ToString(Convert.ToInt32(t[8]))
+                    }).ToList();
+
+                WriteToLogBox(
+                    "------------------------------------------------------- Faulty trial list -------------------------------------------------------");
+                WriteToLogBox(
+                    cache.OrderBy(t => t[4])
+                         .Select(
+                             t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5])
+                         .ToArray());
+                WriteToLogBox(
+                    "---------------------------------------------------------------------------------------------------------------------------------");
             }
         }
 
@@ -854,7 +941,7 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic1_Turns.Items.Clear();
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
-            string[] studyNames = mySQLWrapper.getStudyNames();
+            string[] studyNames = _mySqlWrapper.GetStudyNames();
             if (studyNames != null)
             {
                 comboBox_DescriptiveStatistic1_Study.Items.AddRange(studyNames);
@@ -865,7 +952,8 @@ namespace ManipAnalysis
         private void checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
         {
             listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
+            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled =
+                checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
         }
 
         private void comboBox_DescriptiveStatistic2_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -876,7 +964,8 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic2_Turns.Items.Clear();
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
-            string[] groupNames = mySQLWrapper.getGroupNames(comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString());
+            string[] groupNames =
+                _mySqlWrapper.GetGroupNames(comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString());
             if (groupNames != null)
             {
                 listBox_DescriptiveStatistic2_Groups.Items.AddRange(groupNames);
@@ -896,13 +985,18 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
 
-                string[] szenarioIntersect = mySQLWrapper.getSzenarioNames(study, groups[0]);
+                string[] szenarioIntersect = _mySqlWrapper.GetSzenarioNames(study, groups[0]);
                 for (int i = 1; i < groups.Length; i++)
                 {
-                    szenarioIntersect = szenarioIntersect.Intersect(mySQLWrapper.getSzenarioNames(study, groups[i])).ToArray();
+                    szenarioIntersect =
+                        szenarioIntersect.Intersect(_mySqlWrapper.GetSzenarioNames(study, groups[i])).ToArray();
                 }
 
-                comboBox_DescriptiveStatistic2_Szenario.Items.AddRange(szenarioIntersect);
+                if (szenarioIntersect != null)
+                {
+                    comboBox_DescriptiveStatistic2_Szenario.Items.AddRange(szenarioIntersect);
+                }
+
                 comboBox_DescriptiveStatistic2_Szenario.SelectedIndex = 0;
             }
         }
@@ -919,7 +1013,11 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                listBox_DescriptiveStatistic2_Subjects.Items.AddRange(mySQLWrapper.getSubjectInformations(study, groups[i], szenario).ToArray());
+                if (_mySqlWrapper != null)
+                {
+                    listBox_DescriptiveStatistic2_Subjects.Items.AddRange(
+                        _mySqlWrapper.GetSubjectInformations(study, groups[i], szenario).ToArray());
+                }
             }
             listBox_DescriptiveStatistic2_Subjects.SelectedIndex = 0;
         }
@@ -932,14 +1030,15 @@ namespace ManipAnalysis
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+            SubjectInformationContainer[] subjects =
+                listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
             {
                 for (int j = 0; j < subjects.Length; j++)
                 {
-                    string[] tempTurnString = mySQLWrapper.getTurns(study, groups[i], szenario, subjects[j].id); ;
+                    string[] tempTurnString = _mySqlWrapper.GetTurns(study, groups[i], szenario, subjects[j].ID);
 
                     if (tempTurnString != null)
                     {
@@ -954,7 +1053,12 @@ namespace ManipAnalysis
                     }
                 }
             }
-            listBox_DescriptiveStatistic2_Turns.Items.AddRange(turnIntersect);
+
+            if (turnIntersect != null)
+            {
+                listBox_DescriptiveStatistic2_Turns.Items.AddRange(turnIntersect);
+            }
+
             listBox_DescriptiveStatistic2_Turns.SelectedIndex = 0;
         }
 
@@ -967,16 +1071,22 @@ namespace ManipAnalysis
             bool showCatchTrials = checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
             bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
 
-            string[] szenarioTrialNames = mySQLWrapper.getSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly);
+            string[] szenarioTrialNames = _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials,
+                                                                          showCatchTrialsExclusivly);
 
-            listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNames);
+            if (szenarioTrialNames != null)
+            {
+                listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNames);
+            }
+
             listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
         }
 
         private void checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
         {
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled = checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
+            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled =
+                checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
         }
 
         private void button_DescriptiveStatistic2_AddSelected_Click(object sender, EventArgs e)
@@ -986,7 +1096,8 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -996,7 +1107,12 @@ namespace ManipAnalysis
                     {
                         foreach (string turn in turns)
                         {
-                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study,
+                                                                                                              group,
+                                                                                                              szenario,
+                                                                                                              subject,
+                                                                                                              turn,
+                                                                                                              trials));
                         }
                     }
                 }
@@ -1010,7 +1126,8 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.Items.Cast<string>().ToArray();
 
@@ -1020,7 +1137,12 @@ namespace ManipAnalysis
                     {
                         foreach (string turn in turns)
                         {
-                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study,
+                                                                                                              group,
+                                                                                                              szenario,
+                                                                                                              subject,
+                                                                                                              turn,
+                                                                                                              trials));
                         }
                     }
                 }
@@ -1031,7 +1153,8 @@ namespace ManipAnalysis
         {
             while (listBox_DescriptiveStatistic2_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_DescriptiveStatistic2_SelectedTrials.Items.Remove(listBox_DescriptiveStatistic2_SelectedTrials.SelectedItem);
+                listBox_DescriptiveStatistic2_SelectedTrials.Items.Remove(
+                    listBox_DescriptiveStatistic2_SelectedTrials.SelectedItem);
             }
         }
 
@@ -1051,7 +1174,8 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic2_Turns.Items.Clear();
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
-            string[] studyNames = mySQLWrapper.getStudyNames();
+            string[] studyNames = _mySqlWrapper.GetStudyNames();
+
             if (studyNames != null)
             {
                 comboBox_DescriptiveStatistic2_Study.Items.AddRange(studyNames);
@@ -1061,42 +1185,53 @@ namespace ManipAnalysis
 
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Getting data...");
+            WriteProgressInfo("Getting data...");
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save mean data file";
+            saveFileDialog.Title = @"Save mean data file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-mean-"
-                                    + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString()
-                                    + "-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-mean-"
+                                      + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem
+                                      + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 if (listBox_DescriptiveStatistic2_SelectedTrials.Items.Count > 0)
                 {
                     int trialListCounter = 0;
-                    List<int> trialList = listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(0).Trials;
-                    double[,] data = new double[trialList.Count, listBox_DescriptiveStatistic2_SelectedTrials.Items.Count];
+                    List<int> trialList =
+                        listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                    .ElementAt(0)
+                                                                    .Trials;
+                    var data = new double[trialList.Count,listBox_DescriptiveStatistic2_SelectedTrials.Items.Count];
 
-                    for (int meanCounter = 0; meanCounter < listBox_DescriptiveStatistic2_SelectedTrials.Items.Count; meanCounter++)
+                    for (int meanCounter = 0;
+                         meanCounter < listBox_DescriptiveStatistic2_SelectedTrials.Items.Count;
+                         meanCounter++)
                     {
-                        setProgressBarValue((100.0 / listBox_DescriptiveStatistic2_SelectedTrials.Items.Count) * meanCounter);
-                        StatisticPlotContainer temp = listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(meanCounter);
+                        SetProgressBarValue((100.0/listBox_DescriptiveStatistic2_SelectedTrials.Items.Count)*meanCounter);
+                        StatisticPlotContainer temp =
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                        .ElementAt(meanCounter);
 
-                        DateTime turn = mySQLWrapper.getTurnDateTime(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
-                        DataSet statisticDataSet = mySQLWrapper.getStatisticDataSet(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, turn);
+                        DateTime turn = _mySqlWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
+                                                                      temp.Subject.ID,
+                                                                      Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
+                        DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(temp.Study, temp.Group,
+                                                                                     temp.Szenario, temp.Subject.ID,
+                                                                                     turn);
 
                         trialListCounter = 0;
                         foreach (DataRow row in statisticDataSet.Tables[0].Rows)
@@ -1107,35 +1242,43 @@ namespace ManipAnalysis
                                 switch (comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString())
                                 {
                                     case "Vector correlation":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["velocity_vector_correlation"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["velocity_vector_correlation"]);
                                         break;
 
                                     case "Perpendicular distance 300ms - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
                                         break;
 
                                     case "Mean perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
                                         break;
 
                                     case "Max perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
                                         break;
 
                                     case "Perpendicular distance 300ms - Sign":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
                                         break;
 
                                     case "Max perpendicular distance - Sign":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
                                         break;
 
                                     case "Trajectory length abs":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_abs"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_abs"]);
                                         break;
 
                                     case "Trajectory length ratio":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
                                         break;
 
                                     case "Enclosed area":
@@ -1156,47 +1299,44 @@ namespace ManipAnalysis
 
                     if (trialListCounter > 1)
                     {
+                        _myMatlabWrapper.SetWorkspaceData("data", data);
 
-                        myMatlabWrapper.setWorkspaceData("data", data);
+                        _myMatlabWrapper.Execute("dataMean = mean(data);");
+                        _myMatlabWrapper.Execute("dataStd = std(data);");
 
-                        myMatlabWrapper.execute("dataMean = mean(data);");
-                        myMatlabWrapper.execute("dataStd = std(data);");
-
-                        dataMean = myMatlabWrapper.getWorkspaceData("dataMean");
-                        dataStd = myMatlabWrapper.getWorkspaceData("dataStd");
+                        dataMean = _myMatlabWrapper.GetWorkspaceData("dataMean");
+                        dataStd = _myMatlabWrapper.GetWorkspaceData("dataStd");
                     }
                     else
                     {
-                        dataMean = new double[,] { { data[0, 0], 0 } };
-                        dataStd = new double[,] { { 0, 0 } };
+                        dataMean = new double[,] {{data[0, 0], 0}};
+                        dataStd = new double[,] {{0, 0}};
                     }
 
-                    List<string> cache = new List<string>();
-                    FileStream meanDataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                    StreamWriter meanDataFileWriter = new StreamWriter(meanDataFileStream);
+                    var cache = new List<string>();
+                    var meanDataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                    var meanDataFileWriter = new StreamWriter(meanDataFileStream);
                     cache.Add("Study;Group;Szenario;Subject;Turn;Trials;Mean;Std");
 
-                    for (int i = 0; i < listBox_DescriptiveStatistic2_SelectedTrials.Items.Count; i++)
-                    {
-                        StatisticPlotContainer tempStatisticPlotContainer = listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(i);
-                        string tempLine = tempStatisticPlotContainer.Study
-                                        + ";"
-                                        + tempStatisticPlotContainer.Group
-                                        + ";"
-                                        + tempStatisticPlotContainer.Szenario
-                                        + ";"
-                                        + tempStatisticPlotContainer.Subject
-                                        + ";"
-                                        + tempStatisticPlotContainer.Turn
-                                        + ";"
-                                        + tempStatisticPlotContainer.getTrialsString()
-                                        + ";"
-                                        + DoubleConverter.ToExactString(dataMean[0, i])
-                                        + ";"
-                                        + DoubleConverter.ToExactString(dataStd[0, i]);
-
-                        cache.Add(tempLine);
-                    }
+                    cache.AddRange(
+                        listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<object>()
+                                                                    .Select(
+                                                                        (t, i) =>
+                                                                        listBox_DescriptiveStatistic2_SelectedTrials
+                                                                            .Items.Cast<StatisticPlotContainer>()
+                                                                            .ElementAt(i))
+                                                                    .Select(
+                                                                        (tempStatisticPlotContainer, i) =>
+                                                                        tempStatisticPlotContainer.Study + ";" +
+                                                                        tempStatisticPlotContainer.Group + ";" +
+                                                                        tempStatisticPlotContainer.Szenario + ";" +
+                                                                        tempStatisticPlotContainer.Subject + ";" +
+                                                                        tempStatisticPlotContainer.Turn + ";" +
+                                                                        tempStatisticPlotContainer.GetTrialsString() +
+                                                                        ";" +
+                                                                        DoubleConverter.ToExactString(dataMean[0, i]) +
+                                                                        ";" +
+                                                                        DoubleConverter.ToExactString(dataStd[0, i])));
 
                     for (int i = 0; i < cache.Count(); i++)
                     {
@@ -1206,66 +1346,77 @@ namespace ManipAnalysis
                     meanDataFileWriter.Close();
                     meanDataFileStream.Close();
 
-                    myMatlabWrapper.clearWorkspace();
+                    _myMatlabWrapper.ClearWorkspace();
                 }
             }
-            writeProgressInfo("Ready");
-            setProgressBarValue(0);
+            WriteProgressInfo("Ready");
+            SetProgressBarValue(0);
         }
 
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Getting data...");
+            WriteProgressInfo("Getting data...");
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save mean data file";
+            saveFileDialog.Title = @"Save mean data file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-mean-"
-                                    + comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
-                                    + "-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-mean-"
+                                      + comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem
+                                      + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-
                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                 {
                     bool isValid = true;
-                    List<int> trialList = listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(0).Trials;
-                    foreach (StatisticPlotContainer temp in listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                    List<int> trialList =
+                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                    .ElementAt(0)
+                                                                    .Trials;
+
+                    if (
+                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                    .Any(temp => !trialList.SequenceEqual(temp.Trials)))
                     {
-                        if (!trialList.SequenceEqual(temp.Trials))
-                        {
-                            writeToLogBox("Trial selections are not equal!");
-                            isValid = false;
-                            break;
-                        }
+                        WriteToLogBox("Trial selections are not equal!");
+                        isValid = false;
                     }
 
                     if (isValid)
                     {
                         int meanCounter;
                         int trialListCounter = 0;
-                        double[,] data = new double[trialList.Count, listBox_DescriptiveStatistic1_SelectedTrials.Items.Count];
+                        var data = new double[trialList.Count,listBox_DescriptiveStatistic1_SelectedTrials.Items.Count];
 
-                        for (meanCounter = 0; meanCounter < listBox_DescriptiveStatistic1_SelectedTrials.Items.Count; meanCounter++)
+                        for (meanCounter = 0;
+                             meanCounter < listBox_DescriptiveStatistic1_SelectedTrials.Items.Count;
+                             meanCounter++)
                         {
-                            setProgressBarValue((100.0 / listBox_DescriptiveStatistic1_SelectedTrials.Items.Count) * meanCounter);
-                            StatisticPlotContainer temp = listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(meanCounter);
+                            SetProgressBarValue((100.0/listBox_DescriptiveStatistic1_SelectedTrials.Items.Count)*
+                                                meanCounter);
+                            StatisticPlotContainer temp =
+                                listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                            .ElementAt(meanCounter);
 
-                            DateTime turn = mySQLWrapper.getTurnDateTime(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
-                            DataSet statisticDataSet = mySQLWrapper.getStatisticDataSet(temp.Study, temp.Group, temp.Szenario, temp.Subject.id, turn);
+                            DateTime turn = _mySqlWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
+                                                                          temp.Subject.ID,
+                                                                          Convert.ToInt32(
+                                                                              temp.Turn.Substring("Turn".Length)));
+                            DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(temp.Study, temp.Group,
+                                                                                         temp.Szenario, temp.Subject.ID,
+                                                                                         turn);
 
                             trialListCounter = 0;
                             for (int rowCounter = 0; rowCounter < statisticDataSet.Tables[0].Rows.Count; rowCounter++)
@@ -1278,35 +1429,43 @@ namespace ManipAnalysis
                                     switch (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString())
                                     {
                                         case "Vector correlation":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["velocity_vector_correlation"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["velocity_vector_correlation"]);
                                             break;
 
                                         case "Perpendicular distance 300ms - Abs":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
                                             break;
 
                                         case "Mean perpendicular distance - Abs":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
                                             break;
 
                                         case "Max perpendicular distance - Abs":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
                                             break;
 
                                         case "Perpendicular distance 300ms - Sign":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
                                             break;
 
                                         case "Max perpendicular distance - Sign":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
                                             break;
 
                                         case "Trajectory length abs":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_abs"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["trajectory_length_abs"]);
                                             break;
 
                                         case "Trajectory length ratio":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
                                             break;
 
                                         case "Enclosed area":
@@ -1322,32 +1481,35 @@ namespace ManipAnalysis
                             }
                         }
 
-                        myMatlabWrapper.setWorkspaceData("data", data);
+                        _myMatlabWrapper.SetWorkspaceData("data", data);
 
                         double[,] dataMean;
                         double[,] dataStd;
 
                         if (meanCounter > 1)
                         {
-                            myMatlabWrapper.execute("dataMean = mean(transpose(data));");
-                            myMatlabWrapper.execute("dataStd = std(transpose(data));");
-                            dataMean = myMatlabWrapper.getWorkspaceData("dataMean");
-                            dataStd = myMatlabWrapper.getWorkspaceData("dataStd");
+                            _myMatlabWrapper.Execute("dataMean = mean(transpose(data));");
+                            _myMatlabWrapper.Execute("dataStd = std(transpose(data));");
+                            dataMean = _myMatlabWrapper.GetWorkspaceData("dataMean");
+                            dataStd = _myMatlabWrapper.GetWorkspaceData("dataStd");
                         }
                         else
                         {
-                            dataMean = new double[,] { { data[0, 0], 0 } };
-                            dataStd = new double[,] { { 0, 0 } }; ;
+                            dataMean = new double[,] {{data[0, 0], 0}};
+                            dataStd = new double[,] {{0, 0}};
                         }
 
-                        List<string> cache = new List<string>();
-                        FileStream meanDataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                        StreamWriter meanDataFileWriter = new StreamWriter(meanDataFileStream);
+                        var cache = new List<string>();
+                        var meanDataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create,
+                                                                FileAccess.Write);
+                        var meanDataFileWriter = new StreamWriter(meanDataFileStream);
 
                         string personNames = "";
                         for (int i = 0; i < listBox_DescriptiveStatistic1_SelectedTrials.Items.Count; i++)
                         {
-                            StatisticPlotContainer tempStatisticPlotContainer = listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>().ElementAt(i);
+                            StatisticPlotContainer tempStatisticPlotContainer =
+                                listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>()
+                                                                            .ElementAt(i);
                             if (i == 0)
                             {
                                 personNames += tempStatisticPlotContainer.Subject;
@@ -1362,14 +1524,13 @@ namespace ManipAnalysis
 
                         for (int i = 0; i < trialListCounter; i++)
                         {
-
-                            string tempLine = trialList.ElementAt(i).ToString() + ";";
+                            string tempLine = trialList.ElementAt(i) + ";";
 
                             for (int j = 0; j < meanCounter; j++)
                             {
                                 tempLine += DoubleConverter.ToExactString(data[i, j]) + ";";
                             }
-                            
+
                             tempLine += DoubleConverter.ToExactString(dataMean[0, i])
                                         + ";"
                                         + DoubleConverter.ToExactString(dataStd[0, i]);
@@ -1385,793 +1546,497 @@ namespace ManipAnalysis
                         meanDataFileWriter.Close();
                         meanDataFileStream.Close();
 
-                        myMatlabWrapper.clearWorkspace();
+                        _myMatlabWrapper.ClearWorkspace();
                     }
                 }
             }
-            writeProgressInfo("Ready");
-            setProgressBarValue(0);
+            WriteProgressInfo("Ready");
+            SetProgressBarValue(0);
         }
 
         private void checkBox_PauseThread_CheckedChanged(object sender, EventArgs e)
         {
-            ThreadManager.pause = checkBox_PauseThread.Checked;
+            ThreadManager.Pause = checkBox_PauseThread.Checked;
         }
 
         private void button_DataManipulation_UpdateGroupID_Click(object sender, EventArgs e)
         {
-            mySQLWrapper.changeGroupID(
-                                            Convert.ToInt32(textBox_DataManipulation_OldGroupID.Text),
-                                            Convert.ToInt32(textBox_DataManipulation_NewGroupID.Text)
-                                            );
+            _mySqlWrapper.ChangeGroupID(
+                Convert.ToInt32(textBox_DataManipulation_OldGroupID.Text),
+                Convert.ToInt32(textBox_DataManipulation_NewGroupID.Text)
+                );
         }
 
         private void button_DataManipulation_UpdateSubjectID_Click(object sender, EventArgs e)
         {
-            mySQLWrapper.changeSubjectID(
-                                            Convert.ToInt32(textBox_DataManipulation_OldSubjectID.Text),
-                                            Convert.ToInt32(textBox_DataManipulation_NewSubjectID.Text)
-                                            );
+            _mySqlWrapper.ChangeSubjectID(
+                Convert.ToInt32(textBox_DataManipulation_OldSubjectID.Text),
+                Convert.ToInt32(textBox_DataManipulation_NewSubjectID.Text)
+                );
         }
 
         private void button_DataManipulation_UpdateGroupName_Click(object sender, EventArgs e)
         {
-            mySQLWrapper.changeGroupName(
-                                            Convert.ToInt32(textBox_DataManipulation_GroupID.Text),
-                                            textBox_DataManipulation_NewGroupName.Text
-                                            );
+            _mySqlWrapper.ChangeGroupName(
+                Convert.ToInt32(textBox_DataManipulation_GroupID.Text),
+                textBox_DataManipulation_NewGroupName.Text
+                );
         }
 
         private void button_DataManipulation_UpdateSubjectName_Click(object sender, EventArgs e)
         {
-            mySQLWrapper.changeSubjectName(
-                                            Convert.ToInt32(textBox_DataManipulation_SubjectID.Text),
-                                            textBox_DataManipulation_NewSubjectName.Text
-                                            );
+            _mySqlWrapper.ChangeSubjectName(
+                Convert.ToInt32(textBox_DataManipulation_SubjectID.Text),
+                textBox_DataManipulation_NewSubjectName.Text
+                );
         }
 
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
-            Thread newThread = null;
-            newThread = new Thread(delegate()
-            {
-                // Debug Christian, can be deleted!
-                int debugCounterZero = 0;
-                int debugCounterTwo = 0;
-                int debugCounterThree = 0;
-                //
-                while (ThreadManager.getIndex(newThread) != 0)
+            var newThread = new Thread(delegate()
                 {
-                    Thread.Sleep(100);
-                }
-                enableTabPages(false);
-                setProgressBarValue(0);
-
-                for (int files = 0; files < listBox_Import_SelectedMeasureFiles.Items.Count; files++)
-                {
-                    while (ThreadManager.pause)
+                    while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
                     {
                         Thread.Sleep(100);
                     }
+                    EnableTabPages(false);
+                    SetProgressBarValue(0);
 
-                    setProgressBarValue((100.0 / listBox_Import_SelectedMeasureFiles.Items.Count) * files);
-
-                    string filename = listBox_Import_SelectedMeasureFiles.Items[files].ToString();
-
-                    string tempFileHash = MD5.computeHash(filename);
-
-                    if (!mySQLWrapper.checkIfMeasureFileHashExists(tempFileHash))
+                    for (int files = 0; files < listBox_Import_SelectedMeasureFiles.Items.Count; files++)
                     {
-                        DataContainer myDataContainter = new DataContainer();
-                        MeasureFileParser myParser = new MeasureFileParser(myDataContainter, this);
-
-                        if (myParser.parseFile(filename))
+                        while (ThreadManager.Pause)
                         {
-                            writeProgressInfo("Running multicore-calculation preparation...");
-                            #region MultiCore preparation
+                            Thread.Sleep(100);
+                        }
 
-                            List<Thread> multiCoreThreads = new List<Thread>();
+                        SetProgressBarValue((100.0/listBox_Import_SelectedMeasureFiles.Items.Count)*files);
 
-                            int[] szenarioTrialNumbers = myDataContainter.measureDataRaw.Select(t => t.szenario_trial_number).OrderBy(t => t).Distinct().ToArray();
-                            int[] targetNumbers = myDataContainter.measureDataRaw.Select(t => t.target_number).OrderBy(t => t).Distinct().ToArray();
+                        string filename = listBox_Import_SelectedMeasureFiles.Items[files].ToString();
 
-                            List<int>[] trialCoreDistribution = new List<int>[Environment.ProcessorCount];
-                            List<int>[] targetCoreDistribution = new List<int>[Environment.ProcessorCount];
+                        string tempFileHash = Md5.ComputeHash(filename);
 
-                            int coreCounter = 0;
-                            for (int i = 0; i < szenarioTrialNumbers.Count(); i++)
+                        if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
+                        {
+                            var myDataContainter = new DataContainer();
+                            var myParser = new MeasureFileParser(myDataContainter, this);
+
+                            if (myParser.ParseFile(filename))
                             {
-                                if (trialCoreDistribution[coreCounter] == null)
+                                WriteProgressInfo("Running multicore-calculation preparation...");
+
+                                #region MultiCore preparation
+
+                                var multiCoreThreads = new List<Thread>();
+
+                                int[] szenarioTrialNumbers =
+                                    myDataContainter.MeasureDataRaw.Select(t => t.SzenarioTrialNumber)
+                                                    .OrderBy(t => t)
+                                                    .Distinct()
+                                                    .ToArray();
+                                int[] targetNumbers =
+                                    myDataContainter.MeasureDataRaw.Select(t => t.TargetNumber)
+                                                    .OrderBy(t => t)
+                                                    .Distinct()
+                                                    .ToArray();
+
+                                var trialCoreDistribution = new List<int>[Environment.ProcessorCount];
+                                var targetCoreDistribution = new List<int>[Environment.ProcessorCount];
+
+                                int coreCounter = 0;
+                                for (int i = 0; i < szenarioTrialNumbers.Count(); i++)
                                 {
-                                    trialCoreDistribution[coreCounter] = new List<int>();
-                                }
-                                trialCoreDistribution[coreCounter].Add(szenarioTrialNumbers[i]);
-
-                                coreCounter++;
-                                if (coreCounter >= Environment.ProcessorCount)
-                                {
-                                    coreCounter = 0;
-                                }
-                            }
-
-                            coreCounter = 0;
-                            for (int i = 0; i < targetNumbers.Count(); i++)
-                            {
-                                if (targetCoreDistribution[coreCounter] == null)
-                                {
-                                    targetCoreDistribution[coreCounter] = new List<int>();
-                                }
-                                targetCoreDistribution[coreCounter].Add(targetNumbers[i]);
-
-                                coreCounter++;
-                                if (coreCounter >= Environment.ProcessorCount)
-                                {
-                                    coreCounter = 0;
-                                }
-                            }
-
-                            #endregion
-
-                            writeProgressInfo("Running duplicate entry detection...");
-                            #region Duplicate entry detection
-
-                            for (int core = 0; core < Environment.ProcessorCount; core++)
-                            {
-                                List<int> _threadTrials = trialCoreDistribution[core];
-
-                                multiCoreThreads.Add(new Thread(delegate()
-                                {
-                                    List<int> threadTrials = new List<int>(_threadTrials);
-
-                                    for (int i = 0; i < threadTrials.Count(); i++)
+                                    if (trialCoreDistribution[coreCounter] == null)
                                     {
-                                        List<MeasureDataContainer> tempRawData;
-                                        lock (myDataContainter)
-                                        {
-                                            tempRawData = new List<MeasureDataContainer>(myDataContainter.measureDataRaw.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
-                                        }
-
-                                        int entryCount = tempRawData.Select(t => t.time_stamp.Ticks).Count();
-                                        int entryUniqueCount = tempRawData.Select(t => t.time_stamp.Ticks).Distinct().Count();
-
-                                        if (entryCount != entryUniqueCount)
-                                        {
-                                            lock (myDataContainter)
-                                            {
-                                                List<MeasureDataContainer> tempList = myDataContainter.measureDataRaw.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).ToList();
-                                                for (int j = 0; j < tempList.Count; j++)
-                                                {
-                                                    tempList.ElementAt(j).contains_duplicates = true;
-                                                }
-                                            }
-                                        }
-
-                                        bool errorDetected;
-                                        do
-                                        {
-                                            errorDetected = false;
-                                            List<double> diffXYZ = new List<double>(); ;
-                                            for (int j = 0; j < (tempRawData.Count - 1); j++)
-                                            {
-                                                diffXYZ.Add(Math.Sqrt(Math.Pow(tempRawData[j].position_cartesian_x - tempRawData[j + 1].position_cartesian_x, 2) +
-                                                                           Math.Pow(tempRawData[j].position_cartesian_y - tempRawData[j + 1].position_cartesian_y, 2) +
-                                                                           Math.Pow(tempRawData[j].position_cartesian_z - tempRawData[j + 1].position_cartesian_z, 2)) /
-                                                                           tempRawData[j + 1].time_stamp.Subtract(tempRawData[j].time_stamp).TotalSeconds);
-                                            }
-                                            
-                                            int maxIndex = diffXYZ.IndexOf(diffXYZ.Max());
-
-                                            if (Math.Abs(diffXYZ.ElementAt(maxIndex) - diffXYZ.ElementAt(maxIndex - 1)) > 3)
-                                            {                                                
-                                                MeasureDataContainer errorEntry = tempRawData.ElementAt(maxIndex + 1);
-                                                writeToLogBox("Fixed error at time-stamp \"" + errorEntry.time_stamp.ToString("hh:mm:ss.fffffff") + "\" in file \"" + filename + "\"");
-                                                tempRawData.RemoveAt(maxIndex + 1);
-                                                errorDetected = true;
-                                            }
-                                        } while (errorDetected);
+                                        trialCoreDistribution[coreCounter] = new List<int>();
                                     }
-                                }));
+                                    trialCoreDistribution[coreCounter].Add(szenarioTrialNumbers[i]);
 
-                                foreach (Thread t in multiCoreThreads)
-                                {
-                                    t.Start();
+                                    coreCounter++;
+                                    if (coreCounter >= Environment.ProcessorCount)
+                                    {
+                                        coreCounter = 0;
+                                    }
                                 }
 
-                                foreach (Thread t in multiCoreThreads)
+                                coreCounter = 0;
+                                for (int i = 0; i < targetNumbers.Count(); i++)
                                 {
-                                    t.Join();
+                                    if (targetCoreDistribution[coreCounter] == null)
+                                    {
+                                        targetCoreDistribution[coreCounter] = new List<int>();
+                                    }
+                                    targetCoreDistribution[coreCounter].Add(targetNumbers[i]);
+
+                                    coreCounter++;
+                                    if (coreCounter >= Environment.ProcessorCount)
+                                    {
+                                        coreCounter = 0;
+                                    }
                                 }
 
-                                multiCoreThreads.Clear();
-                            }
+                                #endregion
 
-                            #endregion
+                                WriteProgressInfo("Running duplicate entry detection...");
 
-                            writeProgressInfo("Filtering data...");
-                            #region Butterworth filter
-
-                            int samplesPerSecond = Convert.ToInt32(textBox_Import_SamplesPerSec.Text);
-                            int filterOrder = Convert.ToInt32(textBox_Import_FilterOrder.Text);
-                            int cutoffFreq = Convert.ToInt32(textBox_Import_CutoffFreq.Text);
-                            int velocityCuttingThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
-
-                            myMatlabWrapper.setWorkspaceData("filterOrder",Convert.ToDouble(filterOrder));
-                            myMatlabWrapper.setWorkspaceData("cutoffFreq", Convert.ToDouble(cutoffFreq));
-                            myMatlabWrapper.setWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
-                            myMatlabWrapper.execute("[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
-
-                            for (int core = 0; core < Environment.ProcessorCount; core++)
-                            {
-                                List<int> _threadTrials = trialCoreDistribution[core];
-
-                                multiCoreThreads.Add(new Thread(delegate()
-                                {
-                                    List<int> threadTrials = new List<int>(_threadTrials);
-
-                                    for (int i = 0; i < threadTrials.Count(); i++)
-                                    {
-                                        List<MeasureDataContainer> tempRawDataEnum;
-                                        lock (myDataContainter)
-                                        {
-                                            tempRawDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataRaw.Where(t => t.contains_duplicates == false).Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
-                                        }
-                                        if (tempRawDataEnum.Count > 0)
-                                        {
-                                            DateTime[] tempTimeStamp = tempRawDataEnum.Select(t => t.time_stamp).ToArray();
-                                            int tempTargetNumber = tempRawDataEnum.Select(t => t.target_number).ElementAt(0);
-                                            int tempTargetTrialNumber = tempRawDataEnum.Select(t => t.target_trial_number).ElementAt(0);
-                                            int tempSzenarioTrialNumber = tempRawDataEnum.Select(t => t.szenario_trial_number).ElementAt(0);
-                                            bool tempIsCatchTrial = tempRawDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
-                                            int[] tempPositionStatus = tempRawDataEnum.Select(t => t.position_status).ToArray();
-
-                                            myMatlabWrapper.setWorkspaceData("force_actual_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_actual_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_actual_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_actual_z).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_nominal_z).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("force_moment_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_moment_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("force_moment_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.force_moment_z).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), tempRawDataEnum.Select(t => t.position_cartesian_z).ToArray());
-
-                                            myMatlabWrapper.execute("force_actual_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_actual_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_actual_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_actual_z" + threadTrials.ElementAt(i) + ");");
-
-                                            myMatlabWrapper.execute("force_nominal_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_nominal_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_nominal_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a,force_nominal_z" + threadTrials.ElementAt(i) + ");");
-
-                                            myMatlabWrapper.execute("force_moment_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_moment_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("force_moment_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, force_moment_z" + threadTrials.ElementAt(i) + ");");
-
-                                            myMatlabWrapper.execute("position_cartesian_x" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_x" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("position_cartesian_y" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_y" + threadTrials.ElementAt(i) + ");");
-                                            myMatlabWrapper.execute("position_cartesian_z" + threadTrials.ElementAt(i) + " = filtfilt(b, a, position_cartesian_z" + threadTrials.ElementAt(i) + ");");
-
-
-                                            double[,] force_actual_x = myMatlabWrapper.getWorkspaceData("force_actual_x" + threadTrials.ElementAt(i));
-                                            double[,] force_actual_y = myMatlabWrapper.getWorkspaceData("force_actual_y" + threadTrials.ElementAt(i));
-                                            double[,] force_actual_z = myMatlabWrapper.getWorkspaceData("force_actual_z" + threadTrials.ElementAt(i));
-
-                                            double[,] force_nominal_x = myMatlabWrapper.getWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i));
-                                            double[,] force_nominal_y = myMatlabWrapper.getWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i));
-                                            double[,] force_nominal_z = myMatlabWrapper.getWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i));
-
-                                            double[,] force_moment_x = myMatlabWrapper.getWorkspaceData("force_moment_x" + threadTrials.ElementAt(i));
-                                            double[,] force_moment_y = myMatlabWrapper.getWorkspaceData("force_moment_y" + threadTrials.ElementAt(i));
-                                            double[,] force_moment_z = myMatlabWrapper.getWorkspaceData("force_moment_z" + threadTrials.ElementAt(i));
-
-                                            double[,] position_cartesian_x = myMatlabWrapper.getWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
-                                            double[,] position_cartesian_y = myMatlabWrapper.getWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
-                                            double[,] position_cartesian_z = myMatlabWrapper.getWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
-
-
-                                            for (int j = 0; j < force_actual_x.Length; j++)
-                                            {
-                                                lock (myDataContainter)
-                                                {
-                                                    myDataContainter.measureDataFiltered.Add(new MeasureDataContainer(
-                                                                                tempTimeStamp[j],
-                                                                                force_actual_x[0, j],
-                                                                                force_actual_y[0, j],
-                                                                                force_actual_z[0, j],
-                                                                                force_nominal_x[0, j],
-                                                                                force_nominal_y[0, j],
-                                                                                force_nominal_z[0, j],
-                                                                                force_moment_x[0, j],
-                                                                                force_moment_y[0, j],
-                                                                                force_moment_z[0, j],
-                                                                                position_cartesian_x[0, j],
-                                                                                position_cartesian_y[0, j],
-                                                                                position_cartesian_z[0, j],
-                                                                                tempTargetNumber,
-                                                                                tempTargetTrialNumber,
-                                                                                tempSzenarioTrialNumber,
-                                                                                tempIsCatchTrial,
-                                                                                tempPositionStatus[j]
-                                                                                ));
-                                                }
-                                            }
-
-                                            myMatlabWrapper.clearWorkspaceData("force_actual_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_actual_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_actual_z" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("force_nominal_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_nominal_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_nominal_z" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("force_moment_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_moment_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("force_moment_z" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
-                                        }
-                                    }
-                                }));
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Start();
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Join();
-                            }
-                            myMatlabWrapper.clearWorkspace();
-                            multiCoreThreads.Clear();
-
-                            #endregion Butterworth Filter
-
-                            writeProgressInfo("Calculating velocity...");
-                            #region Velocity calcultion
-
-                            for (int core = 0; core < Environment.ProcessorCount; core++)
-                            {
-                                List<int> _threadTrials = trialCoreDistribution[core];
-
-                                multiCoreThreads.Add(new Thread(delegate()
-                                {
-                                    List<int> threadTrials = new List<int>(_threadTrials);
-
-                                    for (int i = 0; i < threadTrials.Count(); i++)
-                                    {
-                                        List<MeasureDataContainer> tempFilteredDataEnum;
-                                        lock (myDataContainter)
-                                        {
-                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
-                                        }
-                                        if (tempFilteredDataEnum.Count > 0)
-                                        {                                            
-                                            myMatlabWrapper.setWorkspaceData("time_stamp" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i), tempFilteredDataEnum.Select(t => t.position_cartesian_z).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("sampleRate", (1.0 / Convert.ToDouble(textBox_Import_SamplesPerSec.Text)));
-
-                                            myMatlabWrapper.execute("time_stamp" + threadTrials.ElementAt(i) + " = time_stamp" + threadTrials.ElementAt(i) + "(1:end-1) +  (diff(time_stamp" + threadTrials.ElementAt(i) + ") ./ 2);");
-                                            myMatlabWrapper.execute("velocity_x" + threadTrials.ElementAt(i) + " = diff(position_cartesian_x" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
-                                            myMatlabWrapper.execute("velocity_y" + threadTrials.ElementAt(i) + " = diff(position_cartesian_y" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
-                                            myMatlabWrapper.execute("velocity_z" + threadTrials.ElementAt(i) + " = diff(position_cartesian_z" + threadTrials.ElementAt(i) + ") ./ sampleRate;");
-
-                                            double[,] time_stamp = myMatlabWrapper.getWorkspaceData("time_stamp" + threadTrials.ElementAt(i));
-                                            double[,] velocity_x = myMatlabWrapper.getWorkspaceData("velocity_x" + threadTrials.ElementAt(i));
-                                            double[,] velocity_y = myMatlabWrapper.getWorkspaceData("velocity_y" + threadTrials.ElementAt(i));
-                                            double[,] velocity_z = myMatlabWrapper.getWorkspaceData("velocity_z" + threadTrials.ElementAt(i));                                            
-
-                                            for (int j = 0; j < velocity_x.Length; j++)
-                                            {
-                                                lock (myDataContainter)
-                                                {
-                                                    myDataContainter.velocityDataFiltered.Add(new VelocityDataContainer(
-                                                                                    new DateTime(Convert.ToInt64(time_stamp[0, j])),
-                                                                                    velocity_x[0, j],
-                                                                                    velocity_y[0, j],
-                                                                                    velocity_z[0, j],
-                                                                                    threadTrials.ElementAt(i),
-                                                                                    tempFilteredDataEnum.ElementAt(0).target_number,
-                                                                                    tempFilteredDataEnum.ElementAt(j).position_status
-                                                                                    ));
-                                                }
-                                            }
-
-                                            myMatlabWrapper.clearWorkspaceData("time_stamp" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocity_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocity_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocity_z" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_x" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_y" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("position_cartesian_z" + threadTrials.ElementAt(i));
-                                        }
-                                    }
-                                }));
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Start();
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Join();
-                            }
-                            myMatlabWrapper.clearWorkspace();
-                            multiCoreThreads.Clear();
-
-                            #endregion
-
-                            writeProgressInfo("Normalizing data...");
-                            #region Time normalization
-
-                            for (int core = 0; core < Environment.ProcessorCount; core++)
-                            {
-                                List<int> _threadTrials = trialCoreDistribution[core];
-
-                                multiCoreThreads.Add(new Thread(delegate()
-                                {
-                                    List<int> threadTrials = new List<int>(_threadTrials);
-                                    myMatlabWrapper.setWorkspaceData("newSampleCount", Convert.ToDouble(textBox_Import_NewSampleCount.Text));
-
-                                    for (int i = 0; i < threadTrials.Count(); i++)
-                                    {
-                                        List<MeasureDataContainer> tempFilteredDataEnum;
-                                        List<VelocityDataContainer> tempVelocityDataEnum;
-
-                                        lock (myDataContainter)
-                                        {                                            
-                                            tempFilteredDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t => t.position_status == 1).OrderBy(t => t.time_stamp));
-                                            if (myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t => t.position_status == 0).Count() > 0)
-                                            {
-                                                tempFilteredDataEnum.Insert(0, myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).Where(t => t.position_status == 0).OrderBy(t => t.time_stamp).Last());
-                                            }
-
-                                            tempVelocityDataEnum = new List<VelocityDataContainer>(myDataContainter.velocityDataFiltered.Where(t => t.szenario_trial_number == threadTrials.ElementAt(i)).OrderBy(t => t.time_stamp));
-                                        }
-
-                                        if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
-                                        {
-                                            int trimThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
-                                            List<VelocityDataContainer> tempVelocityDataEnumCropped = new List<VelocityDataContainer>();
-
-                                            if (trimThreshold > 0)
-                                            {
-                                                double velocityCropThreshold = tempVelocityDataEnum.Max(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2))) / 100.0 * trimThreshold;
-
-                                                if (tempVelocityDataEnum.Where(t => t.position_status == 0).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) > velocityCropThreshold) > 0)
-                                                {
-                                                    DateTime startTime = tempVelocityDataEnum.Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) > velocityCropThreshold).OrderBy(t => t.time_stamp).First().time_stamp;
-                                                    tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status == 0).Where(t => t.time_stamp >= startTime));
-                                                }
-                                                // Debug Christian, can be deleted!
-                                                else
-                                                {                                                    
-                                                    debugCounterZero++;
-                                                }
-                                                // ---------------------------------
-                                                tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status == 1));
-                                                
-                                                if (tempVelocityDataEnum.Where(t => t.position_status == 2).Count(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold) > 0)
-                                                {
-                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 2).Where(t => Math.Sqrt(Math.Pow(t.velocity_x, 2) + Math.Pow(t.velocity_z, 2)) < velocityCropThreshold).OrderBy(t => t.time_stamp).First().time_stamp;
-                                                    tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.position_status > 1).Where(t => t.time_stamp <= stopTime));                                                    
-                                                }
-                                                else 
-                                                {
-                                                    if (tempVelocityDataEnum.Exists(t => t.position_status == 3))
-                                                    {
-                                                        DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 3).OrderBy(t => t.time_stamp).Last().time_stamp;
-                                                        tempVelocityDataEnumCropped.AddRange(tempVelocityDataEnum.Where(t => t.time_stamp <= stopTime));
-                                                    }
-                                                    // Debug Christian, can be deleted!
-                                                    else
-                                                    {
-                                                        debugCounterThree++;
-                                                    }
-                                                    debugCounterTwo++;
-                                                    // ---------------------------------
-                                                }
-
-                                                tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
-                                            }
-                                            else if (trimThreshold < 0)
-                                            {
-                                                if(tempVelocityDataEnum.Exists(t => t.position_status == 3))
-                                                {
-                                                    DateTime stopTime = tempVelocityDataEnum.Where(t => t.position_status == 3).OrderBy(t => t.time_stamp).Last().time_stamp;
-                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status > 0).Where(t => t.time_stamp <= stopTime).ToList();
-                                                }
-                                                else
-                                                {
-                                                    tempVelocityDataEnumCropped = tempVelocityDataEnum.Where(t => t.position_status == 1).ToList();                                                    
-                                                }
-
-                                                tempVelocityDataEnum = tempVelocityDataEnumCropped.OrderBy(t => t.time_stamp).ToList();
-                                            }
-                                            
-
-                                            int tempTargetNumber = tempFilteredDataEnum.Select(t => t.target_number).ElementAt(0);
-                                            int tempTargetTrialNumber = tempFilteredDataEnum.Select(t => t.target_trial_number).ElementAt(0);
-                                            int tempSzenarioTrialNumber = tempFilteredDataEnum.Select(t => t.szenario_trial_number).ElementAt(0);
-                                            bool tempIsCatchTrial = tempFilteredDataEnum.Select(t => t.is_catch_trial).ElementAt(0);
-                                            List<string> errorList = new List<string>();
-
-                                            myMatlabWrapper.setWorkspaceData("measure_data_time" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("forceActualX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceActualY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceActualZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_actual_z).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("forceNominalX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceNominalY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_nominal_x).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("forceMomentX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceMomentY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.force_moment_x).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => t.position_cartesian_z).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("positionStatus" + threadTrials.ElementAt(i), tempFilteredDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.position_status)).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => Convert.ToDouble(t.time_stamp.Ticks)).ToArray());
-
-                                            myMatlabWrapper.setWorkspaceData("velocityX" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_x).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("velocityY" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_y).ToArray());
-                                            myMatlabWrapper.setWorkspaceData("velocityZ" + threadTrials.ElementAt(i), tempVelocityDataEnum.OrderBy(t => t.time_stamp).Select(t => t.velocity_z).ToArray());
-
-                                            ///
-
-                                            myMatlabWrapper.execute("[errorvar1_" + threadTrials.ElementAt(i) + ", forceActualX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar2_" + threadTrials.ElementAt(i) + ", forceActualY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar3_" + threadTrials.ElementAt(i) + ", forceActualZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceActualZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                                                                                                
-                                            myMatlabWrapper.execute("[errorvar4_" + threadTrials.ElementAt(i) + ", forceNominalX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar5_" + threadTrials.ElementAt(i) + ", forceNominalY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar6_" + threadTrials.ElementAt(i) + ", forceNominalZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceNominalZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                                                                                                 
-                                            myMatlabWrapper.execute("[errorvar7_" + threadTrials.ElementAt(i) + ", forceMomentX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar8_" + threadTrials.ElementAt(i) + ", forceMomentY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar9_" + threadTrials.ElementAt(i) + ", forceMomentZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(forceMomentZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            myMatlabWrapper.execute("[errorvar10_" + threadTrials.ElementAt(i) + ", positionCartesianX" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianX" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar11_" + threadTrials.ElementAt(i) + ", positionCartesianY" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianY" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar12_" + threadTrials.ElementAt(i) + ", positionCartesianZ" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionCartesianZ" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                                                                  
-                                            myMatlabWrapper.execute("[errorvar13_" + threadTrials.ElementAt(i) + ", positionStatus" + threadTrials.ElementAt(i) + ",newMeasureTime" + threadTrials.ElementAt(i) + "] = timeNorm(positionStatus" + threadTrials.ElementAt(i) + ",measure_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                                                                  
-                                            myMatlabWrapper.execute("[errorvar14_" + threadTrials.ElementAt(i) + ", velocityX" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityX" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar15_" + threadTrials.ElementAt(i) + ", velocityY" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityY" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-                                            myMatlabWrapper.execute("[errorvar16_" + threadTrials.ElementAt(i) + ", velocityZ" + threadTrials.ElementAt(i) + ",newVelocityTime" + threadTrials.ElementAt(i) + "] = timeNorm(velocityZ" + threadTrials.ElementAt(i) + ",velocity_data_time" + threadTrials.ElementAt(i) + ",newSampleCount);");
-
-                                            ///
-
-                                            for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
-                                            {
-                                                errorList.Add(Convert.ToString(myMatlabWrapper.getWorkspaceData("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i))));
-                                                myMatlabWrapper.clearWorkspaceData("errorvar" + errorVarCounterCounter + "_" + threadTrials.ElementAt(i));
-                                            }
-
-                                            if (errorList.Where(t => t != "" && t != null).Count() > 0)
-                                            {
-                                                writeToLogBox(errorList.Where(t => t != "" && t != null).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber).ToArray());
-                                            }
-
-                                            ///
-                                           
-                                            double[,] measure_data_time = myMatlabWrapper.getWorkspaceData("newMeasureTime" + threadTrials.ElementAt(i));
-                                            double[,] velocity_data_time = myMatlabWrapper.getWorkspaceData("newVelocityTime" + threadTrials.ElementAt(i));
-
-                                            double[,] force_actual_x = myMatlabWrapper.getWorkspaceData("forceActualX" + threadTrials.ElementAt(i));
-                                            double[,] force_actual_y = myMatlabWrapper.getWorkspaceData("forceActualY" + threadTrials.ElementAt(i));
-                                            double[,] force_actual_z = myMatlabWrapper.getWorkspaceData("forceActualZ" + threadTrials.ElementAt(i));
-
-                                            double[,] force_nominal_x = myMatlabWrapper.getWorkspaceData("forceNominalX" + threadTrials.ElementAt(i));
-                                            double[,] force_nominal_y = myMatlabWrapper.getWorkspaceData("forceNominalY" + threadTrials.ElementAt(i));
-                                            double[,] force_nominal_z = myMatlabWrapper.getWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i));
-
-                                            double[,] force_moment_x = myMatlabWrapper.getWorkspaceData("forceMomentX" + threadTrials.ElementAt(i));
-                                            double[,] force_moment_y = myMatlabWrapper.getWorkspaceData("forceMomentY" + threadTrials.ElementAt(i));
-                                            double[,] force_moment_z = myMatlabWrapper.getWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i));
-
-                                            double[,] position_cartesian_x = myMatlabWrapper.getWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i));
-                                            double[,] position_cartesian_y = myMatlabWrapper.getWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i));
-                                            double[,] position_cartesian_z = myMatlabWrapper.getWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i));
-
-                                            double[,] position_status = myMatlabWrapper.getWorkspaceData("positionStatus" + threadTrials.ElementAt(i));
-
-                                            double[,] velocity_x = myMatlabWrapper.getWorkspaceData("velocityX" + threadTrials.ElementAt(i));
-                                            double[,] velocity_y = myMatlabWrapper.getWorkspaceData("velocityY" + threadTrials.ElementAt(i));
-                                            double[,] velocity_z = myMatlabWrapper.getWorkspaceData("velocityZ" + threadTrials.ElementAt(i));
-
-                                            ///
-
-                                            for (int j = 0; j < measure_data_time.Length; j++)
-                                            {
-                                                lock (myDataContainter)
-                                                {
-                                                    myDataContainter.measureDataNormalized.Add(new MeasureDataContainer(
-                                                                                    new DateTime(Convert.ToInt64(measure_data_time[j, 0])),
-                                                                                    force_actual_x[j, 0],
-                                                                                    force_actual_y[j, 0],
-                                                                                    force_actual_z[j, 0],
-                                                                                    force_nominal_x[j, 0],
-                                                                                    force_nominal_y[j, 0],
-                                                                                    force_nominal_z[j, 0],
-                                                                                    force_moment_x[j, 0],
-                                                                                    force_moment_y[j, 0],
-                                                                                    force_moment_z[j, 0],
-                                                                                    position_cartesian_x[j, 0],
-                                                                                    position_cartesian_y[j, 0],
-                                                                                    position_cartesian_z[j, 0],
-                                                                                    tempTargetNumber,
-                                                                                    tempTargetTrialNumber,
-                                                                                    tempSzenarioTrialNumber,
-                                                                                    tempIsCatchTrial,
-                                                                                    Convert.ToInt32(position_status[j, 0])
-                                                                                    ));
-                                                }
-                                            }
-
-                                            for (int j = 0; j < velocity_data_time.Length; j++)
-                                            {
-                                                lock (myDataContainter)
-                                                {
-                                                    myDataContainter.velocityDataNormalized.Add(new VelocityDataContainer(
-                                                                                    new DateTime(Convert.ToInt64(velocity_data_time[j, 0])),
-                                                                                    velocity_x[j, 0],
-                                                                                    velocity_y[j, 0],
-                                                                                    velocity_z[j, 0],
-                                                                                    threadTrials.ElementAt(i),
-                                                                                    tempFilteredDataEnum.ElementAt(0).target_number,
-                                                                                    Convert.ToInt32(position_status[j, 0])
-                                                                                    ));
-                                                }
-                                            }
-
-                                            myMatlabWrapper.clearWorkspaceData("newMeasureTime" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("measure_data_time" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocity_data_time" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("forceActualX" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceActualY" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceActualZ" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("forceNominalX" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceNominalY" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceNominalZ" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("forceMomentX" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceMomentY" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("forceMomentZ" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("positionCartesianX" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("positionCartesianY" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("positionCartesianZ" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("positionStatus" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("newVelocityTime" + threadTrials.ElementAt(i));
-
-                                            myMatlabWrapper.clearWorkspaceData("velocityX" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocityY" + threadTrials.ElementAt(i));
-                                            myMatlabWrapper.clearWorkspaceData("velocityZ" + threadTrials.ElementAt(i));
-                                        }
-                                    }
-                                }));
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Start();
-                            }
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Join();
-                            }
-                            myMatlabWrapper.clearWorkspace();
-                            multiCoreThreads.Clear();
-
-                            #endregion
-
-                            writeProgressInfo("Calculating baselines...");
-                            #region Calculate baselines
-
-                            if (myDataContainter.szenarioName == "Szenario02")
-                            {
-                                myDataContainter.baselineData = new List<BaselineDataContainer>();
+                                #region Duplicate entry detection
 
                                 for (int core = 0; core < Environment.ProcessorCount; core++)
                                 {
-                                    List<int> _threadTargets = targetCoreDistribution[core];
-
+                                    int coreVar = core;
                                     multiCoreThreads.Add(new Thread(delegate()
-                                    {
-                                        List<int> threadTargets = new List<int>(_threadTargets);
-
-                                        for (int targetCount = 0; targetCount < threadTargets.Count(); targetCount++)
                                         {
-                                            List<MeasureDataContainer> tempNormalisedDataEnum;
-                                            List<VelocityDataContainer> tempVelocityDataNormalisedEnum;
-
-                                            lock (myDataContainter)
+                                            if (trialCoreDistribution.Length > coreVar)
                                             {
-                                                tempNormalisedDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataNormalized.Where(t => t.target_number == threadTargets.ElementAt(targetCount)).OrderBy(t => t.time_stamp));
-                                                tempVelocityDataNormalisedEnum = new List<VelocityDataContainer>(myDataContainter.velocityDataNormalized.Where(t => t.target_number == threadTargets.ElementAt(targetCount)).OrderBy(t => t.time_stamp));
-                                            }
+                                                var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
 
-                                            int[] tempSzenarioTrialNumbers = tempNormalisedDataEnum.Where(t => t.target_trial_number > 1).Select(t => t.szenario_trial_number).OrderBy(t => t).Distinct().ToArray();
-                                            int measureDataCount = tempNormalisedDataEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(0)).Count();
-
-                                            double[] positionCartesianX = new double[measureDataCount];
-                                            double[] positionCartesianY = new double[measureDataCount];
-                                            double[] positionCartesianZ = new double[measureDataCount];
-
-                                            double[] velocityX = new double[measureDataCount];
-                                            double[] velocityY = new double[measureDataCount];
-                                            double[] velocityZ = new double[measureDataCount];
-
-                                            for (int i = 0; i < tempSzenarioTrialNumbers.Count(); i++)
-                                            {
-                                                List<MeasureDataContainer> tempMeasureDataCountainerList = tempNormalisedDataEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(i)).OrderBy(t => t.time_stamp).ToList();
-                                                List<VelocityDataContainer> tempVelocityDataContainerList = tempVelocityDataNormalisedEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(i)).OrderBy(t => t.time_stamp).ToList();
-
-                                                for (int j = 0; j < tempMeasureDataCountainerList.Count(); j++)
+                                                for (int i = 0; i < threadTrials.Count(); i++)
                                                 {
-                                                    positionCartesianX[j] += tempMeasureDataCountainerList.ElementAt(j).position_cartesian_x;
-                                                    positionCartesianY[j] += tempMeasureDataCountainerList.ElementAt(j).position_cartesian_y;
-                                                    positionCartesianZ[j] += tempMeasureDataCountainerList.ElementAt(j).position_cartesian_z;
-                                                    velocityX[j] += tempVelocityDataContainerList.ElementAt(j).velocity_x;
-                                                    velocityY[j] += tempVelocityDataContainerList.ElementAt(j).velocity_y;
-                                                    velocityZ[j] += tempVelocityDataContainerList.ElementAt(j).velocity_z;
+                                                    List<MeasureDataContainer> tempRawData;
+                                                    lock (myDataContainter)
+                                                    {
+                                                        tempRawData =
+                                                            new List<MeasureDataContainer>(
+                                                                myDataContainter.MeasureDataRaw.Where(
+                                                                    t =>
+                                                                    t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                                .OrderBy(t => t.TimeStamp));
+                                                    }
+
+                                                    int entryCount = tempRawData.Select(t => t.TimeStamp.Ticks).Count();
+                                                    int entryUniqueCount =
+                                                        tempRawData.Select(t => t.TimeStamp.Ticks).Distinct().Count();
+
+                                                    if (entryCount != entryUniqueCount)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            List<MeasureDataContainer> tempList =
+                                                                myDataContainter.MeasureDataRaw.Where(
+                                                                    t =>
+                                                                    t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                                .ToList();
+                                                            for (int j = 0; j < tempList.Count; j++)
+                                                            {
+                                                                tempList.ElementAt(j).ContainsDuplicates = true;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    bool errorDetected;
+                                                    do
+                                                    {
+                                                        errorDetected = false;
+                                                        var diffXYZ = new List<double>();
+                                                        for (int j = 0; j < (tempRawData.Count - 1); j++)
+                                                        {
+                                                            diffXYZ.Add(Math.Sqrt(
+                                                                Math.Pow(
+                                                                    tempRawData[j].PositionCartesianX -
+                                                                    tempRawData[j + 1].PositionCartesianX, 2) +
+                                                                Math.Pow(
+                                                                    tempRawData[j].PositionCartesianY -
+                                                                    tempRawData[j + 1].PositionCartesianY, 2) +
+                                                                Math.Pow(
+                                                                    tempRawData[j].PositionCartesianZ -
+                                                                    tempRawData[j + 1].PositionCartesianZ, 2))/
+                                                                        tempRawData[j + 1].TimeStamp.Subtract(
+                                                                            tempRawData[j].TimeStamp).TotalSeconds);
+                                                        }
+
+                                                        int maxIndex = diffXYZ.IndexOf(diffXYZ.Max());
+
+                                                        if (
+                                                            Math.Abs(diffXYZ.ElementAt(maxIndex) -
+                                                                     diffXYZ.ElementAt(maxIndex - 1)) > 3)
+                                                        {
+                                                            MeasureDataContainer errorEntry =
+                                                                tempRawData.ElementAt(maxIndex + 1);
+                                                            WriteToLogBox("Fixed error at time-stamp \"" +
+                                                                          errorEntry.TimeStamp.ToString(
+                                                                              "hh:mm:ss.fffffff") + "\" in file \"" +
+                                                                          filename + "\"");
+                                                            tempRawData.RemoveAt(maxIndex + 1);
+                                                            errorDetected = true;
+                                                        }
+                                                    } while (errorDetected);
                                                 }
                                             }
+                                        }));
 
-                                            for (int i = 0; i < positionCartesianX.Length; i++)
-                                            {
-                                                positionCartesianX[i] /= tempSzenarioTrialNumbers.Count();
-                                                positionCartesianY[i] /= tempSzenarioTrialNumbers.Count();
-                                                positionCartesianZ[i] /= tempSzenarioTrialNumbers.Count();
-                                                velocityX[i] /= tempSzenarioTrialNumbers.Count();
-                                                velocityY[i] /= tempSzenarioTrialNumbers.Count();
-                                                velocityZ[i] /= tempSzenarioTrialNumbers.Count();
-                                            }
+                                    foreach (Thread t in multiCoreThreads)
+                                    {
+                                        t.Start();
+                                    }
 
-                                            DateTime tempFileCreationDateTime = DateTime.Parse("00:00:00 " + myDataContainter.measureFileCreationDate);
-                                            for (int i = 0; i < positionCartesianX.Length; i++)
+                                    foreach (Thread t in multiCoreThreads)
+                                    {
+                                        t.Join();
+                                    }
+
+                                    multiCoreThreads.Clear();
+                                }
+
+                                #endregion
+
+                                WriteProgressInfo("Filtering data...");
+
+                                #region Butterworth filter
+
+                                int samplesPerSecond = Convert.ToInt32(textBox_Import_SamplesPerSec.Text);
+                                int filterOrder = Convert.ToInt32(textBox_Import_FilterOrder.Text);
+                                int cutoffFreq = Convert.ToInt32(textBox_Import_CutoffFreq.Text);
+                                int velocityCuttingThreshold = Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
+
+                                _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(filterOrder));
+                                _myMatlabWrapper.SetWorkspaceData("cutoffFreq", Convert.ToDouble(cutoffFreq));
+                                _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+                                _myMatlabWrapper.Execute(
+                                    "[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
+
+                                for (int core = 0; core < Environment.ProcessorCount; core++)
+                                {
+                                    int coreVar = core;
+                                    multiCoreThreads.Add(new Thread(delegate()
+                                        {
+                                            var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
+
+                                            for (int i = 0; i < threadTrials.Count(); i++)
                                             {
+                                                List<MeasureDataContainer> tempRawDataEnum;
                                                 lock (myDataContainter)
                                                 {
-                                                    myDataContainter.baselineData.Add(new BaselineDataContainer(
-                                                                                        tempFileCreationDateTime.AddMilliseconds(i * 10),
-                                                                                        positionCartesianX[i],
-                                                                                        positionCartesianY[i],
-                                                                                        positionCartesianZ[i],
-                                                                                        velocityX[i],
-                                                                                        velocityY[i],
-                                                                                        velocityZ[i],
-                                                                                        threadTargets.ElementAt(targetCount)
-                                                                                        ));
+                                                    tempRawDataEnum =
+                                                        new List<MeasureDataContainer>(
+                                                            myDataContainter.MeasureDataRaw.Where(
+                                                                t => t.ContainsDuplicates == false)
+                                                                            .Where(
+                                                                                t =>
+                                                                                t.SzenarioTrialNumber ==
+                                                                                threadTrials.ElementAt(i))
+                                                                            .OrderBy(t => t.TimeStamp));
+                                                }
+                                                if (tempRawDataEnum.Count > 0)
+                                                {
+                                                    DateTime[] tempTimeStamp =
+                                                        tempRawDataEnum.Select(t => t.TimeStamp).ToArray();
+                                                    int tempTargetNumber =
+                                                        tempRawDataEnum.Select(t => t.TargetNumber).ElementAt(0);
+                                                    int tempTargetTrialNumber =
+                                                        tempRawDataEnum.Select(t => t.TargetTrialNumber).ElementAt(0);
+                                                    int tempSzenarioTrialNumber =
+                                                        tempRawDataEnum.Select(t => t.SzenarioTrialNumber)
+                                                                       .ElementAt(0);
+                                                    bool tempIsCatchTrial =
+                                                        tempRawDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
+                                                    int[] tempPositionStatus =
+                                                        tempRawDataEnum.Select(t => t.PositionStatus).ToArray();
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_actual_x" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceActualX).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_actual_y" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceActualY).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_actual_z" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceActualZ).ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_nominal_x" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceNominalX).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_nominal_y" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceNominalY).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_nominal_z" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceNominalZ).ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_moment_x" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceMomentX).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_moment_y" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceMomentY).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "force_moment_z" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.ForceMomentZ).ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_x" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.PositionCartesianX).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_y" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.PositionCartesianY).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_z" + threadTrials.ElementAt(i),
+                                                        tempRawDataEnum.Select(t => t.PositionCartesianZ).ToArray());
+
+                                                    _myMatlabWrapper.Execute("force_actual_x" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_actual_x" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_actual_y" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_actual_y" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_actual_z" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_actual_z" +
+                                                                             threadTrials.ElementAt(i) + ");");
+
+                                                    _myMatlabWrapper.Execute("force_nominal_x" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a,force_nominal_x" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_nominal_y" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a,force_nominal_y" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_nominal_z" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a,force_nominal_z" +
+                                                                             threadTrials.ElementAt(i) + ");");
+
+                                                    _myMatlabWrapper.Execute("force_moment_x" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_moment_x" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_moment_y" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_moment_y" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("force_moment_z" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, force_moment_z" +
+                                                                             threadTrials.ElementAt(i) + ");");
+
+                                                    _myMatlabWrapper.Execute("position_cartesian_x" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, position_cartesian_x" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("position_cartesian_y" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, position_cartesian_y" +
+                                                                             threadTrials.ElementAt(i) + ");");
+                                                    _myMatlabWrapper.Execute("position_cartesian_z" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             " = filtfilt(b, a, position_cartesian_z" +
+                                                                             threadTrials.ElementAt(i) + ");");
+
+
+                                                    double[,] forceActualX =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_actual_x" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceActualY =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_actual_y" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceActualZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_actual_z" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] forceNominalX =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_nominal_x" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceNominalY =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_nominal_y" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceNominalZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_nominal_z" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] forceMomentX =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_moment_x" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceMomentY =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_moment_y" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceMomentZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("force_moment_z" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] positionCartesianX =
+                                                        _myMatlabWrapper.GetWorkspaceData("position_cartesian_x" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] positionCartesianY =
+                                                        _myMatlabWrapper.GetWorkspaceData("position_cartesian_y" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] positionCartesianZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("position_cartesian_z" +
+                                                                                          threadTrials.ElementAt(i));
+
+
+                                                    for (int j = 0; j < forceActualX.Length; j++)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            myDataContainter.MeasureDataFiltered.Add(new MeasureDataContainer
+                                                                                                         (
+                                                                                                         tempTimeStamp[j
+                                                                                                             ],
+                                                                                                         forceActualX[
+                                                                                                             0, j],
+                                                                                                         forceActualY[
+                                                                                                             0, j],
+                                                                                                         forceActualZ[
+                                                                                                             0, j],
+                                                                                                         forceNominalX[
+                                                                                                             0, j],
+                                                                                                         forceNominalY[
+                                                                                                             0, j],
+                                                                                                         forceNominalZ[
+                                                                                                             0, j],
+                                                                                                         forceMomentX[
+                                                                                                             0, j],
+                                                                                                         forceMomentY[
+                                                                                                             0, j],
+                                                                                                         forceMomentZ[
+                                                                                                             0, j],
+                                                                                                         positionCartesianX
+                                                                                                             [0, j],
+                                                                                                         positionCartesianY
+                                                                                                             [0, j],
+                                                                                                         positionCartesianZ
+                                                                                                             [0, j],
+                                                                                                         tempTargetNumber,
+                                                                                                         tempTargetTrialNumber,
+                                                                                                         tempSzenarioTrialNumber,
+                                                                                                         tempIsCatchTrial,
+                                                                                                         tempPositionStatus
+                                                                                                             [j]
+                                                                                                         ));
+                                                        }
+                                                    }
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_actual_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_actual_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_actual_z" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_nominal_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_nominal_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_nominal_z" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_moment_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_moment_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("force_moment_z" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z" +
+                                                                                        threadTrials.ElementAt(i));
                                                 }
                                             }
-                                        }
-
-                                    }));
+                                        }));
                                 }
 
                                 foreach (Thread t in multiCoreThreads)
@@ -2183,644 +2048,1797 @@ namespace ManipAnalysis
                                 {
                                     t.Join();
                                 }
-
+                                _myMatlabWrapper.ClearWorkspace();
                                 multiCoreThreads.Clear();
-                            }
 
-                            #endregion
+                                #endregion Butterworth Filter
 
-                            writeProgressInfo("Calculating szenario mean times...");
-                            #region Calculate szenario mean times
+                                WriteProgressInfo("Calculating velocity...");
 
-                            for (int core = 0; core < Environment.ProcessorCount; core++)
-                            {
-                                List<int> _threadTargets = targetCoreDistribution[core];
+                                #region Velocity calcultion
 
-                                multiCoreThreads.Add(new Thread(delegate()
+                                for (int core = 0; core < Environment.ProcessorCount; core++)
                                 {
-                                    List<int> threadTargets = new List<int>(_threadTargets);
+                                    int coreVar = core;
 
-                                    for (int targetCount = 0; targetCount < threadTargets.Count(); targetCount++)
+                                    multiCoreThreads.Add(new Thread(delegate()
+                                        {
+                                            var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
+
+                                            for (int i = 0; i < threadTrials.Count(); i++)
+                                            {
+                                                List<MeasureDataContainer> tempFilteredDataEnum;
+                                                lock (myDataContainter)
+                                                {
+                                                    tempFilteredDataEnum =
+                                                        new List<MeasureDataContainer>(
+                                                            myDataContainter.MeasureDataFiltered.Where(
+                                                                t =>
+                                                                t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                            .OrderBy(t => t.TimeStamp));
+                                                }
+                                                if (tempFilteredDataEnum.Count > 0)
+                                                {
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "time_stamp" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.Select(
+                                                            t => Convert.ToDouble(t.TimeStamp.Ticks)).ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_x" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.Select(t => t.PositionCartesianX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_y" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.Select(t => t.PositionCartesianY)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "position_cartesian_z" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.Select(t => t.PositionCartesianZ)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData("sampleRate",
+                                                                                      (1.0/
+                                                                                       Convert.ToDouble(
+                                                                                           textBox_Import_SamplesPerSec
+                                                                                               .Text)));
+
+                                                    _myMatlabWrapper.Execute("time_stamp" + threadTrials.ElementAt(i) +
+                                                                             " = time_stamp" + threadTrials.ElementAt(i) +
+                                                                             "(1:end-1) +  (diff(time_stamp" +
+                                                                             threadTrials.ElementAt(i) + ") ./ 2);");
+                                                    _myMatlabWrapper.Execute("velocity_x" + threadTrials.ElementAt(i) +
+                                                                             " = diff(position_cartesian_x" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ") ./ sampleRate;");
+                                                    _myMatlabWrapper.Execute("velocity_y" + threadTrials.ElementAt(i) +
+                                                                             " = diff(position_cartesian_y" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ") ./ sampleRate;");
+                                                    _myMatlabWrapper.Execute("velocity_z" + threadTrials.ElementAt(i) +
+                                                                             " = diff(position_cartesian_z" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ") ./ sampleRate;");
+
+                                                    double[,] timeStamp =
+                                                        _myMatlabWrapper.GetWorkspaceData("time_stamp" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityX =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocity_x" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityY =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocity_y" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocity_z" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    for (int j = 0; j < velocityX.Length; j++)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            myDataContainter.VelocityDataFiltered.Add(new VelocityDataContainer
+                                                                                                          (
+                                                                                                          new DateTime(
+                                                                                                              Convert
+                                                                                                                  .ToInt64
+                                                                                                                  (timeStamp
+                                                                                                                       [
+                                                                                                                           0,
+                                                                                                                           j
+                                                                                                                       ])),
+                                                                                                          velocityX[0, j
+                                                                                                              ],
+                                                                                                          velocityY[0, j
+                                                                                                              ],
+                                                                                                          velocityZ[0, j
+                                                                                                              ],
+                                                                                                          threadTrials
+                                                                                                              .ElementAt
+                                                                                                              (i),
+                                                                                                          tempFilteredDataEnum
+                                                                                                              .ElementAt
+                                                                                                              (0)
+                                                                                                              .TargetNumber,
+                                                                                                          tempFilteredDataEnum
+                                                                                                              .ElementAt
+                                                                                                              (j)
+                                                                                                              .PositionStatus
+                                                                                                          ));
+                                                        }
+                                                    }
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("time_stamp" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocity_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocity_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocity_z" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_x" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_y" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z" +
+                                                                                        threadTrials.ElementAt(i));
+                                                }
+                                            }
+                                        }));
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Start();
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Join();
+                                }
+                                _myMatlabWrapper.ClearWorkspace();
+                                multiCoreThreads.Clear();
+
+                                #endregion
+
+                                WriteProgressInfo("Normalizing data...");
+
+                                #region Time normalization
+
+                                for (int core = 0; core < Environment.ProcessorCount; core++)
+                                {
+                                    int coreVar = core;
+                                    multiCoreThreads.Add(new Thread(delegate()
+                                        {
+                                            var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
+                                            _myMatlabWrapper.SetWorkspaceData("newSampleCount",
+                                                                              Convert.ToDouble(
+                                                                                  textBox_Import_NewSampleCount.Text));
+
+                                            for (int i = 0; i < threadTrials.Count(); i++)
+                                            {
+                                                List<MeasureDataContainer> tempFilteredDataEnum;
+                                                List<VelocityDataContainer> tempVelocityDataEnum;
+
+                                                lock (myDataContainter)
+                                                {
+                                                    tempFilteredDataEnum =
+                                                        new List<MeasureDataContainer>(
+                                                            myDataContainter.MeasureDataFiltered.Where(
+                                                                t =>
+                                                                t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                            .Where(t => t.PositionStatus == 1)
+                                                                            .OrderBy(t => t.TimeStamp));
+                                                    if (
+                                                        myDataContainter.MeasureDataFiltered.Where(
+                                                            t => t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                        .Any(t => t.PositionStatus == 0))
+                                                    {
+                                                        tempFilteredDataEnum.Insert(0,
+                                                                                    myDataContainter.MeasureDataFiltered
+                                                                                                    .Where(
+                                                                                                        t =>
+                                                                                                        t
+                                                                                                            .SzenarioTrialNumber ==
+                                                                                                        threadTrials
+                                                                                                            .ElementAt(i))
+                                                                                                    .Where(
+                                                                                                        t =>
+                                                                                                        t
+                                                                                                            .PositionStatus ==
+                                                                                                        0)
+                                                                                                    .OrderBy(
+                                                                                                        t =>
+                                                                                                        t.TimeStamp)
+                                                                                                    .Last());
+                                                    }
+
+                                                    tempVelocityDataEnum =
+                                                        new List<VelocityDataContainer>(
+                                                            myDataContainter.VelocityDataFiltered.Where(
+                                                                t =>
+                                                                t.SzenarioTrialNumber == threadTrials.ElementAt(i))
+                                                                            .OrderBy(t => t.TimeStamp));
+                                                }
+
+                                                if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
+                                                {
+                                                    int trimThreshold =
+                                                        Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text);
+                                                    var tempVelocityDataEnumCropped = new List<VelocityDataContainer>();
+
+                                                    if (trimThreshold > 0)
+                                                    {
+                                                        double velocityCropThreshold =
+                                                            tempVelocityDataEnum.Max(
+                                                                t =>
+                                                                Math.Sqrt(Math.Pow(t.VelocityX, 2) +
+                                                                          Math.Pow(t.VelocityZ, 2)))/100.0*
+                                                            trimThreshold;
+
+                                                        if (
+                                                            tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
+                                                                                .Count(
+                                                                                    t =>
+                                                                                    Math.Sqrt(
+                                                                                        Math.Pow(t.VelocityX, 2) +
+                                                                                        Math.Pow(t.VelocityZ, 2)) >
+                                                                                    velocityCropThreshold) > 0)
+                                                        {
+                                                            DateTime startTime =
+                                                                tempVelocityDataEnum.Where(
+                                                                    t =>
+                                                                    Math.Sqrt(Math.Pow(t.VelocityX, 2) +
+                                                                              Math.Pow(t.VelocityZ, 2)) >
+                                                                    velocityCropThreshold)
+                                                                                    .OrderBy(t => t.TimeStamp)
+                                                                                    .First()
+                                                                                    .TimeStamp;
+                                                            tempVelocityDataEnumCropped.AddRange(
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
+                                                                                    .Where(
+                                                                                        t => t.TimeStamp >= startTime));
+                                                        }
+
+                                                        tempVelocityDataEnumCropped.AddRange(
+                                                            tempVelocityDataEnum.Where(t => t.PositionStatus == 1));
+
+                                                        if (
+                                                            tempVelocityDataEnum.Where(t => t.PositionStatus == 2)
+                                                                                .Count(
+                                                                                    t =>
+                                                                                    Math.Sqrt(
+                                                                                        Math.Pow(t.VelocityX, 2) +
+                                                                                        Math.Pow(t.VelocityZ, 2)) <
+                                                                                    velocityCropThreshold) > 0)
+                                                        {
+                                                            DateTime stopTime =
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus == 2)
+                                                                                    .Where(
+                                                                                        t =>
+                                                                                        Math.Sqrt(
+                                                                                            Math.Pow(t.VelocityX, 2) +
+                                                                                            Math.Pow(t.VelocityZ, 2)) <
+                                                                                        velocityCropThreshold)
+                                                                                    .OrderBy(t => t.TimeStamp)
+                                                                                    .First()
+                                                                                    .TimeStamp;
+                                                            tempVelocityDataEnumCropped.AddRange(
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus > 1)
+                                                                                    .Where(t => t.TimeStamp <= stopTime));
+                                                        }
+                                                        else
+                                                        {
+                                                            if (tempVelocityDataEnum.Exists(t => t.PositionStatus == 3))
+                                                            {
+                                                                DateTime stopTime =
+                                                                    tempVelocityDataEnum.Where(
+                                                                        t => t.PositionStatus == 3)
+                                                                                        .OrderBy(t => t.TimeStamp)
+                                                                                        .Last()
+                                                                                        .TimeStamp;
+                                                                tempVelocityDataEnumCropped.AddRange(
+                                                                    tempVelocityDataEnum.Where(
+                                                                        t => t.TimeStamp <= stopTime));
+                                                            }
+                                                        }
+
+                                                        tempVelocityDataEnum =
+                                                            tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
+                                                                                       .ToList();
+                                                    }
+                                                    else if (trimThreshold < 0)
+                                                    {
+                                                        if (tempVelocityDataEnum.Exists(t => t.PositionStatus == 3))
+                                                        {
+                                                            DateTime stopTime =
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus == 3)
+                                                                                    .OrderBy(t => t.TimeStamp)
+                                                                                    .Last()
+                                                                                    .TimeStamp;
+                                                            tempVelocityDataEnumCropped =
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus > 0)
+                                                                                    .Where(t => t.TimeStamp <= stopTime)
+                                                                                    .ToList();
+                                                        }
+                                                        else
+                                                        {
+                                                            tempVelocityDataEnumCropped =
+                                                                tempVelocityDataEnum.Where(t => t.PositionStatus == 1)
+                                                                                    .ToList();
+                                                        }
+
+                                                        tempVelocityDataEnum =
+                                                            tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
+                                                                                       .ToList();
+                                                    }
+
+
+                                                    int tempTargetNumber =
+                                                        tempFilteredDataEnum.Select(t => t.TargetNumber).ElementAt(0);
+                                                    int tempTargetTrialNumber =
+                                                        tempFilteredDataEnum.Select(t => t.TargetTrialNumber)
+                                                                            .ElementAt(0);
+                                                    int tempSzenarioTrialNumber =
+                                                        tempFilteredDataEnum.Select(t => t.SzenarioTrialNumber)
+                                                                            .ElementAt(0);
+                                                    bool tempIsCatchTrial =
+                                                        tempFilteredDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
+                                                    var errorList = new List<string>();
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "measure_data_time" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(
+                                                                                t =>
+                                                                                Convert.ToDouble(t.TimeStamp.Ticks))
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceActualX" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceActualX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceActualY" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceActualY)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceActualZ" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceActualZ)
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceNominalX" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceNominalX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceNominalY" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceNominalX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceNominalZ" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceNominalX)
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceMomentX" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceMomentX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceMomentY" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceMomentX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "forceMomentZ" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.ForceMomentX)
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "positionCartesianX" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.PositionCartesianX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "positionCartesianY" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.PositionCartesianY)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "positionCartesianZ" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.PositionCartesianZ)
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "positionStatus" + threadTrials.ElementAt(i),
+                                                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(
+                                                                                t => Convert.ToDouble(t.PositionStatus))
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "velocity_data_time" + threadTrials.ElementAt(i),
+                                                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(
+                                                                                t =>
+                                                                                Convert.ToDouble(t.TimeStamp.Ticks))
+                                                                            .ToArray());
+
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "velocityX" + threadTrials.ElementAt(i),
+                                                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.VelocityX)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "velocityY" + threadTrials.ElementAt(i),
+                                                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.VelocityY)
+                                                                            .ToArray());
+                                                    _myMatlabWrapper.SetWorkspaceData(
+                                                        "velocityZ" + threadTrials.ElementAt(i),
+                                                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                                                                            .Select(t => t.VelocityZ)
+                                                                            .ToArray());
+
+                                                    //-----
+
+                                                    _myMatlabWrapper.Execute("[errorvar1_" + threadTrials.ElementAt(i) +
+                                                                             ", forceActualX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceActualX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar2_" + threadTrials.ElementAt(i) +
+                                                                             ", forceActualY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceActualY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar3_" + threadTrials.ElementAt(i) +
+                                                                             ", forceActualZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceActualZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    _myMatlabWrapper.Execute("[errorvar4_" + threadTrials.ElementAt(i) +
+                                                                             ", forceNominalX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceNominalX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar5_" + threadTrials.ElementAt(i) +
+                                                                             ", forceNominalY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceNominalY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar6_" + threadTrials.ElementAt(i) +
+                                                                             ", forceNominalZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceNominalZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    _myMatlabWrapper.Execute("[errorvar7_" + threadTrials.ElementAt(i) +
+                                                                             ", forceMomentX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceMomentX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar8_" + threadTrials.ElementAt(i) +
+                                                                             ", forceMomentY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceMomentY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar9_" + threadTrials.ElementAt(i) +
+                                                                             ", forceMomentZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(forceMomentZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    _myMatlabWrapper.Execute("[errorvar10_" + threadTrials.ElementAt(i) +
+                                                                             ", positionCartesianX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(positionCartesianX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar11_" + threadTrials.ElementAt(i) +
+                                                                             ", positionCartesianY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(positionCartesianY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar12_" + threadTrials.ElementAt(i) +
+                                                                             ", positionCartesianZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(positionCartesianZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    _myMatlabWrapper.Execute("[errorvar13_" + threadTrials.ElementAt(i) +
+                                                                             ", positionStatus" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newMeasureTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(positionStatus" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",measure_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    _myMatlabWrapper.Execute("[errorvar14_" + threadTrials.ElementAt(i) +
+                                                                             ", velocityX" + threadTrials.ElementAt(i) +
+                                                                             ",newVelocityTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(velocityX" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",velocity_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar15_" + threadTrials.ElementAt(i) +
+                                                                             ", velocityY" + threadTrials.ElementAt(i) +
+                                                                             ",newVelocityTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(velocityY" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",velocity_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+                                                    _myMatlabWrapper.Execute("[errorvar16_" + threadTrials.ElementAt(i) +
+                                                                             ", velocityZ" + threadTrials.ElementAt(i) +
+                                                                             ",newVelocityTime" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             "] = timeNorm(velocityZ" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",velocity_data_time" +
+                                                                             threadTrials.ElementAt(i) +
+                                                                             ",newSampleCount);");
+
+                                                    //-----
+
+                                                    for (int errorVarCounterCounter = 1;
+                                                         errorVarCounterCounter <= 16;
+                                                         errorVarCounterCounter++)
+                                                    {
+                                                        errorList.Add(
+                                                            Convert.ToString(
+                                                                _myMatlabWrapper.GetWorkspaceData("errorvar" +
+                                                                                                  errorVarCounterCounter +
+                                                                                                  "_" +
+                                                                                                  threadTrials.ElementAt
+                                                                                                      (i))));
+                                                        _myMatlabWrapper.ClearWorkspaceData("errorvar" +
+                                                                                            errorVarCounterCounter + "_" +
+                                                                                            threadTrials.ElementAt(i));
+                                                    }
+
+                                                    if (errorList.Any(t => !string.IsNullOrEmpty(t)))
+                                                    {
+                                                        WriteToLogBox(
+                                                            errorList.Where(t => !string.IsNullOrEmpty(t))
+                                                                     .Select(
+                                                                         t =>
+                                                                         t + " in " + filename +
+                                                                         " at szenario-trial-number " +
+                                                                         tempSzenarioTrialNumber)
+                                                                     .ToArray());
+                                                    }
+
+                                                    //-----
+
+                                                    double[,] measureDataTime =
+                                                        _myMatlabWrapper.GetWorkspaceData("newMeasureTime" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityDataTime =
+                                                        _myMatlabWrapper.GetWorkspaceData("newVelocityTime" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] forceActualX =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceActualX" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceActualY =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceActualY" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceActualZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceActualZ" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] forceNominalX =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceNominalX" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceNominalY =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceNominalY" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceNominalZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceNominalZ" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] forceMomentX =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceMomentX" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceMomentY =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceMomentY" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] forceMomentZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("forceMomentZ" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] positionCartesianX =
+                                                        _myMatlabWrapper.GetWorkspaceData("positionCartesianX" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] positionCartesianY =
+                                                        _myMatlabWrapper.GetWorkspaceData("positionCartesianY" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] positionCartesianZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("positionCartesianZ" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] positionStatus =
+                                                        _myMatlabWrapper.GetWorkspaceData("positionStatus" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    double[,] velocityX =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocityX" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityY =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocityY" +
+                                                                                          threadTrials.ElementAt(i));
+                                                    double[,] velocityZ =
+                                                        _myMatlabWrapper.GetWorkspaceData("velocityZ" +
+                                                                                          threadTrials.ElementAt(i));
+
+                                                    //-----
+
+                                                    for (int j = 0; j < measureDataTime.Length; j++)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            myDataContainter.MeasureDataNormalized.Add(new MeasureDataContainer
+                                                                                                           (
+                                                                                                           new DateTime(
+                                                                                                               Convert
+                                                                                                                   .ToInt64
+                                                                                                                   (measureDataTime
+                                                                                                                        [
+                                                                                                                            j,
+                                                                                                                            0
+                                                                                                                        ])),
+                                                                                                           forceActualX[
+                                                                                                               j, 0],
+                                                                                                           forceActualY[
+                                                                                                               j, 0],
+                                                                                                           forceActualZ[
+                                                                                                               j, 0],
+                                                                                                           forceNominalX
+                                                                                                               [j, 0],
+                                                                                                           forceNominalY
+                                                                                                               [j, 0],
+                                                                                                           forceNominalZ
+                                                                                                               [j, 0],
+                                                                                                           forceMomentX[
+                                                                                                               j, 0],
+                                                                                                           forceMomentY[
+                                                                                                               j, 0],
+                                                                                                           forceMomentZ[
+                                                                                                               j, 0],
+                                                                                                           positionCartesianX
+                                                                                                               [j, 0],
+                                                                                                           positionCartesianY
+                                                                                                               [j, 0],
+                                                                                                           positionCartesianZ
+                                                                                                               [j, 0],
+                                                                                                           tempTargetNumber,
+                                                                                                           tempTargetTrialNumber,
+                                                                                                           tempSzenarioTrialNumber,
+                                                                                                           tempIsCatchTrial,
+                                                                                                           Convert
+                                                                                                               .ToInt32(
+                                                                                                                   positionStatus
+                                                                                                                       [
+                                                                                                                           j,
+                                                                                                                           0
+                                                                                                                       ])
+                                                                                                           ));
+                                                        }
+                                                    }
+
+                                                    for (int j = 0; j < velocityDataTime.Length; j++)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            myDataContainter.VelocityDataNormalized.Add(new VelocityDataContainer
+                                                                                                            (
+                                                                                                            new DateTime
+                                                                                                                (Convert
+                                                                                                                     .ToInt64
+                                                                                                                     (velocityDataTime
+                                                                                                                          [
+                                                                                                                              j,
+                                                                                                                              0
+                                                                                                                          ])),
+                                                                                                            velocityX[
+                                                                                                                j, 0],
+                                                                                                            velocityY[
+                                                                                                                j, 0],
+                                                                                                            velocityZ[
+                                                                                                                j, 0],
+                                                                                                            threadTrials
+                                                                                                                .ElementAt
+                                                                                                                (i),
+                                                                                                            tempFilteredDataEnum
+                                                                                                                .ElementAt
+                                                                                                                (0)
+                                                                                                                .TargetNumber,
+                                                                                                            Convert
+                                                                                                                .ToInt32
+                                                                                                                (positionStatus
+                                                                                                                     [
+                                                                                                                         j,
+                                                                                                                         0
+                                                                                                                     ])
+                                                                                                            ));
+                                                        }
+                                                    }
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("newMeasureTime" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("measure_data_time" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocity_data_time" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceActualX" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceActualY" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceActualZ" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceNominalX" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceNominalY" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceNominalZ" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceMomentX" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceMomentY" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("forceMomentZ" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianX" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianY" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianZ" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("positionStatus" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("newVelocityTime" +
+                                                                                        threadTrials.ElementAt(i));
+
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocityX" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocityY" +
+                                                                                        threadTrials.ElementAt(i));
+                                                    _myMatlabWrapper.ClearWorkspaceData("velocityZ" +
+                                                                                        threadTrials.ElementAt(i));
+                                                }
+                                            }
+                                        }));
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Start();
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Join();
+                                }
+                                _myMatlabWrapper.ClearWorkspace();
+                                multiCoreThreads.Clear();
+
+                                #endregion
+
+                                WriteProgressInfo("Calculating baselines...");
+
+                                #region Calculate baselines
+
+                                if (myDataContainter.SzenarioName == "Szenario02")
+                                {
+                                    myDataContainter.BaselineData = new List<BaselineDataContainer>();
+
+                                    for (int core = 0; core < Environment.ProcessorCount; core++)
                                     {
-                                        List<MeasureDataContainer> tempNormalisedDataEnum;
+                                        int coreVar = core;
+                                        multiCoreThreads.Add(new Thread(delegate()
+                                            {
+                                                var threadTargets = new List<int>(targetCoreDistribution[coreVar]);
 
-                                        lock (myDataContainter)
-                                        {
-                                            tempNormalisedDataEnum = new List<MeasureDataContainer>(myDataContainter.measureDataNormalized.Where(t => t.target_number == threadTargets.ElementAt(targetCount)).OrderBy(t => t.time_stamp));
-                                        }
+                                                for (int targetCount = 0;
+                                                     targetCount < threadTargets.Count();
+                                                     targetCount++)
+                                                {
+                                                    List<MeasureDataContainer> tempNormalisedDataEnum;
+                                                    List<VelocityDataContainer> tempVelocityDataNormalisedEnum;
 
-                                        int[] tempSzenarioTrialNumbers = tempNormalisedDataEnum.Select(t => t.szenario_trial_number).OrderBy(t => t).Distinct().ToArray();
+                                                    lock (myDataContainter)
+                                                    {
+                                                        tempNormalisedDataEnum =
+                                                            new List<MeasureDataContainer>(
+                                                                myDataContainter.MeasureDataNormalized.Where(
+                                                                    t =>
+                                                                    t.TargetNumber ==
+                                                                    threadTargets.ElementAt(targetCount))
+                                                                                .OrderBy(t => t.TimeStamp));
+                                                        tempVelocityDataNormalisedEnum =
+                                                            new List<VelocityDataContainer>(
+                                                                myDataContainter.VelocityDataNormalized.Where(
+                                                                    t =>
+                                                                    t.TargetNumber ==
+                                                                    threadTargets.ElementAt(targetCount))
+                                                                                .OrderBy(t => t.TimeStamp));
+                                                    }
 
-                                        long[] meanTimeStdArray = new long[tempSzenarioTrialNumbers.Length];
+                                                    int[] tempSzenarioTrialNumbers =
+                                                        tempNormalisedDataEnum.Where(t => t.TargetTrialNumber > 1)
+                                                                              .Select(t => t.SzenarioTrialNumber)
+                                                                              .OrderBy(t => t)
+                                                                              .Distinct()
+                                                                              .ToArray();
+                                                    int measureDataCount =
+                                                        tempNormalisedDataEnum.Count(
+                                                            t =>
+                                                            t.SzenarioTrialNumber ==
+                                                            tempSzenarioTrialNumbers.ElementAt(0));
 
-                                        for (int i = 0; i < tempSzenarioTrialNumbers.Length; i++)
-                                        {
-                                            long maxVal = tempNormalisedDataEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(i)).Select(t => t.time_stamp.Ticks).Max();
-                                            long minVal = tempNormalisedDataEnum.Where(t => t.szenario_trial_number == tempSzenarioTrialNumbers.ElementAt(i)).Select(t => t.time_stamp.Ticks).Min();
+                                                    var positionCartesianX = new double[measureDataCount];
+                                                    var positionCartesianY = new double[measureDataCount];
+                                                    var positionCartesianZ = new double[measureDataCount];
 
-                                            meanTimeStdArray[i] = (maxVal - minVal);
-                                        }
+                                                    var velocityX = new double[measureDataCount];
+                                                    var velocityY = new double[measureDataCount];
+                                                    var velocityZ = new double[measureDataCount];
 
-                                        TimeSpan meanTime = new TimeSpan(meanTimeStdArray.Sum() / meanTimeStdArray.Length);
+                                                    for (int i = 0; i < tempSzenarioTrialNumbers.Count(); i++)
+                                                    {
+                                                        List<MeasureDataContainer> tempMeasureDataCountainerList =
+                                                            tempNormalisedDataEnum.Where(
+                                                                t =>
+                                                                t.SzenarioTrialNumber ==
+                                                                tempSzenarioTrialNumbers.ElementAt(i))
+                                                                                  .OrderBy(t => t.TimeStamp)
+                                                                                  .ToList();
+                                                        List<VelocityDataContainer> tempVelocityDataContainerList =
+                                                            tempVelocityDataNormalisedEnum.Where(
+                                                                t =>
+                                                                t.SzenarioTrialNumber ==
+                                                                tempSzenarioTrialNumbers.ElementAt(i))
+                                                                                          .OrderBy(t => t.TimeStamp)
+                                                                                          .ToList();
 
-                                        myMatlabWrapper.setWorkspaceData("timeArray" + threadTargets.ElementAt(targetCount), meanTimeStdArray);
-                                        myMatlabWrapper.execute("meanTimeStd" + threadTargets.ElementAt(targetCount) + " = int64(std(double(timeArray" + threadTargets.ElementAt(targetCount) + ")));");
-                                        TimeSpan meanTimeStd = new TimeSpan(myMatlabWrapper.getWorkspaceData("meanTimeStd" + threadTargets.ElementAt(targetCount)));
-                                        myMatlabWrapper.clearWorkspaceData("timeArray" + threadTargets.ElementAt(targetCount));
-                                        myMatlabWrapper.clearWorkspaceData("meanTimeStd" + threadTargets.ElementAt(targetCount));
+                                                        for (int j = 0; j < tempMeasureDataCountainerList.Count(); j++)
+                                                        {
+                                                            positionCartesianX[j] +=
+                                                                tempMeasureDataCountainerList.ElementAt(j)
+                                                                                             .PositionCartesianX;
+                                                            positionCartesianY[j] +=
+                                                                tempMeasureDataCountainerList.ElementAt(j)
+                                                                                             .PositionCartesianY;
+                                                            positionCartesianZ[j] +=
+                                                                tempMeasureDataCountainerList.ElementAt(j)
+                                                                                             .PositionCartesianZ;
+                                                            velocityX[j] +=
+                                                                tempVelocityDataContainerList.ElementAt(j).VelocityX;
+                                                            velocityY[j] +=
+                                                                tempVelocityDataContainerList.ElementAt(j).VelocityY;
+                                                            velocityZ[j] +=
+                                                                tempVelocityDataContainerList.ElementAt(j).VelocityZ;
+                                                        }
+                                                    }
 
+                                                    for (int i = 0; i < positionCartesianX.Length; i++)
+                                                    {
+                                                        positionCartesianX[i] /= tempSzenarioTrialNumbers.Count();
+                                                        positionCartesianY[i] /= tempSzenarioTrialNumbers.Count();
+                                                        positionCartesianZ[i] /= tempSzenarioTrialNumbers.Count();
+                                                        velocityX[i] /= tempSzenarioTrialNumbers.Count();
+                                                        velocityY[i] /= tempSzenarioTrialNumbers.Count();
+                                                        velocityZ[i] /= tempSzenarioTrialNumbers.Count();
+                                                    }
 
-                                        lock (myDataContainter)
-                                        {
-                                            myDataContainter.szenarioMeanTimeData.Add(new SzenarioMeanTimeDataContainer(
-                                                                                meanTime,
-                                                                                meanTimeStd,
-                                                                                threadTargets.ElementAt(targetCount)
-                                                                                ));
-                                        }
-
+                                                    DateTime tempFileCreationDateTime =
+                                                        DateTime.Parse("00:00:00 " +
+                                                                       myDataContainter.MeasureFileCreationDate);
+                                                    for (int i = 0; i < positionCartesianX.Length; i++)
+                                                    {
+                                                        lock (myDataContainter)
+                                                        {
+                                                            myDataContainter.BaselineData.Add(new BaselineDataContainer(
+                                                                                                  tempFileCreationDateTime
+                                                                                                      .AddMilliseconds(
+                                                                                                          i*10),
+                                                                                                  positionCartesianX[i],
+                                                                                                  positionCartesianY[i],
+                                                                                                  positionCartesianZ[i],
+                                                                                                  velocityX[i],
+                                                                                                  velocityY[i],
+                                                                                                  velocityZ[i],
+                                                                                                  threadTargets
+                                                                                                      .ElementAt(
+                                                                                                          targetCount)
+                                                                                                  ));
+                                                        }
+                                                    }
+                                                }
+                                            }));
                                     }
-                                }));
-                            }
 
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Start();
-                            }
+                                    foreach (Thread t in multiCoreThreads)
+                                    {
+                                        t.Start();
+                                    }
 
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Join();
-                            }
-                            myMatlabWrapper.clearWorkspace();
-                            multiCoreThreads.Clear();
+                                    foreach (Thread t in multiCoreThreads)
+                                    {
+                                        t.Join();
+                                    }
 
-                            #endregion
+                                    multiCoreThreads.Clear();
+                                }
 
-                            #region Uploading data to SQL server
+                                #endregion
 
-                            if (File.Exists("C:\\measureDataRaw.dat"))
-                            {
+                                WriteProgressInfo("Calculating szenario mean times...");
+
+                                #region Calculate szenario mean times
+
+                                for (int core = 0; core < Environment.ProcessorCount; core++)
+                                {
+                                    int coreVar = core;
+                                    multiCoreThreads.Add(new Thread(delegate()
+                                        {
+                                            var threadTargets = new List<int>(targetCoreDistribution[coreVar]);
+
+                                            for (int targetCount = 0;
+                                                 targetCount < threadTargets.Count();
+                                                 targetCount++)
+                                            {
+                                                List<MeasureDataContainer> tempNormalisedDataEnum;
+
+                                                lock (myDataContainter)
+                                                {
+                                                    tempNormalisedDataEnum =
+                                                        new List<MeasureDataContainer>(
+                                                            myDataContainter.MeasureDataNormalized.Where(
+                                                                t =>
+                                                                t.TargetNumber == threadTargets.ElementAt(targetCount))
+                                                                            .OrderBy(t => t.TimeStamp));
+                                                }
+
+                                                int[] tempSzenarioTrialNumbers =
+                                                    tempNormalisedDataEnum.Select(t => t.SzenarioTrialNumber)
+                                                                          .OrderBy(t => t)
+                                                                          .Distinct()
+                                                                          .ToArray();
+
+                                                var meanTimeStdArray = new long[tempSzenarioTrialNumbers.Length];
+
+                                                for (int i = 0; i < tempSzenarioTrialNumbers.Length; i++)
+                                                {
+                                                    long maxVal =
+                                                        tempNormalisedDataEnum.Where(
+                                                            t =>
+                                                            t.SzenarioTrialNumber ==
+                                                            tempSzenarioTrialNumbers.ElementAt(i))
+                                                                              .Select(t => t.TimeStamp.Ticks)
+                                                                              .Max();
+                                                    long minVal =
+                                                        tempNormalisedDataEnum.Where(
+                                                            t =>
+                                                            t.SzenarioTrialNumber ==
+                                                            tempSzenarioTrialNumbers.ElementAt(i))
+                                                                              .Select(t => t.TimeStamp.Ticks)
+                                                                              .Min();
+
+                                                    meanTimeStdArray[i] = (maxVal - minVal);
+                                                }
+
+                                                var meanTime =
+                                                    new TimeSpan(meanTimeStdArray.Sum()/meanTimeStdArray.Length);
+
+                                                _myMatlabWrapper.SetWorkspaceData(
+                                                    "timeArray" + threadTargets.ElementAt(targetCount), meanTimeStdArray);
+                                                _myMatlabWrapper.Execute("meanTimeStd" +
+                                                                         threadTargets.ElementAt(targetCount) +
+                                                                         " = int64(std(double(timeArray" +
+                                                                         threadTargets.ElementAt(targetCount) + ")));");
+                                                var meanTimeStd =
+                                                    new TimeSpan(
+                                                        _myMatlabWrapper.GetWorkspaceData("meanTimeStd" +
+                                                                                          threadTargets.ElementAt(
+                                                                                              targetCount)));
+                                                _myMatlabWrapper.ClearWorkspaceData("timeArray" +
+                                                                                    threadTargets.ElementAt(targetCount));
+                                                _myMatlabWrapper.ClearWorkspaceData("meanTimeStd" +
+                                                                                    threadTargets.ElementAt(targetCount));
+
+
+                                                lock (myDataContainter)
+                                                {
+                                                    myDataContainter.SzenarioMeanTimeData.Add(new SzenarioMeanTimeDataContainer
+                                                                                                  (
+                                                                                                  meanTime,
+                                                                                                  meanTimeStd,
+                                                                                                  threadTargets
+                                                                                                      .ElementAt(
+                                                                                                          targetCount)
+                                                                                                  ));
+                                                }
+                                            }
+                                        }));
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Start();
+                                }
+
+                                foreach (Thread t in multiCoreThreads)
+                                {
+                                    t.Join();
+                                }
+                                _myMatlabWrapper.ClearWorkspace();
+                                multiCoreThreads.Clear();
+
+                                #endregion
+
+                                #region Uploading data to SQL server
+
+                                if (File.Exists("C:\\measureDataRaw.dat"))
+                                {
+                                    File.Delete("C:\\measureDataRaw.dat");
+                                }
+                                if (File.Exists("C:\\measureDataFiltered.dat"))
+                                {
+                                    File.Delete("C:\\measureDataFiltered.dat");
+                                }
+                                if (File.Exists("C:\\measureDataNormalized.dat"))
+                                {
+                                    File.Delete("C:\\measureDataNormalized.dat");
+                                }
+                                if (File.Exists("C:\\velocityDataFiltered.dat"))
+                                {
+                                    File.Delete("C:\\velocityDataFiltered.dat");
+                                }
+                                if (File.Exists("C:\\velocityDataNormalized.dat"))
+                                {
+                                    File.Delete("C:\\velocityDataNormalized.dat");
+                                }
+
+                                int measureFileID =
+                                    _mySqlWrapper.InsertMeasureFile(
+                                        DateTime.Parse(myDataContainter.MeasureFileCreationTime + " " +
+                                                       myDataContainter.MeasureFileCreationDate),
+                                        myDataContainter.MeasureFileHash);
+                                int studyID = _mySqlWrapper.InsertStudy(myDataContainter.StudyName);
+                                int szenarioID = _mySqlWrapper.InsertSzenario(myDataContainter.SzenarioName);
+                                int groupID = _mySqlWrapper.InsertGroup(myDataContainter.GroupName);
+                                int subjectID = _mySqlWrapper.InsertSubject(myDataContainter.SubjectName,
+                                                                            myDataContainter.SubjectID);
+
+                                #region Upload trials
+
+                                for (int i = 0; i < szenarioTrialNumbers.Length; i++)
+                                {
+                                    WriteProgressInfo("Preparing Trial " + (i + 1) + " of " +
+                                                      szenarioTrialNumbers.Length);
+
+                                    List<MeasureDataContainer> measureDataRawList =
+                                        myDataContainter.MeasureDataRaw.Where(
+                                            t => t.SzenarioTrialNumber == szenarioTrialNumbers[i])
+                                                        .OrderBy(t => t.TimeStamp)
+                                                        .ToList();
+
+                                    int targetID =
+                                        _mySqlWrapper.InsertTarget(measureDataRawList.ElementAt(0).TargetNumber);
+
+                                    int targetTrialNumberID =
+                                        _mySqlWrapper.InsertTargetTrialNumber(
+                                            measureDataRawList.ElementAt(0).TargetTrialNumber);
+
+                                    int szenarioTrialNumberID =
+                                        _mySqlWrapper.InsertSzenarioTrialNumber(szenarioTrialNumbers[i]);
+
+                                    int trialInformationID =
+                                        _mySqlWrapper.InsertTrialInformation(
+                                            measureDataRawList.ElementAt(0).ContainsDuplicates, filterOrder, cutoffFreq,
+                                            velocityCuttingThreshold);
+
+                                    int isCatchTrialID =
+                                        _mySqlWrapper.InsertIsCatchTrial(measureDataRawList.ElementAt(0).IsCatchTrial);
+
+                                    int trialID = _mySqlWrapper.InsertTrial(
+                                        subjectID,
+                                        studyID,
+                                        groupID,
+                                        isCatchTrialID,
+                                        szenarioID,
+                                        targetID,
+                                        targetTrialNumberID,
+                                        szenarioTrialNumberID,
+                                        measureFileID,
+                                        trialInformationID
+                                        );
+
+
+                                    List<string> dataFileCache =
+                                        measureDataRawList.Select(
+                                            t =>
+                                            "," + trialID + "," + t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") +
+                                            "," + DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                            t.PositionStatus).ToList();
+
+                                    var dataFileStream = new FileStream("C:\\measureDataRaw.dat", FileMode.Append,
+                                                                        FileAccess.Write);
+
+                                    var dataFileWriter = new StreamWriter(dataFileStream);
+
+                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                    {
+                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    }
+
+
+                                    dataFileWriter.Close();
+                                    dataFileStream.Close();
+                                    dataFileCache.Clear();
+
+                                    if (
+                                        myDataContainter.MeasureDataFiltered.Select(t => t.SzenarioTrialNumber)
+                                                        .Contains(szenarioTrialNumbers[i]))
+                                    {
+                                        List<MeasureDataContainer> measureDataFilteredList =
+                                            myDataContainter.MeasureDataFiltered.Where(
+                                                t => t.SzenarioTrialNumber == szenarioTrialNumbers[i])
+                                                            .OrderBy(t => t.TimeStamp)
+                                                            .ToList();
+
+                                        dataFileCache.AddRange(
+                                            measureDataFilteredList.Select(
+                                                t =>
+                                                "," + trialID + "," +
+                                                t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                                t.PositionStatus));
+
+                                        dataFileStream = new FileStream("C:\\measureDataFiltered.dat", FileMode.Append,
+                                                                        FileAccess.Write);
+                                        dataFileWriter = new StreamWriter(dataFileStream);
+
+                                        for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                        {
+                                            dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                        }
+
+
+                                        dataFileWriter.Close();
+                                        dataFileStream.Close();
+                                        dataFileCache.Clear();
+                                    }
+
+                                    if (
+                                        myDataContainter.MeasureDataNormalized.Select(t => t.SzenarioTrialNumber)
+                                                        .Contains(szenarioTrialNumbers[i]))
+                                    {
+                                        List<MeasureDataContainer> measureDataNormalizedList =
+                                            myDataContainter.MeasureDataNormalized.Where(
+                                                t => t.SzenarioTrialNumber == szenarioTrialNumbers[i])
+                                                            .OrderBy(t => t.TimeStamp)
+                                                            .ToList();
+
+                                        dataFileCache.AddRange(
+                                            measureDataNormalizedList.Select(
+                                                t =>
+                                                "," + trialID + "," +
+                                                t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                                DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                                DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                                t.PositionStatus));
+
+                                        dataFileStream = new FileStream("C:\\measureDataNormalized.dat", FileMode.Append,
+                                                                        FileAccess.Write);
+                                        dataFileWriter = new StreamWriter(dataFileStream);
+
+                                        for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                        {
+                                            dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                        }
+
+
+                                        dataFileWriter.Close();
+                                        dataFileStream.Close();
+                                        dataFileCache.Clear();
+                                    }
+
+                                    if (
+                                        myDataContainter.VelocityDataFiltered.Select(t => t.SzenarioTrialNumber)
+                                                        .Contains(szenarioTrialNumbers[i]))
+                                    {
+                                        List<VelocityDataContainer> velocityDataFilteredList =
+                                            myDataContainter.VelocityDataFiltered.Where(
+                                                t => t.SzenarioTrialNumber == szenarioTrialNumbers[i])
+                                                            .OrderBy(t => t.TimeStamp)
+                                                            .ToList();
+
+                                        dataFileCache.AddRange(
+                                            velocityDataFilteredList.Select(
+                                                t =>
+                                                "," + trialID + "," +
+                                                t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                                DoubleConverter.ToExactString(t.VelocityX) + "," +
+                                                DoubleConverter.ToExactString(t.VelocityY) + "," +
+                                                DoubleConverter.ToExactString(t.VelocityZ)));
+
+                                        dataFileStream = new FileStream("C:\\velocityDataFiltered.dat", FileMode.Append,
+                                                                        FileAccess.Write);
+                                        dataFileWriter = new StreamWriter(dataFileStream);
+
+                                        for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                        {
+                                            dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                        }
+
+
+                                        dataFileWriter.Close();
+                                        dataFileStream.Close();
+                                        dataFileCache.Clear();
+                                    }
+
+                                    if (
+                                        myDataContainter.VelocityDataNormalized.Select(t => t.SzenarioTrialNumber)
+                                                        .Contains(szenarioTrialNumbers[i]))
+                                    {
+                                        List<VelocityDataContainer> velocityDataNormalizedList =
+                                            myDataContainter.VelocityDataNormalized.Where(
+                                                t => t.SzenarioTrialNumber == szenarioTrialNumbers[i])
+                                                            .OrderBy(t => t.TimeStamp)
+                                                            .ToList();
+
+                                        dataFileCache.AddRange(
+                                            velocityDataNormalizedList.Select(
+                                                t =>
+                                                "," + trialID + "," +
+                                                t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                                DoubleConverter.ToExactString(t.VelocityX) + "," +
+                                                DoubleConverter.ToExactString(t.VelocityY) + "," +
+                                                DoubleConverter.ToExactString(t.VelocityZ)));
+
+                                        dataFileStream = new FileStream("C:\\velocityDataNormalized.dat",
+                                                                        FileMode.Append, FileAccess.Write);
+                                        dataFileWriter = new StreamWriter(dataFileStream);
+
+                                        for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                        {
+                                            dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                        }
+
+
+                                        dataFileWriter.Close();
+                                        dataFileStream.Close();
+                                        dataFileCache.Clear();
+                                    }
+                                }
+
+                                WriteProgressInfo("Uploading trial data...");
+
+                                _mySqlWrapper.BulkInsertMeasureDataRaw("C:\\measureDataRaw.dat");
                                 File.Delete("C:\\measureDataRaw.dat");
-                            }
-                            if (File.Exists("C:\\measureDataFiltered.dat"))
-                            {
-                                File.Delete("C:\\measureDataFiltered.dat");
-                            }
-                            if (File.Exists("C:\\measureDataNormalized.dat"))
-                            {
-                                File.Delete("C:\\measureDataNormalized.dat");
-                            }
-                            if (File.Exists("C:\\velocityDataFiltered.dat"))
-                            {
-                                File.Delete("C:\\velocityDataFiltered.dat");
-                            }
-                            if (File.Exists("C:\\velocityDataNormalized.dat"))
-                            {
-                                File.Delete("C:\\velocityDataNormalized.dat");
-                            }
 
-                            int measureFileID = mySQLWrapper.insertMeasureFile(DateTime.Parse(myDataContainter.measureFileCreationTime + " " + myDataContainter.measureFileCreationDate), myDataContainter.measureFileHash);
-                            int studyID = mySQLWrapper.insertStudy(myDataContainter.studyName);
-                            int szenarioID = mySQLWrapper.insertSzenario(myDataContainter.szenarioName);
-                            int groupID = mySQLWrapper.insertGroup(myDataContainter.groupName);
-                            int subjectID = mySQLWrapper.insertSubject(myDataContainter.subjectName, myDataContainter.subjectID);
-
-
-                            #region Upload trials
-
-                            for (int i = 0; i < szenarioTrialNumbers.Length; i++)
-                            {
-                                writeProgressInfo("Preparing Trial " + (i + 1) + " of " + szenarioTrialNumbers.Length);
-                                
-                                List<MeasureDataContainer> measureDataRawList = myDataContainter.measureDataRaw.Where(t => t.szenario_trial_number == szenarioTrialNumbers[i]).OrderBy(t => t.time_stamp).ToList();
-                                List<MeasureDataContainer> measureDataFilteredList = null;
-                                List<MeasureDataContainer> measureDataNormalizedList = null;
-                                List<VelocityDataContainer> velocityDataFilteredList = null;
-                                List<VelocityDataContainer> velocityDataNormalizedList = null;
-
-                                int targetID = mySQLWrapper.insertTarget(measureDataRawList.ElementAt(0).target_number);
-                                int targetTrialNumberID = mySQLWrapper.insertTargetTrialNumber(measureDataRawList.ElementAt(0).target_trial_number);
-                                int szenarioTrialNumberID = mySQLWrapper.insertSzenarioTrialNumber(szenarioTrialNumbers[i]);
-                                int trialInformationID = mySQLWrapper.insertTrialInformation(measureDataRawList.ElementAt(0).contains_duplicates, filterOrder, cutoffFreq, velocityCuttingThreshold);
-                                int isCatchTrialID = mySQLWrapper.insertIsCatchTrial(measureDataRawList.ElementAt(0).is_catch_trial);
-                                int trialID = mySQLWrapper.insertTrial(
-                                                                           subjectID,
-                                                                           studyID,
-                                                                           groupID,
-                                                                           isCatchTrialID,
-                                                                           szenarioID,
-                                                                           targetID,
-                                                                           targetTrialNumberID,
-                                                                           szenarioTrialNumberID,
-                                                                           measureFileID,
-                                                                           trialInformationID
-                                                                        );
-
-
-                                List<string> dataFileCache = new List<string>();
-
-                                for (int j = 0; j < measureDataRawList.Count; j++)
+                                if (File.Exists("C:\\measureDataFiltered.dat"))
                                 {
-                                    string tempLine = "," + trialID + "," +
-                                                      measureDataRawList[j].time_stamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_actual_x) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_actual_y) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_actual_z) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_nominal_x) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_nominal_y) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_nominal_z) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_moment_x) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_moment_y) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].force_moment_z) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].position_cartesian_x) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].position_cartesian_y) + "," +
-                                                      DoubleConverter.ToExactString(measureDataRawList[j].position_cartesian_z) + "," +
-                                                      measureDataRawList[j].position_status;
-
-                                    dataFileCache.Add(tempLine);
+                                    _mySqlWrapper.BulkInsertMeasureDataFiltered("C:\\measureDataFiltered.dat");
+                                    File.Delete("C:\\measureDataFiltered.dat");
+                                }
+                                if (File.Exists("C:\\measureDataNormalized.dat"))
+                                {
+                                    _mySqlWrapper.BulkInsertMeasureDataNormalized("C:\\measureDataNormalized.dat");
+                                    File.Delete("C:\\measureDataNormalized.dat");
+                                }
+                                if (File.Exists("C:\\velocityDataFiltered.dat"))
+                                {
+                                    _mySqlWrapper.BulkInsertVelocityDataFiltered("C:\\velocityDataFiltered.dat");
+                                    File.Delete("C:\\velocityDataFiltered.dat");
+                                }
+                                if (File.Exists("C:\\velocityDataNormalized.dat"))
+                                {
+                                    _mySqlWrapper.BulkInsertVelocityDataNormalized("C:\\velocityDataNormalized.dat");
+                                    File.Delete("C:\\velocityDataNormalized.dat");
                                 }
 
+                                #endregion
 
-                                FileStream dataFileStream = new FileStream("C:\\measureDataRaw.dat", FileMode.Append, FileAccess.Write);
-                                StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                                #region Upload szenario mean times
 
-                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                WriteProgressInfo("Uploading szenario mean-time data...");
+                                for (int j = 0; j < myDataContainter.SzenarioMeanTimeData.Count; j++)
                                 {
-                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    int targetID =
+                                        _mySqlWrapper.InsertTarget(
+                                            myDataContainter.SzenarioMeanTimeData[j].TargetNumber);
+
+                                    int szenarioMeanTimeID = _mySqlWrapper.InsertSzenarioMeanTime(
+                                        subjectID,
+                                        studyID,
+                                        groupID,
+                                        targetID,
+                                        szenarioID,
+                                        measureFileID
+                                        );
+
+                                    _mySqlWrapper.InsertSzenarioMeanTimeData(szenarioMeanTimeID,
+                                                                             myDataContainter.SzenarioMeanTimeData[j]
+                                                                                 .MeanTime,
+                                                                             myDataContainter.SzenarioMeanTimeData[j]
+                                                                                 .MeanTimeStd);
                                 }
 
+                                #endregion
 
-                                dataFileWriter.Close();
-                                dataFileStream.Close();
-                                dataFileCache.Clear();
+                                #region Upload baselines
 
-                                if (myDataContainter.measureDataFiltered.Select(t => t.szenario_trial_number).Contains(szenarioTrialNumbers[i]))
+                                WriteProgressInfo("Uploading baseline data...");
+                                if (myDataContainter.BaselineData != null)
                                 {
-                                    measureDataFilteredList = myDataContainter.measureDataFiltered.Where(t => t.szenario_trial_number == szenarioTrialNumbers[i]).OrderBy(t => t.time_stamp).ToList();
-
-                                    for (int j = 0; j < measureDataFilteredList.Count; j++)
+                                    for (int j = 0; j < targetNumbers.Length; j++)
                                     {
-                                        string tempLine = "," + trialID + "," +
-                                                          measureDataFilteredList[j].time_stamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_actual_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_actual_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_actual_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_nominal_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_nominal_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_nominal_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_moment_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_moment_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].force_moment_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].position_cartesian_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].position_cartesian_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataFilteredList[j].position_cartesian_z) + "," +
-                                                          measureDataFilteredList[j].position_status;
+                                        int targetID = _mySqlWrapper.InsertTarget(targetNumbers[j]);
 
-                                        dataFileCache.Add(tempLine);
-                                    }
+                                        int baselineID = _mySqlWrapper.InsertBaseline(
+                                            subjectID,
+                                            studyID,
+                                            groupID,
+                                            targetID,
+                                            szenarioID,
+                                            measureFileID
+                                            );
 
-                                    dataFileStream = new FileStream("C:\\measureDataFiltered.dat", FileMode.Append, FileAccess.Write);
-                                    dataFileWriter = new StreamWriter(dataFileStream);
+                                        List<BaselineDataContainer> baselineDataList =
+                                            myDataContainter.BaselineData.Where(t => t.TargetNumber == targetNumbers[j])
+                                                            .OrderBy(t => t.PseudoTimeStamp)
+                                                            .ToList();
 
-                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                    {
-                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                    }
-
-
-                                    dataFileWriter.Close();
-                                    dataFileStream.Close();
-                                    dataFileCache.Clear();
-                                }
-
-                                if (myDataContainter.measureDataNormalized.Select(t => t.szenario_trial_number).Contains(szenarioTrialNumbers[i]))
-                                {
-                                    measureDataNormalizedList = myDataContainter.measureDataNormalized.Where(t => t.szenario_trial_number == szenarioTrialNumbers[i]).OrderBy(t => t.time_stamp).ToList();
-
-                                    for (int j = 0; j < measureDataNormalizedList.Count; j++)
-                                    {
-                                        string tempLine = "," + trialID + "," +
-                                                          measureDataNormalizedList[j].time_stamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_actual_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_actual_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_actual_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_nominal_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_nominal_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_nominal_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_moment_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_moment_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].force_moment_z) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].position_cartesian_x) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].position_cartesian_y) + "," +
-                                                          DoubleConverter.ToExactString(measureDataNormalizedList[j].position_cartesian_z) + "," +
-                                                          measureDataNormalizedList[j].position_status;
-
-                                        dataFileCache.Add(tempLine);
-                                    }
-
-                                    dataFileStream = new FileStream("C:\\measureDataNormalized.dat", FileMode.Append, FileAccess.Write);
-                                    dataFileWriter = new StreamWriter(dataFileStream);
-
-                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                    {
-                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                    }
-
-
-                                    dataFileWriter.Close();
-                                    dataFileStream.Close();
-                                    dataFileCache.Clear();
-                                }
-
-                                if (myDataContainter.velocityDataFiltered.Select(t => t.szenario_trial_number).Contains(szenarioTrialNumbers[i]))
-                                {
-                                    velocityDataFilteredList = myDataContainter.velocityDataFiltered.Where(t => t.szenario_trial_number == szenarioTrialNumbers[i]).OrderBy(t => t.time_stamp).ToList();
-
-                                    for (int j = 0; j < velocityDataFilteredList.Count; j++)
-                                    {
-                                        string tempLine = "," + trialID + "," +
-                                                          velocityDataFilteredList[j].time_stamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                                          DoubleConverter.ToExactString(velocityDataFilteredList[j].velocity_x) + "," +
-                                                          DoubleConverter.ToExactString(velocityDataFilteredList[j].velocity_y) + "," +
-                                                          DoubleConverter.ToExactString(velocityDataFilteredList[j].velocity_z);
-
-                                        dataFileCache.Add(tempLine);
-                                    }
-
-                                    dataFileStream = new FileStream("C:\\velocityDataFiltered.dat", FileMode.Append, FileAccess.Write);
-                                    dataFileWriter = new StreamWriter(dataFileStream);
-
-                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                    {
-                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                    }
-
-
-                                    dataFileWriter.Close();
-                                    dataFileStream.Close();
-                                    dataFileCache.Clear();
-                                }
-
-                                if (myDataContainter.velocityDataNormalized.Select(t => t.szenario_trial_number).Contains(szenarioTrialNumbers[i]))
-                                {
-                                    velocityDataNormalizedList = myDataContainter.velocityDataNormalized.Where(t => t.szenario_trial_number == szenarioTrialNumbers[i]).OrderBy(t => t.time_stamp).ToList();
-
-                                    for (int j = 0; j < velocityDataNormalizedList.Count; j++)
-                                    {
-                                        string tempLine = "," + trialID + "," +
-                                                          velocityDataNormalizedList[j].time_stamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                                          DoubleConverter.ToExactString(velocityDataNormalizedList[j].velocity_x) + "," +
-                                                          DoubleConverter.ToExactString(velocityDataNormalizedList[j].velocity_y) + "," +
-                                                          DoubleConverter.ToExactString(velocityDataNormalizedList[j].velocity_z);
-
-                                        dataFileCache.Add(tempLine);
-                                    }
-
-                                    dataFileStream = new FileStream("C:\\velocityDataNormalized.dat", FileMode.Append, FileAccess.Write);
-                                    dataFileWriter = new StreamWriter(dataFileStream);
-
-                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                    {
-                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                    }
-
-
-                                    dataFileWriter.Close();
-                                    dataFileStream.Close();
-                                    dataFileCache.Clear();
-                                }
-                            }
-
-                            writeProgressInfo("Uploading trial data...");
-
-                            mySQLWrapper.bulkInsertMeasureDataRaw("C:\\measureDataRaw.dat");
-                            File.Delete("C:\\measureDataRaw.dat");
-
-                            if (File.Exists("C:\\measureDataFiltered.dat"))
-                            {
-                                mySQLWrapper.bulkInsertMeasureDataFiltered("C:\\measureDataFiltered.dat");
-                                File.Delete("C:\\measureDataFiltered.dat");
-                            }
-                            if (File.Exists("C:\\measureDataNormalized.dat"))
-                            {
-                                mySQLWrapper.bulkInsertMeasureDataNormalized("C:\\measureDataNormalized.dat");
-                                File.Delete("C:\\measureDataNormalized.dat");
-                            }
-                            if (File.Exists("C:\\velocityDataFiltered.dat"))
-                            {
-                                mySQLWrapper.bulkInsertVelocityDataFiltered("C:\\velocityDataFiltered.dat");
-                                File.Delete("C:\\velocityDataFiltered.dat");
-                            }
-                            if (File.Exists("C:\\velocityDataNormalized.dat"))
-                            {
-                                mySQLWrapper.bulkInsertVelocityDataNormalized("C:\\velocityDataNormalized.dat");
-                                File.Delete("C:\\velocityDataNormalized.dat");
-                            }
-                            
-                            #endregion
-
-                            #region Upload szenario mean times
-
-                            writeProgressInfo("Uploading szenario mean-time data...");
-                            for (int j = 0; j < myDataContainter.szenarioMeanTimeData.Count; j++)
-                            {
-                               
-                                int targetID = mySQLWrapper.insertTarget(myDataContainter.szenarioMeanTimeData[j].target_number);
-
-                                int szenarioMeanTimeID = mySQLWrapper.insertSzenarioMeanTime(
-                                                                        subjectID,
-                                                                        studyID,
-                                                                        groupID,
-                                                                        targetID,
-                                                                        szenarioID,
-                                                                        measureFileID
-                                                                    );
-
-                                mySQLWrapper.insertSzenarioMeanTimeData(szenarioMeanTimeID, myDataContainter.szenarioMeanTimeData[j].mean_time, myDataContainter.szenarioMeanTimeData[j].mean_time_std);
-                            }
-
-                            #endregion
-
-                            #region Upload baselines
-
-                            writeProgressInfo("Uploading baseline data...");
-                            if (myDataContainter.baselineData != null)
-                            {
-                                for (int j = 0; j < targetNumbers.Length; j++)
-                                {
-                                    int targetID = mySQLWrapper.insertTarget(targetNumbers[j]);
-
-                                    int baselineID =  mySQLWrapper.insertBaseline(
-                                                                    subjectID,
-                                                                    studyID,
-                                                                    groupID,
-                                                                    targetID,
-                                                                    szenarioID,
-                                                                    measureFileID
-                                                                );
-
-                                    List<BaselineDataContainer> baselineDataList = myDataContainter.baselineData.Where(t => t.target_number == targetNumbers[j]).OrderBy(t => t.pseudo_time_stamp).ToList();
-
-                                    for (int k = 0; k < baselineDataList.Count; k++)
-                                    {
-                                        mySQLWrapper.insertBaselineData(
-                                                                            baselineID,
-                                                                            baselineDataList[k].pseudo_time_stamp,
-                                                                            baselineDataList[k].baseline_position_cartesian_x,
-                                                                            baselineDataList[k].baseline_position_cartesian_y,
-                                                                            baselineDataList[k].baseline_position_cartesian_z,
-                                                                            baselineDataList[k].baseline_velocity_x,
-                                                                            baselineDataList[k].baseline_velocity_y,
-                                                                            baselineDataList[k].baseline_velocity_z
-                                                                        );
+                                        for (int k = 0; k < baselineDataList.Count; k++)
+                                        {
+                                            _mySqlWrapper.InsertBaselineData(
+                                                baselineID,
+                                                baselineDataList[k].PseudoTimeStamp,
+                                                baselineDataList[k].BaselinePositionCartesianX,
+                                                baselineDataList[k].BaselinePositionCartesianY,
+                                                baselineDataList[k].BaselinePositionCartesianZ,
+                                                baselineDataList[k].BaselineVelocityX,
+                                                baselineDataList[k].BaselineVelocityY,
+                                                baselineDataList[k].BaselineVelocityZ
+                                                );
+                                        }
                                     }
                                 }
 
+                                #endregion
+
+                                #endregion
                             }
-
-                            #endregion
-
-                            #endregion
-
-                        }
-                        else
-                        {
-                            writeToLogBox("Fehler beim einlesen der Datei \"" + filename + "\"");
+                            else
+                            {
+                                WriteToLogBox("Fehler beim einlesen der Datei \"" + filename + "\"");
+                            }
                         }
                     }
-                }
-                setProgressBarValue(0);
-                writeProgressInfo("Ready");
-                enableTabPages(true);
+                    SetProgressBarValue(0);
+                    WriteProgressInfo("Ready");
+                    EnableTabPages(true);
 
-                writeToLogBox("Counted " + debugCounterZero + " events where velocity threshold in PositionsStatus 0 wasn't exceeded.");
-                writeToLogBox("Counted " + debugCounterTwo + " events where velocity threshold in PositionsStatus 2 wasn't undershot,");
-                writeToLogBox("of wich " + debugCounterTwo + " times a PositionsStatus 3 was not found.");
-                ThreadManager.remove(newThread);
-            });
-            ThreadManager.pushBack(newThread);
+                    ThreadManager.Remove(Thread.CurrentThread);
+                });
+            ThreadManager.PushBack(newThread);
             newThread.Start();
         }
 
         private void button_CalculateStatistics_Click(object sender, EventArgs e)
         {
-            Thread newThread = null;
-            newThread = new Thread(delegate()
-            {
-                while (ThreadManager.getIndex(newThread) != 0)
+            var newThread = new Thread(delegate()
                 {
-                    Thread.Sleep(100);
-                }
-
-                enableTabPages(false);
-                writeProgressInfo("Calculating statistics...");
-
-                List<int[]> trialInfos = mySQLWrapper.getStatisticCalculationInformation();
-
-                if (trialInfos != null)
-                {
-                    int counter = 1;
-
-                    foreach (int[] trialInfo in trialInfos)
+                    while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
                     {
-                        while (ThreadManager.pause)
-                        {
-                            Thread.Sleep(100);
-                        }
-                        setProgressBarValue((100.0 / trialInfos.Count()) * counter);
-                        counter++;
+                        Thread.Sleep(100);
+                    }
 
-                        DataSet measureDataSet = mySQLWrapper.getMeasureDataNormalizedDataSet(trialInfo[0]);
-                        DataSet velocityDataSet = mySQLWrapper.getVelocityDataNormalizedDataSet(trialInfo[0]);
-                        DataSet baselineDataSet = mySQLWrapper.getBaselineDataSet(trialInfo[1], trialInfo[2], trialInfo[3], trialInfo[4]);
-                        int targetNumber = trialInfo[5];
+                    EnableTabPages(false);
+                    WriteProgressInfo("Calculating statistics...");
 
-                        if (baselineDataSet.Tables[0].Rows.Count > 0)
+                    List<int[]> trialInfos = _mySqlWrapper.GetStatisticCalculationInformation();
+
+                    if (trialInfos != null)
+                    {
+                        int counter = 1;
+
+                        foreach (var trialInfo in trialInfos)
                         {
-                            if ((measureDataSet.Tables[0].Rows.Count == velocityDataSet.Tables[0].Rows.Count) && (velocityDataSet.Tables[0].Rows.Count == baselineDataSet.Tables[0].Rows.Count))
+                            while (ThreadManager.Pause)
                             {
-                                try
+                                Thread.Sleep(100);
+                            }
+                            SetProgressBarValue((100.0/trialInfos.Count())*counter);
+                            counter++;
+
+                            DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialInfo[0]);
+                            DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialInfo[0]);
+                            DataSet baselineDataSet = _mySqlWrapper.GetBaselineDataSet(trialInfo[1], trialInfo[2],
+                                                                                       trialInfo[3], trialInfo[4]);
+                            int targetNumber = trialInfo[5];
+
+                            if (baselineDataSet.Tables[0].Rows.Count > 0)
+                            {
+                                if ((measureDataSet.Tables[0].Rows.Count == velocityDataSet.Tables[0].Rows.Count) &&
+                                    (velocityDataSet.Tables[0].Rows.Count == baselineDataSet.Tables[0].Rows.Count))
                                 {
-                                    int sampleCount = measureDataSet.Tables[0].Rows.Count;
-
-                                    double[,] measureData = new double[sampleCount, 3];
-                                    double[,] velocityData = new double[sampleCount, 3];
-                                    double[,] baselineData = new double[sampleCount, 6];
-                                    double[] timeStamp = new double[sampleCount];
-
-                                    for (int i = 0; i < sampleCount; i++)
+                                    try
                                     {
-                                        timeStamp[i] = Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+                                        int sampleCount = measureDataSet.Tables[0].Rows.Count;
 
-                                        measureData[i, 0] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
-                                        measureData[i, 1] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
-                                        measureData[i, 2] = Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+                                        var measureData = new double[sampleCount,3];
+                                        var velocityData = new double[sampleCount,3];
+                                        var baselineData = new double[sampleCount,6];
+                                        var timeStamp = new double[sampleCount];
 
-                                        velocityData[i, 0] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
-                                        velocityData[i, 1] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
-                                        velocityData[i, 2] = Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+                                        for (int i = 0; i < sampleCount; i++)
+                                        {
+                                            timeStamp[i] =
+                                                Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
 
-                                        baselineData[i, 0] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_x"]);
-                                        baselineData[i, 1] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_y"]);
-                                        baselineData[i, 2] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_z"]);
-                                        baselineData[i, 3] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_x"]);
-                                        baselineData[i, 4] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_y"]);
-                                        baselineData[i, 5] = Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_z"]);
+                                            measureData[i, 0] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
+                                            measureData[i, 1] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
+                                            measureData[i, 2] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+
+                                            velocityData[i, 0] =
+                                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
+                                            velocityData[i, 1] =
+                                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
+                                            velocityData[i, 2] =
+                                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+
+                                            baselineData[i, 0] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_x"]);
+                                            baselineData[i, 1] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_y"]);
+                                            baselineData[i, 2] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_z"]);
+                                            baselineData[i, 3] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_velocity_x"]);
+                                            baselineData[i, 4] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_velocity_y"]);
+                                            baselineData[i, 5] =
+                                                Convert.ToDouble(
+                                                    baselineDataSet.Tables[0].Rows[i]["baseline_velocity_z"]);
+                                        }
+
+                                        List<double> tempTimeList = timeStamp.ToList();
+                                        int time300MsIndex =
+                                            tempTimeList.IndexOf(
+                                                tempTimeList.OrderBy(
+                                                    d =>
+                                                    Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
+                                                            .ElementAt(0));
+
+                                        _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
+                                        _myMatlabWrapper.SetWorkspaceData("time300msIndex", time300MsIndex);
+                                        _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
+                                        _myMatlabWrapper.SetWorkspaceData("velocityData", velocityData);
+                                        _myMatlabWrapper.SetWorkspaceData("baselineData", baselineData);
+
+                                        _myMatlabWrapper.Execute(
+                                            "vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
+                                        _myMatlabWrapper.Execute(
+                                            "enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
+                                        _myMatlabWrapper.Execute(
+                                            "length_abs = trajectLength(measureData(:,1),measureData(:,3));");
+                                        _myMatlabWrapper.Execute(
+                                            "length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
+                                        _myMatlabWrapper.Execute(
+                                            "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute(
+                                            "distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
+                                        _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
+                                        _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+                                        _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                                        _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                        _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                        _myMatlabWrapper.Execute(
+                                            "rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
+
+                                        double vectorCorrelation =
+                                            _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                        double enclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
+                                        double lengthAbs = _myMatlabWrapper.GetWorkspaceData("length_abs");
+                                        double lengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                                        double distance300MsAbs = _myMatlabWrapper.GetWorkspaceData("distance300msAbs");
+                                        double distance300MsSign = _myMatlabWrapper.GetWorkspaceData("distance300msSign");
+                                        double meanDistanceAbs = _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+                                        double maxDistanceAbs = _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                                        double maxDistanceSign = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+                                        double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
+
+                                        _mySqlWrapper.InsertStatisticData(
+                                            trialInfo[0],
+                                            vectorCorrelation,
+                                            lengthAbs, lengthRatio,
+                                            distance300MsAbs,
+                                            maxDistanceAbs,
+                                            meanDistanceAbs,
+                                            distance300MsSign,
+                                            maxDistanceSign,
+                                            enclosedArea,
+                                            rmse
+                                            );
                                     }
-
-                                    List<double> tempTimeList = timeStamp.ToList();
-                                    int time300msIndex = tempTimeList.IndexOf(tempTimeList.OrderBy(d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks))).ElementAt(0));
-
-                                    myMatlabWrapper.setWorkspaceData("targetNumber", targetNumber);
-                                    myMatlabWrapper.setWorkspaceData("time300msIndex", time300msIndex);
-                                    myMatlabWrapper.setWorkspaceData("measureData", measureData);
-                                    myMatlabWrapper.setWorkspaceData("velocityData", velocityData);
-                                    myMatlabWrapper.setWorkspaceData("baselineData", baselineData);
-
-                                    myMatlabWrapper.execute("vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
-                                    myMatlabWrapper.execute("enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
-                                    myMatlabWrapper.execute("length_abs = trajectLength(measureData(:,1),measureData(:,3));");
-                                    myMatlabWrapper.execute("length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
-                                    myMatlabWrapper.execute("distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
-                                    myMatlabWrapper.execute("distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
-                                    myMatlabWrapper.execute("distance300msAbs = distanceAbs(time300msIndex);");
-                                    myMatlabWrapper.execute("distance300msSign = distanceSign(time300msIndex);");
-                                    myMatlabWrapper.execute("meanDistanceAbs = mean(distanceAbs);");
-                                    myMatlabWrapper.execute("maxDistanceAbs = max(distanceAbs);");
-                                    myMatlabWrapper.execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                    myMatlabWrapper.execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                    myMatlabWrapper.execute("rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
-
-                                    double vector_correlation = myMatlabWrapper.getWorkspaceData("vector_correlation");
-                                    double enclosed_area = myMatlabWrapper.getWorkspaceData("enclosed_area");
-                                    double length_abs = myMatlabWrapper.getWorkspaceData("length_abs");
-                                    double length_ratio = myMatlabWrapper.getWorkspaceData("length_ratio");
-                                    double distance300msAbs = myMatlabWrapper.getWorkspaceData("distance300msAbs");
-                                    double distance300msSign = myMatlabWrapper.getWorkspaceData("distance300msSign");
-                                    double meanDistanceAbs = myMatlabWrapper.getWorkspaceData("meanDistanceAbs");
-                                    double maxDistanceAbs = myMatlabWrapper.getWorkspaceData("maxDistanceAbs");
-                                    double maxDistanceSign = myMatlabWrapper.getWorkspaceData("maxDistanceSign");
-                                    double rmse = myMatlabWrapper.getWorkspaceData("rmse");
-
-                                    int statisticDataID = mySQLWrapper.insertStatisticData(
-                                                                                            trialInfo[0],
-                                                                                            vector_correlation,
-                                                                                            length_abs,length_ratio,
-                                                                                            distance300msAbs,
-                                                                                            maxDistanceAbs,
-                                                                                            meanDistanceAbs,
-                                                                                            distance300msSign,
-                                                                                            maxDistanceSign,
-                                                                                            enclosed_area,
-                                                                                            rmse
-                                                                                            );                                                                                      
-                                }                                                  
-                                catch(Exception statisticException)
-                                {
-                                    writeToLogBox("Error in Statistic calculation: " + statisticException.ToString());
+                                    catch (Exception statisticException)
+                                    {
+                                        WriteToLogBox("Error in Statistic calculation: " + statisticException);
+                                    }
                                 }
+                                else
+                                {
+                                    WriteToLogBox("TrialID: " + trialInfo[0] + " - Data not normalised!");
+                                }
+                                _myMatlabWrapper.ClearWorkspace();
                             }
                             else
                             {
-                                writeToLogBox("TrialID: " + trialInfo[0] + " - Data not normalised!");
+                                WriteToLogBox("TrialID: " + trialInfo[0] + " - No matching baseline found!");
                             }
-                            myMatlabWrapper.clearWorkspace();
-                        }
-                        else
-                        {
-                            writeToLogBox("TrialID: " + trialInfo[0] + " - No matching baseline found!");
                         }
                     }
-                }
-                else
-                {
-                    writeToLogBox("Statistics already calculated!");
-                }
-                setProgressBarValue(0);
-                writeProgressInfo("Ready");
-                enableTabPages(true);
+                    else
+                    {
+                        WriteToLogBox("Statistics already calculated!");
+                    }
+                    SetProgressBarValue(0);
+                    WriteProgressInfo("Ready");
+                    EnableTabPages(true);
 
-                ThreadManager.remove(newThread);
-            });
-            ThreadManager.pushBack(newThread);
+                    ThreadManager.Remove(Thread.CurrentThread);
+                });
+            ThreadManager.PushBack(newThread);
             newThread.Start();
         }
 
         private void button_FixBrokenTrials_Click(object sender, EventArgs e)
         {
-            Thread newThread = null;
-            newThread = new Thread(delegate()
-            {
-                while (ThreadManager.getIndex(newThread) != 0)
+            var newThread = new Thread(delegate()
                 {
-                    Thread.Sleep(100);
-                }
-
-                enableTabPages(false);
-                writeProgressInfo("Fixing broken Trials...");
-
-                List<object[]> faultyTrialInformation = mySQLWrapper.getFaultyTrialInformation();
-
-                if (faultyTrialInformation != null)
-                {
-                    if (faultyTrialInformation.Count == 0)
+                    while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
                     {
-                        writeToLogBox("Trials already fixed!");
+                        Thread.Sleep(100);
+                    }
+
+                    EnableTabPages(false);
+                    WriteProgressInfo("Fixing broken Trials...");
+
+                    List<object[]> faultyTrialInformation = _mySqlWrapper.GetFaultyTrialInformation();
+
+                    if (faultyTrialInformation != null)
+                    {
+                        if (faultyTrialInformation.Count == 0)
+                        {
+                            WriteToLogBox("Trials already fixed!");
+                        }
+                        else
+                        {
+                            for (int trialIDCounter = 0;
+                                 trialIDCounter < faultyTrialInformation.Count;
+                                 trialIDCounter++)
+                            {
+                                while (ThreadManager.Pause)
+                                {
+                                    Thread.Sleep(100);
+                                }
+                                SetProgressBarValue((100.0/faultyTrialInformation.Count)*trialIDCounter);
+
+                                int[] trialFixInformation =
+                                    _mySqlWrapper.GetFaultyTrialFixInformation(
+                                        Convert.ToInt32(faultyTrialInformation[trialIDCounter][1]),
+                                        Convert.ToInt32(faultyTrialInformation[trialIDCounter][7]));
+
+                                DataSet upperStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[0]);
+                                DataSet lowerStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[1]);
+
+                                double velocityVectorCorrelation =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]))/2;
+                                double trajectoryLengthAbs =
+                                    (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) +
+                                     Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]))/
+                                    2;
+                                double trajectoryLengthRatioBaseline =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]))/2;
+                                double perpendicularDisplacement300MsAbs =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]))/
+                                    2;
+                                double maximalPerpendicularDisplacementAbs =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"
+                                            ]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0][
+                                             "maximal_perpendicular_displacement_abs"]))/2;
+                                double meanPerpendicularDisplacementAbs =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]))/
+                                    2;
+                                double perpendicularDisplacement300MsSign =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"
+                                             ]))/2;
+                                double maximalPerpendicularDisplacementSign =
+                                    (Convert.ToDouble(
+                                        upperStatisticDataSet.Tables[0].Rows[0][
+                                            "maximal_perpendicular_displacement_sign"]) +
+                                     Convert.ToDouble(
+                                         lowerStatisticDataSet.Tables[0].Rows[0][
+                                             "maximal_perpendicular_displacement_sign"]))/2;
+                                double enclosedArea =
+                                    (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]) +
+                                     Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]))/2;
+                                double rmse = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["rmse"]) +
+                                               Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"]))/2;
+
+                                _mySqlWrapper.InsertStatisticData(
+                                    Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
+                                    velocityVectorCorrelation,
+                                    trajectoryLengthAbs,
+                                    trajectoryLengthRatioBaseline,
+                                    perpendicularDisplacement300MsAbs,
+                                    maximalPerpendicularDisplacementAbs,
+                                    meanPerpendicularDisplacementAbs,
+                                    perpendicularDisplacement300MsSign,
+                                    maximalPerpendicularDisplacementSign,
+                                    enclosedArea,
+                                    rmse
+                                    );
+                            }
+                        }
                     }
                     else
                     {
-                        for (int trialIDCounter = 0; trialIDCounter < faultyTrialInformation.Count; trialIDCounter++)
-                        {
-                            while (ThreadManager.pause)
-                            {
-                                Thread.Sleep(100);
-                            }
-                            setProgressBarValue((100.0 / faultyTrialInformation.Count) * trialIDCounter);
-
-                            int[] trialFixInformation = mySQLWrapper.getFaultyTrialFixInformation(Convert.ToInt32(faultyTrialInformation[trialIDCounter][1]), Convert.ToInt32(faultyTrialInformation[trialIDCounter][7]));
-
-                            DataSet upperStatisticDataSet = mySQLWrapper.getStatisticDataSet(trialFixInformation[0]);
-                            DataSet lowerStatisticDataSet = mySQLWrapper.getStatisticDataSet(trialFixInformation[1]);
-
-                            double velocity_vector_correlation = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"])) / 2;
-                            double trajectory_length_abs = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"])) / 2;
-                            double trajectory_length_ratio_baseline = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"])) / 2;
-                            double perpendicular_displacement_300ms_abs = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"])) / 2;
-                            double maximal_perpendicular_displacement_abs = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"])) / 2;
-                            double mean_perpendicular_displacement_abs = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"])) / 2;
-                            double perpendicular_displacement_300ms_sign = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"])) / 2;
-                            double maximal_perpendicular_displacement_sign = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"])) / 2;
-                            double enclosed_area = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["enclosed_area"])) / 2;
-                            double rmse = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["rmse"]) + Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"])) / 2;
-
-                            mySQLWrapper.insertStatisticData(
-                                                              Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
-                                                              velocity_vector_correlation,
-                                                              trajectory_length_abs,
-                                                              trajectory_length_ratio_baseline,
-                                                              perpendicular_displacement_300ms_abs,
-                                                              maximal_perpendicular_displacement_abs,
-                                                              mean_perpendicular_displacement_abs,
-                                                              perpendicular_displacement_300ms_sign,
-                                                              maximal_perpendicular_displacement_sign,
-                                                              enclosed_area,
-                                                              rmse
-                                                            );
-                        }
+                        WriteToLogBox("Trials already fixed!");
                     }
-                }
-                else
-                {
-                    writeToLogBox("Trials already fixed!");
-                }
-                setProgressBarValue(0);
-                writeProgressInfo("Ready");
-                enableTabPages(true);
+                    SetProgressBarValue(0);
+                    WriteProgressInfo("Ready");
+                    EnableTabPages(true);
 
-                ThreadManager.remove(newThread);
-            });
-            ThreadManager.pushBack(newThread);
+                    ThreadManager.Remove(Thread.CurrentThread);
+                });
+            ThreadManager.PushBack(newThread);
             newThread.Start();
         }
 
@@ -2835,28 +3853,28 @@ namespace ManipAnalysis
         {
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save log file";
+            saveFileDialog.Title = @"Save log file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".txt";
-            saveFileDialog.Filter = "LogFiles (*.txt)|.txt";
+            saveFileDialog.Filter = @"LogFiles (*.txt)|.txt";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-LogFile";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-LogFile";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                FileStream logFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                StreamWriter logFileWriter = new StreamWriter(logFileStream);
+                var logFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                var logFileWriter = new StreamWriter(logFileStream);
 
-                string[] logText = getLogBoxText();
+                string[] logText = GetLogBoxText();
                 for (int i = 0; i < logText.Length; i++)
                 {
                     logFileWriter.WriteLine(logText[i]);
@@ -2865,17 +3883,16 @@ namespace ManipAnalysis
                 logFileWriter.Close();
                 logFileStream.Close();
             }
-
         }
 
         private void button_ClearLog_Click(object sender, EventArgs e)
         {
-            clearLogBox();
+            ClearLogBox();
         }
 
         private void tabPage_TrajectoryVelocity_Enter(object sender, EventArgs e)
-        {         
-            comboBox_TrajectoryVelocity_Study.Items.Clear();            
+        {
+            comboBox_TrajectoryVelocity_Study.Items.Clear();
             listBox_TrajectoryVelocity_Groups.Items.Clear();
             comboBox_TrajectoryVelocity_Szenario.Items.Clear();
             listBox_TrajectoryVelocity_Subjects.Items.Clear();
@@ -2886,7 +3903,7 @@ namespace ManipAnalysis
             comboBox_TrajectoryVelocity_IndividualMean.SelectedIndex = 0;
             comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedIndex = 0;
 
-            string[] studyNames = mySQLWrapper.getStudyNames();
+            string[] studyNames = _mySqlWrapper.GetStudyNames();
             if (studyNames != null)
             {
                 comboBox_TrajectoryVelocity_Study.Items.AddRange(studyNames);
@@ -2903,7 +3920,7 @@ namespace ManipAnalysis
             listBox_TrajectoryVelocity_Targets.Items.Clear();
             listBox_TrajectoryVelocity_Trials.Items.Clear();
 
-            string[] groupNames = mySQLWrapper.getGroupNames(comboBox_TrajectoryVelocity_Study.SelectedItem.ToString());
+            string[] groupNames = _mySqlWrapper.GetGroupNames(comboBox_TrajectoryVelocity_Study.SelectedItem.ToString());
             if (groupNames != null)
             {
                 listBox_TrajectoryVelocity_Groups.Items.AddRange(groupNames);
@@ -2924,10 +3941,11 @@ namespace ManipAnalysis
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
 
-                string[] szenarioIntersect = mySQLWrapper.getSzenarioNames(study, groups[0]);
+                string[] szenarioIntersect = _mySqlWrapper.GetSzenarioNames(study, groups[0]);
                 for (int i = 1; i < groups.Length; i++)
                 {
-                    szenarioIntersect = szenarioIntersect.Intersect(mySQLWrapper.getSzenarioNames(study, groups[i])).ToArray();
+                    szenarioIntersect =
+                        szenarioIntersect.Intersect(_mySqlWrapper.GetSzenarioNames(study, groups[i])).ToArray();
                 }
 
                 comboBox_TrajectoryVelocity_Szenario.Items.AddRange(szenarioIntersect);
@@ -2948,7 +3966,8 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                listBox_TrajectoryVelocity_Subjects.Items.AddRange(mySQLWrapper.getSubjectInformations(study, groups[i], szenario).ToArray());
+                listBox_TrajectoryVelocity_Subjects.Items.AddRange(
+                    _mySqlWrapper.GetSubjectInformations(study, groups[i], szenario).ToArray());
             }
 
             listBox_TrajectoryVelocity_Subjects.SelectedIndex = 0;
@@ -2963,14 +3982,15 @@ namespace ManipAnalysis
             string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
             string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+            SubjectInformationContainer[] subjects =
+                listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
             {
                 for (int j = 0; j < subjects.Length; j++)
                 {
-                    string[] tempTurnString = mySQLWrapper.getTurns(study, groups[i], szenario, subjects[j].id); ;
+                    string[] tempTurnString = _mySqlWrapper.GetTurns(study, groups[i], szenario, subjects[j].ID);
 
                     if (tempTurnString != null)
                     {
@@ -2986,8 +4006,11 @@ namespace ManipAnalysis
                 }
             }
 
-            listBox_TrajectoryVelocity_Turns.Items.AddRange(turnIntersect);
-            listBox_TrajectoryVelocity_Turns.SelectedIndex = 0;            
+            if (turnIntersect != null)
+            {
+                listBox_TrajectoryVelocity_Turns.Items.AddRange(turnIntersect);
+            }
+            listBox_TrajectoryVelocity_Turns.SelectedIndex = 0;
         }
 
         private void listBox_TrajectoryVelocity_Turns_SelectedIndexChanged(object sender, EventArgs e)
@@ -2998,8 +4021,8 @@ namespace ManipAnalysis
             string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
 
-            string[] targets = mySQLWrapper.getTargets(study, szenario).OrderBy(t => t).ToArray();
-            string[] trials = mySQLWrapper.getTrials(study, szenario).OrderBy(t => t).ToArray();
+            string[] targets = _mySqlWrapper.GetTargets(study, szenario).OrderBy(t => t).ToArray();
+            string[] trials = _mySqlWrapper.GetTrials(study, szenario).OrderBy(t => t).ToArray();
 
             listBox_TrajectoryVelocity_Targets.Items.AddRange(targets);
             listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
@@ -3015,7 +4038,8 @@ namespace ManipAnalysis
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.SelectedItems.Cast<string>().ToArray();
@@ -3028,30 +4052,41 @@ namespace ManipAnalysis
                         {
                             foreach (string target in targets)
                             {
-                                if (mySQLWrapper.getTurns(study, group, szenario, subject.id) != null)
+                                if (_mySqlWrapper.GetTurns(study, group, szenario, subject.ID) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (TrajectoryVelocityPlotContainer temp in listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (
+                                            TrajectoryVelocityPlotContainer temp in
+                                                listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
-                                            if (temp.updateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
+                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
+                                                                                           subject, turn, target, trials))
                                             {
-                                                typeof(ListBox).InvokeMember("RefreshItems",
-                                                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                                null, listBox_TrajectoryVelocity_SelectedTrials, new object[] { });
+                                                typeof (ListBox).InvokeMember("RefreshItems",
+                                                                              BindingFlags.NonPublic |
+                                                                              BindingFlags.Instance |
+                                                                              BindingFlags.InvokeMethod,
+                                                                              null,
+                                                                              listBox_TrajectoryVelocity_SelectedTrials,
+                                                                              new object[] {});
                                                 canBeUpdated = true;
                                             }
                                         }
 
                                         if (!canBeUpdated)
                                         {
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
+                                                                                    turn, target, trials));
                                         }
                                     }
                                     else
                                     {
-                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
+                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                            new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
+                                                                                target, trials));
                                     }
                                 }
                             }
@@ -3068,7 +4103,8 @@ namespace ManipAnalysis
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectInformationContainer[] subjects =
+                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.Items.Cast<string>().ToArray();
@@ -3081,30 +4117,41 @@ namespace ManipAnalysis
                         {
                             foreach (string target in targets)
                             {
-                                if (mySQLWrapper.getTurns(study, group, szenario, subject.id) != null)
+                                if (_mySqlWrapper.GetTurns(study, group, szenario, subject.ID) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (TrajectoryVelocityPlotContainer temp in listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (
+                                            TrajectoryVelocityPlotContainer temp in
+                                                listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
-                                            if (temp.updateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
+                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
+                                                                                           subject, turn, target, trials))
                                             {
-                                                typeof(ListBox).InvokeMember("RefreshItems",
-                                                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                                null, listBox_TrajectoryVelocity_SelectedTrials, new object[] { });
+                                                typeof (ListBox).InvokeMember("RefreshItems",
+                                                                              BindingFlags.NonPublic |
+                                                                              BindingFlags.Instance |
+                                                                              BindingFlags.InvokeMethod,
+                                                                              null,
+                                                                              listBox_TrajectoryVelocity_SelectedTrials,
+                                                                              new object[] {});
                                                 canBeUpdated = true;
                                             }
                                         }
 
                                         if (!canBeUpdated)
                                         {
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
+                                                                                    turn, target, trials));
                                         }
                                     }
                                     else
                                     {
-                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
+                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                            new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
+                                                                                target, trials));
                                     }
                                 }
                             }
@@ -3118,7 +4165,8 @@ namespace ManipAnalysis
         {
             while (listBox_TrajectoryVelocity_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_TrajectoryVelocity_SelectedTrials.Items.Remove(listBox_TrajectoryVelocity_SelectedTrials.SelectedItem);
+                listBox_TrajectoryVelocity_SelectedTrials.Items.Remove(
+                    listBox_TrajectoryVelocity_SelectedTrials.SelectedItem);
             }
         }
 
@@ -3131,34 +4179,41 @@ namespace ManipAnalysis
         {
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
-                writeProgressInfo("Getting data...");
+                WriteProgressInfo("Getting data...");
                 if (comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString() == "Individual")
                 {
                     if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                     {
-                        myMatlabWrapper.createTrajectoryFigure("XZ-Plot");
-                        myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
+                        _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                        _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
                     }
                     else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                     {
-                        myMatlabWrapper.createVelocityFigure("Velocity plot", 101);
+                        _myMatlabWrapper.CreateVelocityFigure("Velocity plot", 101);
                     }
 
                     int counter = 0;
-                    foreach (TrajectoryVelocityPlotContainer tempContainer in listBox_TrajectoryVelocity_SelectedTrials.Items)
+                    foreach (
+                        TrajectoryVelocityPlotContainer tempContainer in listBox_TrajectoryVelocity_SelectedTrials.Items
+                        )
                     {
-                        setProgressBarValue((100.0 / listBox_TrajectoryVelocity_SelectedTrials.Items.Count) * counter);
+                        SetProgressBarValue((100.0/listBox_TrajectoryVelocity_SelectedTrials.Items.Count)*counter);
                         counter++;
-                        DateTime turnDateTime = mySQLWrapper.getTurnDateTime(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, tempContainer.Turn);
+                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
+                                                                              tempContainer.Szenario,
+                                                                              tempContainer.Subject.ID,
+                                                                              tempContainer.Turn);
                         foreach (int trial in tempContainer.Trials)
                         {
                             if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                             {
-                                int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                DataSet measureDataSet = mySQLWrapper.getMeasureDataNormalizedDataSet(trialID);
+                                int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                                                       tempContainer.Szenario, tempContainer.Subject.ID,
+                                                                       turnDateTime, tempContainer.Target, trial);
+                                DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
 
-                                List<double> measureData_x = new List<double>();
-                                List<double> measureData_z = new List<double>();
+                                var measureDataX = new List<double>();
+                                var measureDataZ = new List<double>();
 
                                 foreach (DataRow row in measureDataSet.Tables[0].Rows)
                                 {
@@ -3166,27 +4221,30 @@ namespace ManipAnalysis
                                     {
                                         if (Convert.ToInt32(row["is_catch_trial"]) == 0)
                                         {
-                                            measureData_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                            measureData_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                            measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                            measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
                                         }
                                     }
                                     else
                                     {
-                                        measureData_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureData_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
                                     }
                                 }
 
-                                myMatlabWrapper.setWorkspaceData("X", measureData_x.ToArray());
-                                myMatlabWrapper.setWorkspaceData("Z", measureData_z.ToArray());
-                                myMatlabWrapper.plot("X", "Z", "black", 2);
+                                _myMatlabWrapper.SetWorkspaceData("X", measureDataX.ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
+                                _myMatlabWrapper.Plot("X", "Z", "black", 2);
                             }
 
                             else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                             {
-                                int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                DataSet velocityDataSet = mySQLWrapper.getVelocityDataNormalizedDataSet(trialID);
-                                List<double> velocityData_xz = new List<double>();
+                                int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                                                       tempContainer.Szenario,
+                                                                       tempContainer.Subject.ID, turnDateTime,
+                                                                       tempContainer.Target, trial);
+                                DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                                var velocityDataXZ = new List<double>();
 
                                 foreach (DataRow row in velocityDataSet.Tables[0].Rows)
                                 {
@@ -3194,17 +4252,21 @@ namespace ManipAnalysis
                                     {
                                         if (Convert.ToInt32(row["is_catch_trial"]) == 0)
                                         {
-                                            velocityData_xz.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                            velocityDataXZ.Add(
+                                                Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                          Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
                                         }
                                     }
                                     else
                                     {
-                                        velocityData_xz.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }                                    
+                                        velocityDataXZ.Add(
+                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                    }
                                 }
 
-                                myMatlabWrapper.setWorkspaceData("XZ", velocityData_xz.ToArray());
-                                myMatlabWrapper.plot("X", "Z", "black", 2);
+                                _myMatlabWrapper.SetWorkspaceData("XZ", velocityDataXZ.ToArray());
+                                _myMatlabWrapper.Plot("X", "Z", "black", 2);
                             }
                         }
                     }
@@ -3212,89 +4274,117 @@ namespace ManipAnalysis
 
                 else if (comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString() == "Mean")
                 {
-                    List<TrajectoryVelocityPlotContainer> tempTrajectoryVelocityPlotContainerList = new List<TrajectoryVelocityPlotContainer>(listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().ToList());
+                    var tempTrajectoryVelocityPlotContainerList =
+                        new List<TrajectoryVelocityPlotContainer>(
+                            listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>()
+                                                                     .ToList());
 
-                    if (tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray()).Distinct(new ArrayComparer()).ToList().Count() > 1)
+                    if (
+                        tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray())
+                                                               .Distinct(new ArrayComparer()).Count() > 1)
                     {
-                        writeToLogBox("Trial selections are not equal!");
+                        WriteToLogBox("Trial selections are not equal!");
                     }
                     else
                     {
                         if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                         {
-                            myMatlabWrapper.createTrajectoryFigure("XZ-Plot");
-                            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
+                            _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                            _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
                         }
                         else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                         {
-                            myMatlabWrapper.createFigure("Velocity plot", "[Samples]", "Velocity [m/s]");
+                            _myMatlabWrapper.CreateFigure("Velocity plot", "[Samples]", "Velocity [m/s]");
                         }
 
-                        int[] targetArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Target).Distinct().ToArray();
+                        int[] targetArray =
+                            tempTrajectoryVelocityPlotContainerList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
-                        
+
                         for (int targetCounter = 0; targetCounter < targetArray.Length; targetCounter++)
                         {
-                            DataSet dataSet;
+                            int targetCounterVar = targetCounter;
                             int meanCounter = 0;
-                            List<double> data_x = new List<double>();
-                            List<double> data_z = new List<double>();
+                            var dataX = new List<double>();
+                            var dataZ = new List<double>();
 
-                            foreach (TrajectoryVelocityPlotContainer tempContainer in tempTrajectoryVelocityPlotContainerList.Where(t => t.Target == targetArray[targetCounter]))
+                            foreach (
+                                TrajectoryVelocityPlotContainer tempContainer in
+                                    tempTrajectoryVelocityPlotContainerList.Where(
+                                        t => t.Target == targetArray[targetCounterVar]))
                             {
-                                setProgressBarValue((100.0 / listBox_TrajectoryVelocity_SelectedTrials.Items.Count) * counter);
+                                SetProgressBarValue((100.0/listBox_TrajectoryVelocity_SelectedTrials.Items.Count)*
+                                                    counter);
                                 counter++;
-                                DateTime turnDateTime = mySQLWrapper.getTurnDateTime(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, tempContainer.Turn);
+                                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                                                                      tempContainer.Group,
+                                                                                      tempContainer.Szenario,
+                                                                                      tempContainer.Subject.ID,
+                                                                                      tempContainer.Turn);
 
-                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
+                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                    "Trajectory")
                                 {
                                     foreach (int trial in tempContainer.Trials)
                                     {
-                                        int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                        dataSet = mySQLWrapper.getMeasureDataNormalizedDataSet(trialID);
+                                        int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                                                               tempContainer.Szenario,
+                                                                               tempContainer.Subject.ID, turnDateTime,
+                                                                               tempContainer.Target, trial);
+                                        DataSet dataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
                                         for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
 
-                                            if (data_x.Count <= i)
+                                            if (dataX.Count <= i)
                                             {
-                                                data_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                             }
                                             else
                                             {
-                                                data_x[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
                                             }
 
-                                            if (data_z.Count <= i)
+                                            if (dataZ.Count <= i)
                                             {
-                                                data_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
                                             }
                                             else
                                             {
-                                                data_z[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
                                             }
                                         }
                                         meanCounter++;
                                     }
                                 }
-                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
+                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                         "Velocity")
                                 {
                                     foreach (int trial in tempContainer.Trials)
                                     {
-                                        int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                        dataSet = mySQLWrapper.getVelocityDataNormalizedDataSet(trialID);
-                                        
+                                        int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                                                               tempContainer.Group,
+                                                                               tempContainer.Szenario,
+                                                                               tempContainer.Subject.ID,
+                                                                               turnDateTime, tempContainer.Target,
+                                                                               trial);
+                                        DataSet dataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+
                                         for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
 
-                                            if (data_x.Count <= i)
+                                            if (dataX.Count <= i)
                                             {
-                                                data_x.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                dataX.Add(
+                                                    Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                              Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
                                             }
                                             else
                                             {
-                                                data_x[i] += Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                dataX[i] +=
+                                                    Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                              Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
                                             }
                                         }
                                         meanCounter++;
@@ -3304,38 +4394,38 @@ namespace ManipAnalysis
 
                             if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                             {
-                                for (int i = 0; i < data_x.Count; i++)
+                                for (int i = 0; i < dataX.Count; i++)
                                 {
-                                    data_x[i] /= meanCounter;
-                                    data_z[i] /= meanCounter;
+                                    dataX[i] /= meanCounter;
+                                    dataZ[i] /= meanCounter;
                                 }
 
-                                myMatlabWrapper.setWorkspaceData("X", data_x.ToArray());
-                                myMatlabWrapper.setWorkspaceData("Z", data_z.ToArray());
-                                myMatlabWrapper.plot("X", "Z", "black", 2);
+                                _myMatlabWrapper.SetWorkspaceData("X", dataX.ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("Z", dataZ.ToArray());
+                                _myMatlabWrapper.Plot("X", "Z", "black", 2);
                             }
                             else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                             {
-                                for (int i = 0; i < data_x.Count; i++)
+                                for (int i = 0; i < dataX.Count; i++)
                                 {
-                                    data_x[i] /= meanCounter;
+                                    dataX[i] /= meanCounter;
                                 }
 
-                                myMatlabWrapper.setWorkspaceData("X", data_x.ToArray());
-                                myMatlabWrapper.plot("X", "black", 2);
+                                _myMatlabWrapper.SetWorkspaceData("X", dataX.ToArray());
+                                _myMatlabWrapper.Plot("X", "black", 2);
                             }
                         }
                     }
                 }
 
-                myMatlabWrapper.clearWorkspace();
+                _myMatlabWrapper.ClearWorkspace();
             }
             else
             {
-                writeToLogBox("Please add data to plot!");
+                WriteToLogBox("Please add data to plot!");
             }
-            setProgressBarValue(0);
-            writeProgressInfo("Ready");
+            SetProgressBarValue(0);
+            WriteProgressInfo("Ready");
         }
 
         private void tabPage_BaselineMeantime_Enter(object sender, EventArgs e)
@@ -3346,7 +4436,7 @@ namespace ManipAnalysis
             comboBox_BaselineMeantime_Subject.Items.Clear();
             comboBox_BaselineMeantime_Turn.Items.Clear();
 
-            string[] studyNames = mySQLWrapper.getStudyNames();
+            string[] studyNames = _mySqlWrapper.GetStudyNames();
             if (studyNames != null)
             {
                 comboBox_BaselineMeantime_Study.Items.AddRange(studyNames);
@@ -3361,7 +4451,7 @@ namespace ManipAnalysis
             comboBox_BaselineMeantime_Subject.Items.Clear();
             comboBox_BaselineMeantime_Turn.Items.Clear();
 
-            string[] groupNames = mySQLWrapper.getGroupNames(comboBox_BaselineMeantime_Study.SelectedItem.ToString());
+            string[] groupNames = _mySqlWrapper.GetGroupNames(comboBox_BaselineMeantime_Study.SelectedItem.ToString());
             if (groupNames != null)
             {
                 comboBox_BaselineMeantime_Group.Items.AddRange(groupNames);
@@ -3373,12 +4463,12 @@ namespace ManipAnalysis
         {
             comboBox_BaselineMeantime_Szenario.Items.Clear();
             comboBox_BaselineMeantime_Subject.Items.Clear();
-            comboBox_BaselineMeantime_Turn.Items.Clear(); ;
+            comboBox_BaselineMeantime_Turn.Items.Clear();
 
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
 
-            string[] szenarioNames = mySQLWrapper.getSzenarioNames(study, group);
+            string[] szenarioNames = _mySqlWrapper.GetSzenarioNames(study, group);
             if (szenarioNames != null)
             {
                 comboBox_BaselineMeantime_Szenario.Items.AddRange(szenarioNames);
@@ -3389,13 +4479,13 @@ namespace ManipAnalysis
         private void comboBox_BaselineMeantime_Szenario_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBox_BaselineMeantime_Subject.Items.Clear();
-            comboBox_BaselineMeantime_Turn.Items.Clear(); ;
+            comboBox_BaselineMeantime_Turn.Items.Clear();
 
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
 
-            SubjectInformationContainer[] subjectNames = mySQLWrapper.getSubjectInformations(study, group, szenario);
+            SubjectInformationContainer[] subjectNames = _mySqlWrapper.GetSubjectInformations(study, group, szenario);
             if (subjectNames != null)
             {
                 comboBox_BaselineMeantime_Subject.Items.AddRange(subjectNames);
@@ -3405,14 +4495,14 @@ namespace ManipAnalysis
 
         private void comboBox_BaselineMeantime_Subject_SelectedIndexChanged(object sender, EventArgs e)
         {
-            comboBox_BaselineMeantime_Turn.Items.Clear(); ;
+            comboBox_BaselineMeantime_Turn.Items.Clear();
 
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+            var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            string[] turnNames = mySQLWrapper.getTurns(study, group, szenario, subject.id);
+            string[] turnNames = _mySqlWrapper.GetTurns(study, group, szenario, subject.ID);
             if (turnNames != null)
             {
                 comboBox_BaselineMeantime_Turn.Items.AddRange(turnNames);
@@ -3427,29 +4517,29 @@ namespace ManipAnalysis
 
         private void button_TrajectoryVelocity_Export_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Getting data...");
+            WriteProgressInfo("Getting data...");
 
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save trajectory / velocity file";
+            saveFileDialog.Title = @"Save trajectory / velocity file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-"
-                                    + comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString()
-                                    + "-"
-                                    + comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString()
-                                    + "-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_TrajectoryVelocity_IndividualMean.SelectedItem
+                                      + "-"
+                                      + comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem
+                                      + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -3458,48 +4548,50 @@ namespace ManipAnalysis
                     if (comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString() == "Individual")
                     {
                         int counter = 0;
-                        foreach (TrajectoryVelocityPlotContainer tempContainer in listBox_TrajectoryVelocity_SelectedTrials.Items)
+                        foreach (
+                            TrajectoryVelocityPlotContainer tempContainer in
+                                listBox_TrajectoryVelocity_SelectedTrials.Items)
                         {
-                            setProgressBarValue((100.0 / listBox_TrajectoryVelocity_SelectedTrials.Items.Count) * counter);
+                            SetProgressBarValue((100.0/listBox_TrajectoryVelocity_SelectedTrials.Items.Count)*counter);
                             counter++;
-                            DateTime turnDateTime = mySQLWrapper.getTurnDateTime(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, tempContainer.Turn);
+                            DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                                                                  tempContainer.Group,
+                                                                                  tempContainer.Szenario,
+                                                                                  tempContainer.Subject.ID,
+                                                                                  tempContainer.Turn);
                             foreach (int trial in tempContainer.Trials)
                             {
-                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
+                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                    "Trajectory")
                                 {
-                                    int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                    DataSet measureDataSet = mySQLWrapper.getMeasureDataNormalizedDataSet(trialID);
+                                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                                                           tempContainer.Szenario,
+                                                                           tempContainer.Subject.ID, turnDateTime,
+                                                                           tempContainer.Target, trial);
+                                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
 
-                                    List<string> cache = new List<string>();
-                                    cache.Add("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianZ");
+                                    var cache = new List<string>
+                                        {
+                                            "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianZ"
+                                        };
 
-                                    foreach (DataRow row in measureDataSet.Tables[0].Rows)
-                                    {
-                                        cache.Add(
-                                                    tempContainer.Study 
-                                                    + ";" 
-                                                    + tempContainer.Group 
-                                                    + ";" 
-                                                    + tempContainer.Szenario 
-                                                    + ";" 
-                                                    + tempContainer.Subject 
-                                                    + ";" 
-                                                    + tempContainer.Turn 
-                                                    + ";" 
-                                                    + tempContainer.Target 
-                                                    + ";" 
-                                                    + trial
-                                                    + ";"
-                                                    + Convert.ToDateTime(row["time_stamp"]).ToString("dd.MM.yyyy HH:mm:ss.fffffff")
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(Convert.ToDouble(row["position_cartesian_x"]))
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(Convert.ToDouble(row["position_cartesian_z"]))
-                                                    );
-                                    }
+                                    TrajectoryVelocityPlotContainer container = tempContainer;
+                                    int trialVar = trial;
+                                    cache.AddRange(from DataRow row in measureDataSet.Tables[0].Rows
+                                                   select
+                                                       container.Study + ";" + container.Group + ";" +
+                                                       container.Szenario + ";" + container.Subject + ";" +
+                                                       container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                       Convert.ToDateTime(row["time_stamp"])
+                                                              .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                       DoubleConverter.ToExactString(
+                                                           Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                                       DoubleConverter.ToExactString(
+                                                           Convert.ToDouble(row["position_cartesian_z"])));
 
-                                    FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                                    StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                                    var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create,
+                                                                        FileAccess.Write);
+                                    var dataFileWriter = new StreamWriter(dataFileStream);
 
                                     for (int i = 0; i < cache.Count(); i++)
                                     {
@@ -3510,39 +4602,38 @@ namespace ManipAnalysis
                                     dataFileStream.Close();
                                 }
 
-                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
+                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                         "Velocity")
                                 {
-                                    int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                    DataSet velocityDataSet = mySQLWrapper.getVelocityDataNormalizedDataSet(trialID);
-                                   
-                                    List<string> cache = new List<string>();
-                                    cache.Add("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityXZ");
+                                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                                                           tempContainer.Szenario,
+                                                                           tempContainer.Subject.ID, turnDateTime,
+                                                                           tempContainer.Target, trial);
+                                    DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
 
-                                    foreach (DataRow row in velocityDataSet.Tables[0].Rows)
-                                    {
-                                        cache.Add(
-                                                    tempContainer.Study
-                                                    + ";"
-                                                    + tempContainer.Group
-                                                    + ";"
-                                                    + tempContainer.Szenario
-                                                    + ";"
-                                                    + tempContainer.Subject
-                                                    + ";"
-                                                    + tempContainer.Turn
-                                                    + ";"
-                                                    + tempContainer.Target
-                                                    + ";"
-                                                    + trial
-                                                    + ";"
-                                                    + Convert.ToDateTime(row["time_stamp"]).ToString("dd.MM.yyyy HH:mm:ss.fffffff")
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(Convert.ToDouble(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2))))
-                                                    );
-                                    }
+                                    var cache = new List<string>
+                                        {
+                                            "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityXZ"
+                                        };
 
-                                    FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                                    StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                                    TrajectoryVelocityPlotContainer container = tempContainer;
+                                    int trialVar = trial;
+                                    cache.AddRange(from DataRow row in velocityDataSet.Tables[0].Rows
+                                                   select
+                                                       container.Study + ";" + container.Group + ";" +
+                                                       container.Szenario + ";" + container.Subject + ";" +
+                                                       container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                       Convert.ToDateTime(row["time_stamp"])
+                                                              .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                       DoubleConverter.ToExactString(
+                                                           Convert.ToDouble(
+                                                               Math.Sqrt(
+                                                                   Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                   Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+
+                                    var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create,
+                                                                        FileAccess.Write);
+                                    var dataFileWriter = new StreamWriter(dataFileStream);
 
                                     for (int i = 0; i < cache.Count(); i++)
                                     {
@@ -3557,27 +4648,42 @@ namespace ManipAnalysis
                     }
 
                     else if (comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString() == "Mean")
-                    {                       
-                        List<TrajectoryVelocityPlotContainer> tempTrajectoryVelocityPlotContainerList = new List<TrajectoryVelocityPlotContainer>(listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().ToList());
+                    {
+                        var tempTrajectoryVelocityPlotContainerList =
+                            new List<TrajectoryVelocityPlotContainer>(
+                                listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>()
+                                                                         .ToList());
 
-                        if (tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray()).Distinct(new ArrayComparer()).ToList().Count() > 1)
+                        if (
+                            tempTrajectoryVelocityPlotContainerList.Select(t => t.Trials.ToArray())
+                                                                   .Distinct(new ArrayComparer())
+                                                                   .Count() > 1)
                         {
-                            writeToLogBox("Trial selections are not equal!");
+                            WriteToLogBox("Trial selections are not equal!");
                         }
                         else
                         {
-                            string[] studyArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Study).Distinct().ToArray();
-                            string[] groupArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Group).Distinct().ToArray();
-                            string[] szenarioArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Szenario).Distinct().ToArray();
-                            SubjectInformationContainer[] subjectArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Subject).Distinct().ToArray();
-                            string[] turnArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Turn.ToString()).Distinct().ToArray();
-                            int[] targetArray = tempTrajectoryVelocityPlotContainerList.Select(t => t.Target).Distinct().ToArray();
-                            string trials = tempTrajectoryVelocityPlotContainerList.ElementAt(0).getTrialsString();
+                            string[] studyArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Study).Distinct().ToArray();
+                            string[] groupArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Group).Distinct().ToArray();
+                            string[] szenarioArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Szenario).Distinct().ToArray();
+                            SubjectInformationContainer[] subjectArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Subject).Distinct().ToArray();
+                            int[] turnArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Turn)
+                                                                       .Distinct()
+                                                                       .ToArray();
+                            int[] targetArray =
+                                tempTrajectoryVelocityPlotContainerList.Select(t => t.Target).Distinct().ToArray();
+                            string trials = tempTrajectoryVelocityPlotContainerList.ElementAt(0).GetTrialsString();
 
-                            List<string> cache = new List<string>();
+                            var cache = new List<string>();
                             if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
                             {
-                                cache.Add("Study;Group;Szenario;Subject;Turn;Target;Trial;DataPoint;PositionCartesianX;PositionCartesianZ");
+                                cache.Add(
+                                    "Study;Group;Szenario;Subject;Turn;Target;Trial;DataPoint;PositionCartesianX;PositionCartesianZ");
                             }
                             else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
                             {
@@ -3587,107 +4693,126 @@ namespace ManipAnalysis
                             int counter = 0;
                             for (int targetCounter = 0; targetCounter < targetArray.Length; targetCounter++)
                             {
-                                DataSet dataSet;
                                 int meanCounter = 0;
-                                List<double> data_x = new List<double>();
-                                List<double> data_z = new List<double>();
+                                var dataX = new List<double>();
+                                var dataZ = new List<double>();
 
-                                foreach (TrajectoryVelocityPlotContainer tempContainer in tempTrajectoryVelocityPlotContainerList.Where(t => t.Target == targetArray[targetCounter]))
+                                int counterVar = targetCounter;
+                                foreach (
+                                    TrajectoryVelocityPlotContainer tempContainer in
+                                        tempTrajectoryVelocityPlotContainerList)
                                 {
-                                    setProgressBarValue((100.0 / listBox_TrajectoryVelocity_SelectedTrials.Items.Count) * counter);
-                                    counter++;
-                                    DateTime turnDateTime = mySQLWrapper.getTurnDateTime(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, tempContainer.Turn);
-
-                                    if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
+                                    if (tempContainer.Target == targetArray[counterVar])
                                     {
-                                        foreach (int trial in tempContainer.Trials)
+                                        SetProgressBarValue((100.0/listBox_TrajectoryVelocity_SelectedTrials.Items.Count)*
+                                                            counter);
+                                        counter++;
+                                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                                                                              tempContainer.Group,
+                                                                                              tempContainer.Szenario,
+                                                                                              tempContainer.Subject.ID,
+                                                                                              tempContainer.Turn);
+
+                                        if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                            "Trajectory")
                                         {
-                                            int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                            dataSet = mySQLWrapper.getMeasureDataNormalizedDataSet(trialID);
-                                            for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                            foreach (int trial in tempContainer.Trials)
                                             {
-                                                DataRow row = dataSet.Tables[0].Rows[i];
+                                                int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                                                                       tempContainer.Group,
+                                                                                       tempContainer.Szenario,
+                                                                                       tempContainer.Subject.ID,
+                                                                                       turnDateTime,
+                                                                                       tempContainer.Target, trial);
+                                                DataSet dataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                                                for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                                {
+                                                    DataRow row = dataSet.Tables[0].Rows[i];
 
-                                                if (data_x.Count <= i)
-                                                {
-                                                    data_x.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                                }
-                                                else
-                                                {
-                                                    data_x[i] += Convert.ToDouble(row["position_cartesian_x"]);
-                                                }
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
 
-                                                if (data_z.Count <= i)
-                                                {
-                                                    data_z.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    data_z[i] += Convert.ToDouble(row["position_cartesian_z"]);
-                                                }
+                                                meanCounter++;
                                             }
-                                            meanCounter++;
                                         }
-                                    }
-                                    else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
-                                    {
-                                        foreach (int trial in tempContainer.Trials)
+                                        else if (
+                                            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                            "Velocity")
                                         {
-                                            int trialID = mySQLWrapper.getTrailID(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject.id, turnDateTime, tempContainer.Target, trial);
-                                            dataSet = mySQLWrapper.getVelocityDataNormalizedDataSet(trialID);
-                                            for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                            foreach (int trial in tempContainer.Trials)
                                             {
-                                                DataRow row = dataSet.Tables[0].Rows[i];
+                                                int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                                                                       tempContainer.Group,
+                                                                                       tempContainer.Szenario,
+                                                                                       tempContainer.Subject.ID,
+                                                                                       turnDateTime,
+                                                                                       tempContainer.Target, trial);
 
-                                                if (data_x.Count <= i)
+                                                DataSet dataSet =
+                                                    _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                                                for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                                 {
-                                                    data_x.Add(Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    DataRow row = dataSet.Tables[0].Rows[i];
+
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    data_x[i] += Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
-                                                }
+                                                meanCounter++;
                                             }
-                                            meanCounter++;
                                         }
                                     }
                                 }
 
-                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Trajectory")
+                                if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                    "Trajectory")
                                 {
-                                    for (int i = 0; i < data_x.Count; i++)
+                                    for (int i = 0; i < dataX.Count; i++)
                                     {
-                                        data_x[i] /= meanCounter;
-                                        data_z[i] /= meanCounter;
+                                        dataX[i] /= meanCounter;
+                                        dataZ[i] /= meanCounter;
                                     }
 
-                                    for (int i = 0; i < data_x.Count; i++)
-                                    {
-                                        cache.Add(
-                                                    String.Join(",", studyArray)
-                                                    + ";"
-                                                    + String.Join(",", groupArray)
-                                                    + ";"
-                                                    + String.Join(",", szenarioArray)
-                                                    + ";"
-                                                    + String.Join<SubjectInformationContainer>(",", subjectArray)
-                                                    + ";"
-                                                    + String.Join(",", turnArray)
-                                                    + ";"
-                                                    + targetArray[targetCounter]
-                                                    + ";"
-                                                    + trials
-                                                    + ";"
-                                                    + i
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(data_x[i])
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(data_z[i])
-                                                    );
-                                    }
+                                    counterVar = targetCounter;
+                                    cache.AddRange(
+                                        dataX.Select(
+                                            (t, i) =>
+                                            String.Join(",", studyArray) + ";" + String.Join(",", groupArray) + ";" +
+                                            String.Join(",", szenarioArray) + ";" +
+                                            String.Join<SubjectInformationContainer>(",", subjectArray) + ";" +
+                                            String.Join(",", turnArray) + ";" + targetArray[counterVar] + ";" + trials +
+                                            ";" + i + ";" + DoubleConverter.ToExactString(t) + ";" +
+                                            DoubleConverter.ToExactString(dataZ[i])));
 
-                                    FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                                    StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                                    var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create,
+                                                                        FileAccess.Write);
+                                    var dataFileWriter = new StreamWriter(dataFileStream);
 
                                     for (int i = 0; i < cache.Count(); i++)
                                     {
@@ -3697,38 +4822,29 @@ namespace ManipAnalysis
                                     dataFileWriter.Close();
                                     dataFileStream.Close();
                                 }
-                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() == "Velocity")
+                                else if (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString() ==
+                                         "Velocity")
                                 {
-                                    for (int i = 0; i < data_x.Count; i++)
+                                    for (int i = 0; i < dataX.Count; i++)
                                     {
-                                        data_x[i] /= meanCounter;
+                                        dataX[i] /= meanCounter;
                                     }
 
-                                    for (int i = 0; i < data_x.Count; i++)
-                                    {
-                                        cache.Add(
-                                                    String.Join(",", studyArray)
-                                                    + ";"
-                                                    + String.Join(",", groupArray)
-                                                    + ";"
-                                                    + String.Join(",", szenarioArray)
-                                                    + ";"
-                                                    + String.Join<SubjectInformationContainer>(",", subjectArray)
-                                                    + ";"
-                                                    + String.Join(",", turnArray)
-                                                    + ";"
-                                                    + targetArray[targetCounter]
-                                                    + ";"
-                                                    + trials
-                                                    + ";"
-                                                    + i
-                                                    + ";"
-                                                    + DoubleConverter.ToExactString(data_x[i])
-                                                    );
-                                    }
+                                    counterVar = targetCounter;
+                                    cache.AddRange(
+                                        dataX.Select(
+                                            (t, i) => String.Join(",", studyArray) + ";" +
+                                                      String.Join(",", groupArray) + ";" +
+                                                      String.Join(",", szenarioArray) + ";" +
+                                                      String.Join<SubjectInformationContainer>(",", subjectArray) +
+                                                      ";" +
+                                                      String.Join(",", turnArray) + ";" + targetArray[counterVar] +
+                                                      ";" + trials +
+                                                      ";" + i + ";" + DoubleConverter.ToExactString(t)));
 
-                                    FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                                    StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                                    var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create,
+                                                                        FileAccess.Write);
+                                    var dataFileWriter = new StreamWriter(dataFileStream);
 
                                     for (int i = 0; i < cache.Count(); i++)
                                     {
@@ -3742,89 +4858,84 @@ namespace ManipAnalysis
                         }
                     }
 
-                    myMatlabWrapper.clearWorkspace();
+                    _myMatlabWrapper.ClearWorkspace();
                 }
                 else
                 {
-                    writeToLogBox("Please add data to export!");
+                    WriteToLogBox("Please add data to export!");
                 }
             }
-            writeProgressInfo("Ready");
-            setProgressBarValue(0);
+            WriteProgressInfo("Ready");
+            SetProgressBarValue(0);
         }
 
         private void button_BaselineMeantime_ExportBaseline_Click(object sender, EventArgs e)
         {
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save trajectory / velocity file";
+            saveFileDialog.Title = @"Save trajectory / velocity file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-"
-                                    + comboBox_BaselineMeantime_Subject.SelectedItem.ToString()
-                                    + "trajectory-baseline-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_BaselineMeantime_Subject.SelectedItem
+                                      + "trajectory-baseline-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
 
-                DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject.ID);
 
-                List<object[]> baselineData = new List<object[]>();
-
-                foreach (DataRow row in baseline.Tables[0].Rows)
-                {
-                    baselineData.Add(new object[] { Convert.ToDouble(row["baseline_position_cartesian_x"]), Convert.ToDouble(row["baseline_position_cartesian_z"]), Convert.ToInt32(row["target_number"]) });
-                }
+                List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
+                                               select new object[]
+                                                   {
+                                                       Convert.ToDouble(row["baseline_position_cartesian_x"]),
+                                                       Convert.ToDouble(row["baseline_position_cartesian_z"]),
+                                                       Convert.ToInt32(row["target_number"])
+                                                   }).ToList();
 
                 int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
 
-                List<string> cache = new List<string>();
-                cache.Add("Study;Group;Szenario;Subject;Target;DataPoint;PositionCartesianX;PositionCartesianZ");
+                var cache = new List<string>
+                    {
+                        "Study;Group;Szenario;Subject;Target;DataPoint;PositionCartesianX;PositionCartesianZ"
+                    };
 
                 for (int i = 0; i < targetNumberArray.Length; i++)
                 {
-                    double[] tempX = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[0])).ToArray();
-                    double[] tempZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[1])).ToArray();
+                    double[] tempX =
+                        baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                    .Select(t => Convert.ToDouble(t[0]))
+                                    .ToArray();
+                    double[] tempZ =
+                        baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                    .Select(t => Convert.ToDouble(t[1]))
+                                    .ToArray();
 
-                    for (int j = 0; j < tempX.Length; j++)
-                    {
-                        cache.Add(
-                                    study
-                                    + ";"
-                                    + group
-                                    + ";"
-                                    + szenario
-                                    + ";"
-                                    + subject
-                                    + ";"
-                                    + targetNumberArray[i]
-                                    + ";"
-                                    + j
-                                    + ";"
-                                    + DoubleConverter.ToExactString(tempX[j])
-                                    + ";"
-                                    + DoubleConverter.ToExactString(tempZ[j])
-                                    );
-                    }
+                    int iVar = i;
+                    cache.AddRange(
+                        tempX.Select(
+                            (t, j) =>
+                            study + ";" + @group + ";" + szenario + ";" + subject + ";" + targetNumberArray[iVar] + ";" +
+                            j + ";" + DoubleConverter.ToExactString(t) + ";" + DoubleConverter.ToExactString(tempZ[j])));
                 }
 
-                FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                var dataFileWriter = new StreamWriter(dataFileStream);
 
                 for (int i = 0; i < cache.Count(); i++)
                 {
@@ -3840,65 +4951,54 @@ namespace ManipAnalysis
         {
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save trajectory / velocity file";
+            saveFileDialog.Title = @"Save trajectory / velocity file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-"
-                                    + comboBox_BaselineMeantime_Subject.SelectedItem.ToString()
-                                    + "-szenario-mean-time-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_BaselineMeantime_Subject.SelectedItem
+                                      + "-szenario-mean-time-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
-                int turn = Convert.ToInt32(comboBox_BaselineMeantime_Turn.SelectedItem.ToString().Substring("Turn".Length));
-                DateTime turnDateTime = mySQLWrapper.getTurnDateTime(study, group, szenario, subject.id, turn);
+                var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
+                int turn =
+                    Convert.ToInt32(comboBox_BaselineMeantime_Turn.SelectedItem.ToString().Substring("Turn".Length));
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject.ID, turn);
 
-                DataSet meanTimeDataSet = mySQLWrapper.getMeanTimeDataSet(study, group, szenario, subject.id, turnDateTime);
+                DataSet meanTimeDataSet = _mySqlWrapper.GetMeanTimeDataSet(study, group, szenario, subject.ID,
+                                                                           turnDateTime);
 
-                List<TimeSpan> meanTimeList = new List<TimeSpan>();
-                List<TimeSpan> meanTimeStdList = new List<TimeSpan>();
-                List<int> targetList = new List<int>();
+                var cache = new List<string>
+                    {
+                        "Study;Group;Szenario;Subject;Turn;Target;SzenarioMeanTime;SzenarioMeanTimeStd"
+                    };
 
-                List<string> cache = new List<string>();
-                cache.Add("Study;Group;Szenario;Subject;Turn;Target;SzenarioMeanTime;SzenarioMeanTimeStd");
+                cache.AddRange(from DataRow row in meanTimeDataSet.Tables[0].Rows
+                               select
+                                   study + ";" + @group + ";" + szenario + ";" + subject + ";" + turn + ";" +
+                                   Convert.ToInt32(row["target_number"]) + ";" +
+                                   DoubleConverter.ToExactString(
+                                       TimeSpan.Parse(Convert.ToString(row["szenario_mean_time"])).TotalMilliseconds) +
+                                   ";" +
+                                   DoubleConverter.ToExactString(
+                                       TimeSpan.Parse(Convert.ToString(row["szenario_mean_time_std"])).TotalMilliseconds));
 
-                foreach (DataRow row in meanTimeDataSet.Tables[0].Rows)
-                {
-                    cache.Add(
-                                    study
-                                    + ";"
-                                    + group
-                                    + ";"
-                                    + szenario
-                                    + ";"
-                                    + subject
-                                    + ";"
-                                    + turn
-                                    + ";"
-                                    + Convert.ToInt32(row["target_number"])
-                                    + ";"
-                                    + DoubleConverter.ToExactString(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time"])).TotalMilliseconds)
-                                    + ";"
-                                    + DoubleConverter.ToExactString(TimeSpan.Parse(Convert.ToString(row["szenario_mean_time_std"])).TotalMilliseconds)
-                                    );
-                }
-
-                FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                var dataFileWriter = new StreamWriter(dataFileStream);
 
                 for (int i = 0; i < cache.Count(); i++)
                 {
@@ -3907,7 +5007,6 @@ namespace ManipAnalysis
 
                 dataFileWriter.Close();
                 dataFileStream.Close();
-
             }
         }
 
@@ -3928,24 +5027,24 @@ namespace ManipAnalysis
 
         private void button_DataManipulation_DeleteMeasureFile_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Deleting measure file...");
-            mySQLWrapper.deleteMeasureFile(Convert.ToInt32(textBox_DataManipulation_MeasureFileID));
-            writeProgressInfo("Ready");
+            WriteProgressInfo("Deleting measure file...");
+            _mySqlWrapper.DeleteMeasureFile(Convert.ToInt32(textBox_DataManipulation_MeasureFileID));
+            WriteProgressInfo("Ready");
         }
 
         private void button_Debug_CleanOrphanedEntries_Click(object sender, EventArgs e)
         {
-            writeProgressInfo("Cleaning orphaned entries...");
-            mySQLWrapper.cleanOrphanedEntries();
-            writeProgressInfo("Ready");
+            WriteProgressInfo("Cleaning orphaned entries...");
+            _mySqlWrapper.CleanOrphanedEntries();
+            WriteProgressInfo("Ready");
         }
 
         private void button_Start_SelectDatabase_Click(object sender, EventArgs e)
         {
-            mySQLWrapper.setDatabase(comboBox_Start_Database.SelectedItem.ToString());
+            _mySqlWrapper.SetDatabase(comboBox_Start_Database.SelectedItem.ToString());
 
-             if (!tabControl.TabPages.Contains(tabPage_VisualizationExport))
-             {
+            if (!tabControl.TabPages.Contains(tabPage_VisualizationExport))
+            {
                 tabControl.TabPages.Remove(tabPage_Impressum);
                 tabControl.TabPages.Add(tabPage_VisualizationExport);
                 tabControl.TabPages.Add(tabPage_Impressum);
@@ -3958,105 +5057,105 @@ namespace ManipAnalysis
             string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
             string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+            var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
 
-            myMatlabWrapper.createVelocityFigure("Velocity baseline plot", 101);
-            myMatlabWrapper.drawTargets(0.005, 0.1, 0, 0);
+            _myMatlabWrapper.CreateVelocityFigure("Velocity baseline plot", 101);
+            _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
-            DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+            DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject.ID);
 
-            List<object[]> baselineData = new List<object[]>();
-
-            foreach (DataRow row in baseline.Tables[0].Rows)
-            {
-                baselineData.Add(new object[] { Convert.ToDouble(row["baseline_velocity_x"]), Convert.ToDouble(row["baseline_velocity_z"]), Convert.ToInt32(row["target_number"]) });
-            }
+            List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
+                                           select new object[]
+                                               {
+                                                   Convert.ToDouble(row["baseline_velocity_x"]),
+                                                   Convert.ToDouble(row["baseline_velocity_z"]),
+                                                   Convert.ToInt32(row["target_number"])
+                                               }).ToList();
 
             int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
 
             for (int i = 0; i < targetNumberArray.Length; i++)
             {
-                double[] tempXZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2))).ToArray();
-                myMatlabWrapper.setWorkspaceData("XZ", tempXZ);
-                myMatlabWrapper.plot("XZ",2);
+                double[] tempXZ =
+                    baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                .Select(
+                                    t =>
+                                    Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2)))
+                                .ToArray();
+                _myMatlabWrapper.SetWorkspaceData("XZ", tempXZ);
+                _myMatlabWrapper.Plot("XZ", 2);
             }
 
-            myMatlabWrapper.clearWorkspace();
+            _myMatlabWrapper.ClearWorkspace();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = "Save trajectory / velocity file";
+            saveFileDialog.Title = @"Save trajectory / velocity file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "DataFiles (*.csv)|.csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
             saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                    + "."
-                                    + DateTime.Now.Month.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Day.ToString("00")
-                                    + "-"
-                                    + DateTime.Now.Hour.ToString("00")
-                                    + "."
-                                    + DateTime.Now.Minute.ToString("00")
-                                    + "-"
-                                    + comboBox_BaselineMeantime_Subject.SelectedItem.ToString()
-                                    + "-velocity-baseline-data";
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_BaselineMeantime_Subject.SelectedItem
+                                      + "-velocity-baseline-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string study = comboBox_BaselineMeantime_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineMeantime_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineMeantime_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineMeantime_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer) comboBox_BaselineMeantime_Subject.SelectedItem;
 
-                DataSet baseline = mySQLWrapper.getBaselineDataSet(study, group, szenario, subject.id);
+                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject.ID);
 
-                List<object[]> baselineData = new List<object[]>();
-
-                foreach (DataRow row in baseline.Tables[0].Rows)
-                {
-                    baselineData.Add(new object[] { Convert.ToDouble(row["baseline_velocity_x"]), Convert.ToDouble(row["baseline_velocity_z"]), Convert.ToInt32(row["target_number"]) });
-                }
+                List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
+                                               select new object[]
+                                                   {
+                                                       Convert.ToDouble(row["baseline_velocity_x"]),
+                                                       Convert.ToDouble(row["baseline_velocity_z"]),
+                                                       Convert.ToInt32(row["target_number"])
+                                                   }).ToList();
 
                 int[] targetNumberArray = baselineData.Select(t => Convert.ToInt32(t[2])).Distinct().ToArray();
 
-                List<string> cache = new List<string>();
-                cache.Add("Study;Group;Szenario;Subject;Target;DataPoint;VelocityX;VelocityZ;VelocityXZ");
+                var cache = new List<string>
+                    {
+                        "Study;Group;Szenario;Subject;Target;DataPoint;VelocityX;VelocityZ;VelocityXZ"
+                    };
 
                 for (int i = 0; i < targetNumberArray.Length; i++)
                 {
-                    double[] tempX = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[0])).ToArray();
-                    double[] tempZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Convert.ToDouble(t[1])).ToArray();
-                    double[] tempXZ = baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i]).Select(t => Math.Sqrt(Math.Pow(Convert.ToDouble(t[0]), 2) + Math.Pow(Convert.ToDouble(t[1]), 2))).ToArray();
+                    double[] tempX =
+                        baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                    .Select(t => Convert.ToDouble(t[0]))
+                                    .ToArray();
+                    double[] tempZ =
+                        baselineData.Where(t => Convert.ToInt32(t[2]) == targetNumberArray[i])
+                                    .Select(t => Convert.ToDouble(t[1]))
+                                    .ToArray();
 
-                    for (int j = 0; j < tempX.Length; j++)
-                    {
-                        cache.Add(
-                                    study
-                                    + ";"
-                                    + group
-                                    + ";"
-                                    + szenario
-                                    + ";"
-                                    + subject
-                                    + ";"
-                                    + targetNumberArray[i]
-                                    + ";"
-                                    + j
-                                    + ";"
-                                    + DoubleConverter.ToExactString(tempX[j])
-                                    + ";"
-                                    + DoubleConverter.ToExactString(tempZ[j])
-                                    );
-                    }
+                    int iVar = i;
+                    cache.AddRange(
+                        tempX.Select(
+                            (t, j) =>
+                            study + ";" + @group + ";" + szenario + ";" + subject + ";" + targetNumberArray[iVar] + ";" +
+                            j + ";" + DoubleConverter.ToExactString(t) + ";" + DoubleConverter.ToExactString(tempZ[j])));
                 }
 
-                FileStream dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
-                StreamWriter dataFileWriter = new StreamWriter(dataFileStream);
+                var dataFileStream = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                var dataFileWriter = new StreamWriter(dataFileStream);
 
                 for (int i = 0; i < cache.Count(); i++)
                 {
@@ -4067,5 +5166,19 @@ namespace ManipAnalysis
                 dataFileStream.Close();
             }
         }
+
+        private delegate void LogBoxCallbackAddString(string text);
+
+        private delegate void LogBoxCallbackAddStringArray(string[] textArray);
+
+        private delegate void LogBoxCallbackClearItems();
+
+        private delegate string[] LogBoxCallbackGetText();
+
+        private delegate void ProgressBarCallback(double value);
+
+        private delegate void ProgressLabelCallback(string text);
+
+        private delegate void TabControlCallback(bool enable);
     }
 }

@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ManipAnalysis
+﻿namespace ManipAnalysis.Container
 {
     public class SubjectInformationContainer
     {
-        public int id;
-        public string subject_name,subject_id;
+        public readonly int ID;
+        public readonly string SubjectID;
+        public readonly string SubjectName;
 
-        public SubjectInformationContainer(int _id, string _subject_name, string _subject_id)
+        public SubjectInformationContainer(int id, string subjectName, string subjectID)
         {
-            id = _id;
-            subject_name = _subject_name;
-            subject_id = _subject_id;
+            ID = id;
+            SubjectName = subjectName;
+            SubjectID = subjectID;
         }
 
         public override string ToString()
         {
-            return subject_id;
+            return SubjectID;
         }
     }
 }

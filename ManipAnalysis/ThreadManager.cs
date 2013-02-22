@@ -1,44 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 
 namespace ManipAnalysis
 {
-    static class ThreadManager
+    internal static class ThreadManager
     {
-        private static List<Thread> runningThreads = new List<Thread>();
-        public static bool pause = false;
+        private static readonly List<Thread> RunningThreads = new List<Thread>();
+        public static bool Pause;
 
-        public static void pushBack(Thread _thread)
+        public static void PushBack(Thread thread)
         {
-            runningThreads.Add(_thread);
+            RunningThreads.Add(thread);
         }
 
-        public static void pushFront(Thread _thread)
+        public static int GetIndex(Thread thread)
         {
-            runningThreads.Insert(0, _thread);
+            return RunningThreads.IndexOf(thread);
         }
 
-        public static int getIndex(Thread _thread)
+        public static void Remove(Thread thread)
         {
-            return runningThreads.IndexOf(_thread);
-        }
-
-        public static void remove(Thread _thread)
-        {
-            runningThreads.Remove(_thread);
-        }
-
-        public static int getThreadCount()
-        {
-            return runningThreads.Count;
-        }
-
-        public static List<Thread> getThreadList()
-        {
-            return runningThreads;
+            RunningThreads.Remove(thread);
         }
     }
 }

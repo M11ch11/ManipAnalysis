@@ -1,4 +1,8 @@
-﻿namespace ManipAnalysis
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace ManipAnalysis
 {
     partial class ManipAnalysis
     {
@@ -2263,6 +2267,20 @@
         private System.Windows.Forms.Button button_BaselineMeantime_PlotVelocityBaseline;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_IgnoreCatchTrials;
         private System.Windows.Forms.ListBox listBox_LogBox;
+
+        private static void GetSubDirectories(ref List<DirectoryInfo> directoriesList, DirectoryInfo rootDir)
+        {
+            directoriesList.Add(rootDir);
+            DirectoryInfo[] dirs = rootDir.GetDirectories();
+
+            directoriesList.AddRange(dirs);
+
+            for (int i = 0; i < dirs.Count(); i++)
+            {
+                DirectoryInfo di = dirs[i];
+                GetSubDirectories(ref directoriesList, di);
+            }
+        }
     }
 }
 

@@ -1,154 +1,147 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
-using System.Threading;
-using System.Net;
+using ManipAnalysis.Container;
 
 namespace ManipAnalysis
 {
     public class SqlWrapper
     {
-        SqlConnection sqlCon;
-        SqlCommand sqlCmd;
-        ManipAnalysis myManipAnalysisGUI;
+        private readonly ManipAnalysis _myManipAnalysisGui;
+        private SqlCommand _sqlCmd;
+        private SqlConnection _sqlCon;
 
-        string SQL_server;
-        string SQL_database;
-        string SQL_username;
-        string SQL_password;
+        private string _sqlDatabase;
+        private string _sqlPassword;
+        private string _sqlServer;
+        private string _sqlUsername;
 
-        public SqlWrapper(ManipAnalysis _myManipAnalysisGUI)
+        public SqlWrapper(ManipAnalysis myManipAnalysisGui)
         {
-            myManipAnalysisGUI = _myManipAnalysisGUI;
+            _myManipAnalysisGui = myManipAnalysisGui;
 
-            SQL_server = "localhost";
-            SQL_database = "master";
-            SQL_username = "DataAccess";
-            SQL_password = "!sport12";           
+            _sqlServer = "localhost";
+            _sqlDatabase = "master";
+            _sqlUsername = "DataAccess";
+            _sqlPassword = "!sport12";
         }
 
-        private void setConnectionString(string _serverURI, string _database, string _username, string _password)
+        private void SetConnectionString(string serverUri, string database, string username, string password)
         {
-            SQL_server = _serverURI;
-            SQL_database = _database;
-            SQL_username = _username;
-            SQL_password = _password;            
+            _sqlServer = serverUri;
+            _sqlDatabase = database;
+            _sqlUsername = username;
+            _sqlPassword = password;
 
-            sqlCon = new SqlConnection(@"Data Source=" + SQL_server + ";Initial Catalog=" + SQL_database + ";User Id=" + SQL_username + ";Password=" + SQL_password);
+            _sqlCon =
+                new SqlConnection(@"Data Source=" + _sqlServer + ";Initial Catalog=" + _sqlDatabase + ";User Id=" +
+                                  _sqlUsername + ";Password=" + _sqlPassword);
 
-            sqlCmd = new SqlCommand();
-            sqlCmd.Connection = sqlCon;
-            sqlCmd.CommandTimeout = 600;
+            _sqlCmd = new SqlCommand {Connection = _sqlCon, CommandTimeout = 600};
         }
 
-        public void setSqlServer(string _serverURI)
+        public void SetSqlServer(string serverUri)
         {
-            closeSqlConnection();
-            setConnectionString(_serverURI, SQL_database, SQL_username, SQL_password);
+            CloseSqlConnection();
+            SetConnectionString(serverUri, _sqlDatabase, _sqlUsername, _sqlPassword);
         }
 
-        public void setDatabase(string _database)
+        public void SetDatabase(string database)
         {
-            openSqlConnection();
-            sqlCon.ChangeDatabase(_database);
+            OpenSqlConnection();
+            _sqlCon.ChangeDatabase(database);
         }
 
-        public bool openSqlConnection()
+        private void OpenSqlConnection()
         {
-            bool _isOpen = true;
-
-            if (sqlCon.State == ConnectionState.Closed)
+            if (_sqlCon.State == ConnectionState.Closed)
             {
-                _isOpen = false;
+                _myManipAnalysisGui.WriteProgressInfo("Opening SQL-Connection...");
 
-                myManipAnalysisGUI.writeProgressInfo("Opening SQL-Connection...");
-
+                bool isOpen;
                 try
                 {
-                    sqlCon.Open();
-                    _isOpen = true;
+                    _sqlCon.Open();
+                    isOpen = true;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
-                    _isOpen = false;
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    isOpen = false;
                 }
 
 
-                if (_isOpen)
+                if (isOpen)
                 {
-                    myManipAnalysisGUI.writeProgressInfo("Ready.");
+                    _myManipAnalysisGui.WriteProgressInfo("Ready.");
                 }
                 else
                 {
-                    myManipAnalysisGUI.writeProgressInfo("SQL-Connection failed!");
+                    _myManipAnalysisGui.WriteProgressInfo("SQL-Connection failed!");
                 }
             }
-            return _isOpen;
         }
 
-        public void closeSqlConnection()
+        public void CloseSqlConnection()
         {
-            if ( (sqlCon != null ) && (sqlCon.State == ConnectionState.Open) )
+            if ((_sqlCon != null) && (_sqlCon.State == ConnectionState.Open))
             {
                 try
                 {
-                    sqlCon.Close();
+                    _sqlCon.Close();
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 }
             }
         }
 
-        public string[] getDatabases()
+        public string[] GetDatabases()
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT name FROM master..sysdatabases WHERE name LIKE 'Study%';";
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT name FROM master..sysdatabases WHERE name LIKE 'Study%';";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -161,16 +154,16 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        private void executeSqlFile(string filename)
+        private void ExecuteSqlFile(string filename)
         {
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            List<string> cmds = new List<string>();
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            var cmds = new List<string>();
 
             if (File.Exists(filename))
             {
                 TextReader tr = new StreamReader(filename);
-                string line = "";
+                string line;
                 string cmd = "";
 
                 while ((line = tr.ReadLine()) != null)
@@ -188,7 +181,6 @@ namespace ManipAnalysis
                 if (cmd.Length > 0)
                 {
                     cmds.Add(cmd);
-                    cmd = "";
                 }
                 tr.Close();
             }
@@ -198,14 +190,14 @@ namespace ManipAnalysis
             {
                 try
                 {
-                    openSqlConnection();                    
-                    
+                    OpenSqlConnection();
+
                     if (cmds.Count > 0)
                     {
                         for (int i = 0; i < cmds.Count; i++)
                         {
-                            sqlCmd.CommandText = cmds[i];
-                            sqlCmd.ExecuteNonQuery();
+                            _sqlCmd.CommandText = cmds[i];
+                            _sqlCmd.ExecuteNonQuery();
                         }
                     }
 
@@ -213,14 +205,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -231,39 +223,39 @@ namespace ManipAnalysis
             }
         }
 
-        public void initializeDatabase()
+        public void InitializeDatabase()
         {
-            executeSqlFile("SQL-Files\\SQL-Tables.sql");
-            executeSqlFile("SQL-Files\\SQL-FunctionsProcedures.sql");
+            ExecuteSqlFile("SQL-Files\\SQL-Tables.sql");
+            ExecuteSqlFile("SQL-Files\\SQL-FunctionsProcedures.sql");
         }
 
-        public void cleanOrphanedEntries()
+        public void CleanOrphanedEntries()
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "cleanOrphanedEntries";
+            _sqlCmd.CommandText = "cleanOrphanedEntries";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -274,34 +266,34 @@ namespace ManipAnalysis
             }
         }
 
-        public void deleteMeasureFile(int _measureFileID)
+        public void DeleteMeasureFile(int measureFileID)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "deleteMeasureFile";
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", _measureFileID));
+            _sqlCmd.CommandText = "deleteMeasureFile";
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", measureFileID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -312,35 +304,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void changeGroupID(int _oldGroupID, int _newGroupID)
+        public void ChangeGroupID(int oldGroupID, int newGroupID)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "changeGroupID";
-            sqlCmd.Parameters.Add(new SqlParameter("@oldGroupID", _oldGroupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@newGroupID", _newGroupID));
+            _sqlCmd.CommandText = "changeGroupID";
+            _sqlCmd.Parameters.Add(new SqlParameter("@oldGroupID", oldGroupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@newGroupID", newGroupID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -351,35 +343,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void changeSubjectID(int _oldSubjectID, int _newSubjectID)
+        public void ChangeSubjectID(int oldSubjectID, int newSubjectID)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "changeSubjectID";
-            sqlCmd.Parameters.Add(new SqlParameter("@oldSubjectID", _oldSubjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@newSubjectID", _newSubjectID));
+            _sqlCmd.CommandText = "changeSubjectID";
+            _sqlCmd.Parameters.Add(new SqlParameter("@oldSubjectID", oldSubjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@newSubjectID", newSubjectID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -390,35 +382,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void changeSubjectName(int _subjectID, string _newSubjectName)
+        public void ChangeSubjectName(int subjectID, string newSubjectName)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "changeSubjectName";
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@newSubjectName", _newSubjectName));
+            _sqlCmd.CommandText = "changeSubjectName";
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@newSubjectName", newSubjectName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -429,35 +421,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void changeGroupName(int _groupID, string _newGrouptName)
+        public void ChangeGroupName(int groupID, string newGrouptName)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "changeGroupName";
-            sqlCmd.Parameters.Add(new SqlParameter("@groupID", _groupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@newGroupName", _newGrouptName));
+            _sqlCmd.CommandText = "changeGroupName";
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupID", groupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@newGroupName", newGrouptName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -468,42 +460,43 @@ namespace ManipAnalysis
             }
         }
 
-        public List<int[]> getStatisticCalculationInformation()
+        public List<int[]> GetStatisticCalculationInformation()
         {
             List<int[]> retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getStatisticCalculationInformation()";
+            _sqlCmd.CommandText = "SELECT * FROM getStatisticCalculationInformation()";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
                         retVal = new List<int[]>();
-                        
-                        while (SqlRdr.Read())
+
+                        while (sqlRdr.Read())
                         {
                             bool hasNullValues = false;
-                            for(int i = 0; i < 6; i++)
+                            for (int i = 0; i < 6; i++)
                             {
-                                if (SqlRdr.IsDBNull(i))
+                                if (sqlRdr.IsDBNull(i))
                                 {
                                     if (i > 0)
                                     {
-                                        myManipAnalysisGUI.writeToLogBox("Trial " + SqlRdr.GetInt32(0) + " has NULL values as id.");
+                                        _myManipAnalysisGui.WriteToLogBox("Trial " + sqlRdr.GetInt32(0) +
+                                                                          " has NULL values as id.");
                                     }
                                     else
                                     {
-                                        myManipAnalysisGUI.writeToLogBox("There are NULL values.");
+                                        _myManipAnalysisGui.WriteToLogBox("There are NULL values.");
                                     }
                                     hasNullValues = true;
                                 }
@@ -511,39 +504,40 @@ namespace ManipAnalysis
 
                             if (!hasNullValues)
                             {
-                                retVal.Add(new int[]  {
-                                                    SqlRdr.GetInt32(0), //trial_id
-                                                    SqlRdr.GetInt32(1), //subject_id
-                                                    SqlRdr.GetInt32(2), //study_id
-                                                    SqlRdr.GetInt32(3), //group_id
-                                                    SqlRdr.GetInt32(4),  //target_id
-                                                    SqlRdr.GetInt32(5)  //target_number
-                                                   });
+                                retVal.Add(new int[]
+                                    {
+                                        sqlRdr.GetInt32(0), //trial_id
+                                        sqlRdr.GetInt32(1), //subject_id
+                                        sqlRdr.GetInt32(2), //study_id
+                                        sqlRdr.GetInt32(3), //group_id
+                                        sqlRdr.GetInt32(4), //target_id
+                                        sqlRdr.GetInt32(5) //target_number
+                                    });
                             }
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
-                    sqlCmd.Cancel();
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    _sqlCmd.Cancel();
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
-                            executeTryCounter = 5;                            
+                            executeTryCounter = 5;
                         }
                     }
                 }
@@ -552,58 +546,59 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public List<object[]> getFaultyTrialInformation()
+        public List<object[]> GetFaultyTrialInformation()
         {
             List<object[]> retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getFaultyTrialInformation()";
+            _sqlCmd.CommandText = "SELECT * FROM getFaultyTrialInformation()";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
                         retVal = new List<object[]>();
-                        while (SqlRdr.Read())
+                        while (sqlRdr.Read())
                         {
-                            retVal.Add(new object[] {
-                                                        SqlRdr.GetInt32(0),     //trial_id
-                                                        SqlRdr.GetInt32(1),     //measure_file_id
-                                                        SqlRdr.GetString(2),    //study_name
-                                                        SqlRdr.GetString(3),    //group_name
-                                                        SqlRdr.GetInt32(4),    //subject_id
-                                                        SqlRdr.GetString(5),    //szenario_name
-                                                        SqlRdr.GetDateTime(6),  //measure_file_creation_time
-                                                        SqlRdr.GetInt32(7)      //szenario_trial_number
-                                                    });
+                            retVal.Add(new object[]
+                                {
+                                    sqlRdr.GetInt32(0), //trial_id
+                                    sqlRdr.GetInt32(1), //measure_file_id
+                                    sqlRdr.GetString(2), //study_name
+                                    sqlRdr.GetString(3), //group_name
+                                    sqlRdr.GetInt32(4), //subject_id
+                                    sqlRdr.GetString(5), //szenario_name
+                                    sqlRdr.GetDateTime(6), //measure_file_creation_time
+                                    sqlRdr.GetInt32(7) //szenario_trial_number
+                                });
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -616,47 +611,48 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int[] getFaultyTrialFixInformation(int _measureFileID, int _szenarioTrialNumber)
+        public int[] GetFaultyTrialFixInformation(int measureFileID, int szenarioTrialNumber)
         {
             int[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "getFaultyTrialFixInformation";
+            _sqlCmd.CommandText = "getFaultyTrialFixInformation";
 
-            sqlCmd.Parameters.Add("@upperTrialID", SqlDbType.Int);
-            sqlCmd.Parameters.Add("@lowerTrialID", SqlDbType.Int);
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", _measureFileID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumber", _szenarioTrialNumber));
+            _sqlCmd.Parameters.Add("@upperTrialID", SqlDbType.Int);
+            _sqlCmd.Parameters.Add("@lowerTrialID", SqlDbType.Int);
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", measureFileID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumber", szenarioTrialNumber));
 
-            sqlCmd.Parameters["@upperTrialID"].Direction = ParameterDirection.Output;
-            sqlCmd.Parameters["@lowerTrialID"].Direction = ParameterDirection.Output;
+            _sqlCmd.Parameters["@upperTrialID"].Direction = ParameterDirection.Output;
+            _sqlCmd.Parameters["@lowerTrialID"].Direction = ParameterDirection.Output;
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = new int[]  {
-                                            Convert.ToInt32(sqlCmd.Parameters["@upperTrialID"].Value),
-                                            Convert.ToInt32(sqlCmd.Parameters["@lowerTrialID"].Value)
-                                        };
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = new int[]
+                        {
+                            Convert.ToInt32(_sqlCmd.Parameters["@upperTrialID"].Value),
+                            Convert.ToInt32(_sqlCmd.Parameters["@lowerTrialID"].Value)
+                        };
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -667,48 +663,47 @@ namespace ManipAnalysis
             }
 
             return retVal;
-
         }
 
-        public DateTime getTurnDateTime(string _study, string _group, string _szenario, int _subjectID, int _turn)
+        public DateTime GetTurnDateTime(string study, string group, string szenario, int subjectID, int turn)
         {
-            DateTime retVal = new DateTime();
+            var retVal = new DateTime();
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "getTurnDateTime";
+            _sqlCmd.CommandText = "getTurnDateTime";
 
-            sqlCmd.Parameters.Add("@turnDateTime", SqlDbType.DateTime2);
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _study));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _group));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenario));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@turn", _turn));
+            _sqlCmd.Parameters.Add("@turnDateTime", SqlDbType.DateTime2);
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", study));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", group));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@turn", turn));
 
-            sqlCmd.Parameters["@turnDateTime"].Direction = ParameterDirection.Output;
+            _sqlCmd.Parameters["@turnDateTime"].Direction = ParameterDirection.Output;
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToDateTime(sqlCmd.Parameters["@turnDateTime"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToDateTime(_sqlCmd.Parameters["@turnDateTime"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -721,24 +716,24 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getMeasureDataNormalizedDataSet(int _trialID)
+        public DataSet GetMeasureDataNormalizedDataSet(int trialID)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getMeasureDataNormalizedData(@trialID) ORDER BY time_stamp;";
-            sqlCmd.Parameters.Add(new SqlParameter("@trialID", _trialID));
+            _sqlCmd.CommandText = "SELECT * FROM getMeasureDataNormalizedData(@trialID) ORDER BY time_stamp;";
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -746,14 +741,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -766,47 +761,48 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int getTrailID(string _study, string _group, string _szenario, int _subjectID, DateTime _turnDateTime, int _target, int _trial)
+        public int GetTrailID(string study, string group, string szenario, int subjectID, DateTime turnDateTime,
+                              int target, int trial)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "getTrialID";
+            _sqlCmd.CommandText = "getTrialID";
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _study));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _group));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenario));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", _turnDateTime));
-            sqlCmd.Parameters.Add(new SqlParameter("@target", _target));
-            sqlCmd.Parameters.Add(new SqlParameter("@trial", _trial));
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", study));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", group));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
+            _sqlCmd.Parameters.Add(new SqlParameter("@target", target));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trial", trial));
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
 
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -819,24 +815,24 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getVelocityDataNormalizedDataSet(int _trialID)
+        public DataSet GetVelocityDataNormalizedDataSet(int trialID)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getVelocityDataNormalizedData(@trialID) ORDER BY time_stamp;";
-            sqlCmd.Parameters.Add(new SqlParameter("@trialID", _trialID));
+            _sqlCmd.CommandText = "SELECT * FROM getVelocityDataNormalizedData(@trialID) ORDER BY time_stamp;";
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -844,14 +840,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -864,24 +860,24 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getStatisticDataSet(int _trialID)
+        public DataSet GetStatisticDataSet(int trialID)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getStatisticData(@trialID);";
-            sqlCmd.Parameters.Add(new SqlParameter("@trialID", _trialID));
+            _sqlCmd.CommandText = "SELECT * FROM getStatisticData(@trialID);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -889,14 +885,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -909,28 +905,30 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getStatisticDataSet(string _studyName, string _groupName, string _szenarioName, int _subjectID, DateTime _turn)
+        public DataSet GetStatisticDataSet(string studyName, string groupName, string szenarioName, int subjectID,
+                                           DateTime turn)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getStatisticData2(@studyName,@groupName,@szenarioName,@subjectID,@turnDateTime);";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", _turn));
+            _sqlCmd.CommandText =
+                "SELECT * FROM getStatisticData2(@studyName,@groupName,@szenarioName,@subjectID,@turnDateTime);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turn));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -938,14 +936,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -958,27 +956,28 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getBaselineDataSet(int _subjectID, int _studyID, int _groupID, int _targetID)
+        public DataSet GetBaselineDataSet(int subjectID, int studyID, int groupID, int targetID)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getBaseLineData(@subjectID,@studyID,@groupID,@targetID) ORDER BY pseudo_time_stamp;";
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@studyID", _studyID));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupID", _groupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@targetID", _targetID));
+            _sqlCmd.CommandText =
+                "SELECT * FROM getBaseLineData(@subjectID,@studyID,@groupID,@targetID) ORDER BY pseudo_time_stamp;";
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyID", studyID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupID", groupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetID", targetID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -986,14 +985,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1006,27 +1005,28 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getBaselineDataSet(string _studyName, string _groupName, string _szenarioName, int _subjectID)
+        public DataSet GetBaselineDataSet(string studyName, string groupName, string szenarioName, int subjectID)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getBaseLineData2(@studyName,@groupName,@szenarioName,@subjectID) ORDER BY pseudo_time_stamp;";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
+            _sqlCmd.CommandText =
+                "SELECT * FROM getBaseLineData2(@studyName,@groupName,@szenarioName,@subjectID) ORDER BY pseudo_time_stamp;";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -1034,14 +1034,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1054,28 +1054,30 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet getMeanTimeDataSet(string _studyName, string _groupName, string _szenarioName, int _subjectID, DateTime _turnDateTime)
+        public DataSet GetMeanTimeDataSet(string studyName, string groupName, string szenarioName, int subjectID,
+                                          DateTime turnDateTime)
         {
             DataSet retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getSzenarioMeanTimeData(@studyName,@groupName,@szenarioName,@subjectID,@turnDateTime);";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", _turnDateTime));
+            _sqlCmd.CommandText =
+                "SELECT * FROM getSzenarioMeanTimeData(@studyName,@groupName,@szenarioName,@subjectID,@turnDateTime);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataAdapter sqlAdapt = new SqlDataAdapter(sqlCmd);
+                    OpenSqlConnection();
+                    var sqlAdapt = new SqlDataAdapter(_sqlCmd);
                     retVal = new DataSet();
                     sqlAdapt.Fill(retVal);
                     sqlAdapt.Dispose();
@@ -1083,14 +1085,14 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1103,41 +1105,41 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertMeasureFile(DateTime _creationTime, string _measureFileHash)
+        public int InsertMeasureFile(DateTime creationTime, string measureFileHash)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertMeasureFile";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertMeasureFile";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@creationTime", _creationTime));
-            sqlCmd.Parameters.Add(new SqlParameter("@fileHash", _measureFileHash));
+            _sqlCmd.Parameters.Add(new SqlParameter("@creationTime", creationTime));
+            _sqlCmd.Parameters.Add(new SqlParameter("@fileHash", measureFileHash));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1150,40 +1152,40 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertStudy(string _studyName)
+        public int InsertStudy(string studyName)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertStudy";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertStudy";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1196,40 +1198,40 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertSzenario(string _szenarioName)
+        public int InsertSzenario(string szenarioName)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertSzenario";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertSzenario";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1242,40 +1244,40 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertGroup(string _groupName)
+        public int InsertGroup(string groupName)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertGroup";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertGroup";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1288,41 +1290,41 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertSubject(string _subjectName, string _subjectID)
+        public int InsertSubject(string subjectName, string subjectID)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertSubject";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertSubject";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectName", _subjectName));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectName", subjectName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1335,40 +1337,40 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertTarget(int _targetNumber)
+        public int InsertTarget(int targetNumber)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertTarget";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertTarget";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@targetNumber", _targetNumber));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetNumber", targetNumber));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1381,40 +1383,41 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertTargetTrialNumber(int _targetTrialNumber)
+        public int InsertTargetTrialNumber(int targetTrialNumber)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertTargetTrialNumber";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertTargetTrialNumber";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@targetTrialNumber", _targetTrialNumber));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetTrialNumber", targetTrialNumber));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1427,40 +1430,41 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertSzenarioTrialNumber(int _szenarioTrialNumber)
+        public int InsertSzenarioTrialNumber(int szenarioTrialNumber)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertSzenarioTrialNumber";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertSzenarioTrialNumber";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumber", _szenarioTrialNumber));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumber", szenarioTrialNumber));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1473,40 +1477,40 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertIsCatchTrial(bool _isCatchTrial)
+        public int InsertIsCatchTrial(bool isCatchTrial)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertIsCatchTrial";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertIsCatchTrial";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@isCatchTrial", _isCatchTrial));
+            _sqlCmd.Parameters.Add(new SqlParameter("@isCatchTrial", isCatchTrial));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1519,22 +1523,23 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertTrialInformation(bool _faultyTrial, int _butterworthFilterOrder, int _butterworthFilterFreq, int _velocityTrimThreshold)
+        public int InsertTrialInformation(bool faultyTrial, int butterworthFilterOrder, int butterworthFilterFreq,
+                                          int velocityTrimThreshold)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertTrialInformation";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertTrialInformation";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@faultyTrial", _faultyTrial));
-            sqlCmd.Parameters.Add(new SqlParameter("@butterworthFilterOrder", _butterworthFilterOrder));
-            sqlCmd.Parameters.Add(new SqlParameter("@butterworthCutOffFreq", _butterworthFilterFreq));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityTrimThreshold", _velocityTrimThreshold));
+            _sqlCmd.Parameters.Add(new SqlParameter("@faultyTrial", faultyTrial));
+            _sqlCmd.Parameters.Add(new SqlParameter("@butterworthFilterOrder", butterworthFilterOrder));
+            _sqlCmd.Parameters.Add(new SqlParameter("@butterworthCutOffFreq", butterworthFilterFreq));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityTrimThreshold", velocityTrimThreshold));
 
 
             int executeTryCounter = 5;
@@ -1542,21 +1547,22 @@ namespace ManipAnalysis
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1569,70 +1575,72 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertMeasureDataRaw(
-                                            int _measureDataRawID,
-                                            DateTime _timeStamp,
-                                            double _forceActualX,
-                                            double _forceActualY,
-                                            double _forceActualZ,
-                                            double _forceNominalX,
-                                            double _forceNominalY,
-                                            double _forceNominalZ,
-                                            double _forceMomentX,
-                                            double _forceMomentY,
-                                            double _forceMomentZ,
-                                            double _positionCartesianX,
-                                            double _positionCartesianY,
-                                            double _positionCartesianZ,
-                                            int _position_status
-                                        )
+        /*
+        public int InsertMeasureDataRaw(
+            int measureDataRawID,
+            DateTime timeStamp,
+            double forceActualX,
+            double forceActualY,
+            double forceActualZ,
+            double forceNominalX,
+            double forceNominalY,
+            double forceNominalZ,
+            double forceMomentX,
+            double forceMomentY,
+            double forceMomentZ,
+            double positionCartesianX,
+            double positionCartesianY,
+            double positionCartesianZ,
+            int positionStatus
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertMeasureDataRaw";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertMeasureDataRaw";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@measureDataRawID", _measureDataRawID));
-            sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", _timeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", _forceActualX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", _forceActualY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", _forceActualZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", _forceNominalX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", _forceNominalY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", _forceNominalZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", _forceMomentX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", _forceMomentY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", _forceMomentZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", _positionCartesianX));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", _positionCartesianY));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", _positionCartesianZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", _position_status));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureDataRawID", measureDataRawID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", timeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", forceActualX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", forceActualY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", forceActualZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", forceNominalX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", forceNominalY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", forceNominalZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", forceMomentX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", forceMomentY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", forceMomentZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", positionCartesianX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", positionCartesianY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", positionCartesianZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", positionStatus));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1644,71 +1652,73 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
-        public int insertMeasureDataFiltered(
-                                            int _measureDataFilteredID,
-                                            DateTime _timeStamp,
-                                            double _forceActualX,
-                                            double _forceActualY,
-                                            double _forceActualZ,
-                                            double _forceNominalX,
-                                            double _forceNominalY,
-                                            double _forceNominalZ,
-                                            double _forceMomentX,
-                                            double _forceMomentY,
-                                            double _forceMomentZ,
-                                            double _positionCartesianX,
-                                            double _positionCartesianY,
-                                            double _positionCartesianZ,
-                                            int _positionStatus
-                                        )
+        */
+        /*
+        public int InsertMeasureDataFiltered(
+            int measureDataFilteredID,
+            DateTime timeStamp,
+            double forceActualX,
+            double forceActualY,
+            double forceActualZ,
+            double forceNominalX,
+            double forceNominalY,
+            double forceNominalZ,
+            double forceMomentX,
+            double forceMomentY,
+            double forceMomentZ,
+            double positionCartesianX,
+            double positionCartesianY,
+            double positionCartesianZ,
+            int positionStatus
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertMeasureDataFiltered";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertMeasureDataFiltered";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@measureDataFilteredID", _measureDataFilteredID));
-            sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", _timeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", _forceActualX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", _forceActualY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", _forceActualZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", _forceNominalX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", _forceNominalY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", _forceNominalZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", _forceMomentX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", _forceMomentY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", _forceMomentZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", _positionCartesianX));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", _positionCartesianY));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", _positionCartesianZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", _positionStatus));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureDataFilteredID", measureDataFilteredID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", timeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", forceActualX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", forceActualY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", forceActualZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", forceNominalX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", forceNominalY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", forceNominalZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", forceMomentX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", forceMomentY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", forceMomentZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", positionCartesianX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", positionCartesianY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", positionCartesianZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", positionStatus));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1720,71 +1730,73 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
-        public int insertMeasureDataNormalized(
-                                            int _measureDataNormalizedID,
-                                            DateTime _timeStamp,
-                                            double _forceActualX,
-                                            double _forceActualY,
-                                            double _forceActualZ,
-                                            double _forceNominalX,
-                                            double _forceNominalY,
-                                            double _forceNominalZ,
-                                            double _forceMomentX,
-                                            double _forceMomentY,
-                                            double _forceMomentZ,
-                                            double _positionCartesianX,
-                                            double _positionCartesianY,
-                                            double _positionCartesianZ,
-                                            int _positionStatus
-                                        )
+        */
+        /*
+        public int InsertMeasureDataNormalized(
+            int measureDataNormalizedID,
+            DateTime timeStamp,
+            double forceActualX,
+            double forceActualY,
+            double forceActualZ,
+            double forceNominalX,
+            double forceNominalY,
+            double forceNominalZ,
+            double forceMomentX,
+            double forceMomentY,
+            double forceMomentZ,
+            double positionCartesianX,
+            double positionCartesianY,
+            double positionCartesianZ,
+            int positionStatus
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertMeasureDataNormalized";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertMeasureDataNormalized";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@measureDataNormalizedID", _measureDataNormalizedID));
-            sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", _timeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", _forceActualX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", _forceActualY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", _forceActualZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", _forceNominalX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", _forceNominalY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", _forceNominalZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", _forceMomentX));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", _forceMomentY));
-            sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", _forceMomentZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", _positionCartesianX));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", _positionCartesianY));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", _positionCartesianZ));
-            sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", _positionStatus));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureDataNormalizedID", measureDataNormalizedID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", timeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualX", forceActualX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualY", forceActualY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceActualZ", forceActualZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalX", forceNominalX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalY", forceNominalY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceNominalZ", forceNominalZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentX", forceMomentX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentY", forceMomentY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@forceMomentZ", forceMomentZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianX", positionCartesianX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianY", positionCartesianY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionCartesianZ", positionCartesianZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@positionStatus", positionStatus));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1796,51 +1808,53 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
-        public int insertVelocityDataFiltered(
-                                            int _velocityDataFilteredID,
-                                            DateTime _timeStamp,
-                                            double _velocityX,
-                                            double _velocityY,
-                                            double _velocityZ
-                                        )
+        */
+        /*
+        public int InsertVelocityDataFiltered(
+            int velocityDataFilteredID,
+            DateTime timeStamp,
+            double velocityX,
+            double velocityY,
+            double velocityZ
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertVelocityDataFiltered";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertVelocityDataFiltered";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityDataFilteredID", _velocityDataFilteredID));
-            sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", _timeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityX", _velocityX));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityY", _velocityY));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityZ", _velocityZ)); ;
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityDataFilteredID", velocityDataFilteredID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", timeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityX", velocityX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityY", velocityY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityZ", velocityZ));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1852,51 +1866,53 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
-        public int insertVelocityDataNormalized(
-                                            int _velocityDataNormalizedID,
-                                            DateTime _timeStamp,
-                                            double _velocityX,
-                                            double _velocityY,
-                                            double _velocityZ
-                                        )
+        */
+        /*
+        public int InsertVelocityDataNormalized(
+            int velocityDataNormalizedID,
+            DateTime timeStamp,
+            double velocityX,
+            double velocityY,
+            double velocityZ
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertVelocityDataNormalized";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertVelocityDataNormalized";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityDataNormalizedID", _velocityDataNormalizedID));
-            sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", _timeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityX", _velocityX));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityY", _velocityY));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityZ", _velocityZ)); ;
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityDataNormalizedID", velocityDataNormalizedID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@timeStamp", timeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityX", velocityX));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityY", velocityY));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityZ", velocityZ));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1908,63 +1924,69 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
-        public int insertStatisticData(
-                                            int _trialID,
-                                            double _velocityVectorCorrelation,
-                                            double _trajectoryLengthAbs,
-                                            double _trajectoryLengthRatio,
-                                            double _perpendicularDisplacement300msAbs,
-                                            double _maximalPerpendicularDisplacementAbs,
-                                            double _meanPerpendicularDisplacementAbs,
-                                            double _perpendicularDisplacement300msSign,
-                                            double _maximalPerpendicularDisplacementSign,
-                                            double _enclosedArea,
-                                            double _rmse
-                                       )
+        */
+        public int InsertStatisticData(
+            int trialID,
+            double velocityVectorCorrelation,
+            double trajectoryLengthAbs,
+            double trajectoryLengthRatio,
+            double perpendicularDisplacement300MsAbs,
+            double maximalPerpendicularDisplacementAbs,
+            double meanPerpendicularDisplacementAbs,
+            double perpendicularDisplacement300MsSign,
+            double maximalPerpendicularDisplacementSign,
+            double enclosedArea,
+            double rmse
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertStatisticData";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertStatisticData";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@trialID", _trialID));
-            sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelation", _velocityVectorCorrelation));
-            sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", _trajectoryLengthAbs));
-            sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", _trajectoryLengthRatio));
-            sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs", _perpendicularDisplacement300msAbs));
-            sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementAbs", _maximalPerpendicularDisplacementAbs));
-            sqlCmd.Parameters.Add(new SqlParameter("@meanPerpendicularDisplacementAbs", _meanPerpendicularDisplacementAbs));
-            sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msSign", _perpendicularDisplacement300msSign));
-            sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementSign", _maximalPerpendicularDisplacementSign));
-            sqlCmd.Parameters.Add(new SqlParameter("@enclosedArea", _enclosedArea));
-            sqlCmd.Parameters.Add(new SqlParameter("@rmse", _rmse));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelation", velocityVectorCorrelation));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", trajectoryLengthAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", trajectoryLengthRatio));
+            _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs",
+                                                    perpendicularDisplacement300MsAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementAbs",
+                                                    maximalPerpendicularDisplacementAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@meanPerpendicularDisplacementAbs",
+                                                    meanPerpendicularDisplacementAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msSign",
+                                                    perpendicularDisplacement300MsSign));
+            _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementSign",
+                                                    maximalPerpendicularDisplacementSign));
+            _sqlCmd.Parameters.Add(new SqlParameter("@enclosedArea", enclosedArea));
+            _sqlCmd.Parameters.Add(new SqlParameter("@rmse", rmse));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1977,60 +1999,61 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertTrial(
-                                            int _subjectID,
-                                            int _studyID,
-                                            int _groupID,
-                                            int _isCatchTrialID,
-                                            int _szenarioID,
-                                            int _targetID,
-                                            int _targetTrialNumberID,
-                                            int _szenarioTrialNumberID,
-                                            int _measureFileID,
-                                            int _trialInformationID
-                                        )
+        public int InsertTrial(
+            int subjectID,
+            int studyID,
+            int groupID,
+            int isCatchTrialID,
+            int szenarioID,
+            int targetID,
+            int targetTrialNumberID,
+            int szenarioTrialNumberID,
+            int measureFileID,
+            int trialInformationID
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertTrial";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertTrial";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@studyID", _studyID));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupID", _groupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@isCatchTrialID", _isCatchTrialID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", _szenarioID));
-            sqlCmd.Parameters.Add(new SqlParameter("@targetID", _targetID));
-            sqlCmd.Parameters.Add(new SqlParameter("@targetTrialNumberID", _targetTrialNumberID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumberID", _szenarioTrialNumberID));
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", _measureFileID));
-            sqlCmd.Parameters.Add(new SqlParameter("@trialInformationID", _trialInformationID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyID", studyID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupID", groupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@isCatchTrialID", isCatchTrialID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", szenarioID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetID", targetID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetTrialNumberID", targetTrialNumberID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumberID", szenarioTrialNumberID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", measureFileID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialInformationID", trialInformationID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2043,42 +2066,44 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertSzenarioMeanTimeData(int _szenarioMeanTimeID, TimeSpan _szenarioMeanTime, TimeSpan _szenarioMeanTimeStd)
+        public int InsertSzenarioMeanTimeData(int szenarioMeanTimeID, TimeSpan szenarioMeanTime,
+                                              TimeSpan szenarioMeanTimeStd)
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertSzenarioMeanTimeData";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertSzenarioMeanTimeData";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTimeID", _szenarioMeanTimeID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTime", _szenarioMeanTime));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTimeStd", _szenarioMeanTimeStd));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTimeID", szenarioMeanTimeID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTime", szenarioMeanTime));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioMeanTimeStd", szenarioMeanTimeStd));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2091,52 +2116,53 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertSzenarioMeanTime(
-                                            int _subjectID,
-                                            int _studyID,
-                                            int _groupID,
-                                            int _targetID,
-                                            int _szenarioID,
-                                            int _measureFileID
-                                        )
+        public int InsertSzenarioMeanTime(
+            int subjectID,
+            int studyID,
+            int groupID,
+            int targetID,
+            int szenarioID,
+            int measureFileID
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertSzenarioMeanTime";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertSzenarioMeanTime";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@studyID", _studyID));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupID", _groupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@targetID", _targetID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", _szenarioID));
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", _measureFileID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyID", studyID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupID", groupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetID", targetID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", szenarioID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", measureFileID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2149,56 +2175,57 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertBaselineData(
-                                            int _baselineID,
-                                            DateTime _pseudoTimeStamp,
-                                            double _baselinePositionCartesianX,
-                                            double _baselinePositionCartesianY,
-                                            double _baselinePositionCartesianZ,
-                                            double _baselineVelocityX,
-                                            double _baselineVelocityY,
-                                            double _baselineVelocityZ
-                                        )
+        public int InsertBaselineData(
+            int baselineID,
+            DateTime pseudoTimeStamp,
+            double baselinePositionCartesianX,
+            double baselinePositionCartesianY,
+            double baselinePositionCartesianZ,
+            double baselineVelocityX,
+            double baselineVelocityY,
+            double baselineVelocityZ
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertBaselineData";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertBaselineData";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@baselineID", _baselineID));
-            sqlCmd.Parameters.Add(new SqlParameter("@pseudoTimeStamp", _pseudoTimeStamp));
-            sqlCmd.Parameters.Add(new SqlParameter("@baselinePositionCartesianX", _baselinePositionCartesianX));
-            sqlCmd.Parameters.Add(new SqlParameter("baselinePositionCartesianY", _baselinePositionCartesianY));
-            sqlCmd.Parameters.Add(new SqlParameter("baselinePositionCartesianZ", _baselinePositionCartesianZ));
-            sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityX", _baselineVelocityX));
-            sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityY", _baselineVelocityY));
-            sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityZ", _baselineVelocityZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@baselineID", baselineID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@pseudoTimeStamp", pseudoTimeStamp));
+            _sqlCmd.Parameters.Add(new SqlParameter("@baselinePositionCartesianX", baselinePositionCartesianX));
+            _sqlCmd.Parameters.Add(new SqlParameter("baselinePositionCartesianY", baselinePositionCartesianY));
+            _sqlCmd.Parameters.Add(new SqlParameter("baselinePositionCartesianZ", baselinePositionCartesianZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityX", baselineVelocityX));
+            _sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityY", baselineVelocityY));
+            _sqlCmd.Parameters.Add(new SqlParameter("baselineVelocityZ", baselineVelocityZ));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2211,52 +2238,53 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int insertBaseline(
-                                            int _subjectID,
-                                            int _studyID,
-                                            int _groupID,
-                                            int _targetID,
-                                            int _szenarioID,
-                                            int _measureFileID
-                                        )
+        public int InsertBaseline(
+            int subjectID,
+            int studyID,
+            int groupID,
+            int targetID,
+            int szenarioID,
+            int measureFileID
+            )
         {
             int retVal = -1;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "insertBaseline";
-            sqlCmd.Parameters.Add("@id", SqlDbType.Int);
-            sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "insertBaseline";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
-            sqlCmd.Parameters.Add(new SqlParameter("@studyID", _studyID));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupID", _groupID));
-            sqlCmd.Parameters.Add(new SqlParameter("@targetID", _targetID));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", _szenarioID));
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", _measureFileID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyID", studyID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupID", groupID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@targetID", targetID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioID", szenarioID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileID", measureFileID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(sqlCmd.Parameters["@id"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2269,33 +2297,35 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public void bulkInsertMeasureDataRaw(string _filename)
+        public void BulkInsertMeasureDataRaw(string filename)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "BULK INSERT dbo._measure_data_raw FROM '" + @_filename + "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
+            _sqlCmd.CommandText = "BULK INSERT dbo._measure_data_raw FROM '" + filename +
+                                  "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2306,33 +2336,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void bulkInsertMeasureDataFiltered(string _filename)
+        public void BulkInsertMeasureDataFiltered(string filename)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "BULK INSERT dbo._measure_data_filtered FROM '" + @_filename + "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
+            _sqlCmd.CommandText = "BULK INSERT dbo._measure_data_filtered FROM '" + filename +
+                                  "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2343,33 +2375,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void bulkInsertMeasureDataNormalized(string _filename)
+        public void BulkInsertMeasureDataNormalized(string filename)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "BULK INSERT dbo._measure_data_normalized FROM '" + @_filename + "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
+            _sqlCmd.CommandText = "BULK INSERT dbo._measure_data_normalized FROM '" + filename +
+                                  "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2380,33 +2414,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void bulkInsertVelocityDataFiltered(string _filename)
+        public void BulkInsertVelocityDataFiltered(string filename)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "BULK INSERT dbo._velocity_data_filtered FROM '" + @_filename + "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
+            _sqlCmd.CommandText = "BULK INSERT dbo._velocity_data_filtered FROM '" + filename +
+                                  "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2417,33 +2453,35 @@ namespace ManipAnalysis
             }
         }
 
-        public void bulkInsertVelocityDataNormalized(string _filename)
+        public void BulkInsertVelocityDataNormalized(string filename)
         {
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "BULK INSERT dbo._velocity_data_normalized FROM '" + @_filename + "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
+            _sqlCmd.CommandText = "BULK INSERT dbo._velocity_data_normalized FROM '" + filename +
+                                  "' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n' )";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2454,40 +2492,41 @@ namespace ManipAnalysis
             }
         }
 
-        public bool checkIfMeasureFileHashExists(string _measureFileHash)
+        public bool CheckIfMeasureFileHashExists(string measureFileHash)
         {
             bool retVal = false;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.StoredProcedure;
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
 
-            sqlCmd.CommandText = "checkMeasureFileHash";
-            sqlCmd.Parameters.Add("@hashExists", SqlDbType.Bit);
-            sqlCmd.Parameters["@hashExists"].Direction = ParameterDirection.Output;
+            _sqlCmd.CommandText = "checkMeasureFileHash";
+            _sqlCmd.Parameters.Add("@hashExists", SqlDbType.Bit);
+            _sqlCmd.Parameters["@hashExists"].Direction = ParameterDirection.Output;
 
-            sqlCmd.Parameters.Add(new SqlParameter("@measureFileHash", _measureFileHash));
+            _sqlCmd.Parameters.Add(new SqlParameter("@measureFileHash", measureFileHash));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToBoolean(sqlCmd.Parameters["@hashExists"].Value);
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToBoolean(_sqlCmd.Parameters["@hashExists"].Value);
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2500,48 +2539,49 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getStudyNames()
+        public string[] GetStudyNames()
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getStudyNames();";
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT * FROM getStudyNames();";
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2554,49 +2594,50 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getGroupNames(string _studyName)
+        public string[] GetGroupNames(string studyName)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getGroupNames(@studyName);";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT * FROM getGroupNames(@studyName);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2609,50 +2650,51 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getSzenarioNames(string _studyName, string _groupName)
+        public string[] GetSzenarioNames(string studyName, string groupName)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getSzenarioNames(@studyName,@groupName);";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT * FROM getSzenarioNames(@studyName,@groupName);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2665,51 +2707,54 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public SubjectInformationContainer[] getSubjectInformations(string _studyName, string _groupName, string _szenarioName)
+        public SubjectInformationContainer[] GetSubjectInformations(string studyName, string groupName,
+                                                                    string szenarioName)
         {
             SubjectInformationContainer[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getSubjectInformations(@studyName,@groupName,@szenarioName);";
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT * FROM getSubjectInformations(@studyName,@groupName,@szenarioName);";
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<SubjectInformationContainer> rows = new List<SubjectInformationContainer>();
-                        while (SqlRdr.Read())
+                        var rows = new List<SubjectInformationContainer>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(new SubjectInformationContainer(SqlRdr.GetInt32(0), SqlRdr.GetString(1), SqlRdr.GetString(2)));
+                            rows.Add(new SubjectInformationContainer(sqlRdr.GetInt32(0), sqlRdr.GetString(1),
+                                                                     sqlRdr.GetString(2)));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2722,54 +2767,55 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getTurns(string _studyName, string _groupName, string _szenarioName, int _subjectID)
+        public string[] GetTurns(string studyName, string groupName, string szenarioName, int subjectID)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM getTurns(@studyName,@groupName,@szenarioName,@subjectID)";
+            _sqlCmd.CommandText = "SELECT * FROM getTurns(@studyName,@groupName,@szenarioName,@subjectID)";
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@groupName", _groupName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
-            sqlCmd.Parameters.Add(new SqlParameter("@subjectID", _subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2782,53 +2828,57 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getSzenarioTrials(string _studyName, string _szenarioName, bool _showCatchTrials, bool _showCatchTrialsExclusivly)
+        public string[] GetSzenarioTrials(string studyName, string szenarioName, bool showCatchTrials,
+                                          bool showCatchTrialsExclusivly)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getSzenarioTrials(@studyName,@szenarioName,@showCatchTrials,@showCatchTrialsExclusivly)";
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText =
+                "SELECT * FROM getSzenarioTrials(@studyName,@szenarioName,@showCatchTrials,@showCatchTrialsExclusivly)";
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
-            sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrials", Convert.ToInt32(_showCatchTrials)));
-            sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrialsExclusivly", Convert.ToInt32(_showCatchTrialsExclusivly)));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrials", Convert.ToInt32(showCatchTrials)));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrialsExclusivly",
+                                                    Convert.ToInt32(showCatchTrialsExclusivly)));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2841,51 +2891,54 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getTargets(string _studyName, string _szenarioName)
+        public IEnumerable<string> GetTargets(string studyName, string szenarioName)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
-            sqlCmd.CommandType = CommandType.Text;
-            sqlCmd.CommandText = "SELECT * FROM getTargets(@studyName,@szenarioName)";
+            _sqlCmd.Parameters.Clear();
+            _sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandText = "SELECT * FROM getTargets(@studyName,@szenarioName)";
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
-
-                    if (SqlRdr.HasRows)
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr;
+                    using (sqlRdr = _sqlCmd.ExecuteReader())
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        if (sqlRdr.HasRows)
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            var rows = new List<string>();
+                            while (sqlRdr.Read())
+                            {
+                                rows.Add(sqlRdr.GetString(0));
+                            }
+                            sqlRdr.Close();
+                            retVal = rows.ToArray();
                         }
-                        SqlRdr.Close();
-                        retVal = rows.ToArray();
-                    }
-                    else
-                    {
-                        SqlRdr.Close();
+                        else
+                        {
+                            sqlRdr.Close();
+                        }
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2898,53 +2951,53 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] getTrials(string _studyName, string _szenarioName)
+        public IEnumerable<string> GetTrials(string studyName, string szenarioName)
         {
             string[] retVal = null;
 
-            sqlCmd.Parameters.Clear();
+            _sqlCmd.Parameters.Clear();
 
-            sqlCmd.CommandType = CommandType.Text;
+            _sqlCmd.CommandType = CommandType.Text;
 
-            sqlCmd.CommandText = "SELECT * FROM  getTrials(@studyName,@szenarioName)";
+            _sqlCmd.CommandText = "SELECT * FROM  getTrials(@studyName,@szenarioName)";
 
-            sqlCmd.Parameters.Add(new SqlParameter("@studyName", _studyName));
-            sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", _szenarioName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
             {
                 try
                 {
-                    openSqlConnection();
-                    SqlDataReader SqlRdr = sqlCmd.ExecuteReader();
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
 
-                    if (SqlRdr.HasRows)
+                    if (sqlRdr.HasRows)
                     {
-                        List<string> rows = new List<string>();
-                        while (SqlRdr.Read())
+                        var rows = new List<string>();
+                        while (sqlRdr.Read())
                         {
-                            rows.Add(SqlRdr.GetString(0));
+                            rows.Add(sqlRdr.GetString(0));
                         }
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                         retVal = rows.ToArray();
                     }
                     else
                     {
-                        SqlRdr.Close();
+                        sqlRdr.Close();
                     }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
                 {
-                    myManipAnalysisGUI.writeToLogBox(ex.ToString());
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     executeTryCounter--;
                     if (executeTryCounter == 0)
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        DialogResult result;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-                        result = MessageBox.Show("Tried to execute SQL command 5 times, try another 5?", "Try again?", buttons);
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {

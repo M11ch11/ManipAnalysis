@@ -1,46 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
 using System.IO;
+using System.Linq;
+using ManipAnalysis.Container;
 
 namespace ManipAnalysis
 {
-    class MeasureFileParser
+    internal class MeasureFileParser
     {
-        string measureFilePath;
-        DataContainer dataContainer;
-        ManipAnalysis myManipAnalysisGUI;
+        private readonly DataContainer _dataContainer;
+        private readonly ManipAnalysis _myManipAnalysisGui;
+        private string _measureFilePath;
 
-        public MeasureFileParser(DataContainer _container, ManipAnalysis _myManipAnalysisGUI)
+        public MeasureFileParser(DataContainer container, ManipAnalysis myManipAnalysisGui)
         {
-            myManipAnalysisGUI = _myManipAnalysisGUI;
-            dataContainer = _container;
+            _myManipAnalysisGui = myManipAnalysisGui;
+            _dataContainer = container;
         }
 
-        public bool parseFile(string path)
+        public bool ParseFile(string path)
         {
-            bool retVal;
+            _measureFilePath = path;
 
-            measureFilePath = path;
-
-            retVal = parseFileInfo();
+            bool retVal = ParseFileInfo();
 
             if (retVal)
             {
-                retVal = parseMeasureData();
+                retVal = ParseMeasureData();
             }
 
             return retVal;
         }
 
-        private bool parseFileInfo()
+        private bool ParseFileInfo()
         {
             bool retVal = false;
 
-            string filenameInfoString = measureFilePath.Substring(measureFilePath.LastIndexOf("\\Szenario") + 1);
-            filenameInfoString = filenameInfoString.Remove(filenameInfoString.IndexOf(".csv"));
+            string filenameInfoString =
+                _measureFilePath.Substring(_measureFilePath.LastIndexOf("\\Szenario", StringComparison.Ordinal) + 1);
+            filenameInfoString = filenameInfoString.Remove(filenameInfoString.IndexOf(".csv", StringComparison.Ordinal));
             string[] filenameInfoStringArray = filenameInfoString.Split('-');
 
             /*
@@ -58,181 +56,215 @@ namespace ManipAnalysis
                 retVal = true;
             }
             */
-            if (filenameInfoStringArray.Count() == 7)   // Study 2
+            if (filenameInfoStringArray.Count() == 7) // Study 2
             {
-                dataContainer.measureFileHash = MD5.computeHash(measureFilePath);
-                dataContainer.studyName = filenameInfoStringArray[3].Trim();
-                dataContainer.szenarioName = filenameInfoStringArray[0].Trim();
-                dataContainer.groupName = filenameInfoStringArray[4].Trim();
-                dataContainer.subjectName = filenameInfoStringArray[5].Trim();
-                dataContainer.subjectID = filenameInfoStringArray[6].Trim();
-                dataContainer.measureFileCreationDate = filenameInfoStringArray[1];
-                dataContainer.measureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
+                _dataContainer.MeasureFileHash = Md5.ComputeHash(_measureFilePath);
+                _dataContainer.StudyName = filenameInfoStringArray[3].Trim();
+                _dataContainer.SzenarioName = filenameInfoStringArray[0].Trim();
+                _dataContainer.GroupName = filenameInfoStringArray[4].Trim();
+                _dataContainer.SubjectName = filenameInfoStringArray[5].Trim();
+                _dataContainer.SubjectID = filenameInfoStringArray[6].Trim();
+                _dataContainer.MeasureFileCreationDate = filenameInfoStringArray[1];
+                _dataContainer.MeasureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
 
                 retVal = true;
-            }          
+            }
 
             return retVal;
         }
 
-        private bool parseMeasureData()
+        private bool ParseMeasureData()
         {
             bool retVal = true;
 
-            if (dataContainer.measureFileHash != null)
+            if (_dataContainer.MeasureFileHash != null)
             {
-                FileStream measureFileStream = new FileStream(measureFilePath, FileMode.Open, FileAccess.Read);
-                StreamReader measureFileReader = new StreamReader(measureFileStream);
-                dataContainer.measureDataRaw.Clear();
+                var measureFileStream = new FileStream(_measureFilePath, FileMode.Open, FileAccess.Read);
+                var measureFileReader = new StreamReader(measureFileStream);
+                _dataContainer.MeasureDataRaw.Clear();
 
                 int expectedSzenarioTrialCount = 0;
                 int expectedTargetTrialCount = 0;
 
-                if (dataContainer.szenarioName == "Szenario02")
+                if (_dataContainer.SzenarioName == "Szenario02")
                 {
                     expectedSzenarioTrialCount = 96;
                     expectedTargetTrialCount = 6;
                 }
-                else if (dataContainer.szenarioName == "Szenario03" ||
-                            dataContainer.szenarioName == "Szenario04" ||
-                            dataContainer.szenarioName == "Szenario05" ||
-                            dataContainer.szenarioName == "Szenario06"
-                        )
+                else if (_dataContainer.SzenarioName == "Szenario03" ||
+                         _dataContainer.SzenarioName == "Szenario04" ||
+                         _dataContainer.SzenarioName == "Szenario05" ||
+                         _dataContainer.SzenarioName == "Szenario06"
+                    )
                 {
                     expectedSzenarioTrialCount = 640;
                     expectedTargetTrialCount = 40;
                 }
-                else if (dataContainer.szenarioName == "Szenario07" ||
-                            dataContainer.szenarioName == "Szenario08" ||
-                            dataContainer.szenarioName == "Szenario09" ||
-                            dataContainer.szenarioName == "Szenario10"
-                        )
+                else if (_dataContainer.SzenarioName == "Szenario07" ||
+                         _dataContainer.SzenarioName == "Szenario08" ||
+                         _dataContainer.SzenarioName == "Szenario09" ||
+                         _dataContainer.SzenarioName == "Szenario10"
+                    )
                 {
                     expectedSzenarioTrialCount = 256;
                     expectedTargetTrialCount = 16;
                 }
-                else if (dataContainer.szenarioName == "Szenario11" ||
-                            dataContainer.szenarioName == "Szenario12" ||
-                            dataContainer.szenarioName == "Szenario13" ||
-                            dataContainer.szenarioName == "Szenario14" ||
-                            dataContainer.szenarioName == "Szenario15" ||
-                            dataContainer.szenarioName == "Szenario16" ||
-                            dataContainer.szenarioName == "Szenario17" ||
-                            dataContainer.szenarioName == "Szenario18"
-                        )
+                else if (_dataContainer.SzenarioName == "Szenario11" ||
+                         _dataContainer.SzenarioName == "Szenario12" ||
+                         _dataContainer.SzenarioName == "Szenario13" ||
+                         _dataContainer.SzenarioName == "Szenario14" ||
+                         _dataContainer.SzenarioName == "Szenario15" ||
+                         _dataContainer.SzenarioName == "Szenario16" ||
+                         _dataContainer.SzenarioName == "Szenario17" ||
+                         _dataContainer.SzenarioName == "Szenario18"
+                    )
                 {
                     expectedSzenarioTrialCount = 400;
                     expectedTargetTrialCount = 25;
                 }
 
                 //string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
-                string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus";   // Study 2 
-                
+                const string checkHeader =
+                    "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus";
+                    // Study 2 
+
 
                 if (checkHeader == measureFileReader.ReadLine())
                 {
                     while (!measureFileReader.EndOfStream)
                     {
-                        string[] measureFileLine = measureFileReader.ReadLine().Split(new string[] { ", " }, StringSplitOptions.None);
+// ReSharper disable PossibleNullReferenceException
+                        string[] measureFileLine = measureFileReader.ReadLine()
+                                                                    .Split(new string[] {", "}, StringSplitOptions.None);
+// ReSharper restore PossibleNullReferenceException
 
                         if (measureFileLine.Count() == 19)
                         {
-                            if (    (dataContainer.measureDataRaw.Count > 0) &&
-                                    (DateTime.Parse(dataContainer.measureFileCreationDate + " " + measureFileLine[0]).Subtract(dataContainer.measureDataRaw.Last().time_stamp).TotalMilliseconds > 500)
-                               )
+                            if ((_dataContainer.MeasureDataRaw.Count > 0) &&
+                                (DateTime.Parse(_dataContainer.MeasureFileCreationDate + " " + measureFileLine[0])
+                                         .Subtract(_dataContainer.MeasureDataRaw.Last().TimeStamp)
+                                         .TotalMilliseconds > 500)
+                                )
                             {
-                                while ( (Convert.ToInt32(measureFileLine[16]) == dataContainer.measureDataRaw.Last().szenario_trial_number) &&
-                                        (!measureFileReader.EndOfStream)
-                                     )
+                                while ((Convert.ToInt32(measureFileLine[16]) ==
+                                        _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
+                                       (!measureFileReader.EndOfStream)
+                                    )
                                 {
-                                    measureFileLine = measureFileReader.ReadLine().Split(new string[] { ", " }, StringSplitOptions.None);
+// ReSharper disable PossibleNullReferenceException
+                                    measureFileLine = measureFileReader.ReadLine()
+                                                                       .Split(new string[] {", "},
+                                                                              StringSplitOptions.None);
+// ReSharper restore PossibleNullReferenceException
                                 }
                             }
-                            else if ((dataContainer.measureDataRaw.Count > 0) &&
-                                        (Convert.ToInt32(measureFileLine[15]) != dataContainer.measureDataRaw.Last().target_number) &&
-                                        (Convert.ToInt32(measureFileLine[16]) == dataContainer.measureDataRaw.Last().szenario_trial_number)
-                                    )
+                            else if ((_dataContainer.MeasureDataRaw.Count > 0) &&
+                                     (Convert.ToInt32(measureFileLine[15]) !=
+                                      _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
+                                     (Convert.ToInt32(measureFileLine[16]) ==
+                                      _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber)
+                                )
                             {
                                 while (
-                                        (Convert.ToInt32(measureFileLine[15]) != dataContainer.measureDataRaw.Last().target_number) &&
-                                        (Convert.ToInt32(measureFileLine[16]) == dataContainer.measureDataRaw.Last().szenario_trial_number) &&
-                                        (!measureFileReader.EndOfStream)
-                                      )
+                                    (Convert.ToInt32(measureFileLine[15]) !=
+                                     _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
+                                    (Convert.ToInt32(measureFileLine[16]) ==
+                                     _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
+                                    (!measureFileReader.EndOfStream)
+                                    )
                                 {
-                                    measureFileLine = measureFileReader.ReadLine().Split(new string[] { ", " }, StringSplitOptions.None);
+// ReSharper disable PossibleNullReferenceException
+                                    measureFileLine = measureFileReader.ReadLine()
+                                                                       .Split(new string[] {", "},
+                                                                              StringSplitOptions.None);
+// ReSharper restore PossibleNullReferenceException
                                 }
                             }
-                            
+
                             if (Convert.ToInt32(measureFileLine[16]) <= expectedSzenarioTrialCount)
                             {
-                                dataContainer.measureDataRaw.Add(new MeasureDataContainer(
-                                                            DateTime.Parse(dataContainer.measureFileCreationDate + " " + measureFileLine[0]),
-                                                            Convert.ToDouble(measureFileLine[1]) / 1E3, //Forces in Newton
-                                                            Convert.ToDouble(measureFileLine[2]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[3]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[4]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[5]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[6]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[7]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[8]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[9]) / 1E3,
-                                                            Convert.ToDouble(measureFileLine[10]) / 1E6, //Positions in Meter
-                                                            Convert.ToDouble(measureFileLine[11]) / 1E6,
-                                                            Convert.ToDouble(measureFileLine[12]) / 1E6,
-                                                            Convert.ToInt32(measureFileLine[15]),
-                                                            -1,
-                                                            Convert.ToInt32(measureFileLine[16]),
-                                                            Convert.ToBoolean(measureFileLine[17]),
-                                                            //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
-                                                            Convert.ToInt32(measureFileLine[18])  //Study 2
-                                                            
-                                                        ));                             
+                                _dataContainer.MeasureDataRaw.Add(new MeasureDataContainer(
+                                                                      DateTime.Parse(
+                                                                          _dataContainer.MeasureFileCreationDate + " " +
+                                                                          measureFileLine[0]),
+                                                                      Convert.ToDouble(measureFileLine[1])/1E3,
+                                                                      //Forces in Newton
+                                                                      Convert.ToDouble(measureFileLine[2])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[3])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[4])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[5])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[6])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[7])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[8])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[9])/1E3,
+                                                                      Convert.ToDouble(measureFileLine[10])/1E6,
+                                                                      //Positions in Meter
+                                                                      Convert.ToDouble(measureFileLine[11])/1E6,
+                                                                      Convert.ToDouble(measureFileLine[12])/1E6,
+                                                                      Convert.ToInt32(measureFileLine[15]),
+                                                                      -1,
+                                                                      Convert.ToInt32(measureFileLine[16]),
+                                                                      Convert.ToBoolean(measureFileLine[17]),
+                                                                      //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
+                                                                      Convert.ToInt32(measureFileLine[18]) //Study 2
+                                                                      ));
                             }
                         }
                         else
                         {
                             //("Measure file line error: invalid column count");
                             retVal = false;
-                        }                        
+                        }
                     }
 
-                    int maxTrialCount = dataContainer.measureDataRaw.Max(t => t.szenario_trial_number);
-                    int realTrialCount = dataContainer.measureDataRaw.Select(t => t.szenario_trial_number).Distinct().Count();
+                    int maxTrialCount = _dataContainer.MeasureDataRaw.Max(t => t.SzenarioTrialNumber);
+                    int realTrialCount =
+                        _dataContainer.MeasureDataRaw.Select(t => t.SzenarioTrialNumber).Distinct().Count();
                     if ((maxTrialCount != expectedSzenarioTrialCount) || (realTrialCount != expectedSzenarioTrialCount))
                     {
-                        myManipAnalysisGUI.writeToLogBox("Trial count error: expected " + expectedSzenarioTrialCount + " trials but " + realTrialCount + " were found.");
+                        _myManipAnalysisGui.WriteToLogBox("Trial count error: expected " + expectedSzenarioTrialCount +
+                                                          " trials but " + realTrialCount + " were found.");
                         retVal = false;
                     }
                 }
                 else
                 {
-                    myManipAnalysisGUI.writeToLogBox("Error in measure file header.");
+                    _myManipAnalysisGui.WriteToLogBox("Error in measure file header.");
                     retVal = false;
                 }
                 measureFileReader.Close();
                 measureFileStream.Close();
 
-                int[] targetArray = dataContainer.measureDataRaw.Select( t => t.target_number ).Distinct().ToArray();
+                int[] targetArray = _dataContainer.MeasureDataRaw.Select(t => t.TargetNumber).Distinct().ToArray();
 
                 for (int i = 0; i < targetArray.Length; i++)
                 {
-                    int[] szenarioTrialNumberArray = dataContainer.measureDataRaw.Where(t => t.target_number == targetArray[i]).Select(t => t.szenario_trial_number).Distinct().OrderBy(t => t).ToArray();
+                    int[] szenarioTrialNumberArray =
+                        _dataContainer.MeasureDataRaw.Where(t => t.TargetNumber == targetArray[i])
+                                      .Select(t => t.SzenarioTrialNumber)
+                                      .Distinct()
+                                      .OrderBy(t => t)
+                                      .ToArray();
 
                     if (expectedTargetTrialCount == szenarioTrialNumberArray.Length)
                     {
                         for (int j = 0; j < szenarioTrialNumberArray.Length; j++)
                         {
-                            List<MeasureDataContainer> tempList = dataContainer.measureDataRaw.Where(t => t.szenario_trial_number == szenarioTrialNumberArray[j]).OrderBy(t => t.time_stamp).ToList();
+                            List<MeasureDataContainer> tempList =
+                                _dataContainer.MeasureDataRaw.Where(
+                                    t => t.SzenarioTrialNumber == szenarioTrialNumberArray[j])
+                                              .OrderBy(t => t.TimeStamp)
+                                              .ToList();
 
                             for (int k = 0; k < tempList.Count; k++)
                             {
-                                tempList.ElementAt(k).target_trial_number = j + 1;
+                                tempList.ElementAt(k).TargetTrialNumber = j + 1;
                             }
                         }
                     }
                     else
                     {
-                        myManipAnalysisGUI.writeToLogBox("Target Trial number incorrect.");
+                        _myManipAnalysisGui.WriteToLogBox("Target Trial number incorrect.");
                         retVal = false;
                     }
                 }
@@ -244,8 +276,8 @@ namespace ManipAnalysis
 
             if (!retVal)
             {
-                dataContainer.measureDataRaw.Clear();
-            }           
+                _dataContainer.MeasureDataRaw.Clear();
+            }
 
             return retVal;
         }

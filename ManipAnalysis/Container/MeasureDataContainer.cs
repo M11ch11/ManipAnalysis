@@ -1,80 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace ManipAnalysis
+namespace ManipAnalysis.Container
 {
-    class MeasureDataContainer
+    internal class MeasureDataContainer
     {
-        public DateTime time_stamp;
+        public bool ContainsDuplicates;
+        public readonly double ForceActualX;
+        public readonly double ForceActualY;
+        public readonly double ForceActualZ;
 
-        public double force_actual_x;
-        public double force_actual_y;
-        public double force_actual_z;
+        public readonly double ForceMomentX;
+        public readonly double ForceMomentY;
+        public readonly double ForceMomentZ;
+        public readonly double ForceNominalX;
+        public readonly double ForceNominalY;
+        public readonly double ForceNominalZ;
+        public readonly bool IsCatchTrial;
 
-        public double force_nominal_x;
-        public double force_nominal_y;
-        public double force_nominal_z;
+        public readonly double PositionCartesianX;
+        public readonly double PositionCartesianY;
+        public readonly double PositionCartesianZ;
+        public readonly int PositionStatus;
+        public readonly int SzenarioTrialNumber;
 
-        public double force_moment_x;
-        public double force_moment_y;
-        public double force_moment_z;
+        public readonly int TargetNumber;
 
-        public double position_cartesian_x;
-        public double position_cartesian_y;
-        public double position_cartesian_z;
+        public int TargetTrialNumber;
+        public DateTime TimeStamp;
 
-        public int target_number;
-
-        public int target_trial_number;
-
-        public int szenario_trial_number;
-
-        public bool is_catch_trial;
-
-        public int position_status;
-
-        public bool contains_duplicates;
-
-        public MeasureDataContainer(DateTime _time_stamp,
-                            double _force_actual_x,
-                            double _force_actual_y,
-                            double _force_actual_z,
-                            double _force_nominal_x,
-                            double _force_nominal_y,
-                            double _force_nominal_z,
-                            double _force_moment_x,
-                            double _force_moment_y,
-                            double _force_moment_z,
-                            double _position_cartesian_x,
-                            double _position_cartesian_y,
-                            double _position_cartesian_z,
-                            int _target_number,
-                            int _target_trial_number,
-                            int _szenario_trial_number,
-                            bool _is_catch_trial,
-                            int _position_status)
+        public MeasureDataContainer(DateTime timeStamp,
+                                    double forceActualX,
+                                    double forceActualY,
+                                    double forceActualZ,
+                                    double forceNominalX,
+                                    double forceNominalY,
+                                    double forceNominalZ,
+                                    double forceMomentX,
+                                    double forceMomentY,
+                                    double forceMomentZ,
+                                    double positionCartesianX,
+                                    double positionCartesianY,
+                                    double positionCartesianZ,
+                                    int targetNumber,
+                                    int targetTrialNumber,
+                                    int szenarioTrialNumber,
+                                    bool isCatchTrial,
+                                    int positionStatus)
         {
-            time_stamp = _time_stamp;
-            force_actual_x = _force_actual_x;
-            force_actual_y = _force_actual_y;
-            force_actual_z = _force_actual_z;
-            force_nominal_x = _force_nominal_x;
-            force_nominal_y = _force_nominal_y;
-            force_nominal_z = _force_nominal_z;
-            force_moment_x = _force_moment_x;
-            force_moment_y = _force_moment_y;
-            force_moment_z = _force_moment_z;
-            position_cartesian_x = _position_cartesian_x;
-            position_cartesian_y = _position_cartesian_y;
-            position_cartesian_z = _position_cartesian_z;
-            target_number = _target_number;
-            target_trial_number = _target_trial_number;
-            szenario_trial_number = _szenario_trial_number;
-            is_catch_trial = _is_catch_trial;
-            position_status = _position_status;
-            contains_duplicates = false;
+            TimeStamp = timeStamp;
+            ForceActualX = forceActualX;
+            ForceActualY = forceActualY;
+            ForceActualZ = forceActualZ;
+            ForceNominalX = forceNominalX;
+            ForceNominalY = forceNominalY;
+            ForceNominalZ = forceNominalZ;
+            ForceMomentX = forceMomentX;
+            ForceMomentY = forceMomentY;
+            ForceMomentZ = forceMomentZ;
+            PositionCartesianX = positionCartesianX;
+            PositionCartesianY = positionCartesianY;
+            PositionCartesianZ = positionCartesianZ;
+            TargetNumber = targetNumber;
+            TargetTrialNumber = targetTrialNumber;
+            SzenarioTrialNumber = szenarioTrialNumber;
+            IsCatchTrial = isCatchTrial;
+            PositionStatus = positionStatus;
+            ContainsDuplicates = false;
         }
     }
 }
