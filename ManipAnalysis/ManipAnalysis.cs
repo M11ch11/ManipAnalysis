@@ -4892,7 +4892,7 @@ namespace ManipAnalysis
                                       + DateTime.Now.Minute.ToString("00")
                                       + "-"
                                       + comboBox_BaselineMeantime_Subject.SelectedItem
-                                      + "trajectory-baseline-data";
+                                      + "-TrajectoryBaselineData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -4970,7 +4970,7 @@ namespace ManipAnalysis
                                       + DateTime.Now.Minute.ToString("00")
                                       + "-"
                                       + comboBox_BaselineMeantime_Subject.SelectedItem
-                                      + "-szenario-mean-time-data";
+                                      + "-SzenarioMeanTimeData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -5112,7 +5112,7 @@ namespace ManipAnalysis
                                       + DateTime.Now.Minute.ToString("00")
                                       + "-"
                                       + comboBox_BaselineMeantime_Subject.SelectedItem
-                                      + "-velocity-baseline-data";
+                                      + "-VelocityBaselineData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
