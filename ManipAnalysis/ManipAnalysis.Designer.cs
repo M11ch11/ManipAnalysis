@@ -2042,6 +2042,7 @@ namespace ManipAnalysis
             this.listBox_LogBox.FormattingEnabled = true;
             this.listBox_LogBox.Location = new System.Drawing.Point(748, 25);
             this.listBox_LogBox.Name = "listBox_LogBox";
+            this.listBox_LogBox.ScrollAlwaysVisible = true;
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 602);
             this.listBox_LogBox.TabIndex = 9;
             // 

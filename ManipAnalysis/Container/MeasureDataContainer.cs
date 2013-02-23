@@ -4,7 +4,6 @@ namespace ManipAnalysis.Container
 {
     internal class MeasureDataContainer
     {
-        public bool ContainsDuplicates;
         public readonly double ForceActualX;
         public readonly double ForceActualY;
         public readonly double ForceActualZ;
@@ -24,6 +23,7 @@ namespace ManipAnalysis.Container
         public readonly int SzenarioTrialNumber;
 
         public readonly int TargetNumber;
+        public bool ContainsDuplicates;
 
         public int TargetTrialNumber;
         public DateTime TimeStamp;

@@ -51,6 +51,7 @@ namespace ManipAnalysis
             else
             {
                 listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + text);
+                listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
             }
         }
 
@@ -70,10 +71,12 @@ namespace ManipAnalysis
                     if (i == 0)
                     {
                         listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + textArray[0]);
+                        listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
                     }
                     else
                     {
                         listBox_LogBox.Items.Add(textArray[i]);
+                        listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
                     }
                 }
             }

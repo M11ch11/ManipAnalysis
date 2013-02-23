@@ -110,7 +110,7 @@
       <DependentUpon>ManipAnalysis.cs</DependentUpon>
     </Compile>
     <Compile Include="MatlabWrapper.cs" />
-    <Compile Include="MD5.cs" />
+    <Compile Include="Md5.cs" />
     <Compile Include="Container\MeasureDataContainer.cs" />
     <Compile Include="MeasureFileParser.cs" />
     <Compile Include="Program.cs" />

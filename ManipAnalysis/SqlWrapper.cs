@@ -1925,6 +1925,7 @@ namespace ManipAnalysis
             return retVal;
         }
         */
+
         public int InsertStatisticData(
             int trialID,
             double velocityVectorCorrelation,
