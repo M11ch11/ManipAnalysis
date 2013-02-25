@@ -2,9 +2,9 @@
 
 namespace ManipAnalysis
 {
-    public partial class SplashScreen : Form
+    public partial class ManipAnalysisSplash : Form
     {
-        public SplashScreen()
+        public ManipAnalysisSplash()
         {
             InitializeComponent();
         }

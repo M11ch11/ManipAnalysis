@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace ManipAnalysis
 {
-    internal class MatlabWrapper
+    public class MatlabWrapper
     {
         private readonly MLApp.MLApp _myMatlabInterface;
 

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ManipAnalysis.Container
 {
-    internal class TrajectoryVelocityPlotContainer
+    public class TrajectoryVelocityPlotContainer
     {
         private readonly string _group;
         private readonly string _study;

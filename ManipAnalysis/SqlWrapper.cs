@@ -10,7 +10,7 @@ namespace ManipAnalysis
 {
     public class SqlWrapper
     {
-        private readonly ManipAnalysis _myManipAnalysisGui;
+        private readonly ManipAnalysisGui _myManipAnalysisGui;
         private SqlCommand _sqlCmd;
         private SqlConnection _sqlCon;
 
@@ -19,7 +19,7 @@ namespace ManipAnalysis
         private string _sqlServer;
         private string _sqlUsername;
 
-        public SqlWrapper(ManipAnalysis myManipAnalysisGui)
+        public SqlWrapper(ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
 
@@ -27,6 +27,11 @@ namespace ManipAnalysis
             _sqlDatabase = "master";
             _sqlUsername = "DataAccess";
             _sqlPassword = "!sport12";
+        }
+
+        ~SqlWrapper()
+        {
+            CloseSqlConnection();
         }
 
         private void SetConnectionString(string serverUri, string database, string username, string password)
@@ -229,43 +234,6 @@ namespace ManipAnalysis
             ExecuteSqlFile("SQL-Files\\SQL-FunctionsProcedures.sql");
         }
 
-        public void CleanOrphanedEntries()
-        {
-            _sqlCmd.Parameters.Clear();
-
-            _sqlCmd.CommandType = CommandType.StoredProcedure;
-
-            _sqlCmd.CommandText = "cleanOrphanedEntries";
-
-            int executeTryCounter = 5;
-            while (executeTryCounter > 0)
-            {
-                try
-                {
-                    OpenSqlConnection();
-                    _sqlCmd.ExecuteNonQuery();
-                    executeTryCounter = 0;
-                }
-                catch (Exception ex)
-                {
-                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
-                    executeTryCounter--;
-                    if (executeTryCounter == 0)
-                    {
-                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-
-                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            executeTryCounter = 5;
-                        }
-                    }
-                }
-            }
-        }
-
         public void DeleteMeasureFile(int measureFileID)
         {
             _sqlCmd.Parameters.Clear();
@@ -391,6 +359,45 @@ namespace ManipAnalysis
             _sqlCmd.CommandText = "changeSubjectName";
             _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
             _sqlCmd.Parameters.Add(new SqlParameter("@newSubjectName", newSubjectName));
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ChangeSubjectSubjectID(int subjectID, string newSubjectSubjectID)
+        {
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "changeSubjectSubjectID";
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@newSubjectSubjectID", newSubjectSubjectID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
@@ -665,7 +672,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DateTime GetTurnDateTime(string study, string group, string szenario, int subjectID, int turn)
+        public DateTime GetTurnDateTime(string study, string group, string szenario, SubjectInformationContainer subject,
+                                        int turn)
         {
             var retVal = new DateTime();
 
@@ -679,7 +687,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", study));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", group));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
             _sqlCmd.Parameters.Add(new SqlParameter("@turn", turn));
 
             _sqlCmd.Parameters["@turnDateTime"].Direction = ParameterDirection.Output;
@@ -761,7 +769,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int GetTrailID(string study, string group, string szenario, int subjectID, DateTime turnDateTime,
+        public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
+                              DateTime turnDateTime,
                               int target, int trial)
         {
             int retVal = -1;
@@ -775,7 +784,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", study));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", group));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
             _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
             _sqlCmd.Parameters.Add(new SqlParameter("@target", target));
             _sqlCmd.Parameters.Add(new SqlParameter("@trial", trial));
@@ -905,7 +914,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet GetStatisticDataSet(string studyName, string groupName, string szenarioName, int subjectID,
+        public DataSet GetStatisticDataSet(string studyName, string groupName, string szenarioName,
+                                           SubjectInformationContainer subject,
                                            DateTime turn)
         {
             DataSet retVal = null;
@@ -919,7 +929,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
             _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turn));
 
             int executeTryCounter = 5;
@@ -1005,7 +1015,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet GetBaselineDataSet(string studyName, string groupName, string szenarioName, int subjectID)
+        public DataSet GetBaselineDataSet(string studyName, string groupName, string szenarioName,
+                                          SubjectInformationContainer subject)
         {
             DataSet retVal = null;
 
@@ -1018,7 +1029,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
@@ -1054,7 +1065,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DataSet GetMeanTimeDataSet(string studyName, string groupName, string szenarioName, int subjectID,
+        public DataSet GetMeanTimeDataSet(string studyName, string groupName, string szenarioName,
+                                          SubjectInformationContainer subject,
                                           DateTime turnDateTime)
         {
             DataSet retVal = null;
@@ -1068,7 +1080,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
             _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
 
             int executeTryCounter = 5;
@@ -2768,7 +2780,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public string[] GetTurns(string studyName, string groupName, string szenarioName, int subjectID)
+        public string[] GetTurns(string studyName, string groupName, string szenarioName,
+                                 SubjectInformationContainer subject)
         {
             string[] retVal = null;
 
@@ -2780,7 +2793,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subjectID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)

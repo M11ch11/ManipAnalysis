@@ -79,6 +79,21 @@ BEGIN
 END
 
 
+GO
+/****** Object:  StoredProcedure [dbo].[changeSubjectSubjectID]    Script Date: 22.11.2012 13:09:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[changeSubjectSubjectID]
+	@subjectID int,
+	@newSubjectSubjectID varchar(max)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE _subject SET subject_id = @newSubjectSubjectID WHERE id = @subjectID;
+END
 
 
 

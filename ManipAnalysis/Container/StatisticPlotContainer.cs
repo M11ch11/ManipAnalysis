@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ManipAnalysis.Container
 {
-    internal class StatisticPlotContainer
+    public class StatisticPlotContainer
     {
         private readonly string _group;
         private readonly string _study;

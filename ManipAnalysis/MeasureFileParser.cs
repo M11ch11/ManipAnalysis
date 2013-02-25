@@ -9,10 +9,10 @@ namespace ManipAnalysis
     internal class MeasureFileParser
     {
         private readonly DataContainer _dataContainer;
-        private readonly ManipAnalysis _myManipAnalysisGui;
+        private readonly ManipAnalysisGui _myManipAnalysisGui;
         private string _measureFilePath;
 
-        public MeasureFileParser(DataContainer container, ManipAnalysis myManipAnalysisGui)
+        public MeasureFileParser(DataContainer container, ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
             _dataContainer = container;

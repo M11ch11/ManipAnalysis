@@ -1,6 +1,6 @@
 ﻿namespace ManipAnalysis
 {
-    partial class SplashScreen
+    partial class ManipAnalysisSplash
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManipAnalysisSplash));
             this.label_ManipAnalysis = new System.Windows.Forms.Label();
             this.label_Loading = new System.Windows.Forms.Label();
             this.pictureBox_Impressum_KITLogo = new System.Windows.Forms.PictureBox();

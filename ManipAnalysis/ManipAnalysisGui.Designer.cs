@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ManipAnalysis
 {
-    partial class ManipAnalysis
+    partial class ManipAnalysisGui
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -32,7 +32,7 @@ namespace ManipAnalysis
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManipAnalysis));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManipAnalysisGui));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage_Start = new System.Windows.Forms.TabPage();
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
@@ -40,7 +40,7 @@ namespace ManipAnalysis
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox_Start_SQL_Server = new System.Windows.Forms.ComboBox();
             this.label_Start_SQL_Server = new System.Windows.Forms.Label();
-            this.button_Start_ChangeSQlServerConnection = new System.Windows.Forms.Button();
+            this.button_Start_ConnectToSQlServer = new System.Windows.Forms.Button();
             this.checkBox_Start_ManualMode = new System.Windows.Forms.CheckBox();
             this.label_Start_ManipAnalysis = new System.Windows.Forms.Label();
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
@@ -159,23 +159,28 @@ namespace ManipAnalysis
             this.listBox_Import_SelectedMeasureFiles = new System.Windows.Forms.ListBox();
             this.button_Import_SelectMeasureFiles = new System.Windows.Forms.Button();
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
+            this.button_DataManipulation_UpdateSubjectSubjectID = new System.Windows.Forms.Button();
+            this.textBox_DataManipulation_NewSubjectSubjectID = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_NewSubjectSubjectName = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_SubjectIdId = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_SubjectIdId = new System.Windows.Forms.Label();
+            this.label_DataManipulation_ChangeSubjectSubjectID = new System.Windows.Forms.Label();
             this.button_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Button();
             this.textBox_DataManipulation_MeasureFileID = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_MeasureFileID = new System.Windows.Forms.Label();
             this.label_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Label();
-            this.button_Debug_CleanOrphanedEntries = new System.Windows.Forms.Button();
             this.button_DataManipulation_UpdateSubjectName = new System.Windows.Forms.Button();
             this.textBox_DataManipulation_NewSubjectName = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_NewSubjectName = new System.Windows.Forms.Label();
             this.textBox_DataManipulation_SubjectID = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_SubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_ChangeSubjectSubjectName = new System.Windows.Forms.Label();
             this.button_DataManipulation_UpdateGroupName = new System.Windows.Forms.Button();
             this.textBox_DataManipulation_NewGroupName = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_NewGroupName = new System.Windows.Forms.Label();
             this.textBox_DataManipulation_GroupID = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_GroupID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeGroupName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_ChangeGroupGroupName = new System.Windows.Forms.Label();
             this.button_DataManipulation_UpdateSubjectID = new System.Windows.Forms.Button();
             this.textBox_DataManipulation_NewSubjectID = new System.Windows.Forms.TextBox();
             this.label_DataManipulation_NewSubjectID = new System.Windows.Forms.Label();
@@ -243,7 +248,7 @@ namespace ManipAnalysis
             this.tabPage_Start.Controls.Add(this.label1);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_SQL_Server);
             this.tabPage_Start.Controls.Add(this.label_Start_SQL_Server);
-            this.tabPage_Start.Controls.Add(this.button_Start_ChangeSQlServerConnection);
+            this.tabPage_Start.Controls.Add(this.button_Start_ConnectToSQlServer);
             this.tabPage_Start.Controls.Add(this.checkBox_Start_ManualMode);
             this.tabPage_Start.Controls.Add(this.label_Start_ManipAnalysis);
             this.tabPage_Start.Location = new System.Drawing.Point(4, 22);
@@ -307,15 +312,15 @@ namespace ManipAnalysis
             this.label_Start_SQL_Server.TabIndex = 17;
             this.label_Start_SQL_Server.Text = "SQL-Server:";
             // 
-            // button_Start_ChangeSQlServerConnection
+            // button_Start_ConnectToSQlServer
             // 
-            this.button_Start_ChangeSQlServerConnection.Location = new System.Drawing.Point(290, 83);
-            this.button_Start_ChangeSQlServerConnection.Name = "button_Start_ChangeSQlServerConnection";
-            this.button_Start_ChangeSQlServerConnection.Size = new System.Drawing.Size(90, 23);
-            this.button_Start_ChangeSQlServerConnection.TabIndex = 16;
-            this.button_Start_ChangeSQlServerConnection.Text = "Connect";
-            this.button_Start_ChangeSQlServerConnection.UseVisualStyleBackColor = true;
-            this.button_Start_ChangeSQlServerConnection.Click += new System.EventHandler(this.button_ChangeSQlServerConnection_Click);
+            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(290, 83);
+            this.button_Start_ConnectToSQlServer.Name = "button_Start_ConnectToSQlServer";
+            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(90, 23);
+            this.button_Start_ConnectToSQlServer.TabIndex = 16;
+            this.button_Start_ConnectToSQlServer.Text = "Connect";
+            this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
+            this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
             // 
             // checkBox_Start_ManualMode
             // 
@@ -1230,7 +1235,7 @@ namespace ManipAnalysis
             this.button_BaselineMeantime_ExportVelocityBaseline.TabIndex = 45;
             this.button_BaselineMeantime_ExportVelocityBaseline.Text = "Export velocity baselines";
             this.button_BaselineMeantime_ExportVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button1_Click);
+            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_ExportVelocityBaseline_Click);
             // 
             // button_BaselineMeantime_PlotVelocityBaseline
             // 
@@ -1240,7 +1245,7 @@ namespace ManipAnalysis
             this.button_BaselineMeantime_PlotVelocityBaseline.TabIndex = 44;
             this.button_BaselineMeantime_PlotVelocityBaseline.Text = "Plot velocity baselines";
             this.button_BaselineMeantime_PlotVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button2_Click);
+            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_PlotVelocityBaseline_Click);
             // 
             // button_BaselineMeantime_ExportTrajectoryBaseline
             // 
@@ -1379,7 +1384,7 @@ namespace ManipAnalysis
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.TabIndex = 22;
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.Text = "Plot mean times";
             this.button_BaselineMeantime_PlotSzenarioMeanTimes.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Click += new System.EventHandler(this.button_StatisticPlots_SzenarioMeanTime_Click);
+            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Click += new System.EventHandler(this.button_BaselineMeantime_PlotSzenarioMeanTimes_Click);
             // 
             // tabPage_ImportCalculations
             // 
@@ -1616,23 +1621,28 @@ namespace ManipAnalysis
             // 
             // tabPage_Debug
             // 
+            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectSubjectID);
+            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectSubjectID);
+            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectSubjectName);
+            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_SubjectIdId);
+            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_SubjectIdId);
+            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectID);
             this.tabPage_Debug.Controls.Add(this.button_DataManipulation_DeleteMeasureFile);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_MeasureFileID);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_MeasureFileID);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_DeleteMeasureFile);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_CleanOrphanedEntries);
             this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectName);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectName);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectName);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_SubjectID);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_SubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectName);
+            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectName);
             this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateGroupName);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewGroupName);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewGroupName);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_GroupID);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_GroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeGroupName);
+            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeGroupGroupName);
             this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectID);
             this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectID);
             this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectID);
@@ -1657,6 +1667,57 @@ namespace ManipAnalysis
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
             // 
+            // button_DataManipulation_UpdateSubjectSubjectID
+            // 
+            this.button_DataManipulation_UpdateSubjectSubjectID.Location = new System.Drawing.Point(590, 347);
+            this.button_DataManipulation_UpdateSubjectSubjectID.Name = "button_DataManipulation_UpdateSubjectSubjectID";
+            this.button_DataManipulation_UpdateSubjectSubjectID.Size = new System.Drawing.Size(122, 23);
+            this.button_DataManipulation_UpdateSubjectSubjectID.TabIndex = 60;
+            this.button_DataManipulation_UpdateSubjectSubjectID.Text = "Update subject_name";
+            this.button_DataManipulation_UpdateSubjectSubjectID.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateSubjectSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectSubjectID_Click);
+            // 
+            // textBox_DataManipulation_NewSubjectSubjectID
+            // 
+            this.textBox_DataManipulation_NewSubjectSubjectID.Location = new System.Drawing.Point(654, 321);
+            this.textBox_DataManipulation_NewSubjectSubjectID.Name = "textBox_DataManipulation_NewSubjectSubjectID";
+            this.textBox_DataManipulation_NewSubjectSubjectID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewSubjectSubjectID.TabIndex = 59;
+            // 
+            // label_DataManipulation_NewSubjectSubjectName
+            // 
+            this.label_DataManipulation_NewSubjectSubjectName.AutoSize = true;
+            this.label_DataManipulation_NewSubjectSubjectName.Location = new System.Drawing.Point(547, 324);
+            this.label_DataManipulation_NewSubjectSubjectName.Name = "label_DataManipulation_NewSubjectSubjectName";
+            this.label_DataManipulation_NewSubjectSubjectName.Size = new System.Drawing.Size(101, 13);
+            this.label_DataManipulation_NewSubjectSubjectName.TabIndex = 58;
+            this.label_DataManipulation_NewSubjectSubjectName.Text = "_subject.subject_id:";
+            // 
+            // textBox_DataManipulation_SubjectIdId
+            // 
+            this.textBox_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(654, 295);
+            this.textBox_DataManipulation_SubjectIdId.Name = "textBox_DataManipulation_SubjectIdId";
+            this.textBox_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_SubjectIdId.TabIndex = 57;
+            // 
+            // label_DataManipulation_SubjectIdId
+            // 
+            this.label_DataManipulation_SubjectIdId.AutoSize = true;
+            this.label_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(591, 298);
+            this.label_DataManipulation_SubjectIdId.Name = "label_DataManipulation_SubjectIdId";
+            this.label_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(61, 13);
+            this.label_DataManipulation_SubjectIdId.TabIndex = 56;
+            this.label_DataManipulation_SubjectIdId.Text = "_subject.id:";
+            // 
+            // label_DataManipulation_ChangeSubjectSubjectID
+            // 
+            this.label_DataManipulation_ChangeSubjectSubjectID.AutoSize = true;
+            this.label_DataManipulation_ChangeSubjectSubjectID.Location = new System.Drawing.Point(566, 279);
+            this.label_DataManipulation_ChangeSubjectSubjectID.Name = "label_DataManipulation_ChangeSubjectSubjectID";
+            this.label_DataManipulation_ChangeSubjectSubjectID.Size = new System.Drawing.Size(146, 13);
+            this.label_DataManipulation_ChangeSubjectSubjectID.TabIndex = 55;
+            this.label_DataManipulation_ChangeSubjectSubjectID.Text = "Change \"_subject.subject_id:";
+            // 
             // button_DataManipulation_DeleteMeasureFile
             // 
             this.button_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(362, 336);
@@ -1677,11 +1738,11 @@ namespace ManipAnalysis
             // label_DataManipulation_MeasureFileID
             // 
             this.label_DataManipulation_MeasureFileID.AutoSize = true;
-            this.label_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(359, 313);
+            this.label_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(354, 313);
             this.label_DataManipulation_MeasureFileID.Name = "label_DataManipulation_MeasureFileID";
-            this.label_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(81, 13);
+            this.label_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(86, 13);
             this.label_DataManipulation_MeasureFileID.TabIndex = 50;
-            this.label_DataManipulation_MeasureFileID.Text = "Measure file ID:";
+            this.label_DataManipulation_MeasureFileID.Text = "_measure_file.id:";
             // 
             // label_DataManipulation_DeleteMeasureFile
             // 
@@ -1691,16 +1752,6 @@ namespace ManipAnalysis
             this.label_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(100, 13);
             this.label_DataManipulation_DeleteMeasureFile.TabIndex = 49;
             this.label_DataManipulation_DeleteMeasureFile.Text = "Delete measure file:";
-            // 
-            // button_Debug_CleanOrphanedEntries
-            // 
-            this.button_Debug_CleanOrphanedEntries.Location = new System.Drawing.Point(15, 232);
-            this.button_Debug_CleanOrphanedEntries.Name = "button_Debug_CleanOrphanedEntries";
-            this.button_Debug_CleanOrphanedEntries.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_CleanOrphanedEntries.TabIndex = 48;
-            this.button_Debug_CleanOrphanedEntries.Text = "Clean orphaned entries";
-            this.button_Debug_CleanOrphanedEntries.UseVisualStyleBackColor = true;
-            this.button_Debug_CleanOrphanedEntries.Click += new System.EventHandler(this.button_Debug_CleanOrphanedEntries_Click);
             // 
             // button_DataManipulation_UpdateSubjectName
             // 
@@ -1722,11 +1773,11 @@ namespace ManipAnalysis
             // label_DataManipulation_NewSubjectName
             // 
             this.label_DataManipulation_NewSubjectName.AutoSize = true;
-            this.label_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(587, 203);
+            this.label_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(529, 203);
             this.label_DataManipulation_NewSubjectName.Name = "label_DataManipulation_NewSubjectName";
-            this.label_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(61, 13);
+            this.label_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(119, 13);
             this.label_DataManipulation_NewSubjectName.TabIndex = 45;
-            this.label_DataManipulation_NewSubjectName.Text = "New name:";
+            this.label_DataManipulation_NewSubjectName.Text = "_subject.subject_name:";
             // 
             // textBox_DataManipulation_SubjectID
             // 
@@ -1738,20 +1789,20 @@ namespace ManipAnalysis
             // label_DataManipulation_SubjectID
             // 
             this.label_DataManipulation_SubjectID.AutoSize = true;
-            this.label_DataManipulation_SubjectID.Location = new System.Drawing.Point(591, 177);
+            this.label_DataManipulation_SubjectID.Location = new System.Drawing.Point(587, 177);
             this.label_DataManipulation_SubjectID.Name = "label_DataManipulation_SubjectID";
-            this.label_DataManipulation_SubjectID.Size = new System.Drawing.Size(57, 13);
+            this.label_DataManipulation_SubjectID.Size = new System.Drawing.Size(61, 13);
             this.label_DataManipulation_SubjectID.TabIndex = 43;
-            this.label_DataManipulation_SubjectID.Text = "SubjectID:";
+            this.label_DataManipulation_SubjectID.Text = "_subject.id:";
             // 
-            // label_DataManipulation_ChangeSubjectName
+            // label_DataManipulation_ChangeSubjectSubjectName
             // 
-            this.label_DataManipulation_ChangeSubjectName.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectName.Location = new System.Drawing.Point(587, 158);
-            this.label_DataManipulation_ChangeSubjectName.Name = "label_DataManipulation_ChangeSubjectName";
-            this.label_DataManipulation_ChangeSubjectName.Size = new System.Drawing.Size(126, 13);
-            this.label_DataManipulation_ChangeSubjectName.TabIndex = 42;
-            this.label_DataManipulation_ChangeSubjectName.Text = "Change \"subject_name\":";
+            this.label_DataManipulation_ChangeSubjectSubjectName.AutoSize = true;
+            this.label_DataManipulation_ChangeSubjectSubjectName.Location = new System.Drawing.Point(566, 158);
+            this.label_DataManipulation_ChangeSubjectSubjectName.Name = "label_DataManipulation_ChangeSubjectSubjectName";
+            this.label_DataManipulation_ChangeSubjectSubjectName.Size = new System.Drawing.Size(164, 13);
+            this.label_DataManipulation_ChangeSubjectSubjectName.TabIndex = 42;
+            this.label_DataManipulation_ChangeSubjectSubjectName.Text = "Change \"_subject.subject_name:";
             // 
             // button_DataManipulation_UpdateGroupName
             // 
@@ -1773,11 +1824,11 @@ namespace ManipAnalysis
             // label_DataManipulation_NewGroupName
             // 
             this.label_DataManipulation_NewGroupName.AutoSize = true;
-            this.label_DataManipulation_NewGroupName.Location = new System.Drawing.Point(359, 203);
+            this.label_DataManipulation_NewGroupName.Location = new System.Drawing.Point(315, 203);
             this.label_DataManipulation_NewGroupName.Name = "label_DataManipulation_NewGroupName";
-            this.label_DataManipulation_NewGroupName.Size = new System.Drawing.Size(61, 13);
+            this.label_DataManipulation_NewGroupName.Size = new System.Drawing.Size(105, 13);
             this.label_DataManipulation_NewGroupName.TabIndex = 39;
-            this.label_DataManipulation_NewGroupName.Text = "New name:";
+            this.label_DataManipulation_NewGroupName.Text = "_group.group_name:";
             // 
             // textBox_DataManipulation_GroupID
             // 
@@ -1789,20 +1840,20 @@ namespace ManipAnalysis
             // label_DataManipulation_GroupID
             // 
             this.label_DataManipulation_GroupID.AutoSize = true;
-            this.label_DataManipulation_GroupID.Location = new System.Drawing.Point(370, 177);
+            this.label_DataManipulation_GroupID.Location = new System.Drawing.Point(366, 177);
             this.label_DataManipulation_GroupID.Name = "label_DataManipulation_GroupID";
-            this.label_DataManipulation_GroupID.Size = new System.Drawing.Size(50, 13);
+            this.label_DataManipulation_GroupID.Size = new System.Drawing.Size(54, 13);
             this.label_DataManipulation_GroupID.TabIndex = 37;
-            this.label_DataManipulation_GroupID.Text = "GroupID:";
+            this.label_DataManipulation_GroupID.Text = "_group.id:";
             // 
-            // label_DataManipulation_ChangeGroupName
+            // label_DataManipulation_ChangeGroupGroupName
             // 
-            this.label_DataManipulation_ChangeGroupName.AutoSize = true;
-            this.label_DataManipulation_ChangeGroupName.Location = new System.Drawing.Point(359, 158);
-            this.label_DataManipulation_ChangeGroupName.Name = "label_DataManipulation_ChangeGroupName";
-            this.label_DataManipulation_ChangeGroupName.Size = new System.Drawing.Size(119, 13);
-            this.label_DataManipulation_ChangeGroupName.TabIndex = 36;
-            this.label_DataManipulation_ChangeGroupName.Text = "Change \"group_name\":";
+            this.label_DataManipulation_ChangeGroupGroupName.AutoSize = true;
+            this.label_DataManipulation_ChangeGroupGroupName.Location = new System.Drawing.Point(359, 158);
+            this.label_DataManipulation_ChangeGroupGroupName.Name = "label_DataManipulation_ChangeGroupGroupName";
+            this.label_DataManipulation_ChangeGroupGroupName.Size = new System.Drawing.Size(155, 13);
+            this.label_DataManipulation_ChangeGroupGroupName.TabIndex = 36;
+            this.label_DataManipulation_ChangeGroupGroupName.Text = "Change \"_group.group_name\":";
             // 
             // button_DataManipulation_UpdateSubjectID
             // 
@@ -1824,11 +1875,11 @@ namespace ManipAnalysis
             // label_DataManipulation_NewSubjectID
             // 
             this.label_DataManipulation_NewSubjectID.AutoSize = true;
-            this.label_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(587, 60);
+            this.label_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(544, 60);
             this.label_DataManipulation_NewSubjectID.Name = "label_DataManipulation_NewSubjectID";
-            this.label_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(43, 13);
+            this.label_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(86, 13);
             this.label_DataManipulation_NewSubjectID.TabIndex = 33;
-            this.label_DataManipulation_NewSubjectID.Text = "New id:";
+            this.label_DataManipulation_NewSubjectID.Text = "New _subject.id:";
             // 
             // textBox_DataManipulation_OldSubjectID
             // 
@@ -1840,20 +1891,20 @@ namespace ManipAnalysis
             // label_DataManipulation_OldSubjectID
             // 
             this.label_DataManipulation_OldSubjectID.AutoSize = true;
-            this.label_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(593, 34);
+            this.label_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(550, 34);
             this.label_DataManipulation_OldSubjectID.Name = "label_DataManipulation_OldSubjectID";
-            this.label_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(37, 13);
+            this.label_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(80, 13);
             this.label_DataManipulation_OldSubjectID.TabIndex = 31;
-            this.label_DataManipulation_OldSubjectID.Text = "Old id:";
+            this.label_DataManipulation_OldSubjectID.Text = "Old _subject.id:";
             // 
             // label_DataManipulation_ChangeSubjectID
             // 
             this.label_DataManipulation_ChangeSubjectID.AutoSize = true;
             this.label_DataManipulation_ChangeSubjectID.Location = new System.Drawing.Point(587, 15);
             this.label_DataManipulation_ChangeSubjectID.Name = "label_DataManipulation_ChangeSubjectID";
-            this.label_DataManipulation_ChangeSubjectID.Size = new System.Drawing.Size(108, 13);
+            this.label_DataManipulation_ChangeSubjectID.Size = new System.Drawing.Size(111, 13);
             this.label_DataManipulation_ChangeSubjectID.TabIndex = 30;
-            this.label_DataManipulation_ChangeSubjectID.Text = "Change \"subject_id\":";
+            this.label_DataManipulation_ChangeSubjectID.Text = "Change \"_subject.id\":";
             // 
             // button_DataManipulation_UpdateGroupID
             // 
@@ -1875,11 +1926,11 @@ namespace ManipAnalysis
             // label_DataManipulation_NewGroupID
             // 
             this.label_DataManipulation_NewGroupID.AutoSize = true;
-            this.label_DataManipulation_NewGroupID.Location = new System.Drawing.Point(359, 60);
+            this.label_DataManipulation_NewGroupID.Location = new System.Drawing.Point(323, 60);
             this.label_DataManipulation_NewGroupID.Name = "label_DataManipulation_NewGroupID";
-            this.label_DataManipulation_NewGroupID.Size = new System.Drawing.Size(43, 13);
+            this.label_DataManipulation_NewGroupID.Size = new System.Drawing.Size(79, 13);
             this.label_DataManipulation_NewGroupID.TabIndex = 27;
-            this.label_DataManipulation_NewGroupID.Text = "New id:";
+            this.label_DataManipulation_NewGroupID.Text = "New _group.id:";
             // 
             // textBox_DataManipulation_OldGroupID
             // 
@@ -1891,20 +1942,20 @@ namespace ManipAnalysis
             // label_DataManipulation_OldGroupID
             // 
             this.label_DataManipulation_OldGroupID.AutoSize = true;
-            this.label_DataManipulation_OldGroupID.Location = new System.Drawing.Point(365, 34);
+            this.label_DataManipulation_OldGroupID.Location = new System.Drawing.Point(329, 34);
             this.label_DataManipulation_OldGroupID.Name = "label_DataManipulation_OldGroupID";
-            this.label_DataManipulation_OldGroupID.Size = new System.Drawing.Size(37, 13);
+            this.label_DataManipulation_OldGroupID.Size = new System.Drawing.Size(73, 13);
             this.label_DataManipulation_OldGroupID.TabIndex = 25;
-            this.label_DataManipulation_OldGroupID.Text = "Old id:";
+            this.label_DataManipulation_OldGroupID.Text = "Old _group.id:";
             // 
             // label_DataManipulation_ChangeGroupID
             // 
             this.label_DataManipulation_ChangeGroupID.AutoSize = true;
             this.label_DataManipulation_ChangeGroupID.Location = new System.Drawing.Point(359, 15);
             this.label_DataManipulation_ChangeGroupID.Name = "label_DataManipulation_ChangeGroupID";
-            this.label_DataManipulation_ChangeGroupID.Size = new System.Drawing.Size(101, 13);
+            this.label_DataManipulation_ChangeGroupID.Size = new System.Drawing.Size(104, 13);
             this.label_DataManipulation_ChangeGroupID.TabIndex = 24;
-            this.label_DataManipulation_ChangeGroupID.Text = "Change \"group_id\":";
+            this.label_DataManipulation_ChangeGroupID.Text = "Change \"_group.id\":";
             // 
             // button_Debug_SaveLogToFile
             // 
@@ -1979,7 +2030,7 @@ namespace ManipAnalysis
             // 
             // pictureBox_Impressum_KITLogo
             // 
-            this.pictureBox_Impressum_KITLogo.Image = global::ManipAnalysis.Properties.Resources.KITLogo;
+            this.pictureBox_Impressum_KITLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox_Impressum_KITLogo.Image")));
             this.pictureBox_Impressum_KITLogo.Location = new System.Drawing.Point(103, 15);
             this.pictureBox_Impressum_KITLogo.Name = "pictureBox_Impressum_KITLogo";
             this.pictureBox_Impressum_KITLogo.Size = new System.Drawing.Size(502, 234);
@@ -2040,13 +2091,14 @@ namespace ManipAnalysis
             // listBox_LogBox
             // 
             this.listBox_LogBox.FormattingEnabled = true;
+            this.listBox_LogBox.HorizontalScrollbar = true;
             this.listBox_LogBox.Location = new System.Drawing.Point(748, 25);
             this.listBox_LogBox.Name = "listBox_LogBox";
             this.listBox_LogBox.ScrollAlwaysVisible = true;
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 602);
             this.listBox_LogBox.TabIndex = 9;
             // 
-            // ManipAnalysis
+            // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -2059,10 +2111,9 @@ namespace ManipAnalysis
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.progressBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "ManipAnalysis";
+            this.Name = "ManipAnalysisGui";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ManipAnalysis";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ManipAnalysis_FormClosed);
             this.tabControl.ResumeLayout(false);
             this.tabPage_Start.ResumeLayout(false);
             this.tabPage_Start.PerformLayout();
@@ -2132,7 +2183,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.TabPage tabPage_VisualizationExport;
         private System.Windows.Forms.ComboBox comboBox_Start_SQL_Server;
         private System.Windows.Forms.Label label_Start_SQL_Server;
-        private System.Windows.Forms.Button button_Start_ChangeSQlServerConnection;
+        private System.Windows.Forms.Button button_Start_ConnectToSQlServer;
         private System.Windows.Forms.CheckBox checkBox_Start_ManualMode;
         private System.Windows.Forms.TabControl tabControl_VisualizationExport;
         private System.Windows.Forms.TabPage tabPage_DescriptiveStatistic1;
@@ -2198,13 +2249,13 @@ namespace ManipAnalysis
         private System.Windows.Forms.Label label_DataManipulation_NewSubjectName;
         private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectID;
         private System.Windows.Forms.Label label_DataManipulation_SubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectName;
+        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectName;
         private System.Windows.Forms.Button button_DataManipulation_UpdateGroupName;
         private System.Windows.Forms.TextBox textBox_DataManipulation_NewGroupName;
         private System.Windows.Forms.Label label_DataManipulation_NewGroupName;
         private System.Windows.Forms.TextBox textBox_DataManipulation_GroupID;
         private System.Windows.Forms.Label label_DataManipulation_GroupID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeGroupName;
+        private System.Windows.Forms.Label label_DataManipulation_ChangeGroupGroupName;
         private System.Windows.Forms.Button button_DataManipulation_UpdateSubjectID;
         private System.Windows.Forms.TextBox textBox_DataManipulation_NewSubjectID;
         private System.Windows.Forms.Label label_DataManipulation_NewSubjectID;
@@ -2257,7 +2308,6 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_DataManipulation_MeasureFileID;
         private System.Windows.Forms.Label label_DataManipulation_MeasureFileID;
         private System.Windows.Forms.Label label_DataManipulation_DeleteMeasureFile;
-        private System.Windows.Forms.Button button_Debug_CleanOrphanedEntries;
         private System.Windows.Forms.GroupBox groupBox_Import_VelocityCropping;
         private System.Windows.Forms.Label label_Import_PercentPeakVelocity;
         private System.Windows.Forms.TextBox textBox_Import_PercentPeakVelocity;
@@ -2282,6 +2332,13 @@ namespace ManipAnalysis
                 GetSubDirectories(ref directoriesList, di);
             }
         }
+
+        private System.Windows.Forms.Button button_DataManipulation_UpdateSubjectSubjectID;
+        private System.Windows.Forms.TextBox textBox_DataManipulation_NewSubjectSubjectID;
+        private System.Windows.Forms.Label label_DataManipulation_NewSubjectSubjectName;
+        private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectIdId;
+        private System.Windows.Forms.Label label_DataManipulation_SubjectIdId;
+        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectID;
     }
 }
 
