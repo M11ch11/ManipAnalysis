@@ -983,11 +983,11 @@ namespace ManipAnalysis
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
             _manipAnalysisModel.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>(),
-                                                   Convert.ToInt32(textBox_Import_SamplesPerSec),
-                                                   Convert.ToInt32(textBox_Import_FilterOrder),
-                                                   Convert.ToInt32(textBox_Import_CutoffFreq),
-                                                   Convert.ToInt32(textBox_Import_PercentPeakVelocity),
-                                                   Convert.ToInt32(textBox_Import_NewSampleCount));
+                                                   Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
+                                                   Convert.ToInt32(textBox_Import_FilterOrder.Text),
+                                                   Convert.ToInt32(textBox_Import_CutoffFreq.Text),
+                                                   Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),
+                                                   Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }
 
         private void button_CalculateStatistics_Click(object sender, EventArgs e)

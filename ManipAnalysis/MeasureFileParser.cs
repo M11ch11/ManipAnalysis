@@ -116,7 +116,9 @@ namespace ManipAnalysis
                          _dataContainer.SzenarioName == "Szenario15" ||
                          _dataContainer.SzenarioName == "Szenario16" ||
                          _dataContainer.SzenarioName == "Szenario17" ||
-                         _dataContainer.SzenarioName == "Szenario18"
+                         _dataContainer.SzenarioName == "Szenario18" ||
+                         _dataContainer.SzenarioName == "Szenario19" ||
+                         _dataContainer.SzenarioName == "Szenario20" ||
                     )
                 {
                     expectedSzenarioTrialCount = 400;
