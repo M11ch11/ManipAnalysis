@@ -86,7 +86,8 @@ namespace ManipAnalysis
                 int expectedSzenarioTrialCount = 0;
                 int expectedTargetTrialCount = 0;
 
-                if (_dataContainer.SzenarioName == "Szenario02")
+                if (_dataContainer.SzenarioName == "Szenario02" ||
+                    _dataContainer.SzenarioName == "Szenario30")
                 {
                     expectedSzenarioTrialCount = 96;
                     expectedTargetTrialCount = 6;
@@ -103,7 +104,9 @@ namespace ManipAnalysis
                 else if (_dataContainer.SzenarioName == "Szenario07" ||
                          _dataContainer.SzenarioName == "Szenario08" ||
                          _dataContainer.SzenarioName == "Szenario09" ||
-                         _dataContainer.SzenarioName == "Szenario10"
+                         _dataContainer.SzenarioName == "Szenario10" ||
+                         _dataContainer.SzenarioName == "Szenario31" ||
+                         _dataContainer.SzenarioName == "Szenario32" 
                     )
                 {
                     expectedSzenarioTrialCount = 256;
@@ -118,7 +121,7 @@ namespace ManipAnalysis
                          _dataContainer.SzenarioName == "Szenario17" ||
                          _dataContainer.SzenarioName == "Szenario18" ||
                          _dataContainer.SzenarioName == "Szenario19" ||
-                         _dataContainer.SzenarioName == "Szenario20" ||
+                         _dataContainer.SzenarioName == "Szenario20"
                     )
                 {
                     expectedSzenarioTrialCount = 400;
