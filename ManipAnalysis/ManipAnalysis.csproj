@@ -192,6 +192,7 @@
     <Content Include="MatlabFiles\vectorCorrelation.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\SplashLogo.png" />
     <Content Include="SQL-Files\SQL-FunctionsProcedures.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ManipAnalysis")]
-[assembly: AssemblyCopyright("Copyright ©  KIT 2012")]
+[assembly: AssemblyCopyright("Copyright ©  KIT 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

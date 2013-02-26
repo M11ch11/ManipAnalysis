@@ -2102,7 +2102,7 @@ namespace ManipAnalysis
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1172, 664);
+            this.ClientSize = new System.Drawing.Size(1172, 663);
             this.Controls.Add(this.listBox_LogBox);
             this.Controls.Add(this.button_ClearLog);
             this.Controls.Add(this.label_Log);
@@ -2110,7 +2110,9 @@ namespace ManipAnalysis
             this.Controls.Add(this.label_ProgressInfo);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.progressBar);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "ManipAnalysisGui";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ManipAnalysis";

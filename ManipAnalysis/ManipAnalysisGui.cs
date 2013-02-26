@@ -68,7 +68,7 @@ namespace ManipAnalysis
             }
         }
 
-        public string[] GetLogBoxText()
+        private string[] GetLogBoxText()
         {
             string[] retVal = null;
 
@@ -84,7 +84,7 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public void ClearLogBox()
+        private void ClearLogBox()
         {
             if (InvokeRequired)
             {
