@@ -38,6 +38,15 @@ namespace ManipAnalysis
             {
                 listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + text);
                 listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
+
+                if (listBox_LogBox.HorizontalExtent <
+                    TextRenderer.MeasureText(text, listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                             TextFormatFlags.NoPrefix).Width)
+                {
+                    listBox_LogBox.HorizontalExtent =
+                        TextRenderer.MeasureText(text, listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                                 TextFormatFlags.NoPrefix).Width;
+                }
             }
         }
 
@@ -58,11 +67,29 @@ namespace ManipAnalysis
                     {
                         listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + textArray[0]);
                         listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
+
+                        if (listBox_LogBox.HorizontalExtent <
+                            TextRenderer.MeasureText(textArray[0], listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                                     TextFormatFlags.NoPrefix).Width)
+                        {
+                            listBox_LogBox.HorizontalExtent =
+                                TextRenderer.MeasureText(textArray[0], listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                                         TextFormatFlags.NoPrefix).Width;
+                        }
                     }
                     else
                     {
                         listBox_LogBox.Items.Add(textArray[i]);
                         listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
+
+                        if (listBox_LogBox.HorizontalExtent <
+                            TextRenderer.MeasureText(textArray[i], listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                                     TextFormatFlags.NoPrefix).Width)
+                        {
+                            listBox_LogBox.HorizontalExtent =
+                                TextRenderer.MeasureText(textArray[i], listBox_LogBox.Font, listBox_LogBox.ClientSize,
+                                                         TextFormatFlags.NoPrefix).Width;
+                        }
                     }
                 }
             }
@@ -95,6 +122,8 @@ namespace ManipAnalysis
                 listBox_LogBox.Items.Clear();
             }
         }
+
+        
 
         private void button_OpenMeasureFiles_Click(object sender, EventArgs e)
         {
@@ -543,25 +572,36 @@ namespace ManipAnalysis
 
         private void button_showFaultyTrials_Click(object sender, EventArgs e)
         {
-            List<object[]> faultyTrialInfo = _manipAnalysisModel.GetFaultyTrialInformation().ToList();
+            IEnumerable<object[]> faultyTrialInfo = _manipAnalysisModel.GetFaultyTrialInformation();
 
-            if (faultyTrialInfo.Any())
+            if (faultyTrialInfo != null)
             {
-                List<string[]> cache = faultyTrialInfo.Select(t => new string[]
-                    {
-                        Convert.ToString(t[3]), Convert.ToString(t[4]), Convert.ToString(t[6]), Convert.ToString(t[5]),
-                        Convert.ToString(Convert.ToDateTime(t[7])), Convert.ToString(Convert.ToInt32(t[8]))
-                    }).ToList();
+                List<object[]> faultyTrialInfoList = faultyTrialInfo.ToList();
 
-                WriteToLogBox(
-                    "------------------------------------------------------- Faulty trial list -------------------------------------------------------");
-                WriteToLogBox(
-                    cache.OrderBy(t => t[4])
-                         .Select(
-                             t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5])
-                         .ToArray());
-                WriteToLogBox(
-                    "---------------------------------------------------------------------------------------------------------------------------------");
+                if (faultyTrialInfoList.Any())
+                {
+                    List<string[]> cache = faultyTrialInfoList.Select(t => new string[]
+                        {
+                            Convert.ToString(t[3]), Convert.ToString(t[4]), Convert.ToString(t[6]),
+                            Convert.ToString(t[5]),
+                            Convert.ToString(Convert.ToDateTime(t[7])), Convert.ToString(Convert.ToInt32(t[8]))
+                        }).ToList();
+
+                    WriteToLogBox(
+                        "------------------------------------------------------- Faulty trial list -------------------------------------------------------");
+                    WriteToLogBox(
+                        cache.OrderBy(t => t[4])
+                             .Select(
+                                 t =>
+                                 t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5])
+                             .ToArray());
+                    WriteToLogBox(
+                        "---------------------------------------------------------------------------------------------------------------------------------");
+                }
+            }
+            else
+            {
+                WriteToLogBox("No faulty Trials!");
             }
         }
 

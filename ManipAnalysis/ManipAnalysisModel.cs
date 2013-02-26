@@ -36,7 +36,7 @@ namespace ManipAnalysis
                     if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2), false))
                     {
                         tcp.Close();
-                        throw new TimeoutException();
+                        throw new Exception("Server didn't respond within 2 seconds.");
                     }
 
                     tcp.EndConnect(ar);
