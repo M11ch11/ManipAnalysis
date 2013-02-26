@@ -19,7 +19,7 @@ namespace ManipAnalysis
 
             var manipAnalysisGui = new ManipAnalysisGui();
             var sqlWrapper = new SqlWrapper(manipAnalysisGui);
-            var matlabWrapper = new MatlabWrapper();
+            var matlabWrapper = new MatlabWrapper(manipAnalysisGui);
             var manipAnalysisModel = new ManipAnalysisModel(manipAnalysisGui, matlabWrapper, sqlWrapper);
             manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
 
