@@ -845,7 +845,7 @@ namespace ManipAnalysis
                         Thread.Sleep(100);
                     }
 
-                    _myManipAnalysisGui.SetProgressBarValue((100.0 / measureFilesList.Count) * files);
+                    _myManipAnalysisGui.SetProgressBarValue((100.0/measureFilesList.Count)*files);
 
                     string filename = measureFilesList.ElementAt(files);
 
@@ -920,11 +920,11 @@ namespace ManipAnalysis
                             {
                                 int coreVar = core;
                                 multiCoreTasks.Add(new Task(
-                                                         () =>
-                                                         DuplicateEntryDetectionThread(trialCoreDistribution, coreVar,
-                                                                                       filename,
-                                                                                       myDataContainter)
-                                                         ));
+                                                       () =>
+                                                       DuplicateEntryDetectionThread(trialCoreDistribution, coreVar,
+                                                                                     filename,
+                                                                                     myDataContainter)
+                                                       ));
 
                                 foreach (Task t in multiCoreTasks)
                                 {
@@ -984,8 +984,9 @@ namespace ManipAnalysis
 
                                 multiCoreTasks.Add(
                                     new Task(
-                                        () => VelocityCalculationThread(trialCoreDistribution, coreVar, myDataContainter,
-                                                                        samplesPerSecond)
+                                        () =>
+                                        VelocityCalculationThread(trialCoreDistribution, coreVar, myDataContainter,
+                                                                  samplesPerSecond)
                                         ));
                             }
 
@@ -1472,7 +1473,8 @@ namespace ManipAnalysis
                 }
                 catch (Exception ex)
                 {
-                    _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex.ToString() + "\nSkipped file.");
+                    _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex +
+                                                      "\nSkipped file.");
                 }
             }
             _myManipAnalysisGui.SetProgressBarValue(0);
@@ -2002,7 +2004,7 @@ namespace ManipAnalysis
                             tempVelocityDataEnum.Max(
                                 t =>
                                 Math.Sqrt(Math.Pow(t.VelocityX, 2) +
-                                          Math.Pow(t.VelocityZ, 2))) / 100.0 *
+                                          Math.Pow(t.VelocityZ, 2)))/100.0*
                             percentPeakVelocity;
 
                         if (
@@ -2404,7 +2406,13 @@ namespace ManipAnalysis
                     if (errorList.Any(t => !string.IsNullOrEmpty(t)))
                     {
                         string output = "";
-                        foreach (string line in errorList.Where(t => !string.IsNullOrEmpty(t)).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber))
+                        foreach (
+                            string line in
+                                errorList.Where(t => !string.IsNullOrEmpty(t))
+                                         .Select(
+                                             t =>
+                                             t + " in " + filename + " at szenario-trial-number " +
+                                             tempSzenarioTrialNumber))
                         {
                             output += line;
                         }

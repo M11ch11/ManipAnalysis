@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ManipAnalysis
 {
     internal static class TaskManager
     {
-        private static List<Task> RunningTasks = new List<Task>();
+        private static readonly List<Task> RunningTasks = new List<Task>();
         public static bool Pause;
 
         public static void PushBack(Task task)
@@ -18,7 +17,7 @@ namespace ManipAnalysis
         {
             int retVal = -1;
 
-            for(int i = 0; i < RunningTasks.Count; i++)
+            for (int i = 0; i < RunningTasks.Count; i++)
             {
                 if (taskID == RunningTasks[i].Id)
                 {
@@ -36,7 +35,7 @@ namespace ManipAnalysis
                 {
                     RunningTasks.Remove(RunningTasks[i]);
                 }
-            }            
+            }
         }
     }
 }
