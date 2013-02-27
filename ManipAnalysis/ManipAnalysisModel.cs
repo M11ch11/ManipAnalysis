@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using ManipAnalysis.Container;
 
 namespace ManipAnalysis
@@ -815,20 +816,20 @@ namespace ManipAnalysis
         {
             List<string> measureFilesList = measureFiles.ToList();
 
-            var newThread =
-                new Thread(
+            var newTask =
+                new Task(
                     () => ImportMeasureFilesThread(measureFilesList, samplesPerSecond, butterFilterOrder,
                                                    butterFilterCutOff, percentPeakVelocity, timeNormalizationSamples));
 
-            ThreadManager.PushBack(newThread);
-            newThread.Start();
+            TaskManager.PushBack(newTask);
+            newTask.Start();
         }
 
         private void ImportMeasureFilesThread(List<string> measureFilesList, int samplesPerSecond, int butterFilterOrder,
                                               int butterFilterCutOff, int percentPeakVelocity,
                                               int timeNormalizationSamples)
         {
-            while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
+            while (TaskManager.GetIndex(Task.CurrentId) != 0)
             {
                 Thread.Sleep(100);
             }
@@ -837,596 +838,570 @@ namespace ManipAnalysis
 
             for (int files = 0; files < measureFilesList.Count; files++)
             {
-                while (ThreadManager.Pause)
+                try
                 {
-                    Thread.Sleep(100);
-                }
-
-                _myManipAnalysisGui.SetProgressBarValue((100.0/measureFilesList.Count)*files);
-
-                string filename = measureFilesList.ElementAt(files);
-
-                string tempFileHash = Md5.ComputeHash(filename);
-
-                if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
-                {
-                    var myDataContainter = new DataContainer();
-                    var myParser = new MeasureFileParser(myDataContainter, _myManipAnalysisGui);
-
-                    if (myParser.ParseFile(filename))
+                    while (TaskManager.Pause)
                     {
-                        _myManipAnalysisGui.WriteProgressInfo("Running multicore-calculation preparation...");
+                        Thread.Sleep(100);
+                    }
 
-                        #region MultiCore preparation
+                    _myManipAnalysisGui.SetProgressBarValue((100.0 / measureFilesList.Count) * files);
 
-                        var multiCoreThreads = new List<Thread>();
+                    string filename = measureFilesList.ElementAt(files);
 
-                        int[] szenarioTrialNumbers =
-                            myDataContainter.MeasureDataRaw.Select(t => t.SzenarioTrialNumber)
-                                            .OrderBy(t => t)
-                                            .Distinct()
-                                            .ToArray();
-                        int[] targetNumbers =
-                            myDataContainter.MeasureDataRaw.Select(t => t.TargetNumber)
-                                            .OrderBy(t => t)
-                                            .Distinct()
-                                            .ToArray();
+                    string tempFileHash = Md5.ComputeHash(filename);
 
-                        var trialCoreDistribution = new List<int>[Environment.ProcessorCount];
-                        var targetCoreDistribution = new List<int>[Environment.ProcessorCount];
+                    if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
+                    {
+                        var myDataContainter = new DataContainer();
+                        var myParser = new MeasureFileParser(myDataContainter, _myManipAnalysisGui);
 
-                        int coreCounter = 0;
-                        for (int i = 0; i < szenarioTrialNumbers.Count(); i++)
+                        if (myParser.ParseFile(filename))
                         {
-                            if (trialCoreDistribution[coreCounter] == null)
+                            _myManipAnalysisGui.WriteProgressInfo("Running multicore-calculation preparation...");
+
+                            #region MultiCore preparation
+
+                            var multiCoreTasks = new List<Task>();
+
+                            int[] szenarioTrialNumbers =
+                                myDataContainter.MeasureDataRaw.Select(t => t.SzenarioTrialNumber)
+                                                .OrderBy(t => t)
+                                                .Distinct()
+                                                .ToArray();
+                            int[] targetNumbers =
+                                myDataContainter.MeasureDataRaw.Select(t => t.TargetNumber)
+                                                .OrderBy(t => t)
+                                                .Distinct()
+                                                .ToArray();
+
+                            var trialCoreDistribution = new List<int>[Environment.ProcessorCount];
+                            var targetCoreDistribution = new List<int>[Environment.ProcessorCount];
+
+                            int coreCounter = 0;
+                            for (int i = 0; i < szenarioTrialNumbers.Count(); i++)
                             {
-                                trialCoreDistribution[coreCounter] = new List<int>();
-                            }
-                            trialCoreDistribution[coreCounter].Add(szenarioTrialNumbers[i]);
+                                if (trialCoreDistribution[coreCounter] == null)
+                                {
+                                    trialCoreDistribution[coreCounter] = new List<int>();
+                                }
+                                trialCoreDistribution[coreCounter].Add(szenarioTrialNumbers[i]);
 
-                            coreCounter++;
-                            if (coreCounter >= Environment.ProcessorCount)
-                            {
-                                coreCounter = 0;
-                            }
-                        }
-
-                        coreCounter = 0;
-                        for (int i = 0; i < targetNumbers.Count(); i++)
-                        {
-                            if (targetCoreDistribution[coreCounter] == null)
-                            {
-                                targetCoreDistribution[coreCounter] = new List<int>();
-                            }
-                            targetCoreDistribution[coreCounter].Add(targetNumbers[i]);
-
-                            coreCounter++;
-                            if (coreCounter >= Environment.ProcessorCount)
-                            {
-                                coreCounter = 0;
-                            }
-                        }
-
-                        #endregion
-
-                        _myManipAnalysisGui.WriteProgressInfo("Running duplicate entry detection...");
-
-                        #region Duplicate entry detection
-
-                        for (int core = 0; core < Environment.ProcessorCount; core++)
-                        {
-                            int coreVar = core;
-                            multiCoreThreads.Add(new Thread(
-                                                     () =>
-                                                     DuplicateEntryDetectionThread(trialCoreDistribution, coreVar,
-                                                                                   filename,
-                                                                                   myDataContainter)
-                                                     ));
-
-                            foreach (Thread t in multiCoreThreads)
-                            {
-                                t.Start();
+                                coreCounter++;
+                                if (coreCounter >= Environment.ProcessorCount)
+                                {
+                                    coreCounter = 0;
+                                }
                             }
 
-                            foreach (Thread t in multiCoreThreads)
+                            coreCounter = 0;
+                            for (int i = 0; i < targetNumbers.Count(); i++)
                             {
-                                t.Join();
+                                if (targetCoreDistribution[coreCounter] == null)
+                                {
+                                    targetCoreDistribution[coreCounter] = new List<int>();
+                                }
+                                targetCoreDistribution[coreCounter].Add(targetNumbers[i]);
+
+                                coreCounter++;
+                                if (coreCounter >= Environment.ProcessorCount)
+                                {
+                                    coreCounter = 0;
+                                }
                             }
 
-                            multiCoreThreads.Clear();
-                        }
+                            #endregion
 
-                        #endregion
+                            _myManipAnalysisGui.WriteProgressInfo("Running duplicate entry detection...");
 
-                        _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
-
-                        #region Butterworth filter
-
-                        _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
-                        _myMatlabWrapper.SetWorkspaceData("cutoffFreq", Convert.ToDouble(butterFilterCutOff));
-                        _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
-                        _myMatlabWrapper.Execute(
-                            "[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
-
-                        for (int core = 0; core < Environment.ProcessorCount; core++)
-                        {
-                            int coreVar = core;
-                            multiCoreThreads.Add(
-                                new Thread(
-                                    () => ButterWorthFilterThread(trialCoreDistribution, coreVar, myDataContainter)
-                                    ));
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Start();
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Join();
-                        }
-                        _myMatlabWrapper.ClearWorkspace();
-                        multiCoreThreads.Clear();
-
-                        #endregion Butterworth Filter
-
-                        _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
-
-                        #region Velocity calcultion
-
-                        for (int core = 0; core < Environment.ProcessorCount; core++)
-                        {
-                            int coreVar = core;
-
-                            multiCoreThreads.Add(
-                                new Thread(
-                                    () => VelocityCalculationThread(trialCoreDistribution, coreVar, myDataContainter,
-                                                                    samplesPerSecond)
-                                    ));
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Start();
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Join();
-                        }
-                        _myMatlabWrapper.ClearWorkspace();
-                        multiCoreThreads.Clear();
-
-                        #endregion
-
-                        _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
-
-                        #region Time normalization
-
-                        for (int core = 0; core < Environment.ProcessorCount; core++)
-                        {
-                            int coreVar = core;
-                            multiCoreThreads.Add(
-                                new Thread(
-                                    () => TimeNormalizationThread(trialCoreDistribution, coreVar, myDataContainter,
-                                                                  timeNormalizationSamples, percentPeakVelocity,
-                                                                  filename)
-                                    ));
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Start();
-                        }
-
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Join();
-                        }
-                        _myMatlabWrapper.ClearWorkspace();
-                        multiCoreThreads.Clear();
-
-                        #endregion
-
-                        _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
-
-                        #region Calculate baselines
-
-                        if (myDataContainter.SzenarioName == "Szenario02")
-                        {
-                            myDataContainter.BaselineData = new List<BaselineDataContainer>();
+                            #region Duplicate entry detection
 
                             for (int core = 0; core < Environment.ProcessorCount; core++)
                             {
                                 int coreVar = core;
-                                multiCoreThreads.Add(
-                                    new Thread(
-                                        () => CalculateBaselinesThread(targetCoreDistribution, coreVar,
-                                                                       myDataContainter)
+                                multiCoreTasks.Add(new Task(
+                                                         () =>
+                                                         DuplicateEntryDetectionThread(trialCoreDistribution, coreVar,
+                                                                                       filename,
+                                                                                       myDataContainter)
+                                                         ));
+
+                                foreach (Task t in multiCoreTasks)
+                                {
+                                    t.Start();
+                                }
+
+                                foreach (Task t in multiCoreTasks)
+                                {
+                                    t.Wait();
+                                }
+
+                                multiCoreTasks.Clear();
+                            }
+
+                            #endregion
+
+                            _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
+
+                            #region Butterworth filter
+
+                            _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
+                            _myMatlabWrapper.SetWorkspaceData("cutoffFreq", Convert.ToDouble(butterFilterCutOff));
+                            _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+                            _myMatlabWrapper.Execute(
+                                "[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
+
+                            for (int core = 0; core < Environment.ProcessorCount; core++)
+                            {
+                                int coreVar = core;
+                                multiCoreTasks.Add(
+                                    new Task(
+                                        () => ButterWorthFilterThread(trialCoreDistribution, coreVar, myDataContainter)
                                         ));
                             }
 
-                            foreach (Thread t in multiCoreThreads)
+                            foreach (Task t in multiCoreTasks)
                             {
                                 t.Start();
                             }
 
-                            foreach (Thread t in multiCoreThreads)
+                            foreach (Task t in multiCoreTasks)
                             {
-                                t.Join();
+                                t.Wait();
+                            }
+                            _myMatlabWrapper.ClearWorkspace();
+                            multiCoreTasks.Clear();
+
+                            #endregion Butterworth Filter
+
+                            _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
+
+                            #region Velocity calcultion
+
+                            for (int core = 0; core < Environment.ProcessorCount; core++)
+                            {
+                                int coreVar = core;
+
+                                multiCoreTasks.Add(
+                                    new Task(
+                                        () => VelocityCalculationThread(trialCoreDistribution, coreVar, myDataContainter,
+                                                                        samplesPerSecond)
+                                        ));
                             }
 
-                            multiCoreThreads.Clear();
-                        }
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Start();
+                            }
 
-                        #endregion
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Wait();
+                            }
+                            _myMatlabWrapper.ClearWorkspace();
+                            multiCoreTasks.Clear();
 
-                        _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
+                            #endregion
 
-                        #region Calculate szenario mean times
+                            _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
 
-                        for (int core = 0; core < Environment.ProcessorCount; core++)
-                        {
-                            int coreVar = core;
-                            multiCoreThreads.Add(
-                                new Thread(
-                                    () => CalculateSzenarioMeanTimesThread(targetCoreDistribution, coreVar,
+                            #region Time normalization
+
+                            for (int core = 0; core < Environment.ProcessorCount; core++)
+                            {
+                                int coreVar = core;
+                                multiCoreTasks.Add(
+                                    new Task(
+                                        () => TimeNormalizationThread(trialCoreDistribution, coreVar, myDataContainter,
+                                                                      timeNormalizationSamples, percentPeakVelocity,
+                                                                      filename)
+                                        ));
+                            }
+
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Start();
+                            }
+
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Wait();
+                            }
+                            _myMatlabWrapper.ClearWorkspace();
+                            multiCoreTasks.Clear();
+
+                            #endregion
+
+                            _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
+
+                            #region Calculate baselines
+
+                            if (myDataContainter.SzenarioName == "Szenario02")
+                            {
+                                myDataContainter.BaselineData = new List<BaselineDataContainer>();
+
+                                for (int core = 0; core < Environment.ProcessorCount; core++)
+                                {
+                                    int coreVar = core;
+                                    multiCoreTasks.Add(
+                                        new Task(
+                                            () => CalculateBaselinesThread(targetCoreDistribution, coreVar,
                                                                            myDataContainter)
-                                    ));
-                        }
+                                            ));
+                                }
 
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Start();
-                        }
+                                foreach (Task t in multiCoreTasks)
+                                {
+                                    t.Start();
+                                }
 
-                        foreach (Thread t in multiCoreThreads)
-                        {
-                            t.Join();
-                        }
-                        _myMatlabWrapper.ClearWorkspace();
-                        multiCoreThreads.Clear();
+                                foreach (Task t in multiCoreTasks)
+                                {
+                                    t.Wait();
+                                }
 
-                        #endregion
+                                multiCoreTasks.Clear();
+                            }
 
-                        #region Uploading data to SQL server
+                            #endregion
 
-                        if (File.Exists("C:\\measureDataRaw.dat"))
-                        {
+                            _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
+
+                            #region Calculate szenario mean times
+
+                            for (int core = 0; core < Environment.ProcessorCount; core++)
+                            {
+                                int coreVar = core;
+                                multiCoreTasks.Add(
+                                    new Task(
+                                        () => CalculateSzenarioMeanTimesThread(targetCoreDistribution, coreVar,
+                                                                               myDataContainter)
+                                        ));
+                            }
+
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Start();
+                            }
+
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Wait();
+                            }
+                            _myMatlabWrapper.ClearWorkspace();
+                            multiCoreTasks.Clear();
+
+                            #endregion
+
+                            #region Uploading data to SQL server
+
+                            if (File.Exists("C:\\measureDataRaw.dat"))
+                            {
+                                File.Delete("C:\\measureDataRaw.dat");
+                            }
+                            if (File.Exists("C:\\measureDataFiltered.dat"))
+                            {
+                                File.Delete("C:\\measureDataFiltered.dat");
+                            }
+                            if (File.Exists("C:\\measureDataNormalized.dat"))
+                            {
+                                File.Delete("C:\\measureDataNormalized.dat");
+                            }
+                            if (File.Exists("C:\\velocityDataFiltered.dat"))
+                            {
+                                File.Delete("C:\\velocityDataFiltered.dat");
+                            }
+                            if (File.Exists("C:\\velocityDataNormalized.dat"))
+                            {
+                                File.Delete("C:\\velocityDataNormalized.dat");
+                            }
+
+                            int measureFileID =
+                                _mySqlWrapper.InsertMeasureFile(
+                                    DateTime.Parse(myDataContainter.MeasureFileCreationTime + " " +
+                                                   myDataContainter.MeasureFileCreationDate),
+                                    myDataContainter.MeasureFileHash);
+                            int studyID = _mySqlWrapper.InsertStudy(myDataContainter.StudyName);
+                            int szenarioID = _mySqlWrapper.InsertSzenario(myDataContainter.SzenarioName);
+                            int groupID = _mySqlWrapper.InsertGroup(myDataContainter.GroupName);
+                            int subjectID = _mySqlWrapper.InsertSubject(myDataContainter.SubjectName,
+                                                                        myDataContainter.SubjectID);
+
+                            #region Upload trials
+
+                            for (int i = 0; i < szenarioTrialNumbers.Length; i++)
+                            {
+                                int iVar = i;
+                                _myManipAnalysisGui.WriteProgressInfo("Preparing Trial " + (i + 1) + " of " +
+                                                                      szenarioTrialNumbers.Length);
+
+                                List<MeasureDataContainer> measureDataRawList =
+                                    myDataContainter.MeasureDataRaw.Where(
+                                        t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
+                                                    .OrderBy(t => t.TimeStamp)
+                                                    .ToList();
+
+                                int targetID =
+                                    _mySqlWrapper.InsertTarget(measureDataRawList.ElementAt(0).TargetNumber);
+
+                                int targetTrialNumberID =
+                                    _mySqlWrapper.InsertTargetTrialNumber(
+                                        measureDataRawList.ElementAt(0).TargetTrialNumber);
+
+                                int szenarioTrialNumberID =
+                                    _mySqlWrapper.InsertSzenarioTrialNumber(szenarioTrialNumbers[iVar]);
+
+                                int trialInformationID =
+                                    _mySqlWrapper.InsertTrialInformation(
+                                        measureDataRawList.ElementAt(0).ContainsDuplicates, butterFilterOrder,
+                                        butterFilterCutOff,
+                                        percentPeakVelocity);
+
+                                int isCatchTrialID =
+                                    _mySqlWrapper.InsertIsCatchTrial(measureDataRawList.ElementAt(0).IsCatchTrial);
+
+                                int trialID = _mySqlWrapper.InsertTrial(
+                                    subjectID,
+                                    studyID,
+                                    groupID,
+                                    isCatchTrialID,
+                                    szenarioID,
+                                    targetID,
+                                    targetTrialNumberID,
+                                    szenarioTrialNumberID,
+                                    measureFileID,
+                                    trialInformationID
+                                    );
+
+
+                                List<string> dataFileCache =
+                                    measureDataRawList.Select(
+                                        t =>
+                                        "," + trialID + "," + t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") +
+                                        "," + DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                        DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                        DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                        DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                        DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                        DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                        DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                        DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                        DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                        DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                        DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                        DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                        t.PositionStatus).ToList();
+
+                                var dataFileStream = new FileStream("C:\\measureDataRaw.dat", FileMode.Append,
+                                                                    FileAccess.Write);
+
+                                var dataFileWriter = new StreamWriter(dataFileStream);
+
+                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                {
+                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                }
+
+
+                                dataFileWriter.Close();
+                                dataFileStream.Close();
+                                dataFileCache.Clear();
+
+                                if (
+                                    myDataContainter.MeasureDataFiltered.Select(t => t.SzenarioTrialNumber)
+                                                    .Contains(szenarioTrialNumbers[i]))
+                                {
+                                    List<MeasureDataContainer> measureDataFilteredList =
+                                        myDataContainter.MeasureDataFiltered.Where(
+                                            t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
+                                                        .OrderBy(t => t.TimeStamp)
+                                                        .ToList();
+
+                                    dataFileCache.AddRange(
+                                        measureDataFilteredList.Select(
+                                            t =>
+                                            "," + trialID + "," +
+                                            t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                            t.PositionStatus));
+
+                                    dataFileStream = new FileStream("C:\\measureDataFiltered.dat", FileMode.Append,
+                                                                    FileAccess.Write);
+                                    dataFileWriter = new StreamWriter(dataFileStream);
+
+                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                    {
+                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    }
+
+
+                                    dataFileWriter.Close();
+                                    dataFileStream.Close();
+                                    dataFileCache.Clear();
+                                }
+
+                                if (
+                                    myDataContainter.MeasureDataNormalized.Select(t => t.SzenarioTrialNumber)
+                                                    .Contains(szenarioTrialNumbers[i]))
+                                {
+                                    List<MeasureDataContainer> measureDataNormalizedList =
+                                        myDataContainter.MeasureDataNormalized.Where(
+                                            t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
+                                                        .OrderBy(t => t.TimeStamp)
+                                                        .ToList();
+
+                                    dataFileCache.AddRange(
+                                        measureDataNormalizedList.Select(
+                                            t =>
+                                            "," + trialID + "," +
+                                            t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceActualZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentX) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentY) + "," +
+                                            DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
+                                            DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
+                                            t.PositionStatus));
+
+                                    dataFileStream = new FileStream("C:\\measureDataNormalized.dat", FileMode.Append,
+                                                                    FileAccess.Write);
+                                    dataFileWriter = new StreamWriter(dataFileStream);
+
+                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                    {
+                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    }
+
+
+                                    dataFileWriter.Close();
+                                    dataFileStream.Close();
+                                    dataFileCache.Clear();
+                                }
+
+                                if (
+                                    myDataContainter.VelocityDataFiltered.Select(t => t.SzenarioTrialNumber)
+                                                    .Contains(szenarioTrialNumbers[i]))
+                                {
+                                    List<VelocityDataContainer> velocityDataFilteredList =
+                                        myDataContainter.VelocityDataFiltered.Where(
+                                            t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
+                                                        .OrderBy(t => t.TimeStamp)
+                                                        .ToList();
+
+                                    dataFileCache.AddRange(
+                                        velocityDataFilteredList.Select(
+                                            t =>
+                                            "," + trialID + "," +
+                                            t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                            DoubleConverter.ToExactString(t.VelocityX) + "," +
+                                            DoubleConverter.ToExactString(t.VelocityY) + "," +
+                                            DoubleConverter.ToExactString(t.VelocityZ)));
+
+                                    dataFileStream = new FileStream("C:\\velocityDataFiltered.dat", FileMode.Append,
+                                                                    FileAccess.Write);
+                                    dataFileWriter = new StreamWriter(dataFileStream);
+
+                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                    {
+                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    }
+
+
+                                    dataFileWriter.Close();
+                                    dataFileStream.Close();
+                                    dataFileCache.Clear();
+                                }
+
+                                if (
+                                    myDataContainter.VelocityDataNormalized.Select(t => t.SzenarioTrialNumber)
+                                                    .Contains(szenarioTrialNumbers[i]))
+                                {
+                                    List<VelocityDataContainer> velocityDataNormalizedList =
+                                        myDataContainter.VelocityDataNormalized.Where(
+                                            t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
+                                                        .OrderBy(t => t.TimeStamp)
+                                                        .ToList();
+
+                                    dataFileCache.AddRange(
+                                        velocityDataNormalizedList.Select(
+                                            t =>
+                                            "," + trialID + "," +
+                                            t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
+                                            DoubleConverter.ToExactString(t.VelocityX) + "," +
+                                            DoubleConverter.ToExactString(t.VelocityY) + "," +
+                                            DoubleConverter.ToExactString(t.VelocityZ)));
+
+                                    dataFileStream = new FileStream("C:\\velocityDataNormalized.dat",
+                                                                    FileMode.Append, FileAccess.Write);
+                                    dataFileWriter = new StreamWriter(dataFileStream);
+
+                                    for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                                    {
+                                        dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                    }
+
+
+                                    dataFileWriter.Close();
+                                    dataFileStream.Close();
+                                    dataFileCache.Clear();
+                                }
+                            }
+
+                            _myManipAnalysisGui.WriteProgressInfo("Uploading trial data...");
+
+                            _mySqlWrapper.BulkInsertMeasureDataRaw("C:\\measureDataRaw.dat");
                             File.Delete("C:\\measureDataRaw.dat");
-                        }
-                        if (File.Exists("C:\\measureDataFiltered.dat"))
-                        {
-                            File.Delete("C:\\measureDataFiltered.dat");
-                        }
-                        if (File.Exists("C:\\measureDataNormalized.dat"))
-                        {
-                            File.Delete("C:\\measureDataNormalized.dat");
-                        }
-                        if (File.Exists("C:\\velocityDataFiltered.dat"))
-                        {
-                            File.Delete("C:\\velocityDataFiltered.dat");
-                        }
-                        if (File.Exists("C:\\velocityDataNormalized.dat"))
-                        {
-                            File.Delete("C:\\velocityDataNormalized.dat");
-                        }
 
-                        int measureFileID =
-                            _mySqlWrapper.InsertMeasureFile(
-                                DateTime.Parse(myDataContainter.MeasureFileCreationTime + " " +
-                                               myDataContainter.MeasureFileCreationDate),
-                                myDataContainter.MeasureFileHash);
-                        int studyID = _mySqlWrapper.InsertStudy(myDataContainter.StudyName);
-                        int szenarioID = _mySqlWrapper.InsertSzenario(myDataContainter.SzenarioName);
-                        int groupID = _mySqlWrapper.InsertGroup(myDataContainter.GroupName);
-                        int subjectID = _mySqlWrapper.InsertSubject(myDataContainter.SubjectName,
-                                                                    myDataContainter.SubjectID);
-
-                        #region Upload trials
-
-                        for (int i = 0; i < szenarioTrialNumbers.Length; i++)
-                        {
-                            int iVar = i;
-                            _myManipAnalysisGui.WriteProgressInfo("Preparing Trial " + (i + 1) + " of " +
-                                                                  szenarioTrialNumbers.Length);
-
-                            List<MeasureDataContainer> measureDataRawList =
-                                myDataContainter.MeasureDataRaw.Where(
-                                    t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
-                                                .OrderBy(t => t.TimeStamp)
-                                                .ToList();
-
-                            int targetID =
-                                _mySqlWrapper.InsertTarget(measureDataRawList.ElementAt(0).TargetNumber);
-
-                            int targetTrialNumberID =
-                                _mySqlWrapper.InsertTargetTrialNumber(
-                                    measureDataRawList.ElementAt(0).TargetTrialNumber);
-
-                            int szenarioTrialNumberID =
-                                _mySqlWrapper.InsertSzenarioTrialNumber(szenarioTrialNumbers[iVar]);
-
-                            int trialInformationID =
-                                _mySqlWrapper.InsertTrialInformation(
-                                    measureDataRawList.ElementAt(0).ContainsDuplicates, butterFilterOrder,
-                                    butterFilterCutOff,
-                                    percentPeakVelocity);
-
-                            int isCatchTrialID =
-                                _mySqlWrapper.InsertIsCatchTrial(measureDataRawList.ElementAt(0).IsCatchTrial);
-
-                            int trialID = _mySqlWrapper.InsertTrial(
-                                subjectID,
-                                studyID,
-                                groupID,
-                                isCatchTrialID,
-                                szenarioID,
-                                targetID,
-                                targetTrialNumberID,
-                                szenarioTrialNumberID,
-                                measureFileID,
-                                trialInformationID
-                                );
-
-
-                            List<string> dataFileCache =
-                                measureDataRawList.Select(
-                                    t =>
-                                    "," + trialID + "," + t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") +
-                                    "," + DoubleConverter.ToExactString(t.ForceActualX) + "," +
-                                    DoubleConverter.ToExactString(t.ForceActualY) + "," +
-                                    DoubleConverter.ToExactString(t.ForceActualZ) + "," +
-                                    DoubleConverter.ToExactString(t.ForceNominalX) + "," +
-                                    DoubleConverter.ToExactString(t.ForceNominalY) + "," +
-                                    DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
-                                    DoubleConverter.ToExactString(t.ForceMomentX) + "," +
-                                    DoubleConverter.ToExactString(t.ForceMomentY) + "," +
-                                    DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
-                                    DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
-                                    DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
-                                    DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
-                                    t.PositionStatus).ToList();
-
-                            var dataFileStream = new FileStream("C:\\measureDataRaw.dat", FileMode.Append,
-                                                                FileAccess.Write);
-
-                            var dataFileWriter = new StreamWriter(dataFileStream);
-
-                            for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
+                            if (File.Exists("C:\\measureDataFiltered.dat"))
                             {
-                                dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
+                                _mySqlWrapper.BulkInsertMeasureDataFiltered("C:\\measureDataFiltered.dat");
+                                File.Delete("C:\\measureDataFiltered.dat");
+                            }
+                            if (File.Exists("C:\\measureDataNormalized.dat"))
+                            {
+                                _mySqlWrapper.BulkInsertMeasureDataNormalized("C:\\measureDataNormalized.dat");
+                                File.Delete("C:\\measureDataNormalized.dat");
+                            }
+                            if (File.Exists("C:\\velocityDataFiltered.dat"))
+                            {
+                                _mySqlWrapper.BulkInsertVelocityDataFiltered("C:\\velocityDataFiltered.dat");
+                                File.Delete("C:\\velocityDataFiltered.dat");
+                            }
+                            if (File.Exists("C:\\velocityDataNormalized.dat"))
+                            {
+                                _mySqlWrapper.BulkInsertVelocityDataNormalized("C:\\velocityDataNormalized.dat");
+                                File.Delete("C:\\velocityDataNormalized.dat");
                             }
 
+                            #endregion
 
-                            dataFileWriter.Close();
-                            dataFileStream.Close();
-                            dataFileCache.Clear();
+                            #region Upload szenario mean times
 
-                            if (
-                                myDataContainter.MeasureDataFiltered.Select(t => t.SzenarioTrialNumber)
-                                                .Contains(szenarioTrialNumbers[i]))
+                            _myManipAnalysisGui.WriteProgressInfo("Uploading szenario mean-time data...");
+                            for (int j = 0; j < myDataContainter.SzenarioMeanTimeData.Count; j++)
                             {
-                                List<MeasureDataContainer> measureDataFilteredList =
-                                    myDataContainter.MeasureDataFiltered.Where(
-                                        t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
+                                int targetID =
+                                    _mySqlWrapper.InsertTarget(
+                                        myDataContainter.SzenarioMeanTimeData[j].TargetNumber);
 
-                                dataFileCache.AddRange(
-                                    measureDataFilteredList.Select(
-                                        t =>
-                                        "," + trialID + "," +
-                                        t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualZ) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
-                                        t.PositionStatus));
-
-                                dataFileStream = new FileStream("C:\\measureDataFiltered.dat", FileMode.Append,
-                                                                FileAccess.Write);
-                                dataFileWriter = new StreamWriter(dataFileStream);
-
-                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                {
-                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                }
-
-
-                                dataFileWriter.Close();
-                                dataFileStream.Close();
-                                dataFileCache.Clear();
-                            }
-
-                            if (
-                                myDataContainter.MeasureDataNormalized.Select(t => t.SzenarioTrialNumber)
-                                                .Contains(szenarioTrialNumbers[i]))
-                            {
-                                List<MeasureDataContainer> measureDataNormalizedList =
-                                    myDataContainter.MeasureDataNormalized.Where(
-                                        t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
-
-                                dataFileCache.AddRange(
-                                    measureDataNormalizedList.Select(
-                                        t =>
-                                        "," + trialID + "," +
-                                        t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceActualZ) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceNominalZ) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentX) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentY) + "," +
-                                        DoubleConverter.ToExactString(t.ForceMomentZ) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianX) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianY) + "," +
-                                        DoubleConverter.ToExactString(t.PositionCartesianZ) + "," +
-                                        t.PositionStatus));
-
-                                dataFileStream = new FileStream("C:\\measureDataNormalized.dat", FileMode.Append,
-                                                                FileAccess.Write);
-                                dataFileWriter = new StreamWriter(dataFileStream);
-
-                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                {
-                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                }
-
-
-                                dataFileWriter.Close();
-                                dataFileStream.Close();
-                                dataFileCache.Clear();
-                            }
-
-                            if (
-                                myDataContainter.VelocityDataFiltered.Select(t => t.SzenarioTrialNumber)
-                                                .Contains(szenarioTrialNumbers[i]))
-                            {
-                                List<VelocityDataContainer> velocityDataFilteredList =
-                                    myDataContainter.VelocityDataFiltered.Where(
-                                        t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
-
-                                dataFileCache.AddRange(
-                                    velocityDataFilteredList.Select(
-                                        t =>
-                                        "," + trialID + "," +
-                                        t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                        DoubleConverter.ToExactString(t.VelocityX) + "," +
-                                        DoubleConverter.ToExactString(t.VelocityY) + "," +
-                                        DoubleConverter.ToExactString(t.VelocityZ)));
-
-                                dataFileStream = new FileStream("C:\\velocityDataFiltered.dat", FileMode.Append,
-                                                                FileAccess.Write);
-                                dataFileWriter = new StreamWriter(dataFileStream);
-
-                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                {
-                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                }
-
-
-                                dataFileWriter.Close();
-                                dataFileStream.Close();
-                                dataFileCache.Clear();
-                            }
-
-                            if (
-                                myDataContainter.VelocityDataNormalized.Select(t => t.SzenarioTrialNumber)
-                                                .Contains(szenarioTrialNumbers[i]))
-                            {
-                                List<VelocityDataContainer> velocityDataNormalizedList =
-                                    myDataContainter.VelocityDataNormalized.Where(
-                                        t => t.SzenarioTrialNumber == szenarioTrialNumbers[iVar])
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
-
-                                dataFileCache.AddRange(
-                                    velocityDataNormalizedList.Select(
-                                        t =>
-                                        "," + trialID + "," +
-                                        t.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fffffff") + "," +
-                                        DoubleConverter.ToExactString(t.VelocityX) + "," +
-                                        DoubleConverter.ToExactString(t.VelocityY) + "," +
-                                        DoubleConverter.ToExactString(t.VelocityZ)));
-
-                                dataFileStream = new FileStream("C:\\velocityDataNormalized.dat",
-                                                                FileMode.Append, FileAccess.Write);
-                                dataFileWriter = new StreamWriter(dataFileStream);
-
-                                for (int cacheWriter = 0; cacheWriter < dataFileCache.Count(); cacheWriter++)
-                                {
-                                    dataFileWriter.WriteLine(dataFileCache[cacheWriter]);
-                                }
-
-
-                                dataFileWriter.Close();
-                                dataFileStream.Close();
-                                dataFileCache.Clear();
-                            }
-                        }
-
-                        _myManipAnalysisGui.WriteProgressInfo("Uploading trial data...");
-
-                        _mySqlWrapper.BulkInsertMeasureDataRaw("C:\\measureDataRaw.dat");
-                        File.Delete("C:\\measureDataRaw.dat");
-
-                        if (File.Exists("C:\\measureDataFiltered.dat"))
-                        {
-                            _mySqlWrapper.BulkInsertMeasureDataFiltered("C:\\measureDataFiltered.dat");
-                            File.Delete("C:\\measureDataFiltered.dat");
-                        }
-                        if (File.Exists("C:\\measureDataNormalized.dat"))
-                        {
-                            _mySqlWrapper.BulkInsertMeasureDataNormalized("C:\\measureDataNormalized.dat");
-                            File.Delete("C:\\measureDataNormalized.dat");
-                        }
-                        if (File.Exists("C:\\velocityDataFiltered.dat"))
-                        {
-                            _mySqlWrapper.BulkInsertVelocityDataFiltered("C:\\velocityDataFiltered.dat");
-                            File.Delete("C:\\velocityDataFiltered.dat");
-                        }
-                        if (File.Exists("C:\\velocityDataNormalized.dat"))
-                        {
-                            _mySqlWrapper.BulkInsertVelocityDataNormalized("C:\\velocityDataNormalized.dat");
-                            File.Delete("C:\\velocityDataNormalized.dat");
-                        }
-
-                        #endregion
-
-                        #region Upload szenario mean times
-
-                        _myManipAnalysisGui.WriteProgressInfo("Uploading szenario mean-time data...");
-                        for (int j = 0; j < myDataContainter.SzenarioMeanTimeData.Count; j++)
-                        {
-                            int targetID =
-                                _mySqlWrapper.InsertTarget(
-                                    myDataContainter.SzenarioMeanTimeData[j].TargetNumber);
-
-                            int szenarioMeanTimeID = _mySqlWrapper.InsertSzenarioMeanTime(
-                                subjectID,
-                                studyID,
-                                groupID,
-                                targetID,
-                                szenarioID,
-                                measureFileID
-                                );
-
-                            _mySqlWrapper.InsertSzenarioMeanTimeData(szenarioMeanTimeID,
-                                                                     myDataContainter.SzenarioMeanTimeData[j]
-                                                                         .MeanTime,
-                                                                     myDataContainter.SzenarioMeanTimeData[j]
-                                                                         .MeanTimeStd);
-                        }
-
-                        #endregion
-
-                        #region Upload baselines
-
-                        _myManipAnalysisGui.WriteProgressInfo("Uploading baseline data...");
-                        if (myDataContainter.BaselineData != null)
-                        {
-                            for (int j = 0; j < targetNumbers.Length; j++)
-                            {
-                                int jVar = j;
-                                int targetID = _mySqlWrapper.InsertTarget(targetNumbers[j]);
-
-                                int baselineID = _mySqlWrapper.InsertBaseline(
+                                int szenarioMeanTimeID = _mySqlWrapper.InsertSzenarioMeanTime(
                                     subjectID,
                                     studyID,
                                     groupID,
@@ -1435,43 +1410,76 @@ namespace ManipAnalysis
                                     measureFileID
                                     );
 
-                                List<BaselineDataContainer> baselineDataList =
-                                    myDataContainter.BaselineData.Where(
-                                        t => t.TargetNumber == targetNumbers[jVar])
-                                                    .OrderBy(t => t.PseudoTimeStamp)
-                                                    .ToList();
+                                _mySqlWrapper.InsertSzenarioMeanTimeData(szenarioMeanTimeID,
+                                                                         myDataContainter.SzenarioMeanTimeData[j]
+                                                                             .MeanTime,
+                                                                         myDataContainter.SzenarioMeanTimeData[j]
+                                                                             .MeanTimeStd);
+                            }
 
-                                for (int k = 0; k < baselineDataList.Count; k++)
+                            #endregion
+
+                            #region Upload baselines
+
+                            _myManipAnalysisGui.WriteProgressInfo("Uploading baseline data...");
+                            if (myDataContainter.BaselineData != null)
+                            {
+                                for (int j = 0; j < targetNumbers.Length; j++)
                                 {
-                                    _mySqlWrapper.InsertBaselineData(
-                                        baselineID,
-                                        baselineDataList[k].PseudoTimeStamp,
-                                        baselineDataList[k].BaselinePositionCartesianX,
-                                        baselineDataList[k].BaselinePositionCartesianY,
-                                        baselineDataList[k].BaselinePositionCartesianZ,
-                                        baselineDataList[k].BaselineVelocityX,
-                                        baselineDataList[k].BaselineVelocityY,
-                                        baselineDataList[k].BaselineVelocityZ
+                                    int jVar = j;
+                                    int targetID = _mySqlWrapper.InsertTarget(targetNumbers[j]);
+
+                                    int baselineID = _mySqlWrapper.InsertBaseline(
+                                        subjectID,
+                                        studyID,
+                                        groupID,
+                                        targetID,
+                                        szenarioID,
+                                        measureFileID
                                         );
+
+                                    List<BaselineDataContainer> baselineDataList =
+                                        myDataContainter.BaselineData.Where(
+                                            t => t.TargetNumber == targetNumbers[jVar])
+                                                        .OrderBy(t => t.PseudoTimeStamp)
+                                                        .ToList();
+
+                                    for (int k = 0; k < baselineDataList.Count; k++)
+                                    {
+                                        _mySqlWrapper.InsertBaselineData(
+                                            baselineID,
+                                            baselineDataList[k].PseudoTimeStamp,
+                                            baselineDataList[k].BaselinePositionCartesianX,
+                                            baselineDataList[k].BaselinePositionCartesianY,
+                                            baselineDataList[k].BaselinePositionCartesianZ,
+                                            baselineDataList[k].BaselineVelocityX,
+                                            baselineDataList[k].BaselineVelocityY,
+                                            baselineDataList[k].BaselineVelocityZ
+                                            );
+                                    }
                                 }
                             }
+
+                            #endregion
+
+                            #endregion
                         }
-
-                        #endregion
-
-                        #endregion
+                        else
+                        {
+                            _myManipAnalysisGui.WriteToLogBox("Error parsing \"" + filename + "\"");
+                        }
                     }
-                    else
-                    {
-                        _myManipAnalysisGui.WriteToLogBox("Fehler beim einlesen der Datei \"" + filename + "\"");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex.ToString() + "\nSkipped file.");
                 }
             }
             _myManipAnalysisGui.SetProgressBarValue(0);
             _myManipAnalysisGui.WriteProgressInfo("Ready");
             _myManipAnalysisGui.EnableTabPages(true);
 
-            ThreadManager.Remove(Thread.CurrentThread);
+            TaskManager.Remove(Task.CurrentId);
         }
 
         private void DuplicateEntryDetectionThread(List<int>[] trialCoreDistribution, int coreVar, string filename,
@@ -1994,7 +2002,7 @@ namespace ManipAnalysis
                             tempVelocityDataEnum.Max(
                                 t =>
                                 Math.Sqrt(Math.Pow(t.VelocityX, 2) +
-                                          Math.Pow(t.VelocityZ, 2)))/100.0*
+                                          Math.Pow(t.VelocityZ, 2))) / 100.0 *
                             percentPeakVelocity;
 
                         if (
@@ -2395,14 +2403,12 @@ namespace ManipAnalysis
 
                     if (errorList.Any(t => !string.IsNullOrEmpty(t)))
                     {
-                        _myManipAnalysisGui.WriteToLogBox(
-                            errorList.Where(t => !string.IsNullOrEmpty(t))
-                                     .Select(
-                                         t =>
-                                         t + " in " + filename +
-                                         " at szenario-trial-number " +
-                                         tempSzenarioTrialNumber)
-                                     .ToArray());
+                        string output = "";
+                        foreach (string line in errorList.Where(t => !string.IsNullOrEmpty(t)).Select(t => t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber))
+                        {
+                            output += line;
+                        }
+                        _myManipAnalysisGui.WriteToLogBox(output);
                     }
 
                     //-----
@@ -2824,14 +2830,14 @@ namespace ManipAnalysis
 
         public void CalculateStatistics()
         {
-            var newThread = new Thread(CalculateStatisticsThread);
-            ThreadManager.PushBack(newThread);
-            newThread.Start();
+            var newTask = new Task(CalculateStatisticsThread);
+            TaskManager.PushBack(newTask);
+            newTask.Start();
         }
 
         private void CalculateStatisticsThread()
         {
-            while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
+            while (TaskManager.GetIndex(Task.CurrentId) != 0)
             {
                 Thread.Sleep(100);
             }
@@ -2847,7 +2853,7 @@ namespace ManipAnalysis
 
                 foreach (var trialInfo in trialInfos)
                 {
-                    while (ThreadManager.Pause)
+                    while (TaskManager.Pause)
                     {
                         Thread.Sleep(100);
                     }
@@ -2986,19 +2992,19 @@ namespace ManipAnalysis
             _myManipAnalysisGui.WriteProgressInfo("Ready");
             _myManipAnalysisGui.EnableTabPages(true);
 
-            ThreadManager.Remove(Thread.CurrentThread);
+            TaskManager.Remove(Task.CurrentId);
         }
 
         public void FixBrokenTrials()
         {
-            var newThread = new Thread(FixBrokenTrialsThread);
-            ThreadManager.PushBack(newThread);
-            newThread.Start();
+            var newTask = new Task(FixBrokenTrialsThread);
+            TaskManager.PushBack(newTask);
+            newTask.Start();
         }
 
         private void FixBrokenTrialsThread()
         {
-            while (ThreadManager.GetIndex(Thread.CurrentThread) != 0)
+            while (TaskManager.GetIndex(Task.CurrentId) != 0)
             {
                 Thread.Sleep(100);
             }
@@ -3018,7 +3024,7 @@ namespace ManipAnalysis
                 {
                     for (int trialIDCounter = 0; trialIDCounter < faultyTrialInformation.Count; trialIDCounter++)
                     {
-                        while (ThreadManager.Pause)
+                        while (TaskManager.Pause)
                         {
                             Thread.Sleep(100);
                         }
@@ -3093,7 +3099,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.WriteProgressInfo("Ready");
             _myManipAnalysisGui.EnableTabPages(true);
 
-            ThreadManager.Remove(Thread.CurrentThread);
+            TaskManager.Remove(Task.CurrentId);
         }
 
         public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,

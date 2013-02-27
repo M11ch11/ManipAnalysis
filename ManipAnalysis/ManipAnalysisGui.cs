@@ -50,51 +50,6 @@ namespace ManipAnalysis
             }
         }
 
-        public void WriteToLogBox(string[] textArray)
-        {
-            if (InvokeRequired)
-            {
-                if (textArray != null)
-                {
-                    BeginInvoke(new LogBoxCallbackAddStringArray(WriteToLogBox), textArray);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < textArray.Length; i++)
-                {
-                    if (i == 0)
-                    {
-                        listBox_LogBox.Items.Add("[" + DateTime.Now + "] " + textArray[0]);
-                        listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
-
-                        if (listBox_LogBox.HorizontalExtent <
-                            TextRenderer.MeasureText(textArray[0], listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                                                     TextFormatFlags.NoPrefix).Width)
-                        {
-                            listBox_LogBox.HorizontalExtent =
-                                TextRenderer.MeasureText(textArray[0], listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                                                         TextFormatFlags.NoPrefix).Width;
-                        }
-                    }
-                    else
-                    {
-                        listBox_LogBox.Items.Add(textArray[i]);
-                        listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
-
-                        if (listBox_LogBox.HorizontalExtent <
-                            TextRenderer.MeasureText(textArray[i], listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                                                     TextFormatFlags.NoPrefix).Width)
-                        {
-                            listBox_LogBox.HorizontalExtent =
-                                TextRenderer.MeasureText(textArray[i], listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                                                         TextFormatFlags.NoPrefix).Width;
-                        }
-                    }
-                }
-            }
-        }
-
         private string[] GetLogBoxText()
         {
             string[] retVal = null;
@@ -591,16 +546,14 @@ namespace ManipAnalysis
                             Convert.ToString(Convert.ToDateTime(t[7])), Convert.ToString(Convert.ToInt32(t[8]))
                         }).ToList();
 
-                    WriteToLogBox(
-                        "------------------------------------------------------- Faulty trial list -------------------------------------------------------");
-                    WriteToLogBox(
-                        cache.OrderBy(t => t[4])
-                             .Select(
-                                 t =>
-                                 t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5])
-                             .ToArray());
-                    WriteToLogBox(
-                        "---------------------------------------------------------------------------------------------------------------------------------");
+                    string output = "------------------------------------------------------- Faulty trial list -------------------------------------------------------\n";
+                    foreach (string line in cache.OrderBy(t => t[4]).Select(t => t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5]).ToArray())
+                    {
+                        output += line + "\n";
+                    }
+                    output += "---------------------------------------------------------------------------------------------------------------------------------";
+
+                    WriteToLogBox(output);
                 }
             }
             else
@@ -937,7 +890,7 @@ namespace ManipAnalysis
 
         private void checkBox_PauseThread_CheckedChanged(object sender, EventArgs e)
         {
-            ThreadManager.Pause = checkBox_PauseThread.Checked;
+            TaskManager.Pause = checkBox_PauseThread.Checked;
         }
 
         private void button_DataManipulation_UpdateGroupID_Click(object sender, EventArgs e)
@@ -1700,8 +1653,6 @@ namespace ManipAnalysis
         }
 
         private delegate void LogBoxCallbackAddString(string text);
-
-        private delegate void LogBoxCallbackAddStringArray(string[] textArray);
 
         private delegate void LogBoxCallbackClearItems();
 

@@ -124,7 +124,7 @@
     </Compile>
     <Compile Include="SqlWrapper.cs" />
     <Compile Include="Container\StatisticPlotContainer.cs" />
-    <Compile Include="ThreadManager.cs" />
+    <Compile Include="TaskManager.cs" />
     <Compile Include="Container\VelocityDataContainer.cs" />
     <EmbeddedResource Include="ManipAnalysisGui.resx">
       <DependentUpon>ManipAnalysisGui.cs</DependentUpon>
