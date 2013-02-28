@@ -159,45 +159,67 @@ namespace ManipAnalysis
             this.listBox_Import_SelectedMeasureFiles = new System.Windows.Forms.ListBox();
             this.button_Import_SelectMeasureFiles = new System.Windows.Forms.Button();
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
-            this.button_DataManipulation_UpdateSubjectSubjectID = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewSubjectSubjectID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewSubjectSubjectName = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_SubjectIdId = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_SubjectIdId = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectSubjectID = new System.Windows.Forms.Label();
-            this.button_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_MeasureFileID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_MeasureFileID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateSubjectName = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewSubjectName = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewSubjectName = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_SubjectID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_SubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectSubjectName = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateGroupName = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewGroupName = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewGroupName = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_GroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_GroupID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeGroupGroupName = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateSubjectID = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewSubjectID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewSubjectID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_OldSubjectID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_OldSubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectID = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateGroupID = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewGroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewGroupID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_OldGroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_OldGroupID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeGroupID = new System.Windows.Forms.Label();
-            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
-            this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
-            this.button_Debug_InitialiseDatabase = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
             this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
+            this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
+            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
+            this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
+            this.button_Debug_InitialiseDatabase = new System.Windows.Forms.Button();
+            this.label_DataManipulation_ChangeGroupID = new System.Windows.Forms.Label();
+            this.button_DataManipulation_UpdateSubjectSubjectID = new System.Windows.Forms.Button();
+            this.label_DataManipulation_OldGroupID = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_NewSubjectSubjectID = new System.Windows.Forms.TextBox();
+            this.textBox_DataManipulation_OldGroupID = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_NewSubjectSubjectName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_NewGroupID = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_SubjectIdId = new System.Windows.Forms.TextBox();
+            this.textBox_DataManipulation_NewGroupID = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_SubjectIdId = new System.Windows.Forms.Label();
+            this.button_DataManipulation_UpdateGroupID = new System.Windows.Forms.Button();
+            this.label_DataManipulation_ChangeSubjectSubjectID = new System.Windows.Forms.Label();
+            this.label_DataManipulation_ChangeSubjectID = new System.Windows.Forms.Label();
+            this.button_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Button();
+            this.label_DataManipulation_OldSubjectID = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_MeasureFileID = new System.Windows.Forms.TextBox();
+            this.textBox_DataManipulation_OldSubjectID = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_MeasureFileID = new System.Windows.Forms.Label();
+            this.label_DataManipulation_NewSubjectID = new System.Windows.Forms.Label();
+            this.label_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_NewSubjectID = new System.Windows.Forms.TextBox();
+            this.button_DataManipulation_UpdateSubjectName = new System.Windows.Forms.Button();
+            this.button_DataManipulation_UpdateSubjectID = new System.Windows.Forms.Button();
+            this.textBox_DataManipulation_NewSubjectName = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_ChangeGroupGroupName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_NewSubjectName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_GroupID = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_SubjectID = new System.Windows.Forms.TextBox();
+            this.textBox_DataManipulation_GroupID = new System.Windows.Forms.TextBox();
+            this.label_DataManipulation_SubjectID = new System.Windows.Forms.Label();
+            this.label_DataManipulation_NewGroupName = new System.Windows.Forms.Label();
+            this.label_DataManipulation_ChangeSubjectSubjectName = new System.Windows.Forms.Label();
+            this.textBox_DataManipulation_NewGroupName = new System.Windows.Forms.TextBox();
+            this.button_DataManipulation_UpdateGroupName = new System.Windows.Forms.Button();
+            this.tabPage_Debug_BaselineRecalculation = new System.Windows.Forms.TabPage();
+            this.button_BaselineRecalculation_RecalculateBaseline = new System.Windows.Forms.Button();
+            this.label_BaselineRecalculation_Targets = new System.Windows.Forms.Label();
+            this.listBox_BaselineRecalculation_Targets = new System.Windows.Forms.ListBox();
+            this.button_BaselineRecalculation_AddAll = new System.Windows.Forms.Button();
+            this.button_BaselineRecalculation_ClearAll = new System.Windows.Forms.Button();
+            this.button_BaselineRecalculation_ClearSelected = new System.Windows.Forms.Button();
+            this.listBox_BaselineRecalculation_SelectedTrials = new System.Windows.Forms.ListBox();
+            this.button_BaselineRecalculation_AddSelected = new System.Windows.Forms.Button();
+            this.label_BaselineRecalculation_Trials = new System.Windows.Forms.Label();
+            this.listBox_BaselineRecalculation_Trials = new System.Windows.Forms.ListBox();
+            this.label_BaselineRecalculation_Group = new System.Windows.Forms.Label();
+            this.comboBox_BaselineRecalculation_Group = new System.Windows.Forms.ComboBox();
+            this.label_BaselineRecalculation_Szenario = new System.Windows.Forms.Label();
+            this.label_BaselineRecalculation_Subject = new System.Windows.Forms.Label();
+            this.label_BaselineRecalculation_Study = new System.Windows.Forms.Label();
+            this.comboBox_BaselineRecalculation_Subject = new System.Windows.Forms.ComboBox();
+            this.comboBox_BaselineRecalculation_Study = new System.Windows.Forms.ComboBox();
+            this.comboBox_BaselineRecalculation_Szenario = new System.Windows.Forms.ComboBox();
             this.tabPage_Impressum = new System.Windows.Forms.TabPage();
             this.label_Impressum_Text = new System.Windows.Forms.Label();
             this.pictureBox_Impressum_KITLogo = new System.Windows.Forms.PictureBox();
@@ -224,6 +246,10 @@ namespace ManipAnalysis
             this.groupBox_Import_TimeNormalization.SuspendLayout();
             this.groupBox_Import_ButterworthFilter.SuspendLayout();
             this.tabPage_Debug.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
+            this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
+            this.tabPage_Debug_BaselineRecalculation.SuspendLayout();
             this.tabPage_Impressum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).BeginInit();
             this.SuspendLayout();
@@ -1408,7 +1434,7 @@ namespace ManipAnalysis
             // 
             this.groupBox_Import_VelocityCropping.Controls.Add(this.label_Import_PercentPeakVelocity);
             this.groupBox_Import_VelocityCropping.Controls.Add(this.textBox_Import_PercentPeakVelocity);
-            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(572, 291);
+            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(572, 317);
             this.groupBox_Import_VelocityCropping.Name = "groupBox_Import_VelocityCropping";
             this.groupBox_Import_VelocityCropping.Size = new System.Drawing.Size(155, 51);
             this.groupBox_Import_VelocityCropping.TabIndex = 35;
@@ -1449,7 +1475,7 @@ namespace ManipAnalysis
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_FixBrokenTrials);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_ImportMeasureFiles);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateStatistics);
-            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(572, 405);
+            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(572, 431);
             this.groupBox_Import_CalculationsImport.Name = "groupBox_Import_CalculationsImport";
             this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(155, 154);
             this.groupBox_Import_CalculationsImport.TabIndex = 36;
@@ -1500,7 +1526,7 @@ namespace ManipAnalysis
             // 
             this.groupBox_Import_TimeNormalization.Controls.Add(this.label_Import_NewSampleCountText);
             this.groupBox_Import_TimeNormalization.Controls.Add(this.textBox_Import_NewSampleCount);
-            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(572, 348);
+            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(572, 374);
             this.groupBox_Import_TimeNormalization.Name = "groupBox_Import_TimeNormalization";
             this.groupBox_Import_TimeNormalization.Size = new System.Drawing.Size(155, 51);
             this.groupBox_Import_TimeNormalization.TabIndex = 34;
@@ -1532,7 +1558,7 @@ namespace ManipAnalysis
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_SamplesPerSec);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_FilterOrder);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_FilterOrder);
-            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(572, 184);
+            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(572, 210);
             this.groupBox_Import_ButterworthFilter.Name = "groupBox_Import_ButterworthFilter";
             this.groupBox_Import_ButterworthFilter.Size = new System.Drawing.Size(155, 101);
             this.groupBox_Import_ButterworthFilter.TabIndex = 33;
@@ -1606,7 +1632,7 @@ namespace ManipAnalysis
             this.listBox_Import_SelectedMeasureFiles.HorizontalScrollbar = true;
             this.listBox_Import_SelectedMeasureFiles.Location = new System.Drawing.Point(6, 9);
             this.listBox_Import_SelectedMeasureFiles.Name = "listBox_Import_SelectedMeasureFiles";
-            this.listBox_Import_SelectedMeasureFiles.Size = new System.Drawing.Size(560, 550);
+            this.listBox_Import_SelectedMeasureFiles.Size = new System.Drawing.Size(560, 576);
             this.listBox_Import_SelectedMeasureFiles.TabIndex = 1;
             // 
             // button_Import_SelectMeasureFiles
@@ -1621,45 +1647,7 @@ namespace ManipAnalysis
             // 
             // tabPage_Debug
             // 
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectSubjectID);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectSubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectSubjectName);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_SubjectIdId);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_SubjectIdId);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectID);
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_DeleteMeasureFile);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_MeasureFileID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_MeasureFileID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_DeleteMeasureFile);
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectName);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectName);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectName);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_SubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_SubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectName);
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateGroupName);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewGroupName);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewGroupName);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_GroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_GroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeGroupGroupName);
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateSubjectID);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewSubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewSubjectID);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_OldSubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_OldSubjectID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeSubjectID);
-            this.tabPage_Debug.Controls.Add(this.button_DataManipulation_UpdateGroupID);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_NewGroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_NewGroupID);
-            this.tabPage_Debug.Controls.Add(this.textBox_DataManipulation_OldGroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_OldGroupID);
-            this.tabPage_Debug.Controls.Add(this.label_DataManipulation_ChangeGroupID);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_SaveLogToFile);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_showFaultyTrials);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_InitialiseDatabase);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
-            this.tabPage_Debug.Controls.Add(this.button_Debug_ShowMatlabWindow);
+            this.tabPage_Debug.Controls.Add(this.tabControl1);
             this.tabPage_Debug.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Debug.Name = "tabPage_Debug";
             this.tabPage_Debug.Size = new System.Drawing.Size(733, 598);
@@ -1667,329 +1655,44 @@ namespace ManipAnalysis
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
             // 
-            // button_DataManipulation_UpdateSubjectSubjectID
-            // 
-            this.button_DataManipulation_UpdateSubjectSubjectID.Location = new System.Drawing.Point(590, 347);
-            this.button_DataManipulation_UpdateSubjectSubjectID.Name = "button_DataManipulation_UpdateSubjectSubjectID";
-            this.button_DataManipulation_UpdateSubjectSubjectID.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateSubjectSubjectID.TabIndex = 60;
-            this.button_DataManipulation_UpdateSubjectSubjectID.Text = "Update subject_name";
-            this.button_DataManipulation_UpdateSubjectSubjectID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectSubjectID_Click);
-            // 
-            // textBox_DataManipulation_NewSubjectSubjectID
-            // 
-            this.textBox_DataManipulation_NewSubjectSubjectID.Location = new System.Drawing.Point(654, 321);
-            this.textBox_DataManipulation_NewSubjectSubjectID.Name = "textBox_DataManipulation_NewSubjectSubjectID";
-            this.textBox_DataManipulation_NewSubjectSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectSubjectID.TabIndex = 59;
-            // 
-            // label_DataManipulation_NewSubjectSubjectName
-            // 
-            this.label_DataManipulation_NewSubjectSubjectName.AutoSize = true;
-            this.label_DataManipulation_NewSubjectSubjectName.Location = new System.Drawing.Point(547, 324);
-            this.label_DataManipulation_NewSubjectSubjectName.Name = "label_DataManipulation_NewSubjectSubjectName";
-            this.label_DataManipulation_NewSubjectSubjectName.Size = new System.Drawing.Size(101, 13);
-            this.label_DataManipulation_NewSubjectSubjectName.TabIndex = 58;
-            this.label_DataManipulation_NewSubjectSubjectName.Text = "_subject.subject_id:";
-            // 
-            // textBox_DataManipulation_SubjectIdId
-            // 
-            this.textBox_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(654, 295);
-            this.textBox_DataManipulation_SubjectIdId.Name = "textBox_DataManipulation_SubjectIdId";
-            this.textBox_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_SubjectIdId.TabIndex = 57;
-            // 
-            // label_DataManipulation_SubjectIdId
-            // 
-            this.label_DataManipulation_SubjectIdId.AutoSize = true;
-            this.label_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(591, 298);
-            this.label_DataManipulation_SubjectIdId.Name = "label_DataManipulation_SubjectIdId";
-            this.label_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(61, 13);
-            this.label_DataManipulation_SubjectIdId.TabIndex = 56;
-            this.label_DataManipulation_SubjectIdId.Text = "_subject.id:";
-            // 
-            // label_DataManipulation_ChangeSubjectSubjectID
-            // 
-            this.label_DataManipulation_ChangeSubjectSubjectID.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectSubjectID.Location = new System.Drawing.Point(566, 279);
-            this.label_DataManipulation_ChangeSubjectSubjectID.Name = "label_DataManipulation_ChangeSubjectSubjectID";
-            this.label_DataManipulation_ChangeSubjectSubjectID.Size = new System.Drawing.Size(146, 13);
-            this.label_DataManipulation_ChangeSubjectSubjectID.TabIndex = 55;
-            this.label_DataManipulation_ChangeSubjectSubjectID.Text = "Change \"_subject.subject_id:";
-            // 
-            // button_DataManipulation_DeleteMeasureFile
-            // 
-            this.button_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(362, 336);
-            this.button_DataManipulation_DeleteMeasureFile.Name = "button_DataManipulation_DeleteMeasureFile";
-            this.button_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(142, 23);
-            this.button_DataManipulation_DeleteMeasureFile.TabIndex = 54;
-            this.button_DataManipulation_DeleteMeasureFile.Text = "Delete measure file";
-            this.button_DataManipulation_DeleteMeasureFile.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DeleteMeasureFile.Click += new System.EventHandler(this.button_DataManipulation_DeleteMeasureFile_Click);
-            // 
-            // textBox_DataManipulation_MeasureFileID
-            // 
-            this.textBox_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(446, 310);
-            this.textBox_DataManipulation_MeasureFileID.Name = "textBox_DataManipulation_MeasureFileID";
-            this.textBox_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_MeasureFileID.TabIndex = 51;
-            // 
-            // label_DataManipulation_MeasureFileID
-            // 
-            this.label_DataManipulation_MeasureFileID.AutoSize = true;
-            this.label_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(354, 313);
-            this.label_DataManipulation_MeasureFileID.Name = "label_DataManipulation_MeasureFileID";
-            this.label_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(86, 13);
-            this.label_DataManipulation_MeasureFileID.TabIndex = 50;
-            this.label_DataManipulation_MeasureFileID.Text = "_measure_file.id:";
-            // 
-            // label_DataManipulation_DeleteMeasureFile
-            // 
-            this.label_DataManipulation_DeleteMeasureFile.AutoSize = true;
-            this.label_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(359, 294);
-            this.label_DataManipulation_DeleteMeasureFile.Name = "label_DataManipulation_DeleteMeasureFile";
-            this.label_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(100, 13);
-            this.label_DataManipulation_DeleteMeasureFile.TabIndex = 49;
-            this.label_DataManipulation_DeleteMeasureFile.Text = "Delete measure file:";
-            // 
-            // button_DataManipulation_UpdateSubjectName
-            // 
-            this.button_DataManipulation_UpdateSubjectName.Location = new System.Drawing.Point(590, 226);
-            this.button_DataManipulation_UpdateSubjectName.Name = "button_DataManipulation_UpdateSubjectName";
-            this.button_DataManipulation_UpdateSubjectName.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateSubjectName.TabIndex = 47;
-            this.button_DataManipulation_UpdateSubjectName.Text = "Update subject_name";
-            this.button_DataManipulation_UpdateSubjectName.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectName.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectName_Click);
-            // 
-            // textBox_DataManipulation_NewSubjectName
-            // 
-            this.textBox_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(654, 200);
-            this.textBox_DataManipulation_NewSubjectName.Name = "textBox_DataManipulation_NewSubjectName";
-            this.textBox_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectName.TabIndex = 46;
-            // 
-            // label_DataManipulation_NewSubjectName
-            // 
-            this.label_DataManipulation_NewSubjectName.AutoSize = true;
-            this.label_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(529, 203);
-            this.label_DataManipulation_NewSubjectName.Name = "label_DataManipulation_NewSubjectName";
-            this.label_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(119, 13);
-            this.label_DataManipulation_NewSubjectName.TabIndex = 45;
-            this.label_DataManipulation_NewSubjectName.Text = "_subject.subject_name:";
-            // 
-            // textBox_DataManipulation_SubjectID
-            // 
-            this.textBox_DataManipulation_SubjectID.Location = new System.Drawing.Point(654, 174);
-            this.textBox_DataManipulation_SubjectID.Name = "textBox_DataManipulation_SubjectID";
-            this.textBox_DataManipulation_SubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_SubjectID.TabIndex = 44;
-            // 
-            // label_DataManipulation_SubjectID
-            // 
-            this.label_DataManipulation_SubjectID.AutoSize = true;
-            this.label_DataManipulation_SubjectID.Location = new System.Drawing.Point(587, 177);
-            this.label_DataManipulation_SubjectID.Name = "label_DataManipulation_SubjectID";
-            this.label_DataManipulation_SubjectID.Size = new System.Drawing.Size(61, 13);
-            this.label_DataManipulation_SubjectID.TabIndex = 43;
-            this.label_DataManipulation_SubjectID.Text = "_subject.id:";
-            // 
-            // label_DataManipulation_ChangeSubjectSubjectName
-            // 
-            this.label_DataManipulation_ChangeSubjectSubjectName.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectSubjectName.Location = new System.Drawing.Point(566, 158);
-            this.label_DataManipulation_ChangeSubjectSubjectName.Name = "label_DataManipulation_ChangeSubjectSubjectName";
-            this.label_DataManipulation_ChangeSubjectSubjectName.Size = new System.Drawing.Size(164, 13);
-            this.label_DataManipulation_ChangeSubjectSubjectName.TabIndex = 42;
-            this.label_DataManipulation_ChangeSubjectSubjectName.Text = "Change \"_subject.subject_name:";
-            // 
-            // button_DataManipulation_UpdateGroupName
-            // 
-            this.button_DataManipulation_UpdateGroupName.Location = new System.Drawing.Point(362, 226);
-            this.button_DataManipulation_UpdateGroupName.Name = "button_DataManipulation_UpdateGroupName";
-            this.button_DataManipulation_UpdateGroupName.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateGroupName.TabIndex = 41;
-            this.button_DataManipulation_UpdateGroupName.Text = "Update group_name";
-            this.button_DataManipulation_UpdateGroupName.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateGroupName.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupName_Click);
-            // 
-            // textBox_DataManipulation_NewGroupName
-            // 
-            this.textBox_DataManipulation_NewGroupName.Location = new System.Drawing.Point(426, 200);
-            this.textBox_DataManipulation_NewGroupName.Name = "textBox_DataManipulation_NewGroupName";
-            this.textBox_DataManipulation_NewGroupName.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewGroupName.TabIndex = 40;
-            // 
-            // label_DataManipulation_NewGroupName
-            // 
-            this.label_DataManipulation_NewGroupName.AutoSize = true;
-            this.label_DataManipulation_NewGroupName.Location = new System.Drawing.Point(315, 203);
-            this.label_DataManipulation_NewGroupName.Name = "label_DataManipulation_NewGroupName";
-            this.label_DataManipulation_NewGroupName.Size = new System.Drawing.Size(105, 13);
-            this.label_DataManipulation_NewGroupName.TabIndex = 39;
-            this.label_DataManipulation_NewGroupName.Text = "_group.group_name:";
-            // 
-            // textBox_DataManipulation_GroupID
-            // 
-            this.textBox_DataManipulation_GroupID.Location = new System.Drawing.Point(426, 174);
-            this.textBox_DataManipulation_GroupID.Name = "textBox_DataManipulation_GroupID";
-            this.textBox_DataManipulation_GroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_GroupID.TabIndex = 38;
-            // 
-            // label_DataManipulation_GroupID
-            // 
-            this.label_DataManipulation_GroupID.AutoSize = true;
-            this.label_DataManipulation_GroupID.Location = new System.Drawing.Point(366, 177);
-            this.label_DataManipulation_GroupID.Name = "label_DataManipulation_GroupID";
-            this.label_DataManipulation_GroupID.Size = new System.Drawing.Size(54, 13);
-            this.label_DataManipulation_GroupID.TabIndex = 37;
-            this.label_DataManipulation_GroupID.Text = "_group.id:";
-            // 
-            // label_DataManipulation_ChangeGroupGroupName
-            // 
-            this.label_DataManipulation_ChangeGroupGroupName.AutoSize = true;
-            this.label_DataManipulation_ChangeGroupGroupName.Location = new System.Drawing.Point(359, 158);
-            this.label_DataManipulation_ChangeGroupGroupName.Name = "label_DataManipulation_ChangeGroupGroupName";
-            this.label_DataManipulation_ChangeGroupGroupName.Size = new System.Drawing.Size(155, 13);
-            this.label_DataManipulation_ChangeGroupGroupName.TabIndex = 36;
-            this.label_DataManipulation_ChangeGroupGroupName.Text = "Change \"_group.group_name\":";
-            // 
-            // button_DataManipulation_UpdateSubjectID
-            // 
-            this.button_DataManipulation_UpdateSubjectID.Location = new System.Drawing.Point(590, 83);
-            this.button_DataManipulation_UpdateSubjectID.Name = "button_DataManipulation_UpdateSubjectID";
-            this.button_DataManipulation_UpdateSubjectID.Size = new System.Drawing.Size(104, 23);
-            this.button_DataManipulation_UpdateSubjectID.TabIndex = 35;
-            this.button_DataManipulation_UpdateSubjectID.Text = "Update subject_id";
-            this.button_DataManipulation_UpdateSubjectID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectID_Click);
-            // 
-            // textBox_DataManipulation_NewSubjectID
-            // 
-            this.textBox_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(636, 57);
-            this.textBox_DataManipulation_NewSubjectID.Name = "textBox_DataManipulation_NewSubjectID";
-            this.textBox_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectID.TabIndex = 34;
-            // 
-            // label_DataManipulation_NewSubjectID
-            // 
-            this.label_DataManipulation_NewSubjectID.AutoSize = true;
-            this.label_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(544, 60);
-            this.label_DataManipulation_NewSubjectID.Name = "label_DataManipulation_NewSubjectID";
-            this.label_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(86, 13);
-            this.label_DataManipulation_NewSubjectID.TabIndex = 33;
-            this.label_DataManipulation_NewSubjectID.Text = "New _subject.id:";
-            // 
-            // textBox_DataManipulation_OldSubjectID
-            // 
-            this.textBox_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(636, 31);
-            this.textBox_DataManipulation_OldSubjectID.Name = "textBox_DataManipulation_OldSubjectID";
-            this.textBox_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_OldSubjectID.TabIndex = 32;
-            // 
-            // label_DataManipulation_OldSubjectID
-            // 
-            this.label_DataManipulation_OldSubjectID.AutoSize = true;
-            this.label_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(550, 34);
-            this.label_DataManipulation_OldSubjectID.Name = "label_DataManipulation_OldSubjectID";
-            this.label_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(80, 13);
-            this.label_DataManipulation_OldSubjectID.TabIndex = 31;
-            this.label_DataManipulation_OldSubjectID.Text = "Old _subject.id:";
-            // 
-            // label_DataManipulation_ChangeSubjectID
-            // 
-            this.label_DataManipulation_ChangeSubjectID.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectID.Location = new System.Drawing.Point(587, 15);
-            this.label_DataManipulation_ChangeSubjectID.Name = "label_DataManipulation_ChangeSubjectID";
-            this.label_DataManipulation_ChangeSubjectID.Size = new System.Drawing.Size(111, 13);
-            this.label_DataManipulation_ChangeSubjectID.TabIndex = 30;
-            this.label_DataManipulation_ChangeSubjectID.Text = "Change \"_subject.id\":";
-            // 
-            // button_DataManipulation_UpdateGroupID
-            // 
-            this.button_DataManipulation_UpdateGroupID.Location = new System.Drawing.Point(362, 83);
-            this.button_DataManipulation_UpdateGroupID.Name = "button_DataManipulation_UpdateGroupID";
-            this.button_DataManipulation_UpdateGroupID.Size = new System.Drawing.Size(104, 23);
-            this.button_DataManipulation_UpdateGroupID.TabIndex = 29;
-            this.button_DataManipulation_UpdateGroupID.Text = "Update group_id";
-            this.button_DataManipulation_UpdateGroupID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateGroupID.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupID_Click);
-            // 
-            // textBox_DataManipulation_NewGroupID
-            // 
-            this.textBox_DataManipulation_NewGroupID.Location = new System.Drawing.Point(408, 57);
-            this.textBox_DataManipulation_NewGroupID.Name = "textBox_DataManipulation_NewGroupID";
-            this.textBox_DataManipulation_NewGroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewGroupID.TabIndex = 28;
-            // 
-            // label_DataManipulation_NewGroupID
-            // 
-            this.label_DataManipulation_NewGroupID.AutoSize = true;
-            this.label_DataManipulation_NewGroupID.Location = new System.Drawing.Point(323, 60);
-            this.label_DataManipulation_NewGroupID.Name = "label_DataManipulation_NewGroupID";
-            this.label_DataManipulation_NewGroupID.Size = new System.Drawing.Size(79, 13);
-            this.label_DataManipulation_NewGroupID.TabIndex = 27;
-            this.label_DataManipulation_NewGroupID.Text = "New _group.id:";
-            // 
-            // textBox_DataManipulation_OldGroupID
-            // 
-            this.textBox_DataManipulation_OldGroupID.Location = new System.Drawing.Point(408, 31);
-            this.textBox_DataManipulation_OldGroupID.Name = "textBox_DataManipulation_OldGroupID";
-            this.textBox_DataManipulation_OldGroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_OldGroupID.TabIndex = 26;
-            // 
-            // label_DataManipulation_OldGroupID
-            // 
-            this.label_DataManipulation_OldGroupID.AutoSize = true;
-            this.label_DataManipulation_OldGroupID.Location = new System.Drawing.Point(329, 34);
-            this.label_DataManipulation_OldGroupID.Name = "label_DataManipulation_OldGroupID";
-            this.label_DataManipulation_OldGroupID.Size = new System.Drawing.Size(73, 13);
-            this.label_DataManipulation_OldGroupID.TabIndex = 25;
-            this.label_DataManipulation_OldGroupID.Text = "Old _group.id:";
-            // 
-            // label_DataManipulation_ChangeGroupID
-            // 
-            this.label_DataManipulation_ChangeGroupID.AutoSize = true;
-            this.label_DataManipulation_ChangeGroupID.Location = new System.Drawing.Point(359, 15);
-            this.label_DataManipulation_ChangeGroupID.Name = "label_DataManipulation_ChangeGroupID";
-            this.label_DataManipulation_ChangeGroupID.Size = new System.Drawing.Size(104, 13);
-            this.label_DataManipulation_ChangeGroupID.TabIndex = 24;
-            this.label_DataManipulation_ChangeGroupID.Text = "Change \"_group.id\":";
-            // 
-            // button_Debug_SaveLogToFile
-            // 
-            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(15, 137);
-            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
-            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_SaveLogToFile.TabIndex = 8;
-            this.button_Debug_SaveLogToFile.Text = "Save log to file";
-            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
-            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
-            // 
-            // button_Debug_showFaultyTrials
-            // 
-            this.button_Debug_showFaultyTrials.Location = new System.Drawing.Point(15, 108);
-            this.button_Debug_showFaultyTrials.Name = "button_Debug_showFaultyTrials";
-            this.button_Debug_showFaultyTrials.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_showFaultyTrials.TabIndex = 7;
-            this.button_Debug_showFaultyTrials.Text = "Show faulty Trials";
-            this.button_Debug_showFaultyTrials.UseVisualStyleBackColor = true;
-            this.button_Debug_showFaultyTrials.Click += new System.EventHandler(this.button_showFaultyTrials_Click);
-            // 
-            // button_Debug_InitialiseDatabase
-            // 
-            this.button_Debug_InitialiseDatabase.Location = new System.Drawing.Point(15, 203);
-            this.button_Debug_InitialiseDatabase.Name = "button_Debug_InitialiseDatabase";
-            this.button_Debug_InitialiseDatabase.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_InitialiseDatabase.TabIndex = 5;
-            this.button_Debug_InitialiseDatabase.Text = "Initialise Database";
-            this.button_Debug_InitialiseDatabase.UseVisualStyleBackColor = true;
-            this.button_Debug_InitialiseDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
+            this.tabControl1.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
+            this.tabControl1.Controls.Add(this.tabPage_Debug_BaselineRecalculation);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(727, 592);
+            this.tabControl1.TabIndex = 61;
+            // 
+            // tabPage_Debug_MatlabAndLogs
+            // 
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_showFaultyTrials);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
+            this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
+            this.tabPage_Debug_MatlabAndLogs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_MatlabAndLogs.Size = new System.Drawing.Size(719, 566);
+            this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
+            this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
+            this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_ShowMatlabWindow
+            // 
+            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(6, 12);
+            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
+            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
+            this.button_Debug_ShowMatlabWindow.Text = "Show / Hide MATLAB window";
+            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
             // 
             // button_Debug_ShowMatlabWorkspace
             // 
-            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(15, 44);
+            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(6, 41);
             this.button_Debug_ShowMatlabWorkspace.Name = "button_Debug_ShowMatlabWorkspace";
             this.button_Debug_ShowMatlabWorkspace.Size = new System.Drawing.Size(178, 23);
             this.button_Debug_ShowMatlabWorkspace.TabIndex = 4;
@@ -1997,15 +1700,578 @@ namespace ManipAnalysis
             this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
             this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
             // 
-            // button_Debug_ShowMatlabWindow
+            // button_Debug_showFaultyTrials
             // 
-            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(15, 15);
-            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
-            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
-            this.button_Debug_ShowMatlabWindow.Text = "Show / Hide MATLAB window";
-            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
+            this.button_Debug_showFaultyTrials.Location = new System.Drawing.Point(6, 105);
+            this.button_Debug_showFaultyTrials.Name = "button_Debug_showFaultyTrials";
+            this.button_Debug_showFaultyTrials.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_showFaultyTrials.TabIndex = 7;
+            this.button_Debug_showFaultyTrials.Text = "Show faulty Trials";
+            this.button_Debug_showFaultyTrials.UseVisualStyleBackColor = true;
+            this.button_Debug_showFaultyTrials.Click += new System.EventHandler(this.button_showFaultyTrials_Click);
+            // 
+            // button_Debug_SaveLogToFile
+            // 
+            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 134);
+            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
+            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_SaveLogToFile.TabIndex = 8;
+            this.button_Debug_SaveLogToFile.Text = "Save log to file";
+            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
+            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
+            // 
+            // tabPage_Debug_DatabaseManipulation
+            // 
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_InitialiseDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_OldGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_OldGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectSubjectName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_SubjectIdId);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_SubjectIdId);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateGroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DeleteMeasureFile);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_OldSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_MeasureFileID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_OldSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_MeasureFileID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_DeleteMeasureFile);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeGroupGroupName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_GroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_SubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_GroupID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_SubjectID);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewGroupName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewGroupName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateGroupName);
+            this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
+            this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_DatabaseManipulation.Size = new System.Drawing.Size(719, 566);
+            this.tabPage_Debug_DatabaseManipulation.TabIndex = 1;
+            this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
+            this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_InitialiseDatabase
+            // 
+            this.button_Debug_InitialiseDatabase.Location = new System.Drawing.Point(17, 427);
+            this.button_Debug_InitialiseDatabase.Name = "button_Debug_InitialiseDatabase";
+            this.button_Debug_InitialiseDatabase.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_InitialiseDatabase.TabIndex = 61;
+            this.button_Debug_InitialiseDatabase.Text = "Initialise Database";
+            this.button_Debug_InitialiseDatabase.UseVisualStyleBackColor = true;
+            this.button_Debug_InitialiseDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
+            // 
+            // label_DataManipulation_ChangeGroupID
+            // 
+            this.label_DataManipulation_ChangeGroupID.AutoSize = true;
+            this.label_DataManipulation_ChangeGroupID.Location = new System.Drawing.Point(50, 9);
+            this.label_DataManipulation_ChangeGroupID.Name = "label_DataManipulation_ChangeGroupID";
+            this.label_DataManipulation_ChangeGroupID.Size = new System.Drawing.Size(104, 13);
+            this.label_DataManipulation_ChangeGroupID.TabIndex = 24;
+            this.label_DataManipulation_ChangeGroupID.Text = "Change \"_group.id\":";
+            // 
+            // button_DataManipulation_UpdateSubjectSubjectID
+            // 
+            this.button_DataManipulation_UpdateSubjectSubjectID.Location = new System.Drawing.Point(281, 341);
+            this.button_DataManipulation_UpdateSubjectSubjectID.Name = "button_DataManipulation_UpdateSubjectSubjectID";
+            this.button_DataManipulation_UpdateSubjectSubjectID.Size = new System.Drawing.Size(122, 23);
+            this.button_DataManipulation_UpdateSubjectSubjectID.TabIndex = 60;
+            this.button_DataManipulation_UpdateSubjectSubjectID.Text = "Update subject_name";
+            this.button_DataManipulation_UpdateSubjectSubjectID.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateSubjectSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectSubjectID_Click);
+            // 
+            // label_DataManipulation_OldGroupID
+            // 
+            this.label_DataManipulation_OldGroupID.AutoSize = true;
+            this.label_DataManipulation_OldGroupID.Location = new System.Drawing.Point(20, 28);
+            this.label_DataManipulation_OldGroupID.Name = "label_DataManipulation_OldGroupID";
+            this.label_DataManipulation_OldGroupID.Size = new System.Drawing.Size(73, 13);
+            this.label_DataManipulation_OldGroupID.TabIndex = 25;
+            this.label_DataManipulation_OldGroupID.Text = "Old _group.id:";
+            // 
+            // textBox_DataManipulation_NewSubjectSubjectID
+            // 
+            this.textBox_DataManipulation_NewSubjectSubjectID.Location = new System.Drawing.Point(345, 315);
+            this.textBox_DataManipulation_NewSubjectSubjectID.Name = "textBox_DataManipulation_NewSubjectSubjectID";
+            this.textBox_DataManipulation_NewSubjectSubjectID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewSubjectSubjectID.TabIndex = 59;
+            // 
+            // textBox_DataManipulation_OldGroupID
+            // 
+            this.textBox_DataManipulation_OldGroupID.Location = new System.Drawing.Point(99, 25);
+            this.textBox_DataManipulation_OldGroupID.Name = "textBox_DataManipulation_OldGroupID";
+            this.textBox_DataManipulation_OldGroupID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_OldGroupID.TabIndex = 26;
+            // 
+            // label_DataManipulation_NewSubjectSubjectName
+            // 
+            this.label_DataManipulation_NewSubjectSubjectName.AutoSize = true;
+            this.label_DataManipulation_NewSubjectSubjectName.Location = new System.Drawing.Point(238, 318);
+            this.label_DataManipulation_NewSubjectSubjectName.Name = "label_DataManipulation_NewSubjectSubjectName";
+            this.label_DataManipulation_NewSubjectSubjectName.Size = new System.Drawing.Size(101, 13);
+            this.label_DataManipulation_NewSubjectSubjectName.TabIndex = 58;
+            this.label_DataManipulation_NewSubjectSubjectName.Text = "_subject.subject_id:";
+            // 
+            // label_DataManipulation_NewGroupID
+            // 
+            this.label_DataManipulation_NewGroupID.AutoSize = true;
+            this.label_DataManipulation_NewGroupID.Location = new System.Drawing.Point(14, 54);
+            this.label_DataManipulation_NewGroupID.Name = "label_DataManipulation_NewGroupID";
+            this.label_DataManipulation_NewGroupID.Size = new System.Drawing.Size(79, 13);
+            this.label_DataManipulation_NewGroupID.TabIndex = 27;
+            this.label_DataManipulation_NewGroupID.Text = "New _group.id:";
+            // 
+            // textBox_DataManipulation_SubjectIdId
+            // 
+            this.textBox_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(345, 289);
+            this.textBox_DataManipulation_SubjectIdId.Name = "textBox_DataManipulation_SubjectIdId";
+            this.textBox_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_SubjectIdId.TabIndex = 57;
+            // 
+            // textBox_DataManipulation_NewGroupID
+            // 
+            this.textBox_DataManipulation_NewGroupID.Location = new System.Drawing.Point(99, 51);
+            this.textBox_DataManipulation_NewGroupID.Name = "textBox_DataManipulation_NewGroupID";
+            this.textBox_DataManipulation_NewGroupID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewGroupID.TabIndex = 28;
+            // 
+            // label_DataManipulation_SubjectIdId
+            // 
+            this.label_DataManipulation_SubjectIdId.AutoSize = true;
+            this.label_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(282, 292);
+            this.label_DataManipulation_SubjectIdId.Name = "label_DataManipulation_SubjectIdId";
+            this.label_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(61, 13);
+            this.label_DataManipulation_SubjectIdId.TabIndex = 56;
+            this.label_DataManipulation_SubjectIdId.Text = "_subject.id:";
+            // 
+            // button_DataManipulation_UpdateGroupID
+            // 
+            this.button_DataManipulation_UpdateGroupID.Location = new System.Drawing.Point(53, 77);
+            this.button_DataManipulation_UpdateGroupID.Name = "button_DataManipulation_UpdateGroupID";
+            this.button_DataManipulation_UpdateGroupID.Size = new System.Drawing.Size(104, 23);
+            this.button_DataManipulation_UpdateGroupID.TabIndex = 29;
+            this.button_DataManipulation_UpdateGroupID.Text = "Update group_id";
+            this.button_DataManipulation_UpdateGroupID.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateGroupID.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupID_Click);
+            // 
+            // label_DataManipulation_ChangeSubjectSubjectID
+            // 
+            this.label_DataManipulation_ChangeSubjectSubjectID.AutoSize = true;
+            this.label_DataManipulation_ChangeSubjectSubjectID.Location = new System.Drawing.Point(257, 273);
+            this.label_DataManipulation_ChangeSubjectSubjectID.Name = "label_DataManipulation_ChangeSubjectSubjectID";
+            this.label_DataManipulation_ChangeSubjectSubjectID.Size = new System.Drawing.Size(146, 13);
+            this.label_DataManipulation_ChangeSubjectSubjectID.TabIndex = 55;
+            this.label_DataManipulation_ChangeSubjectSubjectID.Text = "Change \"_subject.subject_id:";
+            // 
+            // label_DataManipulation_ChangeSubjectID
+            // 
+            this.label_DataManipulation_ChangeSubjectID.AutoSize = true;
+            this.label_DataManipulation_ChangeSubjectID.Location = new System.Drawing.Point(278, 9);
+            this.label_DataManipulation_ChangeSubjectID.Name = "label_DataManipulation_ChangeSubjectID";
+            this.label_DataManipulation_ChangeSubjectID.Size = new System.Drawing.Size(111, 13);
+            this.label_DataManipulation_ChangeSubjectID.TabIndex = 30;
+            this.label_DataManipulation_ChangeSubjectID.Text = "Change \"_subject.id\":";
+            // 
+            // button_DataManipulation_DeleteMeasureFile
+            // 
+            this.button_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(53, 341);
+            this.button_DataManipulation_DeleteMeasureFile.Name = "button_DataManipulation_DeleteMeasureFile";
+            this.button_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(142, 23);
+            this.button_DataManipulation_DeleteMeasureFile.TabIndex = 54;
+            this.button_DataManipulation_DeleteMeasureFile.Text = "Delete measure file";
+            this.button_DataManipulation_DeleteMeasureFile.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DeleteMeasureFile.Click += new System.EventHandler(this.button_DataManipulation_DeleteMeasureFile_Click);
+            // 
+            // label_DataManipulation_OldSubjectID
+            // 
+            this.label_DataManipulation_OldSubjectID.AutoSize = true;
+            this.label_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(241, 28);
+            this.label_DataManipulation_OldSubjectID.Name = "label_DataManipulation_OldSubjectID";
+            this.label_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(80, 13);
+            this.label_DataManipulation_OldSubjectID.TabIndex = 31;
+            this.label_DataManipulation_OldSubjectID.Text = "Old _subject.id:";
+            // 
+            // textBox_DataManipulation_MeasureFileID
+            // 
+            this.textBox_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(137, 315);
+            this.textBox_DataManipulation_MeasureFileID.Name = "textBox_DataManipulation_MeasureFileID";
+            this.textBox_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_MeasureFileID.TabIndex = 51;
+            // 
+            // textBox_DataManipulation_OldSubjectID
+            // 
+            this.textBox_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(327, 25);
+            this.textBox_DataManipulation_OldSubjectID.Name = "textBox_DataManipulation_OldSubjectID";
+            this.textBox_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_OldSubjectID.TabIndex = 32;
+            // 
+            // label_DataManipulation_MeasureFileID
+            // 
+            this.label_DataManipulation_MeasureFileID.AutoSize = true;
+            this.label_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(45, 318);
+            this.label_DataManipulation_MeasureFileID.Name = "label_DataManipulation_MeasureFileID";
+            this.label_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(86, 13);
+            this.label_DataManipulation_MeasureFileID.TabIndex = 50;
+            this.label_DataManipulation_MeasureFileID.Text = "_measure_file.id:";
+            // 
+            // label_DataManipulation_NewSubjectID
+            // 
+            this.label_DataManipulation_NewSubjectID.AutoSize = true;
+            this.label_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(235, 54);
+            this.label_DataManipulation_NewSubjectID.Name = "label_DataManipulation_NewSubjectID";
+            this.label_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(86, 13);
+            this.label_DataManipulation_NewSubjectID.TabIndex = 33;
+            this.label_DataManipulation_NewSubjectID.Text = "New _subject.id:";
+            // 
+            // label_DataManipulation_DeleteMeasureFile
+            // 
+            this.label_DataManipulation_DeleteMeasureFile.AutoSize = true;
+            this.label_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(50, 299);
+            this.label_DataManipulation_DeleteMeasureFile.Name = "label_DataManipulation_DeleteMeasureFile";
+            this.label_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(100, 13);
+            this.label_DataManipulation_DeleteMeasureFile.TabIndex = 49;
+            this.label_DataManipulation_DeleteMeasureFile.Text = "Delete measure file:";
+            // 
+            // textBox_DataManipulation_NewSubjectID
+            // 
+            this.textBox_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(327, 51);
+            this.textBox_DataManipulation_NewSubjectID.Name = "textBox_DataManipulation_NewSubjectID";
+            this.textBox_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewSubjectID.TabIndex = 34;
+            // 
+            // button_DataManipulation_UpdateSubjectName
+            // 
+            this.button_DataManipulation_UpdateSubjectName.Location = new System.Drawing.Point(281, 220);
+            this.button_DataManipulation_UpdateSubjectName.Name = "button_DataManipulation_UpdateSubjectName";
+            this.button_DataManipulation_UpdateSubjectName.Size = new System.Drawing.Size(122, 23);
+            this.button_DataManipulation_UpdateSubjectName.TabIndex = 47;
+            this.button_DataManipulation_UpdateSubjectName.Text = "Update subject_name";
+            this.button_DataManipulation_UpdateSubjectName.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateSubjectName.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectName_Click);
+            // 
+            // button_DataManipulation_UpdateSubjectID
+            // 
+            this.button_DataManipulation_UpdateSubjectID.Location = new System.Drawing.Point(281, 77);
+            this.button_DataManipulation_UpdateSubjectID.Name = "button_DataManipulation_UpdateSubjectID";
+            this.button_DataManipulation_UpdateSubjectID.Size = new System.Drawing.Size(104, 23);
+            this.button_DataManipulation_UpdateSubjectID.TabIndex = 35;
+            this.button_DataManipulation_UpdateSubjectID.Text = "Update subject_id";
+            this.button_DataManipulation_UpdateSubjectID.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectID_Click);
+            // 
+            // textBox_DataManipulation_NewSubjectName
+            // 
+            this.textBox_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(345, 194);
+            this.textBox_DataManipulation_NewSubjectName.Name = "textBox_DataManipulation_NewSubjectName";
+            this.textBox_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewSubjectName.TabIndex = 46;
+            // 
+            // label_DataManipulation_ChangeGroupGroupName
+            // 
+            this.label_DataManipulation_ChangeGroupGroupName.AutoSize = true;
+            this.label_DataManipulation_ChangeGroupGroupName.Location = new System.Drawing.Point(50, 152);
+            this.label_DataManipulation_ChangeGroupGroupName.Name = "label_DataManipulation_ChangeGroupGroupName";
+            this.label_DataManipulation_ChangeGroupGroupName.Size = new System.Drawing.Size(155, 13);
+            this.label_DataManipulation_ChangeGroupGroupName.TabIndex = 36;
+            this.label_DataManipulation_ChangeGroupGroupName.Text = "Change \"_group.group_name\":";
+            // 
+            // label_DataManipulation_NewSubjectName
+            // 
+            this.label_DataManipulation_NewSubjectName.AutoSize = true;
+            this.label_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(220, 197);
+            this.label_DataManipulation_NewSubjectName.Name = "label_DataManipulation_NewSubjectName";
+            this.label_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(119, 13);
+            this.label_DataManipulation_NewSubjectName.TabIndex = 45;
+            this.label_DataManipulation_NewSubjectName.Text = "_subject.subject_name:";
+            // 
+            // label_DataManipulation_GroupID
+            // 
+            this.label_DataManipulation_GroupID.AutoSize = true;
+            this.label_DataManipulation_GroupID.Location = new System.Drawing.Point(57, 171);
+            this.label_DataManipulation_GroupID.Name = "label_DataManipulation_GroupID";
+            this.label_DataManipulation_GroupID.Size = new System.Drawing.Size(54, 13);
+            this.label_DataManipulation_GroupID.TabIndex = 37;
+            this.label_DataManipulation_GroupID.Text = "_group.id:";
+            // 
+            // textBox_DataManipulation_SubjectID
+            // 
+            this.textBox_DataManipulation_SubjectID.Location = new System.Drawing.Point(345, 168);
+            this.textBox_DataManipulation_SubjectID.Name = "textBox_DataManipulation_SubjectID";
+            this.textBox_DataManipulation_SubjectID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_SubjectID.TabIndex = 44;
+            // 
+            // textBox_DataManipulation_GroupID
+            // 
+            this.textBox_DataManipulation_GroupID.Location = new System.Drawing.Point(117, 168);
+            this.textBox_DataManipulation_GroupID.Name = "textBox_DataManipulation_GroupID";
+            this.textBox_DataManipulation_GroupID.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_GroupID.TabIndex = 38;
+            // 
+            // label_DataManipulation_SubjectID
+            // 
+            this.label_DataManipulation_SubjectID.AutoSize = true;
+            this.label_DataManipulation_SubjectID.Location = new System.Drawing.Point(278, 171);
+            this.label_DataManipulation_SubjectID.Name = "label_DataManipulation_SubjectID";
+            this.label_DataManipulation_SubjectID.Size = new System.Drawing.Size(61, 13);
+            this.label_DataManipulation_SubjectID.TabIndex = 43;
+            this.label_DataManipulation_SubjectID.Text = "_subject.id:";
+            // 
+            // label_DataManipulation_NewGroupName
+            // 
+            this.label_DataManipulation_NewGroupName.AutoSize = true;
+            this.label_DataManipulation_NewGroupName.Location = new System.Drawing.Point(6, 197);
+            this.label_DataManipulation_NewGroupName.Name = "label_DataManipulation_NewGroupName";
+            this.label_DataManipulation_NewGroupName.Size = new System.Drawing.Size(105, 13);
+            this.label_DataManipulation_NewGroupName.TabIndex = 39;
+            this.label_DataManipulation_NewGroupName.Text = "_group.group_name:";
+            // 
+            // label_DataManipulation_ChangeSubjectSubjectName
+            // 
+            this.label_DataManipulation_ChangeSubjectSubjectName.AutoSize = true;
+            this.label_DataManipulation_ChangeSubjectSubjectName.Location = new System.Drawing.Point(257, 152);
+            this.label_DataManipulation_ChangeSubjectSubjectName.Name = "label_DataManipulation_ChangeSubjectSubjectName";
+            this.label_DataManipulation_ChangeSubjectSubjectName.Size = new System.Drawing.Size(164, 13);
+            this.label_DataManipulation_ChangeSubjectSubjectName.TabIndex = 42;
+            this.label_DataManipulation_ChangeSubjectSubjectName.Text = "Change \"_subject.subject_name:";
+            // 
+            // textBox_DataManipulation_NewGroupName
+            // 
+            this.textBox_DataManipulation_NewGroupName.Location = new System.Drawing.Point(117, 194);
+            this.textBox_DataManipulation_NewGroupName.Name = "textBox_DataManipulation_NewGroupName";
+            this.textBox_DataManipulation_NewGroupName.Size = new System.Drawing.Size(58, 20);
+            this.textBox_DataManipulation_NewGroupName.TabIndex = 40;
+            // 
+            // button_DataManipulation_UpdateGroupName
+            // 
+            this.button_DataManipulation_UpdateGroupName.Location = new System.Drawing.Point(53, 220);
+            this.button_DataManipulation_UpdateGroupName.Name = "button_DataManipulation_UpdateGroupName";
+            this.button_DataManipulation_UpdateGroupName.Size = new System.Drawing.Size(122, 23);
+            this.button_DataManipulation_UpdateGroupName.TabIndex = 41;
+            this.button_DataManipulation_UpdateGroupName.Text = "Update group_name";
+            this.button_DataManipulation_UpdateGroupName.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_UpdateGroupName.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupName_Click);
+            // 
+            // tabPage_Debug_BaselineRecalculation
+            // 
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_RecalculateBaseline);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Targets);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_Targets);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_AddAll);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_ClearAll);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_ClearSelected);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_SelectedTrials);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_AddSelected);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Trials);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_Trials);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Group);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Group);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Szenario);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Subject);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Study);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Subject);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Study);
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Szenario);
+            this.tabPage_Debug_BaselineRecalculation.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_BaselineRecalculation.Name = "tabPage_Debug_BaselineRecalculation";
+            this.tabPage_Debug_BaselineRecalculation.Size = new System.Drawing.Size(719, 566);
+            this.tabPage_Debug_BaselineRecalculation.TabIndex = 2;
+            this.tabPage_Debug_BaselineRecalculation.Text = "Baseline Recalculation";
+            this.tabPage_Debug_BaselineRecalculation.UseVisualStyleBackColor = true;
+            this.tabPage_Debug_BaselineRecalculation.Enter += new System.EventHandler(this.tabPage_Debug_BaselineRecalculation_Enter);
+            // 
+            // button_BaselineRecalculation_RecalculateBaseline
+            // 
+            this.button_BaselineRecalculation_RecalculateBaseline.Location = new System.Drawing.Point(466, 421);
+            this.button_BaselineRecalculation_RecalculateBaseline.Name = "button_BaselineRecalculation_RecalculateBaseline";
+            this.button_BaselineRecalculation_RecalculateBaseline.Size = new System.Drawing.Size(242, 51);
+            this.button_BaselineRecalculation_RecalculateBaseline.TabIndex = 61;
+            this.button_BaselineRecalculation_RecalculateBaseline.Text = "Recalcualte Baseline";
+            this.button_BaselineRecalculation_RecalculateBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_RecalculateBaseline.Click += new System.EventHandler(this.button_BaselineRecalculation_RecalculateBaseline_Click);
+            // 
+            // label_BaselineRecalculation_Targets
+            // 
+            this.label_BaselineRecalculation_Targets.AutoSize = true;
+            this.label_BaselineRecalculation_Targets.Location = new System.Drawing.Point(10, 215);
+            this.label_BaselineRecalculation_Targets.Name = "label_BaselineRecalculation_Targets";
+            this.label_BaselineRecalculation_Targets.Size = new System.Drawing.Size(52, 13);
+            this.label_BaselineRecalculation_Targets.TabIndex = 60;
+            this.label_BaselineRecalculation_Targets.Text = "Target(s):";
+            // 
+            // listBox_BaselineRecalculation_Targets
+            // 
+            this.listBox_BaselineRecalculation_Targets.FormattingEnabled = true;
+            this.listBox_BaselineRecalculation_Targets.Location = new System.Drawing.Point(65, 117);
+            this.listBox_BaselineRecalculation_Targets.Name = "listBox_BaselineRecalculation_Targets";
+            this.listBox_BaselineRecalculation_Targets.ScrollAlwaysVisible = true;
+            this.listBox_BaselineRecalculation_Targets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_BaselineRecalculation_Targets.Size = new System.Drawing.Size(150, 212);
+            this.listBox_BaselineRecalculation_Targets.Sorted = true;
+            this.listBox_BaselineRecalculation_Targets.TabIndex = 59;
+            // 
+            // button_BaselineRecalculation_AddAll
+            // 
+            this.button_BaselineRecalculation_AddAll.Location = new System.Drawing.Point(222, 449);
+            this.button_BaselineRecalculation_AddAll.Name = "button_BaselineRecalculation_AddAll";
+            this.button_BaselineRecalculation_AddAll.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineRecalculation_AddAll.TabIndex = 58;
+            this.button_BaselineRecalculation_AddAll.Text = "Add all";
+            this.button_BaselineRecalculation_AddAll.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_AddAll.Click += new System.EventHandler(this.button_BaselineRecalculation_AddAll_Click);
+            // 
+            // button_BaselineRecalculation_ClearAll
+            // 
+            this.button_BaselineRecalculation_ClearAll.Location = new System.Drawing.Point(344, 449);
+            this.button_BaselineRecalculation_ClearAll.Name = "button_BaselineRecalculation_ClearAll";
+            this.button_BaselineRecalculation_ClearAll.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineRecalculation_ClearAll.TabIndex = 57;
+            this.button_BaselineRecalculation_ClearAll.Text = "Clear all";
+            this.button_BaselineRecalculation_ClearAll.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_ClearAll.Click += new System.EventHandler(this.button_BaselineRecalculation_ClearAll_Click);
+            // 
+            // button_BaselineRecalculation_ClearSelected
+            // 
+            this.button_BaselineRecalculation_ClearSelected.Location = new System.Drawing.Point(344, 420);
+            this.button_BaselineRecalculation_ClearSelected.Name = "button_BaselineRecalculation_ClearSelected";
+            this.button_BaselineRecalculation_ClearSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineRecalculation_ClearSelected.TabIndex = 56;
+            this.button_BaselineRecalculation_ClearSelected.Text = "Clear selected";
+            this.button_BaselineRecalculation_ClearSelected.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_ClearSelected.Click += new System.EventHandler(this.button_BaselineRecalculation_ClearSelected_Click);
+            // 
+            // listBox_BaselineRecalculation_SelectedTrials
+            // 
+            this.listBox_BaselineRecalculation_SelectedTrials.FormattingEnabled = true;
+            this.listBox_BaselineRecalculation_SelectedTrials.Location = new System.Drawing.Point(221, 8);
+            this.listBox_BaselineRecalculation_SelectedTrials.Name = "listBox_BaselineRecalculation_SelectedTrials";
+            this.listBox_BaselineRecalculation_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_BaselineRecalculation_SelectedTrials.Size = new System.Drawing.Size(487, 407);
+            this.listBox_BaselineRecalculation_SelectedTrials.Sorted = true;
+            this.listBox_BaselineRecalculation_SelectedTrials.TabIndex = 55;
+            // 
+            // button_BaselineRecalculation_AddSelected
+            // 
+            this.button_BaselineRecalculation_AddSelected.Location = new System.Drawing.Point(221, 420);
+            this.button_BaselineRecalculation_AddSelected.Name = "button_BaselineRecalculation_AddSelected";
+            this.button_BaselineRecalculation_AddSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_BaselineRecalculation_AddSelected.TabIndex = 54;
+            this.button_BaselineRecalculation_AddSelected.Text = "Add selected";
+            this.button_BaselineRecalculation_AddSelected.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_AddSelected.Click += new System.EventHandler(this.button_BaselineRecalculation_AddSelected_Click);
+            // 
+            // label_BaselineRecalculation_Trials
+            // 
+            this.label_BaselineRecalculation_Trials.AutoSize = true;
+            this.label_BaselineRecalculation_Trials.Location = new System.Drawing.Point(21, 366);
+            this.label_BaselineRecalculation_Trials.Name = "label_BaselineRecalculation_Trials";
+            this.label_BaselineRecalculation_Trials.Size = new System.Drawing.Size(41, 13);
+            this.label_BaselineRecalculation_Trials.TabIndex = 53;
+            this.label_BaselineRecalculation_Trials.Text = "Trial(s):";
+            // 
+            // listBox_BaselineRecalculation_Trials
+            // 
+            this.listBox_BaselineRecalculation_Trials.FormattingEnabled = true;
+            this.listBox_BaselineRecalculation_Trials.Location = new System.Drawing.Point(65, 335);
+            this.listBox_BaselineRecalculation_Trials.Name = "listBox_BaselineRecalculation_Trials";
+            this.listBox_BaselineRecalculation_Trials.ScrollAlwaysVisible = true;
+            this.listBox_BaselineRecalculation_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_BaselineRecalculation_Trials.Size = new System.Drawing.Size(150, 82);
+            this.listBox_BaselineRecalculation_Trials.Sorted = true;
+            this.listBox_BaselineRecalculation_Trials.TabIndex = 52;
+            // 
+            // label_BaselineRecalculation_Group
+            // 
+            this.label_BaselineRecalculation_Group.AutoSize = true;
+            this.label_BaselineRecalculation_Group.Location = new System.Drawing.Point(23, 38);
+            this.label_BaselineRecalculation_Group.Name = "label_BaselineRecalculation_Group";
+            this.label_BaselineRecalculation_Group.Size = new System.Drawing.Size(39, 13);
+            this.label_BaselineRecalculation_Group.TabIndex = 49;
+            this.label_BaselineRecalculation_Group.Text = "Group:";
+            // 
+            // comboBox_BaselineRecalculation_Group
+            // 
+            this.comboBox_BaselineRecalculation_Group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineRecalculation_Group.FormattingEnabled = true;
+            this.comboBox_BaselineRecalculation_Group.Location = new System.Drawing.Point(65, 35);
+            this.comboBox_BaselineRecalculation_Group.Name = "comboBox_BaselineRecalculation_Group";
+            this.comboBox_BaselineRecalculation_Group.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_BaselineRecalculation_Group.Sorted = true;
+            this.comboBox_BaselineRecalculation_Group.TabIndex = 48;
+            this.comboBox_BaselineRecalculation_Group.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Group_SelectedIndexChanged);
+            // 
+            // label_BaselineRecalculation_Szenario
+            // 
+            this.label_BaselineRecalculation_Szenario.AutoSize = true;
+            this.label_BaselineRecalculation_Szenario.Location = new System.Drawing.Point(11, 65);
+            this.label_BaselineRecalculation_Szenario.Name = "label_BaselineRecalculation_Szenario";
+            this.label_BaselineRecalculation_Szenario.Size = new System.Drawing.Size(51, 13);
+            this.label_BaselineRecalculation_Szenario.TabIndex = 47;
+            this.label_BaselineRecalculation_Szenario.Text = "Szenario:";
+            // 
+            // label_BaselineRecalculation_Subject
+            // 
+            this.label_BaselineRecalculation_Subject.AutoSize = true;
+            this.label_BaselineRecalculation_Subject.Location = new System.Drawing.Point(16, 92);
+            this.label_BaselineRecalculation_Subject.Name = "label_BaselineRecalculation_Subject";
+            this.label_BaselineRecalculation_Subject.Size = new System.Drawing.Size(46, 13);
+            this.label_BaselineRecalculation_Subject.TabIndex = 46;
+            this.label_BaselineRecalculation_Subject.Text = "Subject:";
+            // 
+            // label_BaselineRecalculation_Study
+            // 
+            this.label_BaselineRecalculation_Study.AutoSize = true;
+            this.label_BaselineRecalculation_Study.Location = new System.Drawing.Point(25, 11);
+            this.label_BaselineRecalculation_Study.Name = "label_BaselineRecalculation_Study";
+            this.label_BaselineRecalculation_Study.Size = new System.Drawing.Size(37, 13);
+            this.label_BaselineRecalculation_Study.TabIndex = 45;
+            this.label_BaselineRecalculation_Study.Text = "Study:";
+            // 
+            // comboBox_BaselineRecalculation_Subject
+            // 
+            this.comboBox_BaselineRecalculation_Subject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineRecalculation_Subject.FormattingEnabled = true;
+            this.comboBox_BaselineRecalculation_Subject.Location = new System.Drawing.Point(65, 89);
+            this.comboBox_BaselineRecalculation_Subject.Name = "comboBox_BaselineRecalculation_Subject";
+            this.comboBox_BaselineRecalculation_Subject.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_BaselineRecalculation_Subject.Sorted = true;
+            this.comboBox_BaselineRecalculation_Subject.TabIndex = 44;
+            this.comboBox_BaselineRecalculation_Subject.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Subject_SelectedIndexChanged);
+            // 
+            // comboBox_BaselineRecalculation_Study
+            // 
+            this.comboBox_BaselineRecalculation_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineRecalculation_Study.FormattingEnabled = true;
+            this.comboBox_BaselineRecalculation_Study.Location = new System.Drawing.Point(65, 8);
+            this.comboBox_BaselineRecalculation_Study.Name = "comboBox_BaselineRecalculation_Study";
+            this.comboBox_BaselineRecalculation_Study.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_BaselineRecalculation_Study.Sorted = true;
+            this.comboBox_BaselineRecalculation_Study.TabIndex = 43;
+            this.comboBox_BaselineRecalculation_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Study_SelectedIndexChanged);
+            // 
+            // comboBox_BaselineRecalculation_Szenario
+            // 
+            this.comboBox_BaselineRecalculation_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineRecalculation_Szenario.FormattingEnabled = true;
+            this.comboBox_BaselineRecalculation_Szenario.Location = new System.Drawing.Point(65, 62);
+            this.comboBox_BaselineRecalculation_Szenario.Name = "comboBox_BaselineRecalculation_Szenario";
+            this.comboBox_BaselineRecalculation_Szenario.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_BaselineRecalculation_Szenario.Sorted = true;
+            this.comboBox_BaselineRecalculation_Szenario.TabIndex = 42;
+            this.comboBox_BaselineRecalculation_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Szenario_SelectedIndexChanged);
             // 
             // tabPage_Impressum
             // 
@@ -2138,7 +2404,12 @@ namespace ManipAnalysis
             this.groupBox_Import_ButterworthFilter.ResumeLayout(false);
             this.groupBox_Import_ButterworthFilter.PerformLayout();
             this.tabPage_Debug.ResumeLayout(false);
-            this.tabPage_Debug.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
+            this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
+            this.tabPage_Debug_DatabaseManipulation.PerformLayout();
+            this.tabPage_Debug_BaselineRecalculation.ResumeLayout(false);
+            this.tabPage_Debug_BaselineRecalculation.PerformLayout();
             this.tabPage_Impressum.ResumeLayout(false);
             this.tabPage_Impressum.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).EndInit();
@@ -2158,7 +2429,6 @@ namespace ManipAnalysis
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button button_Debug_ShowMatlabWindow;
         private System.Windows.Forms.Button button_Debug_ShowMatlabWorkspace;
-        private System.Windows.Forms.Button button_Debug_InitialiseDatabase;
         private System.Windows.Forms.Label label_ProgressInfo;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Trials;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Subject;
@@ -2341,6 +2611,29 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectIdId;
         private System.Windows.Forms.Label label_DataManipulation_SubjectIdId;
         private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectID;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
+        private System.Windows.Forms.TabPage tabPage_Debug_DatabaseManipulation;
+        private System.Windows.Forms.TabPage tabPage_Debug_BaselineRecalculation;
+        private System.Windows.Forms.Button button_Debug_InitialiseDatabase;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Targets;
+        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Targets;
+        private System.Windows.Forms.Button button_BaselineRecalculation_AddAll;
+        private System.Windows.Forms.Button button_BaselineRecalculation_ClearAll;
+        private System.Windows.Forms.Button button_BaselineRecalculation_ClearSelected;
+        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_SelectedTrials;
+        private System.Windows.Forms.Button button_BaselineRecalculation_AddSelected;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Trials;
+        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Trials;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Group;
+        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Group;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Szenario;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Subject;
+        private System.Windows.Forms.Label label_BaselineRecalculation_Study;
+        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Subject;
+        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Study;
+        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Szenario;
+        private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaseline;
     }
 }
 

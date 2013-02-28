@@ -1,4 +1,3 @@
-/****** Object:  StoredProcedure [dbo].[changeGroupID]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18,7 +17,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[changeGroupName]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,7 +37,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[changeSubjectID]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -63,7 +60,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[changeSubjectName]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -80,7 +76,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[changeSubjectSubjectID]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,7 +94,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[checkMeasureFileHash]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -127,7 +121,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[cleanOrphanedEntries]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,7 +146,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[deleteMeasureFile]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -176,7 +168,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[getFaultyTrialFixInformation]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,7 +208,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[getMeasureDataNormalizedDataID]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -256,10 +246,42 @@ END
 
 
 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[getBaselineID]
+	@studyName varchar(max),
+	@groupName varchar(max),
+	@szenarioName varchar(max),
+	@subjectID int,
+	@target int,
+	@id int OUTPUT
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT @id = _baseline.id FROM ( _baseline
+				INNER JOIN _study on _study.id = _baseline.study_id
+				INNER JOIN _group on _group.id = _baseline.group_id
+				INNER JOIN _szenario on _szenario.id = _baseline.szenario_id
+				INNER JOIN _target on _target.id = _baseline.target_id)
+				WHERE study_name = @studyName AND
+				group_name = @groupName AND
+				subject_id = @subjectID AND
+				szenario_name = @szenarioName AND
+				target_number = @target;
+END
+
+
+
+
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[getTurnDateTime]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -301,7 +323,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertBaseline]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -374,7 +395,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertBaselineData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -425,7 +445,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertGroup]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -466,7 +485,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertIsCatchTrial]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -511,7 +529,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertMeasureFile]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -558,7 +575,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertStatisticData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -620,7 +636,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertStudy]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -662,7 +677,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertSubject]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -709,7 +723,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertSzenario]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -750,7 +763,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertSzenarioMeanTime]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -816,7 +828,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertSzenarioMeanTimeData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -853,7 +864,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertSzenarioTrialNumber]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -894,7 +904,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertTarget]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -935,7 +944,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertTargetTrialNumber]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -976,7 +984,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertTrial]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1063,7 +1070,6 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[insertTrialInformation]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1119,7 +1125,6 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getSzenarioTrials]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1181,7 +1186,6 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getTurns]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1227,7 +1231,6 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getBaseLineData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1258,7 +1261,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getBaselineData2]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1294,7 +1296,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getFaultyTrialInformation]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1337,7 +1338,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getGroupNames]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1364,7 +1364,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getMeasureDataNormalizedData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1390,7 +1389,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getStatisticCalculationInformation]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1425,7 +1423,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getStatisticData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1448,7 +1445,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getStatisticData2]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1485,7 +1481,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getStudyNames]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1539,7 +1534,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getSzenarioMeanTimeData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1579,7 +1573,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getSzenarioNames]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1609,7 +1602,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getTargets]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1638,7 +1630,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getTrials]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1667,7 +1658,6 @@ RETURN
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[getVelocityDataNormalizedData]    Script Date: 22.11.2012 13:09:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

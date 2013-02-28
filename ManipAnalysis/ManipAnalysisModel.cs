@@ -2405,17 +2405,12 @@ namespace ManipAnalysis
 
                     if (errorList.Any(t => !string.IsNullOrEmpty(t)))
                     {
-                        string output = "";
-                        foreach (
-                            string line in
-                                errorList.Where(t => !string.IsNullOrEmpty(t))
-                                         .Select(
-                                             t =>
-                                             t + " in " + filename + " at szenario-trial-number " +
-                                             tempSzenarioTrialNumber))
-                        {
-                            output += line;
-                        }
+                        string output =
+                            errorList.Where(t => !string.IsNullOrEmpty(t))
+                                     .Select(
+                                         t =>
+                                         t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber)
+                                     .Aggregate("", (current, line) => current + line);
                         _myManipAnalysisGui.WriteToLogBox(output);
                     }
 
@@ -3882,6 +3877,154 @@ namespace ManipAnalysis
             }
 
             _myMatlabWrapper.ClearWorkspace();
+        }
+
+        public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials)
+        {
+            // (1) Recalculate subjects baselines
+            // (2) Delete subjects baselines
+            //      -> Get baseline_id, delete entries with this id in _baseline_data, insert new data with this id.
+            // (3) Delete subjects statistics
+            //      -> Get trial_id, delete entried with this id in _statistic_data
+            // (4) Upload new baselines
+            // (5) Recalculate missing statistics
+
+            List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
+            int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
+            int counter = 0;
+
+            _myManipAnalysisGui.WriteProgressInfo("Recalculating baselines...");
+
+            for (int targetCounter = 0; targetCounter < targetArray.Length; targetCounter++)
+            {
+                int targetCounterVar = targetCounter;
+                int meanCounter = 0;
+                var measureDataNormalizedDataX = new List<double>();
+                var measureDataNormalizedDataY = new List<double>();
+                var measureDataNormalizedDataZ = new List<double>();
+                var velocityDataNormalizedDataX = new List<double>();
+                var velocityDataNormalizedDataY = new List<double>();
+                var velocityDataNormalizedDataZ = new List<double>();
+
+                TrajectoryVelocityPlotContainer tempContainer =
+                    selectedTrialsList.Where(t => t.Target == targetArray[targetCounterVar]).ElementAt(0);
+
+                int baselineID = _mySqlWrapper.GetBaselineID(tempContainer.Study,
+                                                                     tempContainer.Group,
+                                                                     tempContainer.Szenario,
+                                                                     tempContainer.Subject,
+                                                                     tempContainer.Target);
+                
+
+                    _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
+                                                            counter);
+                    counter++;
+                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                                                          tempContainer.Group,
+                                                                          tempContainer.Szenario,
+                                                                          tempContainer.Subject,
+                                                                          tempContainer.Turn);
+
+
+                foreach (int trial in tempContainer.Trials)
+                {
+                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                                           tempContainer.Group,
+                                                           tempContainer.Szenario,
+                                                           tempContainer.Subject,
+                                                           turnDateTime,
+                                                           tempContainer.Target,
+                                                           trial);
+
+                    DataSet measureDataNormalizedDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                    DataSet velocityDataNormalizedDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+
+                    for (int i = 0; i < measureDataNormalizedDataSet.Tables[0].Rows.Count; i++)
+                    {
+                        DataRow row = measureDataNormalizedDataSet.Tables[0].Rows[i];
+
+                        if (measureDataNormalizedDataX.Count <= i)
+                        {
+                            measureDataNormalizedDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                        }
+                        else
+                        {
+                            measureDataNormalizedDataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                        }
+
+                        if (measureDataNormalizedDataY.Count <= i)
+                        {
+                            measureDataNormalizedDataY.Add(Convert.ToDouble(row["position_cartesian_y"]));
+                        }
+                        else
+                        {
+                            measureDataNormalizedDataY[i] += Convert.ToDouble(row["position_cartesian_y"]);
+                        }
+
+                        if (measureDataNormalizedDataZ.Count <= i)
+                        {
+                            measureDataNormalizedDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                        }
+                        else
+                        {
+                            measureDataNormalizedDataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                        }
+                    }
+
+                    for (int i = 0; i < velocityDataNormalizedDataSet.Tables[0].Rows.Count; i++)
+                    {
+                        DataRow row = velocityDataNormalizedDataSet.Tables[0].Rows[i];
+
+                        if (velocityDataNormalizedDataX.Count <= i)
+                        {
+                            velocityDataNormalizedDataX.Add(Convert.ToDouble(row["velocity_x"]));
+                        }
+                        else
+                        {
+                            velocityDataNormalizedDataX[i] += Convert.ToDouble(row["velocity_x"]);
+                        }
+
+                        if (velocityDataNormalizedDataY.Count <= i)
+                        {
+                            velocityDataNormalizedDataY.Add(Convert.ToDouble(row["velocity_y"]));
+                        }
+                        else
+                        {
+                            velocityDataNormalizedDataY[i] += Convert.ToDouble(row["velocity_y"]);
+                        }
+
+                        if (velocityDataNormalizedDataZ.Count <= i)
+                        {
+                            velocityDataNormalizedDataZ.Add(Convert.ToDouble(row["velocity_z"]));
+                        }
+                        else
+                        {
+                            velocityDataNormalizedDataZ[i] += Convert.ToDouble(row["velocity_z"]);
+                        }
+                    }
+
+                    meanCounter++;
+                }
+
+                for (int i = 0; i < measureDataNormalizedDataX.Count; i++)
+                {
+                    measureDataNormalizedDataX[i] /= meanCounter;
+                    measureDataNormalizedDataY[i] /= meanCounter;
+                    measureDataNormalizedDataZ[i] /= meanCounter;
+                }
+
+                for (int i = 0; i < velocityDataNormalizedDataX.Count; i++)
+                {
+                    velocityDataNormalizedDataX[i] /= meanCounter;
+                    velocityDataNormalizedDataY[i] /= meanCounter;
+                    velocityDataNormalizedDataZ[i] /= meanCounter;
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("BaselineID: " + baselineID + " - Target: " + targetArray[targetCounterVar] + " - " + meanCounter + " Values used.");
+            }
+
+            _myManipAnalysisGui.WriteProgressInfo("Ready.");
+            _myManipAnalysisGui.SetProgressBarValue(0);
         }
     }
 }
