@@ -297,6 +297,7 @@ namespace ManipAnalysis
             // 
             // comboBox_Start_Database
             // 
+            this.comboBox_Start_Database.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Start_Database.Enabled = false;
             this.comboBox_Start_Database.FormattingEnabled = true;
             this.comboBox_Start_Database.Items.AddRange(new object[] {

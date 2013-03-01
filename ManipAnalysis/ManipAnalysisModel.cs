@@ -3881,14 +3881,6 @@ namespace ManipAnalysis
 
         public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials)
         {
-            // (1) Recalculate subjects baselines
-            // (2) Delete subjects baselines
-            //      -> Get baseline_id, delete entries with this id in _baseline_data, insert new data with this id.
-            // (3) Delete subjects statistics
-            //      -> Get trial_id, delete entried with this id in _statistic_data
-            // (4) Upload new baselines
-            // (5) Recalculate missing statistics
-
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
             SubjectInformationContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
@@ -4025,17 +4017,12 @@ namespace ManipAnalysis
                 if (measureDataNormalizedDataX.Count() == velocityDataNormalizedDataX.Count())
                 {
                     _mySqlWrapper.DeleteBaselineData(baselineID);
-                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline-data of Target " + tempContainer.Target + ", uploading new Baseline...");
+                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline of Target " + tempContainer.Target + ", uploading new one...");
                     
-
-                    DateTime tempFileCreationDateTime =
-                        DateTime.Parse("00:00:00 " + turnDateTime.Date);
-
-
                     for (int i = 0; i < measureDataNormalizedDataX.Count(); i++)
                     {
                         _mySqlWrapper.InsertBaselineData(baselineID,
-                                                         tempFileCreationDateTime.AddMilliseconds(i*5),
+                                                         turnDateTime.AddMilliseconds(i * 5),
                                                          measureDataNormalizedDataX[i],
                                                          measureDataNormalizedDataY[i],
                                                          measureDataNormalizedDataZ[i],
