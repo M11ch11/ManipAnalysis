@@ -272,6 +272,83 @@ namespace ManipAnalysis
             }
         }
 
+        public void DeleteSubjectStatistics(SubjectInformationContainer subject)
+        {
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "deleteSubjectStatistics";
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void DeleteBaselineData(int baselineID)
+        {
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "deleteBaselineData";
+            _sqlCmd.Parameters.Add(new SqlParameter("@baselineID", baselineID));
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+        }
+
+
         public void ChangeGroupID(int oldGroupID, int newGroupID)
         {
             _sqlCmd.Parameters.Clear();

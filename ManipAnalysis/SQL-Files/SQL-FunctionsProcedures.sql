@@ -164,6 +164,39 @@ END
 
 
 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[deleteSubjectStatistics]
+	@subjectID int
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE statistic FROM _statistic_data statistic JOIN _trial trial ON statistic.trial_id = trial.id
+	WHERE trial.subject_id = @subjectID;
+END
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[deleteBaselineData]
+	@baselineID int
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM _baseline_data WHERE baseline_id = @baselineID;
+END
 
 
 

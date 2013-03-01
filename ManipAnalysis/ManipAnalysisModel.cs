@@ -2653,7 +2653,7 @@ namespace ManipAnalysis
                 }
 
                 int[] tempSzenarioTrialNumbers =
-                    tempNormalisedDataEnum.Where(t => t.TargetTrialNumber > 1)
+                    tempNormalisedDataEnum.Where(t => t.TargetTrialNumber > 1) // Szenario 2-6
                                           .Select(t => t.SzenarioTrialNumber)
                                           .OrderBy(t => t)
                                           .Distinct()
@@ -2730,7 +2730,7 @@ namespace ManipAnalysis
                         myDataContainter.BaselineData.Add(new BaselineDataContainer(
                                                               tempFileCreationDateTime
                                                                   .AddMilliseconds(
-                                                                      i*10),
+                                                                      i*5),
                                                               positionCartesianX[i],
                                                               positionCartesianY[i],
                                                               positionCartesianZ[i],
@@ -3891,6 +3891,8 @@ namespace ManipAnalysis
 
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
+            SubjectInformationContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
+
             int counter = 0;
 
             _myManipAnalysisGui.WriteProgressInfo("Recalculating baselines...");
@@ -3916,10 +3918,10 @@ namespace ManipAnalysis
                                                                      tempContainer.Target);
                 
 
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
+                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
                                                             counter);
-                    counter++;
-                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                counter++;
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
                                                                           tempContainer.Group,
                                                                           tempContainer.Szenario,
                                                                           tempContainer.Subject,
@@ -4020,8 +4022,37 @@ namespace ManipAnalysis
                     velocityDataNormalizedDataZ[i] /= meanCounter;
                 }
 
-                _myManipAnalysisGui.WriteToLogBox("BaselineID: " + baselineID + " - Target: " + targetArray[targetCounterVar] + " - " + meanCounter + " Values used.");
+                if (measureDataNormalizedDataX.Count() == velocityDataNormalizedDataX.Count())
+                {
+                    _mySqlWrapper.DeleteBaselineData(baselineID);
+                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline-data of Target " + tempContainer.Target + ", uploading new Baseline...");
+                    
+
+                    DateTime tempFileCreationDateTime =
+                        DateTime.Parse("00:00:00 " + turnDateTime.Date);
+
+
+                    for (int i = 0; i < measureDataNormalizedDataX.Count(); i++)
+                    {
+                        _mySqlWrapper.InsertBaselineData(baselineID,
+                                                         tempFileCreationDateTime.AddMilliseconds(i*5),
+                                                         measureDataNormalizedDataX[i],
+                                                         measureDataNormalizedDataY[i],
+                                                         measureDataNormalizedDataZ[i],
+                                                         velocityDataNormalizedDataX[i],
+                                                         velocityDataNormalizedDataY[i],
+                                                         velocityDataNormalizedDataZ[i]);
+
+                    }
+                }
+                else
+                {
+                    _myManipAnalysisGui.WriteToLogBox("Trajectory- and Velocity-Baseline are of unequal length!");
+                }
             }
+            _mySqlWrapper.DeleteSubjectStatistics(subject);
+            _myManipAnalysisGui.WriteToLogBox("Deleted subjects (" + subject + ") statistics...");
+            
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
