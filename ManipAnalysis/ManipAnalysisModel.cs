@@ -600,7 +600,7 @@ namespace ManipAnalysis
                 }
                 else
                 {
-                    dataMean = new double[,] {{data[0, 0], 0}};
+                    dataMean = new double[,] {{0, 0}};
                     dataStd = new double[,] {{0, 0}};
                 }
 
@@ -635,10 +635,16 @@ namespace ManipAnalysis
                         tempLine += DoubleConverter.ToExactString(data[i, j]) + ";";
                     }
 
-                    tempLine += DoubleConverter.ToExactString(dataMean[0, i])
-                                + ";"
-                                + DoubleConverter.ToExactString(dataStd[0, i]);
-
+                    if (meanCounter > 1)
+                    {
+                        tempLine += DoubleConverter.ToExactString(dataMean[0, i])
+                                    + ";"
+                                    + DoubleConverter.ToExactString(dataStd[0, i]);
+                    }
+                    else
+                    {
+                        tempLine += "0.0;0.0";
+                    }
                     cache.Add(tempLine);
                 }
 
