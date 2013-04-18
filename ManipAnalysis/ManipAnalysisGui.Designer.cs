@@ -1687,7 +1687,7 @@ namespace ManipAnalysis
             this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
             this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
             this.button_Debug_ShowMatlabWindow.TabIndex = 2;
-            this.button_Debug_ShowMatlabWindow.Text = "Show / Hide MATLAB window";
+            this.button_Debug_ShowMatlabWindow.Text = "Show MATLAB window";
             this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
             this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
             // 
