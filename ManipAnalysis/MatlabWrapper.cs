@@ -10,22 +10,29 @@ namespace ManipAnalysis
         private readonly ManipAnalysisGui _manipAnalysisGui;
         private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
         private readonly object _matlab;
+        private bool _showMatlabWindow;
 
         public MatlabWrapper(ManipAnalysisGui manipAnalysisGui)
         {
-            _matlab = Activator.CreateInstance(Type.GetTypeFromProgID("Matlab.Application"));
+            _matlab = Activator.CreateInstance(MatlabType);
             _manipAnalysisGui = manipAnalysisGui;
+            _showMatlabWindow = false;
 
             try
             {
-                Execute("actxserver('matlab.application').Visible = 0");
                 ClearWorkspace();
                 NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
+                ShowCommandWindow(false);
             }
             catch (Exception ex)
             {
-                _manipAnalysisGui.WriteToLogBox("Matlab could not be started. Is Matlab installed?\n" + ex);
+                _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started.\n" + ex);
             }
+        }
+
+        ~MatlabWrapper()
+        {
+            ClearWorkspace();
         }
 
         public void Execute(string command)
@@ -219,11 +226,41 @@ namespace ManipAnalysis
             }
         }
 
-        public void ToggleShowCommandWindow()
+        public void ShowCommandWindow(bool showWindow)
         {
             try
             {
-                Execute("actxserver('matlab.application').Visible = 1");
+                if (showWindow)
+                {
+                    Execute("showMatlabCommandWindow(1)");   
+                }
+                else
+                {
+                    Execute("showMatlabCommandWindow(0)");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+        public void ToggleCommandWindow()
+        {
+            try
+            {
+                if (_showMatlabWindow)
+                {
+                    Execute("showMatlabCommandWindow(0)");
+                    _showMatlabWindow = false;
+                }
+                else
+                {
+                    Execute("showMatlabCommandWindow(1)");
+                    _showMatlabWindow = true;
+                }
+
             }
             catch (Exception ex)
             {

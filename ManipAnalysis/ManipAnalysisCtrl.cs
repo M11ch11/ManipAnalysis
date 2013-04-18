@@ -24,6 +24,7 @@ namespace ManipAnalysis
             manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
 
             splash.Close();
+            splash.Dispose();
 
             Application.Run(manipAnalysisGui);
         }

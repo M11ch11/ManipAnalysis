@@ -200,7 +200,7 @@ namespace ManipAnalysis
 
         public void ToggleMatlabCommandWindow()
         {
-            _myMatlabWrapper.ToggleShowCommandWindow();
+            _myMatlabWrapper.ToggleCommandWindow();
         }
 
         public void ShowMatlabWorkspace()

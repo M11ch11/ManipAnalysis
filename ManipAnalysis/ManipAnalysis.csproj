@@ -199,6 +199,9 @@
     <Content Include="MatlabFiles\timeNorm.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MatlabFiles\showMatlabCommandWindow.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\trajectLength.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
