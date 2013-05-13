@@ -212,7 +212,14 @@ namespace ManipAnalysis
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
-                tabControl.TabPages.Add(tabPage_ImportCalculations);
+                if (comboBox_Start_SQL_Server.SelectedItem != "localhost")
+                {
+                    MessageBox.Show("Import and Calculations only possible when running on ManipServer (localhost)!");
+                }
+                else
+                {
+                    tabControl.TabPages.Add(tabPage_ImportCalculations);
+                }
                 tabControl.TabPages.Add(tabPage_Debug);
                 tabControl.TabPages.Add(tabPage_Impressum);
             }

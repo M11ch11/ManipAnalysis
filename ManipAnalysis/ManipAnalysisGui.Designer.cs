@@ -322,7 +322,7 @@ namespace ManipAnalysis
             // 
             this.comboBox_Start_SQL_Server.FormattingEnabled = true;
             this.comboBox_Start_SQL_Server.Items.AddRange(new object[] {
-            "172.22.190.96",
+            "ifs96",
             "7.188.190.190",
             "localhost"});
             this.comboBox_Start_SQL_Server.Location = new System.Drawing.Point(6, 85);
