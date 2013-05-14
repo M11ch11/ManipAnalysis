@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
+using ManipAnalysis.Properties;
 
 namespace ManipAnalysis
 {
@@ -16,6 +19,23 @@ namespace ManipAnalysis
 
             var splash = new ManipAnalysisSplash();
             splash.Show();
+
+            try
+            {
+                string newestVersion =
+                    new WebClient().DownloadString("http://eoptam.github.io/ManipAnalysis/release-version");
+                if (Assembly.GetExecutingAssembly().GetName().Version.CompareTo(Version.Parse(newestVersion)) < 0)
+                {
+                    if (MessageBox.Show(Resources.VersionCheckerNewVersionAvailableMessageBox, @"New Version available!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start("http://eoptam.github.io/ManipAnalysis/");
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show(Resources.VersionCheckerCatchBlockMessageBox);
+            }
 
             var manipAnalysisGui = new ManipAnalysisGui();
             var sqlWrapper = new SqlWrapper(manipAnalysisGui);

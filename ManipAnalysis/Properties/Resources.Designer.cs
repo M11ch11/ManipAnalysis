@@ -79,5 +79,25 @@ namespace ManipAnalysis.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Could not check for a new version of ManipAnalysis.
+        ///Are you connected to the Internet? ähnelt.
+        /// </summary>
+        internal static string VersionCheckerCatchBlockMessageBox {
+            get {
+                return ResourceManager.GetString("VersionCheckerCatchBlockMessageBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die There is a new version of ManipAnalysis available.
+        ///Do you want to download it? ähnelt.
+        /// </summary>
+        internal static string VersionCheckerNewVersionAvailableMessageBox {
+            get {
+                return ResourceManager.GetString("VersionCheckerNewVersionAvailableMessageBox", resourceCulture);
+            }
+        }
     }
 }
