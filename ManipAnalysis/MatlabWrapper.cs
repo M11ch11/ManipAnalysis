@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ManipAnalysis
 {
-    public class MatlabWrapper
+    public class MatlabWrapper : IDisposable
     {
         private readonly ManipAnalysisGui _manipAnalysisGui;
         private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
@@ -28,11 +28,6 @@ namespace ManipAnalysis
             {
                 _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started.\n" + ex);
             }
-        }
-
-        ~MatlabWrapper()
-        {
-            ClearWorkspace();
         }
 
         public void Execute(string command)
@@ -366,6 +361,12 @@ namespace ManipAnalysis
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
+        }
+
+        public void Dispose()
+        {
+            ClearWorkspace();
+            Execute("exit");
         }
     }
 }

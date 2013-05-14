@@ -212,9 +212,9 @@ namespace ManipAnalysis
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
-                if (comboBox_Start_SQL_Server.SelectedItem != "localhost")
+                if (comboBox_Start_SQL_Server.SelectedItem.ToString() != "localhost")
                 {
-                    MessageBox.Show("Import and Calculations only possible when running on ManipServer (localhost)!");
+                    MessageBox.Show(@"Import and Calculations only possible when running on ManipServer (localhost)!");
                 }
                 else
                 {
@@ -1814,7 +1814,7 @@ namespace ManipAnalysis
         {
             if (comboBox_BaselineRecalculation_Study.SelectedItem != null)
             {
-                string turn = "Turn 1";
+                const string turn = "Turn 1";
 
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
@@ -1870,7 +1870,7 @@ namespace ManipAnalysis
         {
             if (comboBox_BaselineRecalculation_Study.SelectedItem != null)
             {
-                string turn = "Turn 1";
+                const string turn = "Turn 1";
 
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();

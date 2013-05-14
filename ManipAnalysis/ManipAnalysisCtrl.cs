@@ -47,6 +47,8 @@ namespace ManipAnalysis
             splash.Dispose();
 
             Application.Run(manipAnalysisGui);
+
+            matlabWrapper.Dispose();
         }
     }
 }
