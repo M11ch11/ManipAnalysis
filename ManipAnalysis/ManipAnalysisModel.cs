@@ -1043,7 +1043,7 @@ namespace ManipAnalysis
 
                             #region Calculate baselines
 
-                            if (myDataContainter.SzenarioName == "Szenario02")
+                            if (myDataContainter.SzenarioName == "Szenario02" || myDataContainter.SzenarioName == "Szenario30") // Szenario 30 == EEG-Baseline
                             {
                                 myDataContainter.BaselineData = new List<BaselineDataContainer>();
 
