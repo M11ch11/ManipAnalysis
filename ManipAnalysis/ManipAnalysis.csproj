@@ -100,127 +100,22 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayComparer.cs" />
-    <Compile Include="Container\BaselineDataContainer.cs" />
-    <Compile Include="Container\DataContainer.cs" />
-    <Compile Include="Container\SubjectInformationContainer.cs" />
-    <Compile Include="Container\SzenarioMeanTimeDataContainer.cs" />
-    <Compile Include="Container\TrajectoryVelocityPlotContainer.cs" />
-    <Compile Include="DoubleConverter.cs" />
-    <Compile Include="ManipAnalysisModel.cs" />
-    <Compile Include="ManipAnalysisGui.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ManipAnalysisGui.Designer.cs">
-      <DependentUpon>ManipAnalysisGui.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MatlabWrapper.cs" />
-    <Compile Include="Md5.cs" />
-    <Compile Include="Container\MeasureDataContainer.cs" />
-    <Compile Include="MeasureFileParser.cs" />
     <Compile Include="ManipAnalysisCtrl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ManipAnalysisSplash.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ManipAnalysisSplash.Designer.cs">
-      <DependentUpon>ManipAnalysisSplash.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SqlWrapper.cs" />
-    <Compile Include="Container\StatisticPlotContainer.cs" />
-    <Compile Include="TaskManager.cs" />
-    <Compile Include="Container\VelocityDataContainer.cs" />
-    <EmbeddedResource Include="ManipAnalysisGui.resx">
-      <DependentUpon>ManipAnalysisGui.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="ManipAnalysisSplash.resx">
-      <DependentUpon>ManipAnalysisSplash.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="MLApp">
-      <Guid>{C36E46AB-6A81-457B-9F91-A7719A06287F}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Logo.ico" />
-    <Content Include="MatlabFiles\distance2curveAbs.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\distance2curveSign.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\drawCircle.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\enclosedArea.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\rootMeanSquareError.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\timeNorm.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\showMatlabCommandWindow.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\trajectLength.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MatlabFiles\vectorCorrelation.m">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\SplashLogo.png" />
-    <Content Include="SQL-Files\SQL-FunctionsProcedures.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SQL-Files\SQL-Tables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SQL-Files\SQL-WipeDatabase.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="Resources\KITLogo.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ManipAnalysisLib\ManipAnalysisLib.csproj">
+      <Project>{e63cc259-e0f2-41bf-8733-c92e514af8c9}</Project>
+      <Name>ManipAnalysisLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

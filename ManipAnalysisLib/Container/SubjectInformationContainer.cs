@@ -1,4 +1,4 @@
-﻿namespace ManipAnalysis.Container
+﻿namespace ManipAnalysisLib.Container
 {
     public class SubjectInformationContainer
     {

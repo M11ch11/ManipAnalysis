@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ManipAnalysis
+namespace ManipAnalysisLib
 {
     /// <summary>
     ///     A class to allow the conversion of doubles to string representations of

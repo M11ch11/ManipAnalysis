@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ManipAnalysis.Container;
+using ManipAnalysisLib.Container;
 
-namespace ManipAnalysis
+namespace ManipAnalysisLib
 {
     internal class MeasureFileParser
     {

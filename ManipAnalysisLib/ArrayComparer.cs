@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ManipAnalysis
+namespace ManipAnalysisLib
 {
     internal class ArrayComparer : IEqualityComparer<int[]>
     {

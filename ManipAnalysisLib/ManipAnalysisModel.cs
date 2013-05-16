@@ -6,9 +6,10 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using ManipAnalysis.Container;
+using ManipAnalysisLib.Container;
+using System.Reflection;
 
-namespace ManipAnalysis
+namespace ManipAnalysisLib
 {
     public class ManipAnalysisModel
     {

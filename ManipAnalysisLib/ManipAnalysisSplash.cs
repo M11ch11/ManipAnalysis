@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ManipAnalysis
+namespace ManipAnalysisLib
 {
     public partial class ManipAnalysisSplash : Form
     {
