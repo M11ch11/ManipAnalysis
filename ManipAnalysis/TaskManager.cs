@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ManipAnalysisLib
+namespace ManipAnalysis
 {
     internal static class TaskManager
     {

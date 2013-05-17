@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace ManipAnalysisLib
+namespace ManipAnalysis
 {
     public class MatlabWrapper : IDisposable
     {

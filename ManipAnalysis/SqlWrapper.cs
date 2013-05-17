@@ -4,9 +4,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
-using ManipAnalysisLib.Container;
+using ManipAnalysis.Container;
 
-namespace ManipAnalysisLib
+namespace ManipAnalysis
 {
     public class SqlWrapper
     {

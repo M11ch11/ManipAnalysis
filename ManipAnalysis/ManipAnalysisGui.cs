@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using ManipAnalysisLib.Container;
+using ManipAnalysis.Container;
 
-namespace ManipAnalysisLib
+namespace ManipAnalysis
 {
     public partial class ManipAnalysisGui : Form
     {

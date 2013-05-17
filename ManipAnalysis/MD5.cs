@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace ManipAnalysisLib
+namespace ManipAnalysis
 {
     public static class Md5
     {

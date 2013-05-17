@@ -1,4 +1,4 @@
-﻿namespace ManipAnalysisLib
+﻿namespace ManipAnalysis
 {
     partial class ManipAnalysisSplash
     {

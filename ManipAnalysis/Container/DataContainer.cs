@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ManipAnalysisLib.Container
+namespace ManipAnalysis.Container
 {
     internal class DataContainer
     {

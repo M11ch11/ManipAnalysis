@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ManipAnalysisLib.Container
+namespace ManipAnalysis.Container
 {
     internal class BaselineDataContainer
     {

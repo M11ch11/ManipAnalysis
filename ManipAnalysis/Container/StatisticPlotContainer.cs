@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace ManipAnalysisLib.Container
+namespace ManipAnalysis.Container
 {
     public class StatisticPlotContainer
     {
