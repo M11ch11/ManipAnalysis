@@ -32,7 +32,7 @@
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>false</MapFileExtensions>
+    <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://eoptam.github.io/ManipAnalysis/Deploy/</InstallUrl>
     <ProductName>ManipAnalysis</ProductName>
     <PublisherName>Karlsruhe Institute of Technology</PublisherName>
