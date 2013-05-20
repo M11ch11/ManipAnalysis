@@ -11,6 +11,7 @@ namespace ManipAnalysis
     public partial class ManipAnalysisGui : Form
     {
         private ManipAnalysisModel _manipAnalysisModel;
+        private string _serverName = "IFS96";
 
         public ManipAnalysisGui()
         {
@@ -20,7 +21,6 @@ namespace ManipAnalysis
             tabControl.TabPages.Remove(tabPage_VisualizationExport);
             tabControl.TabPages.Remove(tabPage_ImportCalculations);
             tabControl.TabPages.Remove(tabPage_Debug);
-            comboBox_Start_SQL_Server.SelectedIndex = 0;
 
             label_Impressum_Text.Text += Assembly.GetExecutingAssembly().GetName().Version;
         }
@@ -212,9 +212,9 @@ namespace ManipAnalysis
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
-                if (comboBox_Start_SQL_Server.SelectedItem.ToString() != "localhost")
+                if (Environment.MachineName != _serverName)
                 {
-                    MessageBox.Show(@"Import and Calculations only possible when running on ManipServer (localhost)!");
+                    MessageBox.Show(@"Import and Calculations only possible when running on ManipServer!");
                 }
                 else
                 {
@@ -1627,7 +1627,7 @@ namespace ManipAnalysis
         {
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisModel.ConnectToSqlServer(comboBox_Start_SQL_Server.Text))
+            if (_manipAnalysisModel.ConnectToSqlServer(_serverName))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;

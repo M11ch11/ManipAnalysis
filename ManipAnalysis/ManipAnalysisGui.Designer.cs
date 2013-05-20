@@ -38,8 +38,6 @@ namespace ManipAnalysis
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
             this.comboBox_Start_Database = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox_Start_SQL_Server = new System.Windows.Forms.ComboBox();
-            this.label_Start_SQL_Server = new System.Windows.Forms.Label();
             this.button_Start_ConnectToSQlServer = new System.Windows.Forms.Button();
             this.checkBox_Start_ManualMode = new System.Windows.Forms.CheckBox();
             this.label_Start_ManipAnalysis = new System.Windows.Forms.Label();
@@ -272,10 +270,7 @@ namespace ManipAnalysis
             this.tabPage_Start.Controls.Add(this.button_Start_SelectDatabase);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_Database);
             this.tabPage_Start.Controls.Add(this.label1);
-            this.tabPage_Start.Controls.Add(this.comboBox_Start_SQL_Server);
-            this.tabPage_Start.Controls.Add(this.label_Start_SQL_Server);
             this.tabPage_Start.Controls.Add(this.button_Start_ConnectToSQlServer);
-            this.tabPage_Start.Controls.Add(this.checkBox_Start_ManualMode);
             this.tabPage_Start.Controls.Add(this.label_Start_ManipAnalysis);
             this.tabPage_Start.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Start.Name = "tabPage_Start";
@@ -287,7 +282,7 @@ namespace ManipAnalysis
             // button_Start_SelectDatabase
             // 
             this.button_Start_SelectDatabase.Enabled = false;
-            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(290, 123);
+            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(301, 127);
             this.button_Start_SelectDatabase.Name = "button_Start_SelectDatabase";
             this.button_Start_SelectDatabase.Size = new System.Drawing.Size(90, 23);
             this.button_Start_SelectDatabase.TabIndex = 21;
@@ -304,48 +299,27 @@ namespace ManipAnalysis
             "172.22.190.96",
             "7.188.190.190",
             "localhost"});
-            this.comboBox_Start_Database.Location = new System.Drawing.Point(6, 125);
+            this.comboBox_Start_Database.Location = new System.Drawing.Point(14, 129);
             this.comboBox_Start_Database.Name = "comboBox_Start_Database";
-            this.comboBox_Start_Database.Size = new System.Drawing.Size(278, 21);
+            this.comboBox_Start_Database.Size = new System.Drawing.Size(281, 21);
             this.comboBox_Start_Database.TabIndex = 20;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 109);
+            this.label1.Location = new System.Drawing.Point(11, 113);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 13);
             this.label1.TabIndex = 19;
             this.label1.Text = "Database:";
             // 
-            // comboBox_Start_SQL_Server
-            // 
-            this.comboBox_Start_SQL_Server.FormattingEnabled = true;
-            this.comboBox_Start_SQL_Server.Items.AddRange(new object[] {
-            "ifs96",
-            "7.188.190.190",
-            "localhost"});
-            this.comboBox_Start_SQL_Server.Location = new System.Drawing.Point(6, 85);
-            this.comboBox_Start_SQL_Server.Name = "comboBox_Start_SQL_Server";
-            this.comboBox_Start_SQL_Server.Size = new System.Drawing.Size(278, 21);
-            this.comboBox_Start_SQL_Server.TabIndex = 18;
-            // 
-            // label_Start_SQL_Server
-            // 
-            this.label_Start_SQL_Server.AutoSize = true;
-            this.label_Start_SQL_Server.Location = new System.Drawing.Point(3, 69);
-            this.label_Start_SQL_Server.Name = "label_Start_SQL_Server";
-            this.label_Start_SQL_Server.Size = new System.Drawing.Size(65, 13);
-            this.label_Start_SQL_Server.TabIndex = 17;
-            this.label_Start_SQL_Server.Text = "SQL-Server:";
-            // 
             // button_Start_ConnectToSQlServer
             // 
-            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(290, 83);
+            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(14, 78);
             this.button_Start_ConnectToSQlServer.Name = "button_Start_ConnectToSQlServer";
-            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(90, 23);
+            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(377, 23);
             this.button_Start_ConnectToSQlServer.TabIndex = 16;
-            this.button_Start_ConnectToSQlServer.Text = "Connect";
+            this.button_Start_ConnectToSQlServer.Text = "Connect to Server (IFS96)";
             this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
             this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
             // 
@@ -355,7 +329,7 @@ namespace ManipAnalysis
             this.checkBox_Start_ManualMode.AutoSize = true;
             this.checkBox_Start_ManualMode.Enabled = false;
             this.checkBox_Start_ManualMode.FlatAppearance.BorderSize = 2;
-            this.checkBox_Start_ManualMode.Location = new System.Drawing.Point(6, 217);
+            this.checkBox_Start_ManualMode.Location = new System.Drawing.Point(1079, 633);
             this.checkBox_Start_ManualMode.Name = "checkBox_Start_ManualMode";
             this.checkBox_Start_ManualMode.Size = new System.Drawing.Size(91, 23);
             this.checkBox_Start_ManualMode.TabIndex = 15;
@@ -366,10 +340,10 @@ namespace ManipAnalysis
             // label_Start_ManipAnalysis
             // 
             this.label_Start_ManipAnalysis.AutoSize = true;
-            this.label_Start_ManipAnalysis.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Start_ManipAnalysis.Location = new System.Drawing.Point(3, 9);
+            this.label_Start_ManipAnalysis.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Start_ManipAnalysis.Location = new System.Drawing.Point(7, 10);
             this.label_Start_ManipAnalysis.Name = "label_Start_ManipAnalysis";
-            this.label_Start_ManipAnalysis.Size = new System.Drawing.Size(223, 37);
+            this.label_Start_ManipAnalysis.Size = new System.Drawing.Size(255, 39);
             this.label_Start_ManipAnalysis.TabIndex = 0;
             this.label_Start_ManipAnalysis.Text = "ManipAnalysis";
             // 
@@ -2308,7 +2282,7 @@ namespace ManipAnalysis
             // 
             this.progressBar.Location = new System.Drawing.Point(1, 633);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1050, 23);
+            this.progressBar.Size = new System.Drawing.Size(948, 23);
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 3;
             // 
@@ -2328,7 +2302,7 @@ namespace ManipAnalysis
             // 
             this.checkBox_PauseThread.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBox_PauseThread.AutoSize = true;
-            this.checkBox_PauseThread.Location = new System.Drawing.Point(1057, 633);
+            this.checkBox_PauseThread.Location = new System.Drawing.Point(955, 633);
             this.checkBox_PauseThread.Name = "checkBox_PauseThread";
             this.checkBox_PauseThread.Size = new System.Drawing.Size(47, 23);
             this.checkBox_PauseThread.TabIndex = 5;
@@ -2347,9 +2321,9 @@ namespace ManipAnalysis
             // 
             // button_ClearLog
             // 
-            this.button_ClearLog.Location = new System.Drawing.Point(1110, 633);
+            this.button_ClearLog.Location = new System.Drawing.Point(1008, 633);
             this.button_ClearLog.Name = "button_ClearLog";
-            this.button_ClearLog.Size = new System.Drawing.Size(60, 23);
+            this.button_ClearLog.Size = new System.Drawing.Size(65, 23);
             this.button_ClearLog.TabIndex = 8;
             this.button_ClearLog.Text = "Clear log";
             this.button_ClearLog.UseVisualStyleBackColor = true;
@@ -2374,6 +2348,7 @@ namespace ManipAnalysis
             this.Controls.Add(this.button_ClearLog);
             this.Controls.Add(this.label_Log);
             this.Controls.Add(this.checkBox_PauseThread);
+            this.Controls.Add(this.checkBox_Start_ManualMode);
             this.Controls.Add(this.label_ProgressInfo);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.progressBar);
@@ -2454,8 +2429,6 @@ namespace ManipAnalysis
         private System.Windows.Forms.TabPage tabPage_Start;
         private System.Windows.Forms.Label label_Start_ManipAnalysis;
         private System.Windows.Forms.TabPage tabPage_VisualizationExport;
-        private System.Windows.Forms.ComboBox comboBox_Start_SQL_Server;
-        private System.Windows.Forms.Label label_Start_SQL_Server;
         private System.Windows.Forms.Button button_Start_ConnectToSQlServer;
         private System.Windows.Forms.CheckBox checkBox_Start_ManualMode;
         private System.Windows.Forms.TabControl tabControl_VisualizationExport;
