@@ -3,10 +3,14 @@ using System.Windows.Forms;
 
 namespace ManipAnalysis
 {
-    internal static class ManipAnalysisCtrl
+    internal static class ManipAnalysisMain
     {
         /// <summary>
-        ///     Der Haupteinstiegspunkt für die Anwendung.
+        ///     Main-Method, start of program
+        ///     (1) Show Splashscreen
+        ///     (2) Declare and instantiate all objects
+        ///     (3) Close SplashScreen
+        ///     (4) Start GUI-Process
         /// </summary>
         [STAThread]
         private static void Main()
@@ -17,11 +21,10 @@ namespace ManipAnalysis
             var manipAnalysisGui = new ManipAnalysisGui();
             var sqlWrapper = new SqlWrapper(manipAnalysisGui);
             var matlabWrapper = new MatlabWrapper(manipAnalysisGui);
-            var manipAnalysisModel = new ManipAnalysisModel(manipAnalysisGui, matlabWrapper, sqlWrapper);
+            var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, sqlWrapper);
             manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
 
             splash.Close();
-            splash.Dispose();
 
             Application.Run(manipAnalysisGui);
 

@@ -10,21 +10,30 @@ using ManipAnalysis.Container;
 
 namespace ManipAnalysis
 {
-    public class ManipAnalysisModel
+    /// <summary>
+    ///     This class provides all interactive functionality between the Gui and the programm.
+    /// </summary>
+    public class ManipAnalysisFunctions
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private readonly MatlabWrapper _myMatlabWrapper;
         private readonly SqlWrapper _mySqlWrapper;
 
-        public ManipAnalysisModel(ManipAnalysisGui myManipAnalysisGui, MatlabWrapper myMatlabWrapper,
-                                  SqlWrapper mySqlWrapper)
+        public ManipAnalysisFunctions(ManipAnalysisGui myManipAnalysisGui, MatlabWrapper myMatlabWrapper,
+                                      SqlWrapper mySqlWrapper)
         {
             _myMatlabWrapper = myMatlabWrapper;
             _mySqlWrapper = mySqlWrapper;
             _myManipAnalysisGui = myManipAnalysisGui;
         }
 
-        private bool CheckSqlServerAvailability(string server)
+        /// <summary>
+        ///     Does a network reachability check if the given server is available over the network.
+        /// </summary>
+        /// <param name="server">The server that has to be checked</param>
+        /// <param name="timeOutMilliSec">Timeout in milliseconds for the check</param>
+        /// <returns></returns>
+        private bool CheckSqlServerAvailability(string server, int timeOutMilliSec)
         {
             bool serverAvailable = false;
 
@@ -34,9 +43,8 @@ namespace ManipAnalysis
                 WaitHandle wh = ar.AsyncWaitHandle;
                 try
                 {
-                    if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2), false))
+                    if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeOutMilliSec), false))
                     {
-                        tcp.Close();
                         throw new Exception("Server didn't respond within 2 seconds.");
                     }
 
@@ -56,11 +64,17 @@ namespace ManipAnalysis
             return serverAvailable;
         }
 
+        /// <summary>
+        ///     Changes the SQL-Server-Value in the SQL-Wrapper.
+        ///     Checks wether the server is available first.
+        /// </summary>
+        /// <param name="server">The new SQL-Server</param>
+        /// <returns></returns>
         public bool ConnectToSqlServer(string server)
         {
             bool retVal = false;
 
-            if (CheckSqlServerAvailability(server))
+            if (CheckSqlServerAvailability(server, 2000))
             {
                 _myManipAnalysisGui.WriteToLogBox("Connected to SQL-Server.");
                 _mySqlWrapper.SetSqlServer(server);
@@ -75,52 +89,112 @@ namespace ManipAnalysis
             return retVal;
         }
 
+        /// <summary>
+        ///     Sets a Database in the SQL-Wrapper
+        /// </summary>
+        /// <param name="database">The new Database</param>
         public void SetSqlDatabase(string database)
         {
             _mySqlWrapper.SetDatabase(database);
         }
 
+        /// <summary>
+        ///     Gets all studys from database
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<string> GetStudys()
         {
             return _mySqlWrapper.GetStudyNames();
         }
 
+        /// <summary>
+        ///     Gets all groups from database of a given study
+        /// </summary>
+        /// <param name="study"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetGroups(string study)
         {
             return _mySqlWrapper.GetGroupNames(study);
         }
 
+        /// <summary>
+        ///     Gets all szenarios from database of a given study and group
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetSzenarios(string study, string group)
         {
             return _mySqlWrapper.GetSzenarioNames(study, group);
         }
 
+        /// <summary>
+        ///     Gets all subjects from database of a given study, group and szenario
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <returns></returns>
         public IEnumerable<SubjectInformationContainer> GetSubjects(string study, string group, string szenario)
         {
             return _mySqlWrapper.GetSubjectInformations(study, group, szenario);
         }
 
+        /// <summary>
+        ///     Gets all turns from database of a given study, group, szenario and subject
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <param name="subject"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetTurns(string study, string group, string szenario,
                                             SubjectInformationContainer subject)
         {
             return _mySqlWrapper.GetTurns(study, group, szenario, subject);
         }
 
+        /// <summary>
+        ///     Gets all targets from database of a given study and szenario
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="szenario"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetTargets(string study, string szenario)
         {
             return _mySqlWrapper.GetTargets(study, szenario);
         }
 
+        /// <summary>
+        ///     Gets all trials from database of a given study and szenario
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="szenario"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
             return _mySqlWrapper.GetTrials(study, szenario);
         }
 
+        /// <summary>
+        ///     Checks wether a raw-measure-file-hash already exists in database
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         public bool CheckIfMeasureFileHashAlreadyExists(string hash)
         {
             return _mySqlWrapper.CheckIfMeasureFileHashExists(hash);
         }
 
+        /// <summary>
+        ///     Gets the DateTime of a turn from database of a given study, group, szenario, subject and turn
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <param name="subject"></param>
+        /// <param name="turn"></param>
+        /// <returns></returns>
         private DateTime GetTurnDateTime(string study, string group, string szenario,
                                          SubjectInformationContainer subject,
                                          int turn)
@@ -128,6 +202,10 @@ namespace ManipAnalysis
             return _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
         }
 
+        /// <summary>
+        ///     Deletes all data from a given measure-file-id from the database
+        /// </summary>
+        /// <param name="measureFileID"></param>
         public void DeleteMeasureFile(int measureFileID)
         {
             _mySqlWrapper.DeleteMeasureFile(measureFileID);
@@ -195,7 +273,6 @@ namespace ManipAnalysis
             }
 
             dataFileWriter.Close();
-            dataFileStream.Close();
         }
 
         public void ToggleMatlabCommandWindow()
@@ -654,7 +731,6 @@ namespace ManipAnalysis
                 }
 
                 meanDataFileWriter.Close();
-                meanDataFileStream.Close();
 
                 _myMatlabWrapper.ClearWorkspace();
             }
@@ -787,7 +863,6 @@ namespace ManipAnalysis
             }
 
             meanDataFileWriter.Close();
-            meanDataFileStream.Close();
 
             _myMatlabWrapper.ClearWorkspace();
         }
@@ -1043,7 +1118,8 @@ namespace ManipAnalysis
 
                             #region Calculate baselines
 
-                            if (myDataContainter.SzenarioName == "Szenario02" || myDataContainter.SzenarioName == "Szenario30") // Szenario 30 == EEG-Baseline
+                            if (myDataContainter.SzenarioName == "Szenario02" ||
+                                myDataContainter.SzenarioName == "Szenario30") // Szenario 30 == EEG-Baseline
                             {
                                 myDataContainter.BaselineData = new List<BaselineDataContainer>();
 
@@ -1211,7 +1287,6 @@ namespace ManipAnalysis
 
 
                                 dataFileWriter.Close();
-                                dataFileStream.Close();
                                 dataFileCache.Clear();
 
                                 if (
@@ -1254,7 +1329,6 @@ namespace ManipAnalysis
 
 
                                     dataFileWriter.Close();
-                                    dataFileStream.Close();
                                     dataFileCache.Clear();
                                 }
 
@@ -1298,7 +1372,6 @@ namespace ManipAnalysis
 
 
                                     dataFileWriter.Close();
-                                    dataFileStream.Close();
                                     dataFileCache.Clear();
                                 }
 
@@ -1332,7 +1405,6 @@ namespace ManipAnalysis
 
 
                                     dataFileWriter.Close();
-                                    dataFileStream.Close();
                                     dataFileCache.Clear();
                                 }
 
@@ -1366,7 +1438,6 @@ namespace ManipAnalysis
 
 
                                     dataFileWriter.Close();
-                                    dataFileStream.Close();
                                     dataFileCache.Clear();
                                 }
                             }
@@ -3440,7 +3511,6 @@ namespace ManipAnalysis
                         }
 
                         dataFileWriter.Close();
-                        dataFileStream.Close();
                     }
                 }
             }
@@ -3563,7 +3633,6 @@ namespace ManipAnalysis
                         }
 
                         dataFileWriter.Close();
-                        dataFileStream.Close();
                     }
                 }
             }
@@ -3625,7 +3694,6 @@ namespace ManipAnalysis
                         }
 
                         dataFileWriter.Close();
-                        dataFileStream.Close();
                     }
                 }
             }
@@ -3742,7 +3810,6 @@ namespace ManipAnalysis
                         }
 
                         dataFileWriter.Close();
-                        dataFileStream.Close();
                     }
                 }
             }
@@ -3798,7 +3865,6 @@ namespace ManipAnalysis
             }
 
             dataFileWriter.Close();
-            dataFileStream.Close();
         }
 
         public void ExportVelocityBaseline(string study, string group, string szenario,
@@ -3849,7 +3915,6 @@ namespace ManipAnalysis
             }
 
             dataFileWriter.Close();
-            dataFileStream.Close();
         }
 
         public void PlotVelocityBaselines(string study, string group, string szenario,
@@ -3910,20 +3975,20 @@ namespace ManipAnalysis
                     selectedTrialsList.Where(t => t.Target == targetArray[targetCounterVar]).ElementAt(0);
 
                 int baselineID = _mySqlWrapper.GetBaselineID(tempContainer.Study,
-                                                                     tempContainer.Group,
-                                                                     tempContainer.Szenario,
-                                                                     tempContainer.Subject,
-                                                                     tempContainer.Target);
-                
+                                                             tempContainer.Group,
+                                                             tempContainer.Szenario,
+                                                             tempContainer.Subject,
+                                                             tempContainer.Target);
+
 
                 _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
-                                                            counter);
+                                                        counter);
                 counter++;
                 DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
-                                                                          tempContainer.Group,
-                                                                          tempContainer.Szenario,
-                                                                          tempContainer.Subject,
-                                                                          tempContainer.Turn);
+                                                                      tempContainer.Group,
+                                                                      tempContainer.Szenario,
+                                                                      tempContainer.Subject,
+                                                                      tempContainer.Turn);
 
 
                 foreach (int trial in tempContainer.Trials)
@@ -4023,19 +4088,19 @@ namespace ManipAnalysis
                 if (measureDataNormalizedDataX.Count() == velocityDataNormalizedDataX.Count())
                 {
                     _mySqlWrapper.DeleteBaselineData(baselineID);
-                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline of Target " + tempContainer.Target + ", uploading new one...");
-                    
+                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline of Target " + tempContainer.Target +
+                                                      ", uploading new one...");
+
                     for (int i = 0; i < measureDataNormalizedDataX.Count(); i++)
                     {
                         _mySqlWrapper.InsertBaselineData(baselineID,
-                                                         turnDateTime.AddMilliseconds(i * 5),
+                                                         turnDateTime.AddMilliseconds(i*5),
                                                          measureDataNormalizedDataX[i],
                                                          measureDataNormalizedDataY[i],
                                                          measureDataNormalizedDataZ[i],
                                                          velocityDataNormalizedDataX[i],
                                                          velocityDataNormalizedDataY[i],
                                                          velocityDataNormalizedDataZ[i]);
-
                     }
                 }
                 else
@@ -4045,7 +4110,7 @@ namespace ManipAnalysis
             }
             _mySqlWrapper.DeleteSubjectStatistics(subject);
             _myManipAnalysisGui.WriteToLogBox("Deleted subjects (" + subject + ") statistics...");
-            
+
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);

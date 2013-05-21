@@ -238,7 +238,6 @@ namespace ManipAnalysis
                     retVal = false;
                 }
                 measureFileReader.Close();
-                measureFileStream.Close();
 
                 int[] targetArray = _dataContainer.MeasureDataRaw.Select(t => t.TargetNumber).Distinct().ToArray();
 

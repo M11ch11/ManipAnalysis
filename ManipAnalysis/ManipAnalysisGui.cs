@@ -10,7 +10,7 @@ namespace ManipAnalysis
 {
     public partial class ManipAnalysisGui : Form
     {
-        private ManipAnalysisModel _manipAnalysisModel;
+        private ManipAnalysisFunctions _manipAnalysisModel;
         private string _serverName = "IFS96";
 
         public ManipAnalysisGui()
@@ -25,7 +25,7 @@ namespace ManipAnalysis
             label_Impressum_Text.Text += Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        public void SetManipAnalysisModel(ManipAnalysisModel manipAnalysisModel)
+        public void SetManipAnalysisModel(ManipAnalysisFunctions manipAnalysisModel)
         {
             _manipAnalysisModel = manipAnalysisModel;
         }
@@ -1037,7 +1037,6 @@ namespace ManipAnalysis
                 }
 
                 logFileWriter.Close();
-                logFileStream.Close();
             }
         }
 
@@ -1702,18 +1701,6 @@ namespace ManipAnalysis
                                                       comboBox_BaselineMeantime_Subject.SelectedItem);
         }
 
-        private delegate void LogBoxCallbackAddString(string text);
-
-        private delegate void LogBoxCallbackClearItems();
-
-        private delegate string[] LogBoxCallbackGetText();
-
-        private delegate void ProgressBarCallback(double value);
-
-        private delegate void ProgressLabelCallback(string text);
-
-        private delegate void TabControlCallback(bool enable);
-
         private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
         {
             comboBox_BaselineRecalculation_Study.Items.Clear();
@@ -1819,7 +1806,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -1837,13 +1824,13 @@ namespace ManipAnalysis
                                 if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                                                                subject, turn, target, trials))
                                 {
-                                    typeof(ListBox).InvokeMember("RefreshItems",
+                                    typeof (ListBox).InvokeMember("RefreshItems",
                                                                   BindingFlags.NonPublic |
                                                                   BindingFlags.Instance |
                                                                   BindingFlags.InvokeMethod,
                                                                   null,
                                                                   listBox_BaselineRecalculation_SelectedTrials,
-                                                                  new object[] { });
+                                                                  new object[] {});
                                     canBeUpdated = true;
                                 }
                             }
@@ -1875,7 +1862,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer subject = (SubjectInformationContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
@@ -1893,13 +1880,13 @@ namespace ManipAnalysis
                                 if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                                                                subject, turn, target, trials))
                                 {
-                                    typeof(ListBox).InvokeMember("RefreshItems",
+                                    typeof (ListBox).InvokeMember("RefreshItems",
                                                                   BindingFlags.NonPublic |
                                                                   BindingFlags.Instance |
                                                                   BindingFlags.InvokeMethod,
                                                                   null,
                                                                   listBox_BaselineRecalculation_SelectedTrials,
-                                                                  new object[] { });
+                                                                  new object[] {});
                                     canBeUpdated = true;
                                 }
                             }
@@ -1992,5 +1979,17 @@ namespace ManipAnalysis
                 WriteToLogBox("Please add data for all Targets!");
             }
         }
+
+        private delegate void LogBoxCallbackAddString(string text);
+
+        private delegate void LogBoxCallbackClearItems();
+
+        private delegate string[] LogBoxCallbackGetText();
+
+        private delegate void ProgressBarCallback(double value);
+
+        private delegate void ProgressLabelCallback(string text);
+
+        private delegate void TabControlCallback(bool enable);
     }
 }

@@ -3,6 +3,10 @@ using System.Linq;
 
 namespace ManipAnalysis
 {
+    /// <summary>
+    ///     This class checks if the two int-arrays contain the same values,
+    ///     regardless their order in the arrays.
+    /// </summary>
     internal class ArrayComparer : IEqualityComparer<int[]>
     {
         public bool Equals(int[] x, int[] y)

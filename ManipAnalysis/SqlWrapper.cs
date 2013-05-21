@@ -901,7 +901,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int GetBaselineID(string study, string group, string szenario, SubjectInformationContainer subject, int target)
+        public int GetBaselineID(string study, string group, string szenario, SubjectInformationContainer subject,
+                                 int target)
         {
             int retVal = -1;
 
@@ -3060,12 +3061,7 @@ namespace ManipAnalysis
                             {
                                 rows.Add(sqlRdr.GetString(0));
                             }
-                            sqlRdr.Close();
                             retVal = rows.ToArray();
-                        }
-                        else
-                        {
-                            sqlRdr.Close();
                         }
                     }
                     executeTryCounter = 0;

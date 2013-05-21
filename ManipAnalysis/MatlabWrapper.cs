@@ -7,8 +7,8 @@ namespace ManipAnalysis
 {
     public class MatlabWrapper : IDisposable
     {
-        private readonly ManipAnalysisGui _manipAnalysisGui;
         private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
+        private readonly ManipAnalysisGui _manipAnalysisGui;
         private readonly object _matlab;
         private bool _showMatlabWindow;
 
@@ -30,11 +30,17 @@ namespace ManipAnalysis
             }
         }
 
+        public void Dispose()
+        {
+            ClearWorkspace();
+            Execute("exit");
+        }
+
         public void Execute(string command)
         {
             try
             {
-                MatlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[]{command});
+                MatlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] {command});
             }
             catch (Exception ex)
             {
@@ -94,8 +100,8 @@ namespace ManipAnalysis
                 if (stdVar != null && plotErrorBars)
                 {
                     Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" +
-                                               dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar +
-                                               "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
+                            dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar +
+                            "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
                 }
 
                 Execute("plot(" + dataVar + ");");
@@ -108,12 +114,12 @@ namespace ManipAnalysis
                 Execute("xlabel('" + xAxisLabel + "');");
                 Execute("ylabel('" + yAxisLabel + "');");
                 Execute("set(gca,'YLim',[" +
-                                           yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
-                                           yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
-                                           "],'YLimMode', 'manual','XLim',[" +
-                                           xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
-                                           xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
-                                           "],'XLimMode', 'manual');");
+                        yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                        yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
+                        "],'YLimMode', 'manual','XLim',[" +
+                        xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                        xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
+                        "],'XLimMode', 'manual');");
                 Execute("set(gca, 'Layer','top');");
             }
             catch (Exception ex)
@@ -172,24 +178,24 @@ namespace ManipAnalysis
             try
             {
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString +
-                                           ", sin(degtorad(0)) * " + radiusString + ");");
+                        ", sin(degtorad(0)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString +
-                                           ", sin(degtorad(45)) * " + radiusString + ");");
+                        ", sin(degtorad(45)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString +
-                                           ", sin(degtorad(90)) * " + radiusString + ");");
+                        ", sin(degtorad(90)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString +
-                                           ", sin(degtorad(135)) * " + radiusString + ");");
+                        ", sin(degtorad(135)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString +
-                                           ", sin(degtorad(180)) * " + radiusString + ");");
+                        ", sin(degtorad(180)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString +
-                                           ", sin(degtorad(225)) * " + radiusString + ");");
+                        ", sin(degtorad(225)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString +
-                                           ", sin(degtorad(270)) * " + radiusString + ");");
+                        ", sin(degtorad(270)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
-                                           ", sin(degtorad(315)) * " + radiusString + ");");
+                        ", sin(degtorad(315)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", " +
-                                           centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
-                                           centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
+                        centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
+                        centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
             }
             catch (Exception ex)
             {
@@ -227,13 +233,12 @@ namespace ManipAnalysis
             {
                 if (showWindow)
                 {
-                    Execute("showMatlabCommandWindow(1)");   
+                    Execute("showMatlabCommandWindow(1)");
                 }
                 else
                 {
                     Execute("showMatlabCommandWindow(0)");
                 }
-                
             }
             catch (Exception ex)
             {
@@ -255,7 +260,6 @@ namespace ManipAnalysis
                     Execute("showMatlabCommandWindow(1)");
                     _showMatlabWindow = true;
                 }
-
             }
             catch (Exception ex)
             {
@@ -279,7 +283,8 @@ namespace ManipAnalysis
         {
             try
             {
-                MatlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab, new Object[] { name, "base", variable });
+                MatlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
+                                        new Object[] {name, "base", variable});
             }
             catch (Exception ex)
             {
@@ -291,7 +296,8 @@ namespace ManipAnalysis
         {
             try
             {
-                return MatlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab, new Object[] { name, "base" }, null);
+                return MatlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
+                                               new Object[] {name, "base"}, null);
             }
             catch (Exception ex)
             {
@@ -317,7 +323,7 @@ namespace ManipAnalysis
             try
             {
                 Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar +
-                                           ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
+                        ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
             }
             catch (Exception ex)
             {
@@ -330,8 +336,8 @@ namespace ManipAnalysis
             try
             {
                 Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," +
-                                           lineWidth +
-                                           ")");
+                        lineWidth +
+                        ")");
             }
             catch (Exception ex)
             {
@@ -361,12 +367,6 @@ namespace ManipAnalysis
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
-        }
-
-        public void Dispose()
-        {
-            ClearWorkspace();
-            Execute("exit");
         }
     }
 }
