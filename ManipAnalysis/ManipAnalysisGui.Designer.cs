@@ -1238,6 +1238,7 @@ namespace ManipAnalysis
             this.button_BaselineMeantimeLi_ExportGroupLi.TabIndex = 47;
             this.button_BaselineMeantimeLi_ExportGroupLi.Text = "Export learning index";
             this.button_BaselineMeantimeLi_ExportGroupLi.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_ExportGroupLi.Click += new System.EventHandler(this.button_BaselineMeantimeLi_ExportGroupLi_Click);
             // 
             // button_BaselineMeantimeLi_PlotGroupLi
             // 

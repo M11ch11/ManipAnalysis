@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -4119,35 +4120,36 @@ namespace ManipAnalysis
         public void PlotLearningIndex(string study, string group, string szenario,
                                       IEnumerable<SubjectInformationContainer> subjects, int turn)
         {
-            List<SubjectInformationContainer> subjectList = subjects.ToList();
-            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);
-            int setCount = szenarioTrials.Length / 16;
-            List<double>[] liData = new List<double>[setCount];
+            List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
+            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);  // List of all trials in the szenario
+            int setCount = szenarioTrials.Length / 16;  // The number of sets in the szenario
+            List<double>[] liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
 
+            // Info output
             _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
             _myManipAnalysisGui.SetProgressBarValue(0);
 
+            // Loops over all subjects. Can also be only one.
             for (int subjectCounter = 0; subjectCounter < subjectList.Count(); subjectCounter++)
             {
                 _myManipAnalysisGui.SetProgressBarValue((100.0 / subjectList.Count()) * subjectCounter);
 
+                // Gets the statistic-data for the subject
                 DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subjectList[subjectCounter], turn);
                 DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario, subjectList[subjectCounter],
                                                                              turnDateTime);
 
+                // Checks wether the amount of statistic-data equals the amount of szenario-trials
                 if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
                 {
+                    // Loops over all sets in the szenario
                     for (int setCounter = 0; setCounter < setCount; setCounter++)
                     {
-                        if (liData[setCounter] == null)
-                        {
-                            liData[setCounter] = new List<double>();
-                        }
-
                         List<double> catchPdSign = new List<double>();
                         List<double> catchPdAbs = new List<double>();
                         List<double> fieldPdAbs = new List<double>();
 
+                        // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
                         for (int rowCounter = (setCounter*16); rowCounter < ((setCounter + 1)*16); rowCounter++)
                         {
                             DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
@@ -4167,27 +4169,40 @@ namespace ManipAnalysis
                             }
                         }
 
+                        // If a catch-trial was present in the set, the learning-index is calculated and saved
                         if (catchPdAbs.Count > 0)
                         {
+                            if (liData[setCounter] == null)
+                            {
+                                liData[setCounter] = new List<double>();
+                            }
+
                             liData[setCounter].Add(catchPdSign.Average()/(catchPdAbs.Average() + fieldPdAbs.Average()));
-                        }
-                        else
-                        {
-                            liData[setCounter].Add(0.0);
                         }
                     }
                 }
             }
-            
-            double[] stdAbwArr = new double[setCount];
-            double[] liDataArr = new double[setCount];
-            double[] setCountArr = new double[setCount];
 
+            // Some necessary Array-magic to leave out the sets with no catch-trials
+            int trueSetCount = liData.Count(t => t != null);
+            double[] stdAbwArr = new double[trueSetCount];
+            double[] liDataArr = new double[trueSetCount];
+            double[] setCountArr = new double[trueSetCount];
+            trueSetCount = 0;
+
+            // Fill the data-arrays and calculate the StdAbv
             for (int setCounter = 0; setCounter < setCount; setCounter++)
             {
-                stdAbwArr[setCounter] = Math.Sqrt(liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)) / (liData[setCounter].Count - 1));
-                liDataArr[setCounter] = liData[setCounter].Average();
-                setCountArr[setCounter] = setCounter + 1;
+                if (liData[setCounter] != null)
+                {
+                    stdAbwArr[trueSetCount] = Math.Sqrt( (liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
+                                                         / 
+                                                         (liData[setCounter].Count - 1)
+                                                       );
+                    liDataArr[trueSetCount] = liData[setCounter].Average();
+                    setCountArr[trueSetCount] = setCounter + 1;
+                    trueSetCount++;
+                }
             }
 
             _myMatlabWrapper.CreateLearningIndexFigure(setCount);
@@ -4195,6 +4210,122 @@ namespace ManipAnalysis
             _myMatlabWrapper.SetWorkspaceData("Y", liDataArr);
             _myMatlabWrapper.SetWorkspaceData("std", stdAbwArr);
             _myMatlabWrapper.PlotMeanTimeErrorBar("X", "Y", "std");
+
+            _myManipAnalysisGui.WriteProgressInfo("Ready.");
+            _myManipAnalysisGui.SetProgressBarValue(0);
+        }
+
+        public void ExportLearningIndex(string fileName, string study, string group, string szenario,
+                                      IEnumerable<SubjectInformationContainer> subjects, int turn)
+        {
+            List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
+            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);  // List of all trials in the szenario
+            int setCount = szenarioTrials.Length / 16;  // The number of sets in the szenario
+            List<double>[] liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
+     
+            // Info output
+            _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
+            _myManipAnalysisGui.SetProgressBarValue(0);
+
+            // Loops over all subjects. Can also be only one.
+            for (int subjectCounter = 0; subjectCounter < subjectList.Count(); subjectCounter++)
+            {
+                _myManipAnalysisGui.SetProgressBarValue((100.0 / subjectList.Count()) * subjectCounter);
+
+                // Gets the statistic-data for the subject
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subjectList[subjectCounter], turn);
+                DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario, subjectList[subjectCounter],
+                                                                             turnDateTime);
+
+                // Checks wether the amount of statistic-data equals the amount of szenario-trials
+                if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
+                {
+                    // Loops over all sets in the szenario
+                    for (int setCounter = 0; setCounter < setCount; setCounter++)
+                    {
+                        List<double> catchPdSign = new List<double>();
+                        List<double> catchPdAbs = new List<double>();
+                        List<double> fieldPdAbs = new List<double>();
+
+                        // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
+                        for (int rowCounter = (setCounter * 16); rowCounter < ((setCounter + 1) * 16); rowCounter++)
+                        {
+                            DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
+                            int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                            double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                            double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                            bool isCatchTrial = szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") + " - CatchTrial");
+
+                            if (isCatchTrial)
+                            {
+                                catchPdAbs.Add(pd300Abs);
+                                catchPdSign.Add(pd300Sign);
+                            }
+                            else
+                            {
+                                fieldPdAbs.Add(pd300Abs);
+                            }
+                        }
+
+                        // If a catch-trial was present in the set, the learning-index is calculated and saved
+                        if (catchPdAbs.Count > 0)
+                        {
+                            if (liData[setCounter] == null)
+                            {
+                                liData[setCounter] = new List<double>();
+                            }
+
+                            liData[setCounter].Add(catchPdSign.Average() / (catchPdAbs.Average() + fieldPdAbs.Average()));
+                        }
+                    }
+                }
+            }
+            
+            // Create write-cache and header-line
+            var cache = new List<string>();
+            string line = "SzenarioSetNumber,";
+            for (int subjectCounter = 0; subjectCounter < subjectList.Count; subjectCounter++)
+            {
+                line += subjectList.ElementAt(subjectCounter).SubjectID + ",";
+            }
+            line += "Mean,StdAbv";
+            cache.Add(line);
+
+
+            // Loops over all sets and adds the data to the cache
+            for (int setCounter = 0; setCounter < setCount; setCounter++)
+            {
+                if (liData[setCounter] != null)
+                {
+                    line = setCounter.ToString(CultureInfo.InvariantCulture) + ",";
+
+                    for (int subjectCounter = 0; subjectCounter < liData[setCounter].Count; subjectCounter++)
+                    {
+                        line += DoubleConverter.ToExactString(liData[setCounter].ElementAt(subjectCounter)) + ",";
+                    }
+
+                    line += DoubleConverter.ToExactString(liData[setCounter].Average()) + ",";
+
+                    line +=
+                        DoubleConverter.ToExactString(
+                            Math.Sqrt((liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
+                                      /
+                                      (liData[setCounter].Count - 1)
+                                ));
+                    
+                    cache.Add(line);
+                }
+            }
+            
+            var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+            var dataFileWriter = new StreamWriter(dataFileStream);
+
+            for (int i = 0; i < cache.Count(); i++)
+            {
+                dataFileWriter.WriteLine(cache[i]);
+            }
+
+            dataFileWriter.Close();
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);

@@ -1561,7 +1561,7 @@ namespace ManipAnalysis
         {
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save trajectory / velocity file";
+            saveFileDialog.Title = @"Save mean-time file";
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = ".csv";
             saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
@@ -2006,6 +2006,56 @@ namespace ManipAnalysis
                                                       Convert.ToInt32(
                                                           comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
                                                                                           .Substring("Turn".Length)));
+        }
+
+        private void button_BaselineMeantimeLi_ExportGroupLi_Click(object sender, EventArgs e)
+        {
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Reset();
+            saveFileDialog.Title = @"Save learning-index file";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_BaselineMeantimeLi_Study.SelectedItem
+                                      + "-"
+                                      + comboBox_BaselineMeantimeLi_Group.SelectedItem
+                                      + "-"
+                                      + comboBox_BaselineMeantimeLi_Szenario.SelectedItem
+                                      + "-LearningIndex";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                IEnumerable<SubjectInformationContainer> subjects;
+
+                if (checkBox_BaselineMeantimeLi_GroupAverage.Checked)
+                {
+                    subjects = comboBox_BaselineMeantimeLi_Subject.Items.Cast<SubjectInformationContainer>();
+                }
+                else
+                {
+                    subjects = new List<SubjectInformationContainer> { (SubjectInformationContainer)comboBox_BaselineMeantimeLi_Subject.SelectedItem };
+                }
+
+                _manipAnalysisFunctions.ExportLearningIndex(saveFileDialog.FileName,
+                                                            comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
+                                                            comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                                                            comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                                                            subjects,
+                                                            Convert.ToInt32(
+                                                                comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
+                                                                                                .Substring("Turn".Length)));
+            }
         }
     }
 }
