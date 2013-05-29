@@ -4288,7 +4288,7 @@ namespace ManipAnalysis
             {
                 line += subjectList.ElementAt(subjectCounter).SubjectID + ",";
             }
-            line += "Mean,StdAbv";
+            line += "Mean,Std";
             cache.Add(line);
 
 
@@ -4297,7 +4297,7 @@ namespace ManipAnalysis
             {
                 if (liData[setCounter] != null)
                 {
-                    line = setCounter.ToString(CultureInfo.InvariantCulture) + ",";
+                    line = (setCounter +1 ).ToString(CultureInfo.InvariantCulture) + ",";
 
                     for (int subjectCounter = 0; subjectCounter < liData[setCounter].Count; subjectCounter++)
                     {
