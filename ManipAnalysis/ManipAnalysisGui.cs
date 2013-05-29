@@ -1611,7 +1611,7 @@ namespace ManipAnalysis
         private void button_DataManipulation_DeleteMeasureFile_Click(object sender, EventArgs e)
         {
             WriteProgressInfo("Deleting measure file...");
-            _manipAnalysisFunctions.DeleteMeasureFile(Convert.ToInt32(textBox_DataManipulation_MeasureFileID));
+            _manipAnalysisFunctions.DeleteMeasureFile(Convert.ToInt32(textBox_DataManipulation_MeasureFileID.Text));
             WriteProgressInfo("Ready");
         }
 
