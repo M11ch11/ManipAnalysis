@@ -138,87 +138,85 @@ namespace ManipAnalysis
                 {
                     while (!measureFileReader.EndOfStream)
                     {
-// ReSharper disable PossibleNullReferenceException
-                        string[] measureFileLine = measureFileReader.ReadLine()
-                                                                    .Split(new string[] {", "}, StringSplitOptions.None);
-// ReSharper restore PossibleNullReferenceException
-
-                        if (measureFileLine.Count() == 19)
+                        var readLine = measureFileReader.ReadLine();
+                        if (readLine != null)
                         {
-                            if ((_dataContainer.MeasureDataRaw.Count > 0) &&
-                                (DateTime.Parse(_dataContainer.MeasureFileCreationDate + " " + measureFileLine[0])
-                                         .Subtract(_dataContainer.MeasureDataRaw.Last().TimeStamp)
-                                         .TotalMilliseconds > 500)
-                                )
+                            string[] measureFileLine = readLine.Split(new string[] {", "}, StringSplitOptions.None);
+
+                            if (measureFileLine.Count() == 19)
                             {
-                                while ((Convert.ToInt32(measureFileLine[16]) ==
-                                        _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
-                                       (!measureFileReader.EndOfStream)
+                                if ((_dataContainer.MeasureDataRaw.Count > 0) &&
+                                    (DateTime.Parse(_dataContainer.MeasureFileCreationDate + " " + measureFileLine[0])
+                                             .Subtract(_dataContainer.MeasureDataRaw.Last().TimeStamp)
+                                             .TotalMilliseconds > 500)
                                     )
                                 {
-// ReSharper disable PossibleNullReferenceException
-                                    measureFileLine = measureFileReader.ReadLine()
-                                                                       .Split(new string[] {", "},
-                                                                              StringSplitOptions.None);
-// ReSharper restore PossibleNullReferenceException
+                                    while ((Convert.ToInt32(measureFileLine[16]) ==
+                                            _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
+                                           (!measureFileReader.EndOfStream)
+                                        )
+                                    {
+                                        measureFileLine = readLine
+                                            .Split(new string[] {", "},
+                                                   StringSplitOptions.None);
+                                    }
                                 }
-                            }
-                            else if ((_dataContainer.MeasureDataRaw.Count > 0) &&
-                                     (Convert.ToInt32(measureFileLine[15]) !=
-                                      _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
-                                     (Convert.ToInt32(measureFileLine[16]) ==
-                                      _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber)
-                                )
-                            {
-                                while (
-                                    (Convert.ToInt32(measureFileLine[15]) !=
-                                     _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
-                                    (Convert.ToInt32(measureFileLine[16]) ==
-                                     _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
-                                    (!measureFileReader.EndOfStream)
+                                else if ((_dataContainer.MeasureDataRaw.Count > 0) &&
+                                         (Convert.ToInt32(measureFileLine[15]) !=
+                                          _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
+                                         (Convert.ToInt32(measureFileLine[16]) ==
+                                          _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber)
                                     )
                                 {
-// ReSharper disable PossibleNullReferenceException
-                                    measureFileLine = measureFileReader.ReadLine()
-                                                                       .Split(new string[] {", "},
-                                                                              StringSplitOptions.None);
-// ReSharper restore PossibleNullReferenceException
+                                    while (
+                                        (Convert.ToInt32(measureFileLine[15]) !=
+                                         _dataContainer.MeasureDataRaw.Last().TargetNumber) &&
+                                        (Convert.ToInt32(measureFileLine[16]) ==
+                                         _dataContainer.MeasureDataRaw.Last().SzenarioTrialNumber) &&
+                                        (!measureFileReader.EndOfStream)
+                                        )
+                                    {
+                                        measureFileLine = readLine
+                                            .Split(new string[] {", "},
+                                                   StringSplitOptions.None);
+                                    }
+                                }
+
+                                if (Convert.ToInt32(measureFileLine[16]) <= expectedSzenarioTrialCount)
+                                {
+                                    _dataContainer.MeasureDataRaw.Add(new MeasureDataContainer(
+                                                                          DateTime.Parse(
+                                                                              _dataContainer.MeasureFileCreationDate +
+                                                                              " " +
+                                                                              measureFileLine[0]),
+                                                                          //Forces in Newton
+                                                                          Convert.ToDouble(measureFileLine[1])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[2])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[3])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[4])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[5])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[6])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[7])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[8])/1E3,
+                                                                          Convert.ToDouble(measureFileLine[9])/1E3,
+                                                                          //Positions in Meter
+                                                                          Convert.ToDouble(measureFileLine[10])/1E6,
+                                                                          Convert.ToDouble(measureFileLine[11])/1E6,
+                                                                          Convert.ToDouble(measureFileLine[12])/1E6,
+                                                                          Convert.ToInt32(measureFileLine[15]),
+                                                                          -1,
+                                                                          Convert.ToInt32(measureFileLine[16]),
+                                                                          Convert.ToBoolean(measureFileLine[17]),
+                                                                          //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
+                                                                          Convert.ToInt32(measureFileLine[18]) //Study 2
+                                                                          ));
                                 }
                             }
-
-                            if (Convert.ToInt32(measureFileLine[16]) <= expectedSzenarioTrialCount)
+                            else
                             {
-                                _dataContainer.MeasureDataRaw.Add(new MeasureDataContainer(
-                                                                      DateTime.Parse(
-                                                                          _dataContainer.MeasureFileCreationDate + " " +
-                                                                          measureFileLine[0]),
-                                                                      Convert.ToDouble(measureFileLine[1])/1E3,
-                                                                      //Forces in Newton
-                                                                      Convert.ToDouble(measureFileLine[2])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[3])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[4])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[5])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[6])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[7])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[8])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[9])/1E3,
-                                                                      Convert.ToDouble(measureFileLine[10])/1E6,
-                                                                      //Positions in Meter
-                                                                      Convert.ToDouble(measureFileLine[11])/1E6,
-                                                                      Convert.ToDouble(measureFileLine[12])/1E6,
-                                                                      Convert.ToInt32(measureFileLine[15]),
-                                                                      -1,
-                                                                      Convert.ToInt32(measureFileLine[16]),
-                                                                      Convert.ToBoolean(measureFileLine[17]),
-                                                                      //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
-                                                                      Convert.ToInt32(measureFileLine[18]) //Study 2
-                                                                      ));
+                                //("Measure file line error: invalid column count");
+                                retVal = false;
                             }
-                        }
-                        else
-                        {
-                            //("Measure file line error: invalid column count");
-                            retVal = false;
                         }
                     }
 

@@ -86,6 +86,26 @@ namespace ManipAnalysis
             }
         }
 
+        public void CreateLearningIndexFigure(int setCount)
+        {
+            try
+            {
+                Execute("figure");
+                Execute("set(gcf,'Name','Learning index plot','NumberTitle','off');");
+                Execute("grid on");
+                Execute("hold all");
+                Execute("xlabel('[Set]');");
+                Execute("ylabel('Learning index');");
+                Execute("axis([0 " + (setCount + 1) + " -1.0 1.0]);");
+                Execute("axis manual;");
+                Execute("set(gca,'YGrid','on','YTick',-1.0:0.2:1.0,'XTick',1:1:" + setCount + ");");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
                                           string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit,
                                           double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)

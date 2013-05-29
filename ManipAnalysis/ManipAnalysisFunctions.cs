@@ -4115,5 +4115,89 @@ namespace ManipAnalysis
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
         }
+
+        public void PlotLearningIndex(string study, string group, string szenario,
+                                      IEnumerable<SubjectInformationContainer> subjects, int turn)
+        {
+            List<SubjectInformationContainer> subjectList = subjects.ToList();
+            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);
+            int setCount = szenarioTrials.Length / 16;
+            List<double>[] liData = new List<double>[setCount];
+
+            _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
+            _myManipAnalysisGui.SetProgressBarValue(0);
+
+            for (int subjectCounter = 0; subjectCounter < subjectList.Count(); subjectCounter++)
+            {
+                _myManipAnalysisGui.SetProgressBarValue((100.0 / subjectList.Count()) * subjectCounter);
+
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subjectList[subjectCounter], turn);
+                DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario, subjectList[subjectCounter],
+                                                                             turnDateTime);
+
+                if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
+                {
+                    for (int setCounter = 0; setCounter < setCount; setCounter++)
+                    {
+                        if (liData[setCounter] == null)
+                        {
+                            liData[setCounter] = new List<double>();
+                        }
+
+                        List<double> catchPdSign = new List<double>();
+                        List<double> catchPdAbs = new List<double>();
+                        List<double> fieldPdAbs = new List<double>();
+
+                        for (int rowCounter = (setCounter*16); rowCounter < ((setCounter + 1)*16); rowCounter++)
+                        {
+                            DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
+                            int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                            double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                            double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                            bool isCatchTrial = szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") + " - CatchTrial");
+
+                            if (isCatchTrial)
+                            {
+                                catchPdAbs.Add(pd300Abs);
+                                catchPdSign.Add(pd300Sign);
+                            }
+                            else
+                            {
+                                fieldPdAbs.Add(pd300Abs);
+                            }
+                        }
+
+                        if (catchPdAbs.Count > 0)
+                        {
+                            liData[setCounter].Add(catchPdSign.Average()/(catchPdAbs.Average() + fieldPdAbs.Average()));
+                        }
+                        else
+                        {
+                            liData[setCounter].Add(0.0);
+                        }
+                    }
+                }
+            }
+            
+            double[] stdAbwArr = new double[setCount];
+            double[] liDataArr = new double[setCount];
+            double[] setCountArr = new double[setCount];
+
+            for (int setCounter = 0; setCounter < setCount; setCounter++)
+            {
+                stdAbwArr[setCounter] = Math.Sqrt(liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)) / (liData[setCounter].Count - 1));
+                liDataArr[setCounter] = liData[setCounter].Average();
+                setCountArr[setCounter] = setCounter + 1;
+            }
+
+            _myMatlabWrapper.CreateLearningIndexFigure(setCount);
+            _myMatlabWrapper.SetWorkspaceData("X", setCountArr);
+            _myMatlabWrapper.SetWorkspaceData("Y", liDataArr);
+            _myMatlabWrapper.SetWorkspaceData("std", stdAbwArr);
+            _myMatlabWrapper.PlotMeanTimeErrorBar("X", "Y", "std");
+
+            _myManipAnalysisGui.WriteProgressInfo("Ready.");
+            _myManipAnalysisGui.SetProgressBarValue(0);
+        }
     }
 }

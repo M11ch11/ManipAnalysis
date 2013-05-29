@@ -37,9 +37,8 @@ namespace ManipAnalysis
             this.tabPage_Start = new System.Windows.Forms.TabPage();
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
             this.comboBox_Start_Database = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label_Start_Database = new System.Windows.Forms.Label();
             this.button_Start_ConnectToSQlServer = new System.Windows.Forms.Button();
-            this.checkBox_Start_ManualMode = new System.Windows.Forms.CheckBox();
             this.label_Start_ManipAnalysis = new System.Windows.Forms.Label();
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
@@ -117,22 +116,25 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_BaselineMeantime = new System.Windows.Forms.TabPage();
-            this.button_BaselineMeantime_ExportVelocityBaseline = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_PlotVelocityBaseline = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_ExportTrajectoryBaseline = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes = new System.Windows.Forms.Button();
-            this.label_BaselineMeantime_Turn = new System.Windows.Forms.Label();
-            this.comboBox_BaselineMeantime_Turn = new System.Windows.Forms.ComboBox();
-            this.label_BaselineMeantime_Group = new System.Windows.Forms.Label();
-            this.comboBox_BaselineMeantime_Group = new System.Windows.Forms.ComboBox();
-            this.label_BaselineMeantime_Szenario = new System.Windows.Forms.Label();
-            this.label_BaselineMeantime_Subject = new System.Windows.Forms.Label();
-            this.label_BaselineMeantime_Study = new System.Windows.Forms.Label();
-            this.comboBox_BaselineMeantime_Subject = new System.Windows.Forms.ComboBox();
-            this.comboBox_BaselineMeantime_Study = new System.Windows.Forms.ComboBox();
-            this.comboBox_BaselineMeantime_Szenario = new System.Windows.Forms.ComboBox();
-            this.button_BaselineMeantime_PlotTrajectoryBaseline = new System.Windows.Forms.Button();
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes = new System.Windows.Forms.Button();
+            this.checkBox_BaselineMeantimeLi_GroupAverage = new System.Windows.Forms.CheckBox();
+            this.button_BaselineMeantimeLi_ExportGroupLi = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_PlotGroupLi = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes = new System.Windows.Forms.Button();
+            this.label_BaselineMeantimeLi_Turn = new System.Windows.Forms.Label();
+            this.comboBox_BaselineMeantimeLi_Turn = new System.Windows.Forms.ComboBox();
+            this.label_BaselineMeantimeLi_Group = new System.Windows.Forms.Label();
+            this.comboBox_BaselineMeantimeLi_Group = new System.Windows.Forms.ComboBox();
+            this.label_BaselineMeantimeLi_Szenario = new System.Windows.Forms.Label();
+            this.label_BaselineMeantimeLi_Subject = new System.Windows.Forms.Label();
+            this.label_BaselineMeantimeLi_Study = new System.Windows.Forms.Label();
+            this.comboBox_BaselineMeantimeLi_Subject = new System.Windows.Forms.ComboBox();
+            this.comboBox_BaselineMeantimeLi_Study = new System.Windows.Forms.ComboBox();
+            this.comboBox_BaselineMeantimeLi_Szenario = new System.Windows.Forms.ComboBox();
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline = new System.Windows.Forms.Button();
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes = new System.Windows.Forms.Button();
             this.tabPage_ImportCalculations = new System.Windows.Forms.TabPage();
             this.groupBox_Import_VelocityCropping = new System.Windows.Forms.GroupBox();
             this.label_Import_PercentPeakVelocity = new System.Windows.Forms.Label();
@@ -221,6 +223,7 @@ namespace ManipAnalysis
             this.tabPage_Impressum = new System.Windows.Forms.TabPage();
             this.label_Impressum_Text = new System.Windows.Forms.Label();
             this.pictureBox_Impressum_KITLogo = new System.Windows.Forms.PictureBox();
+            this.checkBox_Start_ManualMode = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.label_ProgressInfo = new System.Windows.Forms.Label();
@@ -269,7 +272,7 @@ namespace ManipAnalysis
             // 
             this.tabPage_Start.Controls.Add(this.button_Start_SelectDatabase);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_Database);
-            this.tabPage_Start.Controls.Add(this.label1);
+            this.tabPage_Start.Controls.Add(this.label_Start_Database);
             this.tabPage_Start.Controls.Add(this.button_Start_ConnectToSQlServer);
             this.tabPage_Start.Controls.Add(this.label_Start_ManipAnalysis);
             this.tabPage_Start.Location = new System.Drawing.Point(4, 22);
@@ -304,14 +307,14 @@ namespace ManipAnalysis
             this.comboBox_Start_Database.Size = new System.Drawing.Size(281, 21);
             this.comboBox_Start_Database.TabIndex = 20;
             // 
-            // label1
+            // label_Start_Database
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 113);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "Database:";
+            this.label_Start_Database.AutoSize = true;
+            this.label_Start_Database.Location = new System.Drawing.Point(11, 113);
+            this.label_Start_Database.Name = "label_Start_Database";
+            this.label_Start_Database.Size = new System.Drawing.Size(56, 13);
+            this.label_Start_Database.TabIndex = 19;
+            this.label_Start_Database.Text = "Database:";
             // 
             // button_Start_ConnectToSQlServer
             // 
@@ -322,20 +325,6 @@ namespace ManipAnalysis
             this.button_Start_ConnectToSQlServer.Text = "Connect to Server (IFS96)";
             this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
             this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
-            // 
-            // checkBox_Start_ManualMode
-            // 
-            this.checkBox_Start_ManualMode.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox_Start_ManualMode.AutoSize = true;
-            this.checkBox_Start_ManualMode.Enabled = false;
-            this.checkBox_Start_ManualMode.FlatAppearance.BorderSize = 2;
-            this.checkBox_Start_ManualMode.Location = new System.Drawing.Point(1079, 633);
-            this.checkBox_Start_ManualMode.Name = "checkBox_Start_ManualMode";
-            this.checkBox_Start_ManualMode.Size = new System.Drawing.Size(91, 23);
-            this.checkBox_Start_ManualMode.TabIndex = 15;
-            this.checkBox_Start_ManualMode.Text = "Extended mode";
-            this.checkBox_Start_ManualMode.UseVisualStyleBackColor = true;
-            this.checkBox_Start_ManualMode.CheckedChanged += new System.EventHandler(this.checkBox_ManualMode_CheckedChanged);
             // 
             // label_Start_ManipAnalysis
             // 
@@ -367,7 +356,7 @@ namespace ManipAnalysis
             this.tabControl_VisualizationExport.Location = new System.Drawing.Point(3, 3);
             this.tabControl_VisualizationExport.Name = "tabControl_VisualizationExport";
             this.tabControl_VisualizationExport.SelectedIndex = 0;
-            this.tabControl_VisualizationExport.Size = new System.Drawing.Size(727, 586);
+            this.tabControl_VisualizationExport.Size = new System.Drawing.Size(727, 591);
             this.tabControl_VisualizationExport.TabIndex = 0;
             // 
             // tabPage_TrajectoryVelocity
@@ -398,7 +387,7 @@ namespace ManipAnalysis
             this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Groups);
             this.tabPage_TrajectoryVelocity.Location = new System.Drawing.Point(4, 22);
             this.tabPage_TrajectoryVelocity.Name = "tabPage_TrajectoryVelocity";
-            this.tabPage_TrajectoryVelocity.Size = new System.Drawing.Size(719, 560);
+            this.tabPage_TrajectoryVelocity.Size = new System.Drawing.Size(719, 565);
             this.tabPage_TrajectoryVelocity.TabIndex = 4;
             this.tabPage_TrajectoryVelocity.Text = "Trajectory / Velocity";
             this.tabPage_TrajectoryVelocity.UseVisualStyleBackColor = true;
@@ -676,7 +665,7 @@ namespace ManipAnalysis
             this.tabPage_DescriptiveStatistic1.Controls.Add(this.listBox_DescriptiveStatistic1_Groups);
             this.tabPage_DescriptiveStatistic1.Location = new System.Drawing.Point(4, 22);
             this.tabPage_DescriptiveStatistic1.Name = "tabPage_DescriptiveStatistic1";
-            this.tabPage_DescriptiveStatistic1.Size = new System.Drawing.Size(719, 560);
+            this.tabPage_DescriptiveStatistic1.Size = new System.Drawing.Size(719, 565);
             this.tabPage_DescriptiveStatistic1.TabIndex = 2;
             this.tabPage_DescriptiveStatistic1.Text = "Descriptive Statistic 1";
             this.tabPage_DescriptiveStatistic1.UseVisualStyleBackColor = true;
@@ -697,7 +686,7 @@ namespace ManipAnalysis
             // checkBox_DescriptiveStatistic1_PlotFit
             // 
             this.checkBox_DescriptiveStatistic1_PlotFit.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(683, 509);
+            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(648, 530);
             this.checkBox_DescriptiveStatistic1_PlotFit.Name = "checkBox_DescriptiveStatistic1_PlotFit";
             this.checkBox_DescriptiveStatistic1_PlotFit.Size = new System.Drawing.Size(37, 17);
             this.checkBox_DescriptiveStatistic1_PlotFit.TabIndex = 24;
@@ -706,7 +695,7 @@ namespace ManipAnalysis
             // 
             // textBox_DescriptiveStatistic1_FitEquation
             // 
-            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(634, 507);
+            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(668, 508);
             this.textBox_DescriptiveStatistic1_FitEquation.Name = "textBox_DescriptiveStatistic1_FitEquation";
             this.textBox_DescriptiveStatistic1_FitEquation.Size = new System.Drawing.Size(48, 20);
             this.textBox_DescriptiveStatistic1_FitEquation.TabIndex = 23;
@@ -757,7 +746,7 @@ namespace ManipAnalysis
             // checkBox_DescriptiveStatistic1_PlotErrorbars
             // 
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(634, 540);
+            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(648, 546);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Name = "checkBox_DescriptiveStatistic1_PlotErrorbars";
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Size = new System.Drawing.Size(68, 17);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.TabIndex = 17;
@@ -791,7 +780,7 @@ namespace ManipAnalysis
             "Vector correlation"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 507);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
-            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(160, 21);
+            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Sorted = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.TabIndex = 15;
             // 
@@ -970,7 +959,7 @@ namespace ManipAnalysis
             this.tabPage_DescriptiveStatistic2.Controls.Add(this.listBox_DescriptiveStatistic2_Groups);
             this.tabPage_DescriptiveStatistic2.Location = new System.Drawing.Point(4, 22);
             this.tabPage_DescriptiveStatistic2.Name = "tabPage_DescriptiveStatistic2";
-            this.tabPage_DescriptiveStatistic2.Size = new System.Drawing.Size(719, 560);
+            this.tabPage_DescriptiveStatistic2.Size = new System.Drawing.Size(719, 565);
             this.tabPage_DescriptiveStatistic2.TabIndex = 3;
             this.tabPage_DescriptiveStatistic2.Text = "Descriptive Statistic 2";
             this.tabPage_DescriptiveStatistic2.UseVisualStyleBackColor = true;
@@ -1203,189 +1192,221 @@ namespace ManipAnalysis
             // 
             // tabPage_BaselineMeantime
             // 
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportVelocityBaseline);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotVelocityBaseline);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportTrajectoryBaseline);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_ExportSzenarioMeanTimes);
-            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Turn);
-            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Turn);
-            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Group);
-            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Group);
-            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Szenario);
-            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Subject);
-            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantime_Study);
-            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Subject);
-            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Study);
-            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantime_Szenario);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotTrajectoryBaseline);
-            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantime_PlotSzenarioMeanTimes);
+            this.tabPage_BaselineMeantime.Controls.Add(this.checkBox_BaselineMeantimeLi_GroupAverage);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_ExportGroupLi);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_PlotGroupLi);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_ExportVelocityBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_PlotVelocityBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_ExportTrajectoryBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes);
+            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantimeLi_Turn);
+            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantimeLi_Turn);
+            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantimeLi_Group);
+            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantimeLi_Group);
+            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantimeLi_Szenario);
+            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantimeLi_Subject);
+            this.tabPage_BaselineMeantime.Controls.Add(this.label_BaselineMeantimeLi_Study);
+            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantimeLi_Subject);
+            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantimeLi_Study);
+            this.tabPage_BaselineMeantime.Controls.Add(this.comboBox_BaselineMeantimeLi_Szenario);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_PlotTrajectoryBaseline);
+            this.tabPage_BaselineMeantime.Controls.Add(this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes);
             this.tabPage_BaselineMeantime.Location = new System.Drawing.Point(4, 22);
             this.tabPage_BaselineMeantime.Name = "tabPage_BaselineMeantime";
             this.tabPage_BaselineMeantime.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_BaselineMeantime.Size = new System.Drawing.Size(719, 560);
+            this.tabPage_BaselineMeantime.Size = new System.Drawing.Size(719, 565);
             this.tabPage_BaselineMeantime.TabIndex = 0;
-            this.tabPage_BaselineMeantime.Text = "Baseline / Mean time";
+            this.tabPage_BaselineMeantime.Text = "Baseline / Mean times / Li";
             this.tabPage_BaselineMeantime.UseVisualStyleBackColor = true;
-            this.tabPage_BaselineMeantime.Enter += new System.EventHandler(this.tabPage_BaselineMeantime_Enter);
+            this.tabPage_BaselineMeantime.Enter += new System.EventHandler(this.tabPage_BaselineMeantimeLi_Enter);
             // 
-            // button_BaselineMeantime_ExportVelocityBaseline
+            // checkBox_BaselineMeantimeLi_GroupAverage
             // 
-            this.button_BaselineMeantime_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
-            this.button_BaselineMeantime_ExportVelocityBaseline.Name = "button_BaselineMeantime_ExportVelocityBaseline";
-            this.button_BaselineMeantime_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_ExportVelocityBaseline.TabIndex = 45;
-            this.button_BaselineMeantime_ExportVelocityBaseline.Text = "Export velocity baselines";
-            this.button_BaselineMeantime_ExportVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_ExportVelocityBaseline_Click);
+            this.checkBox_BaselineMeantimeLi_GroupAverage.AutoSize = true;
+            this.checkBox_BaselineMeantimeLi_GroupAverage.Location = new System.Drawing.Point(326, 238);
+            this.checkBox_BaselineMeantimeLi_GroupAverage.Name = "checkBox_BaselineMeantimeLi_GroupAverage";
+            this.checkBox_BaselineMeantimeLi_GroupAverage.Size = new System.Drawing.Size(97, 17);
+            this.checkBox_BaselineMeantimeLi_GroupAverage.TabIndex = 52;
+            this.checkBox_BaselineMeantimeLi_GroupAverage.Text = "Group average";
+            this.checkBox_BaselineMeantimeLi_GroupAverage.UseVisualStyleBackColor = true;
             // 
-            // button_BaselineMeantime_PlotVelocityBaseline
+            // button_BaselineMeantimeLi_ExportGroupLi
             // 
-            this.button_BaselineMeantime_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
-            this.button_BaselineMeantime_PlotVelocityBaseline.Name = "button_BaselineMeantime_PlotVelocityBaseline";
-            this.button_BaselineMeantime_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_PlotVelocityBaseline.TabIndex = 44;
-            this.button_BaselineMeantime_PlotVelocityBaseline.Text = "Plot velocity baselines";
-            this.button_BaselineMeantime_PlotVelocityBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_PlotVelocityBaseline_Click);
+            this.button_BaselineMeantimeLi_ExportGroupLi.Location = new System.Drawing.Point(170, 234);
+            this.button_BaselineMeantimeLi_ExportGroupLi.Name = "button_BaselineMeantimeLi_ExportGroupLi";
+            this.button_BaselineMeantimeLi_ExportGroupLi.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_ExportGroupLi.TabIndex = 47;
+            this.button_BaselineMeantimeLi_ExportGroupLi.Text = "Export learning index";
+            this.button_BaselineMeantimeLi_ExportGroupLi.UseVisualStyleBackColor = true;
             // 
-            // button_BaselineMeantime_ExportTrajectoryBaseline
+            // button_BaselineMeantimeLi_PlotGroupLi
             // 
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.Name = "button_BaselineMeantime_ExportTrajectoryBaseline";
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.TabIndex = 43;
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.Text = "Export trajectory baselines";
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportTrajectoryBaseline.Click += new System.EventHandler(this.button_BaselineMeantime_ExportBaseline_Click);
+            this.button_BaselineMeantimeLi_PlotGroupLi.Location = new System.Drawing.Point(15, 234);
+            this.button_BaselineMeantimeLi_PlotGroupLi.Name = "button_BaselineMeantimeLi_PlotGroupLi";
+            this.button_BaselineMeantimeLi_PlotGroupLi.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_PlotGroupLi.TabIndex = 46;
+            this.button_BaselineMeantimeLi_PlotGroupLi.Text = "Plot learning index";
+            this.button_BaselineMeantimeLi_PlotGroupLi.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_PlotGroupLi.Click += new System.EventHandler(this.button_BaselineMeantimeLi_PlotGroupLi_Click);
             // 
-            // button_BaselineMeantime_ExportSzenarioMeanTimes
+            // button_BaselineMeantimeLi_ExportVelocityBaseline
             // 
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(170, 205);
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Name = "button_BaselineMeantime_ExportSzenarioMeanTimes";
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.TabIndex = 42;
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Text = "Export mean times";
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_ExportSzenarioMeanTimes.Click += new System.EventHandler(this.button_BaselineMeantime_ExportSzenarioMeanTimes_Click);
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.Name = "button_BaselineMeantimeLi_ExportVelocityBaseline";
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.TabIndex = 45;
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.Text = "Export velocity baselines";
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_ExportVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantimeLi_ExportVelocityBaseline_Click);
             // 
-            // label_BaselineMeantime_Turn
+            // button_BaselineMeantimeLi_PlotVelocityBaseline
             // 
-            this.label_BaselineMeantime_Turn.AutoSize = true;
-            this.label_BaselineMeantime_Turn.Location = new System.Drawing.Point(31, 123);
-            this.label_BaselineMeantime_Turn.Name = "label_BaselineMeantime_Turn";
-            this.label_BaselineMeantime_Turn.Size = new System.Drawing.Size(32, 13);
-            this.label_BaselineMeantime_Turn.TabIndex = 41;
-            this.label_BaselineMeantime_Turn.Text = "Turn:";
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.Name = "button_BaselineMeantimeLi_PlotVelocityBaseline";
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.TabIndex = 44;
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.Text = "Plot velocity baselines";
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_PlotVelocityBaseline.Click += new System.EventHandler(this.button_BaselineMeantimeLi_PlotVelocityBaseline_Click);
             // 
-            // comboBox_BaselineMeantime_Turn
+            // button_BaselineMeantimeLi_ExportTrajectoryBaseline
             // 
-            this.comboBox_BaselineMeantime_Turn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineMeantime_Turn.FormattingEnabled = true;
-            this.comboBox_BaselineMeantime_Turn.Location = new System.Drawing.Point(66, 120);
-            this.comboBox_BaselineMeantime_Turn.Name = "comboBox_BaselineMeantime_Turn";
-            this.comboBox_BaselineMeantime_Turn.Size = new System.Drawing.Size(247, 21);
-            this.comboBox_BaselineMeantime_Turn.Sorted = true;
-            this.comboBox_BaselineMeantime_Turn.TabIndex = 40;
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.Name = "button_BaselineMeantimeLi_ExportTrajectoryBaseline";
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.TabIndex = 43;
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.Text = "Export trajectory baselines";
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_ExportTrajectoryBaseline.Click += new System.EventHandler(this.button_BaselineMeantimeLi_ExportBaseline_Click);
             // 
-            // label_BaselineMeantime_Group
+            // button_BaselineMeantimeLi_ExportSzenarioMeanTimes
             // 
-            this.label_BaselineMeantime_Group.AutoSize = true;
-            this.label_BaselineMeantime_Group.Location = new System.Drawing.Point(24, 42);
-            this.label_BaselineMeantime_Group.Name = "label_BaselineMeantime_Group";
-            this.label_BaselineMeantime_Group.Size = new System.Drawing.Size(39, 13);
-            this.label_BaselineMeantime_Group.TabIndex = 39;
-            this.label_BaselineMeantime_Group.Text = "Group:";
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(170, 205);
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.Name = "button_BaselineMeantimeLi_ExportSzenarioMeanTimes";
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.TabIndex = 42;
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.Text = "Export mean times";
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes.Click += new System.EventHandler(this.button_BaselineMeantimeLi_ExportSzenarioMeanTimes_Click);
             // 
-            // comboBox_BaselineMeantime_Group
+            // label_BaselineMeantimeLi_Turn
             // 
-            this.comboBox_BaselineMeantime_Group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineMeantime_Group.FormattingEnabled = true;
-            this.comboBox_BaselineMeantime_Group.Location = new System.Drawing.Point(66, 39);
-            this.comboBox_BaselineMeantime_Group.Name = "comboBox_BaselineMeantime_Group";
-            this.comboBox_BaselineMeantime_Group.Size = new System.Drawing.Size(247, 21);
-            this.comboBox_BaselineMeantime_Group.Sorted = true;
-            this.comboBox_BaselineMeantime_Group.TabIndex = 38;
-            this.comboBox_BaselineMeantime_Group.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantime_Group_SelectedIndexChanged);
+            this.label_BaselineMeantimeLi_Turn.AutoSize = true;
+            this.label_BaselineMeantimeLi_Turn.Location = new System.Drawing.Point(31, 123);
+            this.label_BaselineMeantimeLi_Turn.Name = "label_BaselineMeantimeLi_Turn";
+            this.label_BaselineMeantimeLi_Turn.Size = new System.Drawing.Size(32, 13);
+            this.label_BaselineMeantimeLi_Turn.TabIndex = 41;
+            this.label_BaselineMeantimeLi_Turn.Text = "Turn:";
             // 
-            // label_BaselineMeantime_Szenario
+            // comboBox_BaselineMeantimeLi_Turn
             // 
-            this.label_BaselineMeantime_Szenario.AutoSize = true;
-            this.label_BaselineMeantime_Szenario.Location = new System.Drawing.Point(12, 69);
-            this.label_BaselineMeantime_Szenario.Name = "label_BaselineMeantime_Szenario";
-            this.label_BaselineMeantime_Szenario.Size = new System.Drawing.Size(51, 13);
-            this.label_BaselineMeantime_Szenario.TabIndex = 37;
-            this.label_BaselineMeantime_Szenario.Text = "Szenario:";
+            this.comboBox_BaselineMeantimeLi_Turn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineMeantimeLi_Turn.FormattingEnabled = true;
+            this.comboBox_BaselineMeantimeLi_Turn.Location = new System.Drawing.Point(66, 120);
+            this.comboBox_BaselineMeantimeLi_Turn.Name = "comboBox_BaselineMeantimeLi_Turn";
+            this.comboBox_BaselineMeantimeLi_Turn.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_BaselineMeantimeLi_Turn.Sorted = true;
+            this.comboBox_BaselineMeantimeLi_Turn.TabIndex = 40;
             // 
-            // label_BaselineMeantime_Subject
+            // label_BaselineMeantimeLi_Group
             // 
-            this.label_BaselineMeantime_Subject.AutoSize = true;
-            this.label_BaselineMeantime_Subject.Location = new System.Drawing.Point(17, 96);
-            this.label_BaselineMeantime_Subject.Name = "label_BaselineMeantime_Subject";
-            this.label_BaselineMeantime_Subject.Size = new System.Drawing.Size(46, 13);
-            this.label_BaselineMeantime_Subject.TabIndex = 36;
-            this.label_BaselineMeantime_Subject.Text = "Subject:";
+            this.label_BaselineMeantimeLi_Group.AutoSize = true;
+            this.label_BaselineMeantimeLi_Group.Location = new System.Drawing.Point(24, 42);
+            this.label_BaselineMeantimeLi_Group.Name = "label_BaselineMeantimeLi_Group";
+            this.label_BaselineMeantimeLi_Group.Size = new System.Drawing.Size(39, 13);
+            this.label_BaselineMeantimeLi_Group.TabIndex = 39;
+            this.label_BaselineMeantimeLi_Group.Text = "Group:";
             // 
-            // label_BaselineMeantime_Study
+            // comboBox_BaselineMeantimeLi_Group
             // 
-            this.label_BaselineMeantime_Study.AutoSize = true;
-            this.label_BaselineMeantime_Study.Location = new System.Drawing.Point(26, 15);
-            this.label_BaselineMeantime_Study.Name = "label_BaselineMeantime_Study";
-            this.label_BaselineMeantime_Study.Size = new System.Drawing.Size(37, 13);
-            this.label_BaselineMeantime_Study.TabIndex = 35;
-            this.label_BaselineMeantime_Study.Text = "Study:";
+            this.comboBox_BaselineMeantimeLi_Group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineMeantimeLi_Group.FormattingEnabled = true;
+            this.comboBox_BaselineMeantimeLi_Group.Location = new System.Drawing.Point(66, 39);
+            this.comboBox_BaselineMeantimeLi_Group.Name = "comboBox_BaselineMeantimeLi_Group";
+            this.comboBox_BaselineMeantimeLi_Group.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_BaselineMeantimeLi_Group.Sorted = true;
+            this.comboBox_BaselineMeantimeLi_Group.TabIndex = 38;
+            this.comboBox_BaselineMeantimeLi_Group.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantimeLi_Group_SelectedIndexChanged);
             // 
-            // comboBox_BaselineMeantime_Subject
+            // label_BaselineMeantimeLi_Szenario
             // 
-            this.comboBox_BaselineMeantime_Subject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineMeantime_Subject.FormattingEnabled = true;
-            this.comboBox_BaselineMeantime_Subject.Location = new System.Drawing.Point(66, 93);
-            this.comboBox_BaselineMeantime_Subject.Name = "comboBox_BaselineMeantime_Subject";
-            this.comboBox_BaselineMeantime_Subject.Size = new System.Drawing.Size(247, 21);
-            this.comboBox_BaselineMeantime_Subject.Sorted = true;
-            this.comboBox_BaselineMeantime_Subject.TabIndex = 34;
-            this.comboBox_BaselineMeantime_Subject.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantime_Subject_SelectedIndexChanged);
+            this.label_BaselineMeantimeLi_Szenario.AutoSize = true;
+            this.label_BaselineMeantimeLi_Szenario.Location = new System.Drawing.Point(12, 69);
+            this.label_BaselineMeantimeLi_Szenario.Name = "label_BaselineMeantimeLi_Szenario";
+            this.label_BaselineMeantimeLi_Szenario.Size = new System.Drawing.Size(51, 13);
+            this.label_BaselineMeantimeLi_Szenario.TabIndex = 37;
+            this.label_BaselineMeantimeLi_Szenario.Text = "Szenario:";
             // 
-            // comboBox_BaselineMeantime_Study
+            // label_BaselineMeantimeLi_Subject
             // 
-            this.comboBox_BaselineMeantime_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineMeantime_Study.FormattingEnabled = true;
-            this.comboBox_BaselineMeantime_Study.Location = new System.Drawing.Point(66, 12);
-            this.comboBox_BaselineMeantime_Study.Name = "comboBox_BaselineMeantime_Study";
-            this.comboBox_BaselineMeantime_Study.Size = new System.Drawing.Size(247, 21);
-            this.comboBox_BaselineMeantime_Study.Sorted = true;
-            this.comboBox_BaselineMeantime_Study.TabIndex = 33;
-            this.comboBox_BaselineMeantime_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantime_Study_SelectedIndexChanged);
+            this.label_BaselineMeantimeLi_Subject.AutoSize = true;
+            this.label_BaselineMeantimeLi_Subject.Location = new System.Drawing.Point(17, 96);
+            this.label_BaselineMeantimeLi_Subject.Name = "label_BaselineMeantimeLi_Subject";
+            this.label_BaselineMeantimeLi_Subject.Size = new System.Drawing.Size(46, 13);
+            this.label_BaselineMeantimeLi_Subject.TabIndex = 36;
+            this.label_BaselineMeantimeLi_Subject.Text = "Subject:";
             // 
-            // comboBox_BaselineMeantime_Szenario
+            // label_BaselineMeantimeLi_Study
             // 
-            this.comboBox_BaselineMeantime_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineMeantime_Szenario.FormattingEnabled = true;
-            this.comboBox_BaselineMeantime_Szenario.Location = new System.Drawing.Point(66, 66);
-            this.comboBox_BaselineMeantime_Szenario.Name = "comboBox_BaselineMeantime_Szenario";
-            this.comboBox_BaselineMeantime_Szenario.Size = new System.Drawing.Size(247, 21);
-            this.comboBox_BaselineMeantime_Szenario.Sorted = true;
-            this.comboBox_BaselineMeantime_Szenario.TabIndex = 32;
-            this.comboBox_BaselineMeantime_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantime_Szenario_SelectedIndexChanged);
+            this.label_BaselineMeantimeLi_Study.AutoSize = true;
+            this.label_BaselineMeantimeLi_Study.Location = new System.Drawing.Point(26, 15);
+            this.label_BaselineMeantimeLi_Study.Name = "label_BaselineMeantimeLi_Study";
+            this.label_BaselineMeantimeLi_Study.Size = new System.Drawing.Size(37, 13);
+            this.label_BaselineMeantimeLi_Study.TabIndex = 35;
+            this.label_BaselineMeantimeLi_Study.Text = "Study:";
             // 
-            // button_BaselineMeantime_PlotTrajectoryBaseline
+            // comboBox_BaselineMeantimeLi_Subject
             // 
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.Location = new System.Drawing.Point(15, 147);
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.Name = "button_BaselineMeantime_PlotTrajectoryBaseline";
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.TabIndex = 31;
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.Text = "Plot trajectory baselines";
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotTrajectoryBaseline.Click += new System.EventHandler(this.button_PlotBaseline_Click);
+            this.comboBox_BaselineMeantimeLi_Subject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineMeantimeLi_Subject.FormattingEnabled = true;
+            this.comboBox_BaselineMeantimeLi_Subject.Location = new System.Drawing.Point(66, 93);
+            this.comboBox_BaselineMeantimeLi_Subject.Name = "comboBox_BaselineMeantimeLi_Subject";
+            this.comboBox_BaselineMeantimeLi_Subject.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_BaselineMeantimeLi_Subject.Sorted = true;
+            this.comboBox_BaselineMeantimeLi_Subject.TabIndex = 34;
+            this.comboBox_BaselineMeantimeLi_Subject.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantimeLi_Subject_SelectedIndexChanged);
             // 
-            // button_BaselineMeantime_PlotSzenarioMeanTimes
+            // comboBox_BaselineMeantimeLi_Study
             // 
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(15, 205);
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Name = "button_BaselineMeantime_PlotSzenarioMeanTimes";
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.TabIndex = 22;
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Text = "Plot mean times";
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.UseVisualStyleBackColor = true;
-            this.button_BaselineMeantime_PlotSzenarioMeanTimes.Click += new System.EventHandler(this.button_BaselineMeantime_PlotSzenarioMeanTimes_Click);
+            this.comboBox_BaselineMeantimeLi_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineMeantimeLi_Study.FormattingEnabled = true;
+            this.comboBox_BaselineMeantimeLi_Study.Location = new System.Drawing.Point(66, 12);
+            this.comboBox_BaselineMeantimeLi_Study.Name = "comboBox_BaselineMeantimeLi_Study";
+            this.comboBox_BaselineMeantimeLi_Study.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_BaselineMeantimeLi_Study.Sorted = true;
+            this.comboBox_BaselineMeantimeLi_Study.TabIndex = 33;
+            this.comboBox_BaselineMeantimeLi_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantimeLi_Study_SelectedIndexChanged);
+            // 
+            // comboBox_BaselineMeantimeLi_Szenario
+            // 
+            this.comboBox_BaselineMeantimeLi_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineMeantimeLi_Szenario.FormattingEnabled = true;
+            this.comboBox_BaselineMeantimeLi_Szenario.Location = new System.Drawing.Point(66, 66);
+            this.comboBox_BaselineMeantimeLi_Szenario.Name = "comboBox_BaselineMeantimeLi_Szenario";
+            this.comboBox_BaselineMeantimeLi_Szenario.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_BaselineMeantimeLi_Szenario.Sorted = true;
+            this.comboBox_BaselineMeantimeLi_Szenario.TabIndex = 32;
+            this.comboBox_BaselineMeantimeLi_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineMeantimeLi_Szenario_SelectedIndexChanged);
+            // 
+            // button_BaselineMeantimeLi_PlotTrajectoryBaseline
+            // 
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.Location = new System.Drawing.Point(15, 147);
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.Name = "button_BaselineMeantimeLi_PlotTrajectoryBaseline";
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.TabIndex = 31;
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.Text = "Plot trajectory baselines";
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_PlotTrajectoryBaseline.Click += new System.EventHandler(this.button_PlotBaseline_Click);
+            // 
+            // button_BaselineMeantimeLi_PlotSzenarioMeanTimes
+            // 
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(15, 205);
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.Name = "button_BaselineMeantimeLi_PlotSzenarioMeanTimes";
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.TabIndex = 22;
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.Text = "Plot mean times";
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.UseVisualStyleBackColor = true;
+            this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes.Click += new System.EventHandler(this.button_BaselineMeantimeLi_PlotSzenarioMeanTimes_Click);
             // 
             // tabPage_ImportCalculations
             // 
@@ -2278,6 +2299,20 @@ namespace ManipAnalysis
             this.pictureBox_Impressum_KITLogo.TabIndex = 0;
             this.pictureBox_Impressum_KITLogo.TabStop = false;
             // 
+            // checkBox_Start_ManualMode
+            // 
+            this.checkBox_Start_ManualMode.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox_Start_ManualMode.AutoSize = true;
+            this.checkBox_Start_ManualMode.Enabled = false;
+            this.checkBox_Start_ManualMode.FlatAppearance.BorderSize = 2;
+            this.checkBox_Start_ManualMode.Location = new System.Drawing.Point(1079, 633);
+            this.checkBox_Start_ManualMode.Name = "checkBox_Start_ManualMode";
+            this.checkBox_Start_ManualMode.Size = new System.Drawing.Size(91, 23);
+            this.checkBox_Start_ManualMode.TabIndex = 15;
+            this.checkBox_Start_ManualMode.Text = "Extended mode";
+            this.checkBox_Start_ManualMode.UseVisualStyleBackColor = true;
+            this.checkBox_Start_ManualMode.CheckedChanged += new System.EventHandler(this.checkBox_ManualMode_CheckedChanged);
+            // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(1, 633);
@@ -2293,10 +2328,14 @@ namespace ManipAnalysis
             // label_ProgressInfo
             // 
             this.label_ProgressInfo.AutoSize = true;
-            this.label_ProgressInfo.Location = new System.Drawing.Point(500, 638);
+            this.label_ProgressInfo.BackColor = System.Drawing.SystemColors.Control;
+            this.label_ProgressInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label_ProgressInfo.Location = new System.Drawing.Point(500, 635);
             this.label_ProgressInfo.Name = "label_ProgressInfo";
-            this.label_ProgressInfo.Size = new System.Drawing.Size(0, 13);
+            this.label_ProgressInfo.Size = new System.Drawing.Size(83, 15);
             this.label_ProgressInfo.TabIndex = 4;
+            this.label_ProgressInfo.Text = "Not connected.";
+            this.label_ProgressInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // checkBox_PauseThread
             // 
@@ -2435,16 +2474,16 @@ namespace ManipAnalysis
         private System.Windows.Forms.TabPage tabPage_DescriptiveStatistic1;
         private System.Windows.Forms.TabPage tabPage_DescriptiveStatistic2;
         private System.Windows.Forms.TabPage tabPage_BaselineMeantime;
-        private System.Windows.Forms.Label label_BaselineMeantime_Group;
-        private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Group;
-        private System.Windows.Forms.Label label_BaselineMeantime_Szenario;
-        private System.Windows.Forms.Label label_BaselineMeantime_Subject;
-        private System.Windows.Forms.Label label_BaselineMeantime_Study;
-        private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Subject;
-        private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Study;
-        private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Szenario;
-        private System.Windows.Forms.Button button_BaselineMeantime_PlotTrajectoryBaseline;
-        private System.Windows.Forms.Button button_BaselineMeantime_PlotSzenarioMeanTimes;
+        private System.Windows.Forms.Label label_BaselineMeantimeLi_Group;
+        private System.Windows.Forms.ComboBox comboBox_BaselineMeantimeLi_Group;
+        private System.Windows.Forms.Label label_BaselineMeantimeLi_Szenario;
+        private System.Windows.Forms.Label label_BaselineMeantimeLi_Subject;
+        private System.Windows.Forms.Label label_BaselineMeantimeLi_Study;
+        private System.Windows.Forms.ComboBox comboBox_BaselineMeantimeLi_Subject;
+        private System.Windows.Forms.ComboBox comboBox_BaselineMeantimeLi_Study;
+        private System.Windows.Forms.ComboBox comboBox_BaselineMeantimeLi_Szenario;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_PlotTrajectoryBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_PlotSzenarioMeanTimes;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowCatchTrials;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Turns;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic1_Turns;
@@ -2538,10 +2577,10 @@ namespace ManipAnalysis
         private System.Windows.Forms.ComboBox comboBox_TrajectoryVelocity_IndividualMean;
         private System.Windows.Forms.ComboBox comboBox_TrajectoryVelocity_TrajectoryVelocity;
         private System.Windows.Forms.Button button_TrajectoryVelocity_Export;
-        private System.Windows.Forms.Button button_BaselineMeantime_ExportTrajectoryBaseline;
-        private System.Windows.Forms.Button button_BaselineMeantime_ExportSzenarioMeanTimes;
-        private System.Windows.Forms.Label label_BaselineMeantime_Turn;
-        private System.Windows.Forms.ComboBox comboBox_BaselineMeantime_Turn;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_ExportTrajectoryBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_ExportSzenarioMeanTimes;
+        private System.Windows.Forms.Label label_BaselineMeantimeLi_Turn;
+        private System.Windows.Forms.ComboBox comboBox_BaselineMeantimeLi_Turn;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_PlotFit;
         private System.Windows.Forms.TextBox textBox_DescriptiveStatistic1_FitEquation;
         private System.Windows.Forms.TabPage tabPage_Impressum;
@@ -2559,9 +2598,9 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_Import_PercentPeakVelocity;
         private System.Windows.Forms.Button button_Start_SelectDatabase;
         private System.Windows.Forms.ComboBox comboBox_Start_Database;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button_BaselineMeantime_ExportVelocityBaseline;
-        private System.Windows.Forms.Button button_BaselineMeantime_PlotVelocityBaseline;
+        private System.Windows.Forms.Label label_Start_Database;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_ExportVelocityBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_PlotVelocityBaseline;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_IgnoreCatchTrials;
         private System.Windows.Forms.ListBox listBox_LogBox;
 
@@ -2608,6 +2647,9 @@ namespace ManipAnalysis
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Study;
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Szenario;
         private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaseline;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_ExportGroupLi;
+        private System.Windows.Forms.Button button_BaselineMeantimeLi_PlotGroupLi;
+        private System.Windows.Forms.CheckBox checkBox_BaselineMeantimeLi_GroupAverage;
     }
 }
 
