@@ -45,7 +45,14 @@ namespace ManipAnalysis
                 new SqlConnection(@"Data Source=" + _sqlServer + ";Initial Catalog=" + _sqlDatabase + ";User Id=" +
                                   _sqlUsername + ";Password=" + _sqlPassword);
 
+            _sqlCon.InfoMessage += OnSqlConInfoMessage;
+
             _sqlCmd = new SqlCommand {Connection = _sqlCon, CommandTimeout = 600};
+        }
+
+        private void OnSqlConInfoMessage(object sender, SqlInfoMessageEventArgs e)
+        {
+            _myManipAnalysisGui.WriteToLogBox(e.ToString());
         }
 
         public void SetSqlServer(string serverUri)

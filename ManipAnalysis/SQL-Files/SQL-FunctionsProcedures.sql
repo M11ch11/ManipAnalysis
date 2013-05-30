@@ -156,11 +156,45 @@ CREATE PROCEDURE [dbo].[deleteMeasureFile]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DELETE FROM _trial WHERE measure_file_id = @measureFileID;
+	RAISERROR('--------------BEGIN--------------', 10, 1) WITH NOWAIT;
+	RAISERROR('DELETE _baseline_data...', 10, 1) WITH NOWAIT;
+	DELETE _baseline_data FROM (_baseline INNER JOIN _baseline_data on _baseline_data.baseline_id = _baseline.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _statistic_data...', 10, 1) WITH NOWAIT;
+	DELETE _statistic_data FROM (_trial INNER JOIN _statistic_data on _statistic_data.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _szenario_mean_time_data...', 10, 1) WITH NOWAIT;
+	DELETE _szenario_mean_time_data FROM (_szenario_mean_time INNER JOIN _szenario_mean_time_data on _szenario_mean_time_data.szenario_mean_time_id = _szenario_mean_time.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _measure_data_filtered...', 10, 1) WITH NOWAIT;
+	DELETE _measure_data_filtered FROM (_trial INNER JOIN _measure_data_filtered on _measure_data_filtered.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _measure_data_normalized...', 10, 1) WITH NOWAIT;
+	DELETE _measure_data_normalized FROM (_trial INNER JOIN _measure_data_normalized on _measure_data_normalized.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _measure_data_raw...', 10, 1) WITH NOWAIT;
+	DELETE _measure_data_raw FROM (_trial INNER JOIN _measure_data_raw on _measure_data_raw.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _velocity_data_filtered...', 10, 1) WITH NOWAIT;
+	DELETE _velocity_data_filtered FROM (_trial INNER JOIN _velocity_data_filtered on _velocity_data_filtered.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _velocity_data_normalized...', 10, 1) WITH NOWAIT;
+	DELETE _velocity_data_normalized FROM (_trial INNER JOIN _velocity_data_normalized on _velocity_data_normalized.trial_id = _trial.id) WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _baseline...', 10, 1) WITH NOWAIT;
 	DELETE FROM _baseline WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _szenario_mean_time...', 10, 1) WITH NOWAIT;
 	DELETE FROM _szenario_mean_time WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _trial...', 10, 1) WITH NOWAIT;
+	DELETE FROM _trial WHERE measure_file_id = @measureFileID;
+	
+	RAISERROR('DELETE _measure_file...', 10, 1) WITH NOWAIT;
 	DELETE FROM _measure_file WHERE id = @measureFileID;
+	RAISERROR('--------------END--------------', 10, 1) WITH NOWAIT;
 END
+
 
 
 
