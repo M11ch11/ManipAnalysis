@@ -43,7 +43,7 @@ namespace ManipAnalysis
 
             _sqlCon =
                 new SqlConnection(@"Data Source=" + _sqlServer + ";Initial Catalog=" + _sqlDatabase + ";User Id=" +
-                                  _sqlUsername + ";Password=" + _sqlPassword);
+                                  _sqlUsername + ";Password=" + _sqlPassword) {FireInfoMessageEventOnUserErrors = true};
 
             _sqlCon.InfoMessage += OnSqlConInfoMessage;
 
