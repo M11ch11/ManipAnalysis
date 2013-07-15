@@ -328,9 +328,10 @@ namespace ManipAnalysis
         }
 
         public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, bool showCatchTrials,
-                                                       bool showCatchTrialsExclusivly)
+                                                       bool showCatchTrialsExclusivly, bool showErrorclampTrials,
+                                                       bool showErrorclampTrialsExclusivly)
         {
-            return _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly);
+            return _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly, showErrorclampTrials, showErrorclampTrialsExclusivly);
         }
 
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
@@ -4128,7 +4129,7 @@ namespace ManipAnalysis
                                       IEnumerable<SubjectInformationContainer> subjects, int turn)
         {
             List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
-            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);  // List of all trials in the szenario
+            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);  // List of all trials in the szenario
             int setCount = szenarioTrials.Length / 16;  // The number of sets in the szenario
             List<double>[] liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
 
@@ -4226,7 +4227,7 @@ namespace ManipAnalysis
                                       IEnumerable<SubjectInformationContainer> subjects, int turn)
         {
             List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
-            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false);  // List of all trials in the szenario
+            string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);  // List of all trials in the szenario
             int setCount = szenarioTrials.Length / 16;  // The number of sets in the szenario
             List<double>[] liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
      

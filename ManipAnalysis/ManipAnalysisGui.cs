@@ -422,10 +422,14 @@ namespace ManipAnalysis
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
             bool showCatchTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
             bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
+            bool showErrorclampTrials = checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
+            bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
                                                                                              showCatchTrials,
-                                                                                             showCatchTrialsExclusivly);
+                                                                                             showCatchTrialsExclusivly,
+                                                                                             showErrorclampTrials,
+                                                                                             showErrorclampTrialsExclusivly);
 
             if (szenarioTrialNames != null)
             {
@@ -754,10 +758,14 @@ namespace ManipAnalysis
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
             bool showCatchTrials = checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
             bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
+            bool showErrorclampTrials = checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked;
+            bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
                                                                                              showCatchTrials,
-                                                                                             showCatchTrialsExclusivly);
+                                                                                             showCatchTrialsExclusivly,
+                                                                                             showErrorclampTrials,
+                                                                                             showErrorclampTrialsExclusivly);
 
             if (szenarioTrialNames != null)
             {
@@ -1600,11 +1608,27 @@ namespace ManipAnalysis
 
         private void checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
         {
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked = false;
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked = false;
+
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled = false;            
+
+            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
+
             listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
         }
 
         private void checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
         {
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = false;
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked = false;
+                                         
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Enabled = false;
+                                         
+            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
+
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
 
@@ -2056,6 +2080,46 @@ namespace ManipAnalysis
                                                                 comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
                                                                                                 .Substring("Turn".Length)));
             }
+        }
+
+        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Enabled =
+                checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked;
+        }
+
+        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled =
+                checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
+        }
+
+        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked = false;
+            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked = false;
+
+            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled = false;
+
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
+
+            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
+        }
+
+        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = false;
+            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked = false;
+                                         
+            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled = false;
+                                         
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
+
+            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
     }
 }

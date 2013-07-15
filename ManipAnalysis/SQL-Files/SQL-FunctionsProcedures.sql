@@ -1160,48 +1160,68 @@ CREATE FUNCTION [dbo].[getSzenarioTrials]
 	@studyName varchar(max),
 	@szenarioName varchar(max),
 	@showCatchTrials bit,
-	@showCatchTrialsExclusivly bit
+	@showCatchTrialsExclusivly bit,
+	@showErrorclampTrials bit,
+	@showErrorclampTrialsExclusivly bit
 )
 RETURNS @trials TABLE (trial_name varchar(max))
 AS
 BEGIN
-	IF @showCatchTrials = 1
-	
-		IF @showCatchTrialsExclusivly = 1
+		IF (@showCatchTrialsExclusivly = 1 OR @showErrorclampTrialsExclusivly = 1)
+			INSERT INTO @trials
+				SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END, CASE WHEN is_errorclamp_trial = 1 THEN ' - ErrorclampTrial' END) FROM ( _trial
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
+				WHERE study_name = @studyName AND
+				szenario_name = @szenarioName AND		
+				is_catch_trial = @showCatchTrials AND
+				is_errorclamp_trial = @showErrorclampTrials;
+		
+		ELSE IF (@showCatchTrials = 1 AND @showErrorclampTrials = 1)
+			INSERT INTO @trials
+				SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END, CASE WHEN is_errorclamp_trial = 1 THEN ' - ErrorclampTrial' END) FROM ( _trial
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
+				WHERE study_name = @studyName AND
+				szenario_name = @szenarioName;
+		
+		ELSE IF (@showCatchTrials = 1 AND @showErrorclampTrials = 0)
+			INSERT INTO @trials
+				SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END, CASE WHEN is_errorclamp_trial = 1 THEN ' - ErrorclampTrial' END) FROM ( _trial
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
+				WHERE study_name = @studyName AND
+				szenario_name = @szenarioName AND		
+				is_errorclamp_trial = @showErrorclampTrials;
+		
+		ELSE IF (@showCatchTrials = 0 AND @showErrorclampTrials = 1)
+			INSERT INTO @trials
+				SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END, CASE WHEN is_errorclamp_trial = 1 THEN ' - ErrorclampTrial' END) FROM ( _trial
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
+				WHERE study_name = @studyName AND
+				szenario_name = @szenarioName AND		
+				is_catch_trial = @showCatchTrials;
 
-			INSERT INTO @trials 
-			SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
-			INNER JOIN _study on _study.id = _trial.study_id
-			INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-			INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
-			INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
-			WHERE study_name = @studyName AND
-			szenario_name = @szenarioName AND
-			is_catch_trial = 1;
-
-		ELSE
-
-			INSERT INTO @trials 
-			SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
-			INNER JOIN _study on _study.id = _trial.study_id
-			INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-			INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
-			INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
-			WHERE study_name = @studyName AND
-			szenario_name = @szenarioName
-
-	ELSE
-
-		INSERT INTO @trials 
-		SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
-		INNER JOIN _study on _study.id = _trial.study_id
-		INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-		INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
-		INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
-		WHERE study_name = @studyName AND
-		szenario_name = @szenarioName AND		
-		is_catch_trial = 0;
-
+		ELSE IF (@showCatchTrials = 0 AND @showErrorclampTrials = 0)
+			INSERT INTO @trials
+				SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END, CASE WHEN is_errorclamp_trial = 1 THEN ' - ErrorclampTrial' END) FROM ( _trial
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
+				WHERE study_name = @studyName AND
+				szenario_name = @szenarioName AND		
+				is_catch_trial = @showCatchTrials AND
+				is_errorclamp_trial = @showErrorclampTrials; 
 	RETURN 
 END
 

@@ -2979,20 +2979,22 @@ namespace ManipAnalysis
         }
 
         public string[] GetSzenarioTrials(string studyName, string szenarioName, bool showCatchTrials,
-                                          bool showCatchTrialsExclusivly)
+                                          bool showCatchTrialsExclusivly, bool showErrorclampTrials,
+                                          bool showErrorclampTrialsExclusivly)
         {
             string[] retVal = null;
 
             _sqlCmd.Parameters.Clear();
             _sqlCmd.CommandType = CommandType.Text;
             _sqlCmd.CommandText =
-                "SELECT * FROM getSzenarioTrials(@studyName,@szenarioName,@showCatchTrials,@showCatchTrialsExclusivly)";
+                "SELECT * FROM getSzenarioTrials(@studyName,@szenarioName,@showCatchTrials,@showCatchTrialsExclusivly,@showErrorclampTrials,@showErrorclampTrialsExclusivly)";
 
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrials", Convert.ToInt32(showCatchTrials)));
-            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrialsExclusivly",
-                                                    Convert.ToInt32(showCatchTrialsExclusivly)));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrials", showCatchTrials));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showCatchTrialsExclusivly", showCatchTrialsExclusivly));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showErrorclampTrials", showErrorclampTrials));
+            _sqlCmd.Parameters.Add(new SqlParameter("@showErrorclampTrialsExclusivly", showErrorclampTrialsExclusivly));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)

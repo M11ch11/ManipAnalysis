@@ -151,7 +151,7 @@ namespace ManipAnalysis
                         {
                             string[] measureFileLine = readLine.Split(new string[] {", "}, StringSplitOptions.None);
 
-                            if (measureFileLine.Count() == 19)
+                            if (measureFileLine.Count() == 20) // Study 4
                             {
                                 if ((_dataContainer.MeasureDataRaw.Count > 0) &&
                                     (DateTime.Parse(_dataContainer.MeasureFileCreationDate + " " + measureFileLine[0])
@@ -164,6 +164,7 @@ namespace ManipAnalysis
                                            (!measureFileReader.EndOfStream)
                                         )
                                     {
+                                        readLine = measureFileReader.ReadLine();
                                         measureFileLine = readLine
                                             .Split(new string[] {", "},
                                                    StringSplitOptions.None);
@@ -184,6 +185,7 @@ namespace ManipAnalysis
                                         (!measureFileReader.EndOfStream)
                                         )
                                     {
+                                        readLine = measureFileReader.ReadLine();
                                         measureFileLine = readLine
                                             .Split(new string[] {", "},
                                                    StringSplitOptions.None);
