@@ -15,6 +15,7 @@ namespace ManipAnalysis.Container
         public readonly double ForceNominalY;
         public readonly double ForceNominalZ;
         public readonly bool IsCatchTrial;
+        public readonly bool IsErrorclampTrial;
 
         public readonly double PositionCartesianX;
         public readonly double PositionCartesianY;
@@ -45,6 +46,7 @@ namespace ManipAnalysis.Container
                                     int targetTrialNumber,
                                     int szenarioTrialNumber,
                                     bool isCatchTrial,
+                                    bool isErrorclampTrial,
                                     int positionStatus)
         {
             TimeStamp = timeStamp;
@@ -64,6 +66,7 @@ namespace ManipAnalysis.Container
             TargetTrialNumber = targetTrialNumber;
             SzenarioTrialNumber = szenarioTrialNumber;
             IsCatchTrial = isCatchTrial;
+            IsErrorclampTrial = isErrorclampTrial;
             PositionStatus = positionStatus;
             ContainsDuplicates = false;
         }

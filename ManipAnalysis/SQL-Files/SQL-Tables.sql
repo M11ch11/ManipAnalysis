@@ -21,7 +21,9 @@ CREATE TABLE dbo._trial_information(
   faulty_trial            bit NOT NULL, 
   butterworth_filterOrder int NOT NULL, 
   butterworth_cutOffFreq  int NOT NULL, 
-  velocity_trim_threshold int NOT NULL, 
+  velocity_trim_threshold int NOT NULL,
+  is_catch_trial          bit NOT NULL,
+  is_errorclamp_trial     bit NOT NULL,
   PRIMARY KEY (id));
   
 CREATE TABLE dbo._trial (
@@ -29,7 +31,6 @@ CREATE TABLE dbo._trial (
   subject_id               int NOT NULL, 
   study_id                 int NOT NULL, 
   group_id                 int NOT NULL, 
-  is_catch_trial_id        int NOT NULL, 
   szenario_id              int NOT NULL, 
   szenario_trial_number_id int NOT NULL, 
   target_id                int NOT NULL, 
@@ -163,11 +164,6 @@ CREATE TABLE dbo._measure_data_filtered (
   position_status      int NOT NULL, 
   PRIMARY KEY (id));
   
-CREATE TABLE dbo._is_catch_trial (
-  id             int IDENTITY NOT NULL, 
-  is_catch_trial bit NOT NULL, 
-  PRIMARY KEY (id));
-  
 CREATE TABLE dbo._group (
   id         int IDENTITY NOT NULL, 
   group_name varchar(max) NOT NULL, 
@@ -213,7 +209,6 @@ ALTER TABLE dbo._baseline ADD CONSTRAINT FK_baseline87337 FOREIGN KEY (study_id)
 ALTER TABLE dbo._trial ADD CONSTRAINT FK_trial993785 FOREIGN KEY (measure_file_id) REFERENCES dbo._measure_file (id) ON UPDATE Cascade ON DELETE Cascade;
 ALTER TABLE dbo._szenario_mean_time ADD CONSTRAINT FK_szenario_781803 FOREIGN KEY (measure_file_id) REFERENCES dbo._measure_file (id) ON UPDATE Cascade ON DELETE Cascade;
 ALTER TABLE dbo._baseline ADD CONSTRAINT FK_baseline692114 FOREIGN KEY (measure_file_id) REFERENCES dbo._measure_file (id) ON UPDATE Cascade ON DELETE Cascade;
-ALTER TABLE dbo._trial ADD CONSTRAINT FK_trial522099 FOREIGN KEY (is_catch_trial_id) REFERENCES dbo._is_catch_trial (id) ON UPDATE Cascade ON DELETE Cascade;
 ALTER TABLE dbo._trial ADD CONSTRAINT FK_trial196049 FOREIGN KEY (group_id) REFERENCES dbo._group (id) ON UPDATE Cascade ON DELETE Cascade;
 ALTER TABLE dbo._szenario_mean_time ADD CONSTRAINT FK_szenario_999951 FOREIGN KEY (group_id) REFERENCES dbo._group (id) ON UPDATE Cascade ON DELETE Cascade;
 ALTER TABLE dbo._baseline ADD CONSTRAINT FK_baseline497720 FOREIGN KEY (group_id) REFERENCES dbo._group (id) ON UPDATE Cascade ON DELETE Cascade;

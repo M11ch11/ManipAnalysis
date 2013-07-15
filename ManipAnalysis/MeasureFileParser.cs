@@ -56,7 +56,7 @@ namespace ManipAnalysis
                 retVal = true;
             }
             */
-            if (filenameInfoStringArray.Count() == 7) // Study 2
+            if (filenameInfoStringArray.Count() == 7) // Study 2 and above
             {
                 _dataContainer.MeasureFileHash = Md5.ComputeHash(_measureFilePath);
                 _dataContainer.StudyName = filenameInfoStringArray[3].Trim();
@@ -128,10 +128,9 @@ namespace ManipAnalysis
                     expectedTargetTrialCount = 25;
                 }
 
-                //string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
-                const string checkHeader =
-                    "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus";
-                // Study 2 
+                //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
+                //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus"; // Study 2 & 3
+                const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, IsErrorClampTrial, PositionStatus"; // Study 4
 
 
                 if (checkHeader == measureFileReader.ReadLine())
@@ -207,8 +206,8 @@ namespace ManipAnalysis
                                                                           -1,
                                                                           Convert.ToInt32(measureFileLine[16]),
                                                                           Convert.ToBoolean(measureFileLine[17]),
-                                                                          //Convert.ToInt32(Convert.ToBoolean(measureFileLine[18]))  //Study 1
-                                                                          Convert.ToInt32(measureFileLine[18]) //Study 2
+                                                                          Convert.ToBoolean(measureFileLine[18]),
+                                                                          Convert.ToInt32(measureFileLine[19])
                                                                           ));
                                 }
                             }

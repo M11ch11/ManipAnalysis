@@ -1237,18 +1237,17 @@ namespace ManipAnalysis
 
                                 int trialInformationID =
                                     _mySqlWrapper.InsertTrialInformation(
-                                        measureDataRawList.ElementAt(0).ContainsDuplicates, butterFilterOrder,
+                                        measureDataRawList.ElementAt(0).ContainsDuplicates, 
+                                        measureDataRawList.ElementAt(0).IsCatchTrial,
+                                        measureDataRawList.ElementAt(0).IsErrorclampTrial,
+                                        butterFilterOrder,
                                         butterFilterCutOff,
                                         percentPeakVelocity);
-
-                                int isCatchTrialID =
-                                    _mySqlWrapper.InsertIsCatchTrial(measureDataRawList.ElementAt(0).IsCatchTrial);
 
                                 int trialID = _mySqlWrapper.InsertTrial(
                                     subjectID,
                                     studyID,
                                     groupID,
-                                    isCatchTrialID,
                                     szenarioID,
                                     targetID,
                                     targetTrialNumberID,
@@ -1682,6 +1681,8 @@ namespace ManipAnalysis
                                        .ElementAt(0);
                     bool tempIsCatchTrial =
                         tempRawDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
+                    bool tempIsErrorclampTrial =
+                       tempRawDataEnum.Select(t => t.IsErrorclampTrial).ElementAt(0);
                     int[] tempPositionStatus =
                         tempRawDataEnum.Select(t => t.PositionStatus).ToArray();
 
@@ -1855,6 +1856,7 @@ namespace ManipAnalysis
                                                                          tempTargetTrialNumber,
                                                                          tempSzenarioTrialNumber,
                                                                          tempIsCatchTrial,
+                                                                         tempIsErrorclampTrial,
                                                                          tempPositionStatus
                                                                              [j]
                                                                          ));
@@ -2193,6 +2195,10 @@ namespace ManipAnalysis
                                             .ElementAt(0);
                     bool tempIsCatchTrial =
                         tempFilteredDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
+
+                    bool tempIsErrorclampTrial =
+                        tempFilteredDataEnum.Select(t => t.IsErrorclampTrial).ElementAt(0);
+
                     var errorList = new List<string>();
 
                     _myMatlabWrapper.SetWorkspaceData(
@@ -2599,6 +2605,7 @@ namespace ManipAnalysis
                                                                            tempTargetTrialNumber,
                                                                            tempSzenarioTrialNumber,
                                                                            tempIsCatchTrial,
+                                                                           tempIsErrorclampTrial,
                                                                            Convert
                                                                                .ToInt32(
                                                                                    positionStatus

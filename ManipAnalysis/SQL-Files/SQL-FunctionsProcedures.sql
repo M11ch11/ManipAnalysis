@@ -548,53 +548,6 @@ END
 
 
 
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[insertIsCatchTrial]
-	@isCatchTrial bit,
-	@id int OUTPUT
-AS
-BEGIN
-	SET NOCOUNT ON;
-	IF NOT EXISTS 
-	(
-		SELECT * FROM dbo._is_catch_trial WHERE 
-		is_catch_trial = @isCatchTrial
-	)
-		BEGIN
-
-			INSERT INTO dbo._is_catch_trial	(	
-												is_catch_trial
-											) 
-											VALUES
-											(
-												@isCatchTrial
-											);
-
-			SELECT @id = Scope_Identity();
-
-		END
-	ELSE
-		BEGIN
-
-			SELECT @id = id FROM dbo._is_catch_trial WHERE 
-			is_catch_trial = @isCatchTrial
-
-		END
-END
-
-
-
-
-
-
 GO
 SET ANSI_NULLS ON
 GO
@@ -1060,7 +1013,6 @@ CREATE PROCEDURE [dbo].[insertTrial]
 	@subjectID int,
 	@studyID int,
 	@groupID int,
-	@isCatchTrialID int,
 	@szenarioID int,
 	@targetID int,
 	@targetTrialNumberID int,
@@ -1077,7 +1029,6 @@ BEGIN
 		subject_id = @subjectID AND
 		study_id = @studyID AND
 		group_id = @groupID AND
-		is_catch_trial_id = @isCatchTrialID AND
 		szenario_id = @szenarioID AND
 		target_id = @targetID AND
 		target_trial_number_id = @targetTrialNumberID AND
@@ -1090,7 +1041,6 @@ BEGIN
 										subject_id,
 										study_id,
 										group_id,
-										is_catch_trial_id,
 										szenario_id,
 										target_id,
 										target_trial_number_id,
@@ -1103,7 +1053,6 @@ BEGIN
 										@subjectID,
 										@studyID,
 										@groupID,
-										@isCatchTrialID,
 										@szenarioID,
 										@targetID,
 										@targetTrialNumberID,
@@ -1120,7 +1069,6 @@ BEGIN
 			subject_id = @subjectID AND
 			study_id = @studyID AND
 			group_id = @groupID AND
-			is_catch_trial_id = @isCatchTrialID AND
 			szenario_id = @szenarioID AND
 			target_id = @targetID AND
 			target_trial_number_id = @targetTrialNumberID AND
@@ -1144,6 +1092,8 @@ GO
 
 CREATE PROCEDURE [dbo].[insertTrialInformation]
 	@faultyTrial bit,
+	@isCatchTrial bit,
+	@isErrorclampTrial bit,
 	@butterworthFilterOrder int,
 	@butterworthCutOffFreq int,
 	@velocityTrimThreshold int,
@@ -1155,6 +1105,8 @@ BEGIN
 	(
 		SELECT * FROM dbo._trial_information WHERE 
 		faulty_trial = @faultyTrial AND
+		is_catch_trial = @isCatchTrial AND
+		is_errorclamp_trial = @isErrorclampTrial AND
 		butterworth_filterOrder = @butterworthFilterOrder AND
 		butterworth_cutOffFreq = @butterworthCutOffFreq AND
 		velocity_trim_threshold = @velocityTrimThreshold
@@ -1162,6 +1114,8 @@ BEGIN
 		BEGIN
 			INSERT INTO dbo._trial_information	(	
 													faulty_trial,
+													is_catch_trial,
+													is_errorclamp_trial,
 													butterworth_filterOrder,
 													butterworth_cutOffFreq,
 													velocity_trim_threshold
@@ -1169,6 +1123,8 @@ BEGIN
 												VALUES
 												(
 													@faultyTrial,
+													@isCatchTrial,
+													@isErrorclampTrial,
 													@butterworthFilterOrder,
 													@butterworthCutOffFreq,
 													@velocityTrimThreshold
@@ -1180,6 +1136,8 @@ BEGIN
 		BEGIN
 			SELECT @id = id FROM dbo._trial_information WHERE 
 			faulty_trial = @faultyTrial AND
+			is_catch_trial = @isCatchTrial AND
+			is_errorclamp_trial = @isErrorclampTrial AND
 			butterworth_filterOrder = @butterworthFilterOrder AND
 			butterworth_cutOffFreq = @butterworthCutOffFreq AND
 			velocity_trim_threshold = @velocityTrimThreshold;
@@ -1215,7 +1173,7 @@ BEGIN
 			SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
 			INNER JOIN _study on _study.id = _trial.study_id
 			INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-			INNER JOIN _is_catch_trial on _is_catch_trial.id = _trial.is_catch_trial_id
+			INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
 			INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
 			WHERE study_name = @studyName AND
 			szenario_name = @szenarioName AND
@@ -1227,7 +1185,7 @@ BEGIN
 			SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
 			INNER JOIN _study on _study.id = _trial.study_id
 			INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-			INNER JOIN _is_catch_trial on _is_catch_trial.id = _trial.is_catch_trial_id
+			INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
 			INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
 			WHERE study_name = @studyName AND
 			szenario_name = @szenarioName
@@ -1238,7 +1196,7 @@ BEGIN
 		SELECT DISTINCT CONCAT('Trial ',RIGHT('00' + CONVERT(VARCHAR, szenario_trial_number ), 3), CASE WHEN is_catch_trial = 1 THEN ' - CatchTrial' END) FROM ( _trial
 		INNER JOIN _study on _study.id = _trial.study_id
 		INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id
-		INNER JOIN _is_catch_trial on _is_catch_trial.id = _trial.is_catch_trial_id
+		INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
 		INNER JOIN _szenario on _szenario.id = _trial.szenario_id )
 		WHERE study_name = @studyName AND
 		szenario_name = @szenarioName AND		
@@ -1246,10 +1204,6 @@ BEGIN
 
 	RETURN 
 END
-
-
-
-
 
 
 GO
@@ -1444,9 +1398,9 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT _measure_data_normalized.*, _is_catch_trial.is_catch_trial
+	SELECT _measure_data_normalized.*, _trial_information.is_catch_trial
 	FROM (_measure_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
-			INNER JOIN _is_catch_trial ON _trial.is_catch_trial_id = _is_catch_trial.id) 
+			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id) 
 	WHERE _measure_data_normalized.trial_id = @trialID
 )
 
@@ -1738,8 +1692,8 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT _velocity_data_normalized.*, _is_catch_trial.is_catch_trial
+	SELECT _velocity_data_normalized.*, _trial_information.is_catch_trial
 	FROM (_velocity_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
-			INNER JOIN _is_catch_trial ON _trial.is_catch_trial_id = _is_catch_trial.id) 
+			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id) 
 	WHERE _velocity_data_normalized.trial_id = @trialID
 )
