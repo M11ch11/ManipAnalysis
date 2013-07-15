@@ -127,6 +127,15 @@ namespace ManipAnalysis
                     expectedSzenarioTrialCount = 400;
                     expectedTargetTrialCount = 25;
                 }
+                else if (_dataContainer.SzenarioName == "Szenario40" ||
+                         _dataContainer.SzenarioName == "Szenario41" ||
+                         _dataContainer.SzenarioName == "Szenario42" ||
+                         _dataContainer.SzenarioName == "Szenario43"
+                    )
+                {
+                    expectedSzenarioTrialCount = 480;
+                    expectedTargetTrialCount = 30;
+                }
 
                 //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
                 //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus"; // Study 2 & 3
