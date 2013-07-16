@@ -165,9 +165,12 @@ namespace ManipAnalysis
                                         )
                                     {
                                         readLine = measureFileReader.ReadLine();
-                                        measureFileLine = readLine
-                                            .Split(new string[] {", "},
-                                                   StringSplitOptions.None);
+                                        if (readLine != null)
+                                        {
+                                            measureFileLine = readLine
+                                                .Split(new string[] {", "},
+                                                       StringSplitOptions.None);
+                                        }
                                     }
                                 }
                                 else if ((_dataContainer.MeasureDataRaw.Count > 0) &&
@@ -186,9 +189,12 @@ namespace ManipAnalysis
                                         )
                                     {
                                         readLine = measureFileReader.ReadLine();
-                                        measureFileLine = readLine
-                                            .Split(new string[] {", "},
-                                                   StringSplitOptions.None);
+                                        if (readLine != null)
+                                        {
+                                            measureFileLine = readLine
+                                                .Split(new string[] {", "},
+                                                       StringSplitOptions.None);
+                                        }
                                     }
                                 }
 

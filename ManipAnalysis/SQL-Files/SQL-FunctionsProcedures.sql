@@ -1418,7 +1418,13 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT _measure_data_normalized.*, _trial_information.is_catch_trial
+
+	SELECT	_measure_data_normalized.time_stamp, _measure_data_normalized.trial_id, _measure_data_normalized.position_status,
+			_measure_data_normalized.force_actual_x, _measure_data_normalized.force_actual_y, _measure_data_normalized.force_actual_z,
+			_measure_data_normalized.force_moment_x, _measure_data_normalized.force_moment_y, _measure_data_normalized.force_moment_z, 
+			_measure_data_normalized.force_nominal_x, _measure_data_normalized.force_nominal_y, _measure_data_normalized.force_nominal_z,
+			_measure_data_normalized.position_cartesian_x, _measure_data_normalized.position_cartesian_y, _measure_data_normalized.position_cartesian_z,			
+			_trial_information.faulty_trial, _trial_information.is_catch_trial, _trial_information.is_errorclamp_trial
 	FROM (_measure_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
 			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id) 
 	WHERE _measure_data_normalized.trial_id = @trialID
@@ -1712,7 +1718,7 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	SELECT _velocity_data_normalized.*, _trial_information.is_catch_trial
+	SELECT _velocity_data_normalized.time_stamp, _velocity_data_normalized.trial_id, _velocity_data_normalized.velocity_x, _velocity_data_normalized.velocity_y, _velocity_data_normalized.velocity_z, _trial_information.faulty_trial, _trial_information.is_catch_trial, _trial_information.is_errorclamp_trial
 	FROM (_velocity_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
 			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id) 
 	WHERE _velocity_data_normalized.trial_id = @trialID

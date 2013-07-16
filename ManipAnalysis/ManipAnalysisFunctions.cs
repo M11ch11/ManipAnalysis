@@ -3192,7 +3192,7 @@ namespace ManipAnalysis
         }
 
         public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-                                   bool ignoreCatchTrials)
+                                   bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials, bool showErrorclampTrialsExclusivly)
         {
             _myManipAnalysisGui.WriteProgressInfo("Getting data...");
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
@@ -3224,18 +3224,51 @@ namespace ManipAnalysis
 
                         foreach (DataRow row in measureDataSet.Tables[0].Rows)
                         {
-                            if (ignoreCatchTrials)
+                            if (showCatchTrialsExclusivly)
                             {
-                                if (Convert.ToInt32(row["is_catch_trial"]) == 0)
+                                if (Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrialsExclusivly)
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
                                 }
                             }
-                            else
+                            else if (showErrorclampTrialsExclusivly)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrialsExclusivly)
+                                {
+                                    measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                    measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                }
+                            }
+                            else if (showCatchTrials & showErrorclampTrials)
                             {
                                 measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                 measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                            }
+                            else if (!showCatchTrials & showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrials)
+                                {
+                                    measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                    measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                }
+                            }
+                            else if (showCatchTrials & !showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrials)
+                                {
+                                    measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                    measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                }
+                            }
+                            else if (!showCatchTrials & !showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrials &
+                                    Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrials)
+                                {
+                                    measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                    measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                }
                             }
                         }
 
@@ -3336,7 +3369,7 @@ namespace ManipAnalysis
         }
 
         public void PlotVelocity(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-                                 bool ignoreCatchTrials)
+                                 bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials, bool showErrorclampTrialsExclusivly)
         {
             _myManipAnalysisGui.WriteProgressInfo("Getting data...");
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
@@ -3365,20 +3398,57 @@ namespace ManipAnalysis
 
                         foreach (DataRow row in velocityDataSet.Tables[0].Rows)
                         {
-                            if (ignoreCatchTrials)
+                            if (showCatchTrialsExclusivly)
                             {
-                                if (Convert.ToInt32(row["is_catch_trial"]) == 0)
+                                if (Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrialsExclusivly)
                                 {
                                     velocityDataXZ.Add(
                                         Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
                                                   Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
                                 }
                             }
-                            else
+                            else if (showErrorclampTrialsExclusivly)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrialsExclusivly)
+                                {
+                                    velocityDataXZ.Add(
+                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                }
+                            }
+                            else if (showCatchTrials & showErrorclampTrials)
                             {
                                 velocityDataXZ.Add(
-                                    Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                              Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                            }
+                            else if (!showCatchTrials & showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrials)
+                                {
+                                    velocityDataXZ.Add(
+                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                }
+                            }
+                            else if (showCatchTrials & !showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrials)
+                                {
+                                    velocityDataXZ.Add(
+                                         Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                   Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                }
+                            }
+                            else if (!showCatchTrials & !showErrorclampTrials)
+                            {
+                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == showErrorclampTrials &
+                                    Convert.ToBoolean(row["is_catch_trial"]) == showCatchTrials)
+                                {
+                                    velocityDataXZ.Add(
+                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                }
                             }
                         }
 

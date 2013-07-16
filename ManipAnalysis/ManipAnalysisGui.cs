@@ -1369,14 +1369,20 @@ namespace ManipAnalysis
                         _manipAnalysisFunctions.PlotVelocity(
                             listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                             comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                            checkBox_TrajectoryVelocity_IgnoreCatchTrials.Checked);
+                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
                         break;
 
                     case "Trajectory":
                         _manipAnalysisFunctions.PlotTrajectory(
                             listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                             comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                            checkBox_TrajectoryVelocity_IgnoreCatchTrials.Checked);
+                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
                         break;
                 }
             }
@@ -2120,6 +2126,40 @@ namespace ManipAnalysis
             checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
 
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
+        }
+
+        private void checkBox_TrajectoryVelocity_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Enabled =
+                checkBox_TrajectoryVelocity_ShowCatchTrials.Checked;
+        }
+
+        private void checkBox_TrajectoryVelocity_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Enabled =
+                checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked;
+        }
+
+        private void checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = false;
+            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked = false;
+
+            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled = !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Enabled = false;
+
+            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled = !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
+        }
+
+        private void checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = false;
+            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked = false;
+
+            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled = !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Enabled = false;
+
+            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled = !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
         }
     }
 }
