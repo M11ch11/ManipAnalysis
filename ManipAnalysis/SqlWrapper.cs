@@ -1671,7 +1671,8 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int InsertTrialInformation(bool faultyTrial, bool isCatchTrial, bool isErrorclampTrial, int butterworthFilterOrder, int butterworthFilterFreq,
+        public int InsertTrialInformation(bool faultyTrial, bool isCatchTrial, bool isErrorclampTrial,
+                                          int butterworthFilterOrder, int butterworthFilterFreq,
                                           int velocityTrimThreshold)
         {
             int retVal = -1;

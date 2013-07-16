@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,15 +10,8 @@ namespace ManipAnalysis
 {
     public partial class ManipAnalysisGui : Form
     {
-        private ManipAnalysisFunctions _manipAnalysisFunctions;
         private const string ServerName = "IFS96";
-
-        private delegate void LogBoxCallbackAddString(string text);
-        private delegate void LogBoxCallbackClearItems();
-        private delegate string[] LogBoxCallbackGetText();
-        private delegate void ProgressBarCallback(double value);
-        private delegate void ProgressLabelCallback(string text);
-        private delegate void TabControlCallback(bool enable);
+        private ManipAnalysisFunctions _manipAnalysisFunctions;
 
         public ManipAnalysisGui()
         {
@@ -254,10 +246,10 @@ namespace ManipAnalysis
         private void button_PlotBaseline_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.PlotBaseline(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                             comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                             comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                             (SubjectInformationContainer)
-                                             comboBox_BaselineMeantimeLi_Subject.SelectedItem);
+                                                 comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                                                 comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                                                 (SubjectInformationContainer)
+                                                 comboBox_BaselineMeantimeLi_Subject.SelectedItem);
         }
 
         public void EnableTabPages(bool enable)
@@ -342,7 +334,8 @@ namespace ManipAnalysis
                     for (int i = 1; i < groups.Length; i++)
                     {
                         szenarioIntersect =
-                            szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i])).ToArray();
+                            szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]))
+                                             .ToArray();
                     }
 
                     comboBox_DescriptiveStatistic1_Szenario.Items.AddRange(szenarioIntersect.ToArray());
@@ -363,8 +356,9 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
-                                                                                                        szenario);
+                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
+                                                                                                            groups[i],
+                                                                                                            szenario);
                 if (tempSubjects != null)
                 {
                     listBox_DescriptiveStatistic1_Subjects.Items.AddRange(tempSubjects.ToArray());
@@ -390,7 +384,7 @@ namespace ManipAnalysis
                 for (int j = 0; j < subjects.Length; j++)
                 {
                     IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                                                                                      subjects[j]);
+                                                                                          subjects[j]);
 
                     if (tempTurnString != null)
                     {
@@ -426,10 +420,10 @@ namespace ManipAnalysis
             bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                                                                                             showCatchTrials,
-                                                                                             showCatchTrialsExclusivly,
-                                                                                             showErrorclampTrials,
-                                                                                             showErrorclampTrialsExclusivly);
+                                                                                                 showCatchTrials,
+                                                                                                 showCatchTrialsExclusivly,
+                                                                                                 showErrorclampTrials,
+                                                                                                 showErrorclampTrialsExclusivly);
 
             if (szenarioTrialNames != null)
             {
@@ -699,8 +693,9 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
-                                                                                                        szenario);
+                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
+                                                                                                            groups[i],
+                                                                                                            szenario);
                 if (tempSubjects != null)
                 {
                     listBox_DescriptiveStatistic2_Subjects.Items.AddRange(tempSubjects.ToArray());
@@ -726,7 +721,7 @@ namespace ManipAnalysis
                 for (int j = 0; j < subjects.Length; j++)
                 {
                     IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                                                                                      subjects[j]);
+                                                                                          subjects[j]);
 
                     if (tempTurnString != null)
                     {
@@ -762,10 +757,10 @@ namespace ManipAnalysis
             bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                                                                                             showCatchTrials,
-                                                                                             showCatchTrialsExclusivly,
-                                                                                             showErrorclampTrials,
-                                                                                             showErrorclampTrialsExclusivly);
+                                                                                                 showCatchTrials,
+                                                                                                 showCatchTrialsExclusivly,
+                                                                                                 showErrorclampTrials,
+                                                                                                 showErrorclampTrialsExclusivly);
 
             if (szenarioTrialNames != null)
             {
@@ -995,11 +990,11 @@ namespace ManipAnalysis
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>(),
-                                                   Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
-                                                   Convert.ToInt32(textBox_Import_FilterOrder.Text),
-                                                   Convert.ToInt32(textBox_Import_CutoffFreq.Text),
-                                                   Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),
-                                                   Convert.ToInt32(textBox_Import_NewSampleCount.Text));
+                                                       Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
+                                                       Convert.ToInt32(textBox_Import_FilterOrder.Text),
+                                                       Convert.ToInt32(textBox_Import_CutoffFreq.Text),
+                                                       Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),
+                                                       Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }
 
         private void button_CalculateStatistics_Click(object sender, EventArgs e)
@@ -1140,7 +1135,7 @@ namespace ManipAnalysis
             for (int i = 0; i < groups.Length; i++)
             {
                 IEnumerable<SubjectInformationContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
-                                                                                                    szenario);
+                                                                                                        szenario);
                 if (subjects != null)
                 {
                     listBox_TrajectoryVelocity_Subjects.Items.AddRange(subjects.ToArray());
@@ -1168,7 +1163,7 @@ namespace ManipAnalysis
                 for (int j = 0; j < subjects.Length; j++)
                 {
                     IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                                                                                      subjects[j]);
+                                                                                          subjects[j]);
 
                     if (tempTurnString != null)
                     {
@@ -1451,7 +1446,7 @@ namespace ManipAnalysis
             string szenario = comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString();
 
             IEnumerable<SubjectInformationContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
-                                                                                                    szenario);
+                                                                                                        szenario);
             if (subjectNames != null)
             {
                 comboBox_BaselineMeantimeLi_Subject.Items.AddRange(subjectNames.ToArray());
@@ -1562,12 +1557,13 @@ namespace ManipAnalysis
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportTrajectoryBaseline(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                                             comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                                             comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                                             (SubjectInformationContainer)
-                                                             comboBox_BaselineMeantimeLi_Subject.SelectedItem,
-                                                             saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportTrajectoryBaseline(
+                    comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                    (SubjectInformationContainer)
+                    comboBox_BaselineMeantimeLi_Subject.SelectedItem,
+                    saveFileDialog.FileName);
             }
         }
 
@@ -1595,15 +1591,16 @@ namespace ManipAnalysis
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportSzenarioMeanTimes(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                                            comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                                            comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                                            (SubjectInformationContainer)
-                                                            comboBox_BaselineMeantimeLi_Subject.SelectedItem,
-                                                            Convert.ToInt32(
-                                                                comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
-                                                                                              .Substring("Turn".Length)),
-                                                            saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportSzenarioMeanTimes(
+                    comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                    (SubjectInformationContainer)
+                    comboBox_BaselineMeantimeLi_Subject.SelectedItem,
+                    Convert.ToInt32(
+                        comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
+                                                        .Substring("Turn".Length)),
+                    saveFileDialog.FileName);
             }
         }
 
@@ -1617,10 +1614,12 @@ namespace ManipAnalysis
             checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked = false;
             checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked = false;
 
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled = false;            
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled =
+                !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled = false;
 
-            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled =
+                !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
 
             listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
         }
@@ -1629,11 +1628,13 @@ namespace ManipAnalysis
         {
             checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = false;
             checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked = false;
-                                         
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
+
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled =
+                !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
             checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Enabled = false;
-                                         
-            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
+
+            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled =
+                !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
 
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
@@ -1686,13 +1687,13 @@ namespace ManipAnalysis
         private void button_BaselineMeantimeLi_PlotSzenarioMeanTimes_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.PlotSzenarioMeanTimes(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                                      comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                                      comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                                      (SubjectInformationContainer)
-                                                      comboBox_BaselineMeantimeLi_Subject.SelectedItem,
-                                                      Convert.ToInt32(
-                                                          comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
-                                                                                        .Substring("Turn".Length)));
+                                                          comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                                                          comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                                                          (SubjectInformationContainer)
+                                                          comboBox_BaselineMeantimeLi_Subject.SelectedItem,
+                                                          Convert.ToInt32(
+                                                              comboBox_BaselineMeantimeLi_Turn.SelectedItem.ToString()
+                                                                                              .Substring("Turn".Length)));
         }
 
         private void button_BaselineMeantimeLi_ExportVelocityBaseline_Click(object sender, EventArgs e)
@@ -1719,22 +1720,23 @@ namespace ManipAnalysis
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportVelocityBaseline(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                                           comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                                           comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                                           (SubjectInformationContainer)
-                                                           comboBox_BaselineMeantimeLi_Subject.SelectedItem,
-                                                           saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportVelocityBaseline(
+                    comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                    comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                    (SubjectInformationContainer)
+                    comboBox_BaselineMeantimeLi_Subject.SelectedItem,
+                    saveFileDialog.FileName);
             }
         }
 
         private void button_BaselineMeantimeLi_PlotVelocityBaseline_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
-                                                      comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
-                                                      comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
-                                                      (SubjectInformationContainer)
-                                                      comboBox_BaselineMeantimeLi_Subject.SelectedItem);
+                                                          comboBox_BaselineMeantimeLi_Group.SelectedItem.ToString(),
+                                                          comboBox_BaselineMeantimeLi_Szenario.SelectedItem.ToString(),
+                                                          (SubjectInformationContainer)
+                                                          comboBox_BaselineMeantimeLi_Subject.SelectedItem);
         }
 
         private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
@@ -1801,7 +1803,7 @@ namespace ManipAnalysis
             string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
 
             IEnumerable<SubjectInformationContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
-                                                                                                    szenario);
+                                                                                                        szenario);
             if (subjectNames != null)
             {
                 comboBox_BaselineRecalculation_Subject.Items.AddRange(subjectNames.ToArray());
@@ -2026,7 +2028,10 @@ namespace ManipAnalysis
             }
             else
             {
-                subjects = new List<SubjectInformationContainer>{(SubjectInformationContainer)comboBox_BaselineMeantimeLi_Subject.SelectedItem};
+                subjects = new List<SubjectInformationContainer>
+                    {
+                        (SubjectInformationContainer) comboBox_BaselineMeantimeLi_Subject.SelectedItem
+                    };
             }
 
             _manipAnalysisFunctions.PlotLearningIndex(comboBox_BaselineMeantimeLi_Study.SelectedItem.ToString(),
@@ -2074,7 +2079,10 @@ namespace ManipAnalysis
                 }
                 else
                 {
-                    subjects = new List<SubjectInformationContainer> { (SubjectInformationContainer)comboBox_BaselineMeantimeLi_Subject.SelectedItem };
+                    subjects = new List<SubjectInformationContainer>
+                        {
+                            (SubjectInformationContainer) comboBox_BaselineMeantimeLi_Subject.SelectedItem
+                        };
                 }
 
                 _manipAnalysisFunctions.ExportLearningIndex(saveFileDialog.FileName,
@@ -2102,28 +2110,34 @@ namespace ManipAnalysis
                 checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
         }
 
-        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
+                                                                                                  EventArgs e)
         {
             checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked = false;
             checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked = false;
 
-            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled =
+                !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
             checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled = false;
 
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled =
+                !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
 
             listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
         }
 
-        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
+                                                                                                  EventArgs e)
         {
             checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = false;
             checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked = false;
-                                         
-            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
+
+            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled =
+                !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
             checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled = false;
-                                         
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled = !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
+
+            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled =
+                !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
 
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
@@ -2145,21 +2159,38 @@ namespace ManipAnalysis
             checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = false;
             checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked = false;
 
-            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled = !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled =
+                !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
             checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Enabled = false;
 
-            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled = !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled =
+                !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
         }
 
-        private void checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
+        private void checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
+                                                                                               EventArgs e)
         {
             checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = false;
             checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked = false;
 
-            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled = !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled =
+                !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
             checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Enabled = false;
 
-            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled = !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
+            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled =
+                !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
         }
+
+        private delegate void LogBoxCallbackAddString(string text);
+
+        private delegate void LogBoxCallbackClearItems();
+
+        private delegate string[] LogBoxCallbackGetText();
+
+        private delegate void ProgressBarCallback(double value);
+
+        private delegate void ProgressLabelCallback(string text);
+
+        private delegate void TabControlCallback(bool enable);
     }
 }
