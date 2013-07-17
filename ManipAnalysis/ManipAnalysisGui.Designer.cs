@@ -43,6 +43,10 @@ namespace ManipAnalysis
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
             this.tabPage_TrajectoryVelocity = new System.Windows.Forms.TabPage();
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly = new System.Windows.Forms.CheckBox();
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly = new System.Windows.Forms.CheckBox();
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials = new System.Windows.Forms.CheckBox();
             this.button_TrajectoryVelocity_Export = new System.Windows.Forms.Button();
             this.comboBox_TrajectoryVelocity_IndividualMean = new System.Windows.Forms.ComboBox();
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity = new System.Windows.Forms.ComboBox();
@@ -236,10 +240,6 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly = new System.Windows.Forms.CheckBox();
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly = new System.Windows.Forms.CheckBox();
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -402,6 +402,54 @@ namespace ManipAnalysis
             this.tabPage_TrajectoryVelocity.Text = "Trajectory / Velocity";
             this.tabPage_TrajectoryVelocity.UseVisualStyleBackColor = true;
             this.tabPage_TrajectoryVelocity.Enter += new System.EventHandler(this.tabPage_TrajectoryVelocity_Enter);
+            // 
+            // checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly
+            // 
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Location = new System.Drawing.Point(150, 571);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly";
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Size = new System.Drawing.Size(71, 17);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.TabIndex = 55;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Text = "exclusivly";
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.UseVisualStyleBackColor = true;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged);
+            // 
+            // checkBox_TrajectoryVelocity_ShowErrorclampTrials
+            // 
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = true;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Location = new System.Drawing.Point(15, 571);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrials";
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.TabIndex = 54;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Text = "Show errorclamp trials";
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.UseVisualStyleBackColor = true;
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowErrorclampTrials_CheckedChanged);
+            // 
+            // checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly
+            // 
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(150, 548);
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Name = "checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly";
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Size = new System.Drawing.Size(71, 17);
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.TabIndex = 53;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Text = "exclusivly";
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.UseVisualStyleBackColor = true;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly_CheckedChanged);
+            // 
+            // checkBox_TrajectoryVelocity_ShowCatchTrials
+            // 
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = true;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Location = new System.Drawing.Point(15, 548);
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Name = "checkBox_TrajectoryVelocity_ShowCatchTrials";
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.TabIndex = 52;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Text = "Show catch trials";
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.UseVisualStyleBackColor = true;
+            this.checkBox_TrajectoryVelocity_ShowCatchTrials.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowCatchTrials_CheckedChanged);
             // 
             // button_TrajectoryVelocity_Export
             // 
@@ -794,6 +842,7 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "ErrorClamp",
             "Max perpendicular distance - Abs",
             "Max perpendicular distance - Sign",
             "Mean perpendicular distance - Abs",
@@ -2428,54 +2477,6 @@ namespace ManipAnalysis
             this.listBox_LogBox.ScrollAlwaysVisible = true;
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
-            // 
-            // checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly
-            // 
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Location = new System.Drawing.Point(150, 571);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Size = new System.Drawing.Size(71, 17);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.TabIndex = 55;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Text = "exclusivly";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.UseVisualStyleBackColor = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged);
-            // 
-            // checkBox_TrajectoryVelocity_ShowErrorclampTrials
-            // 
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Location = new System.Drawing.Point(15, 571);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrials";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.TabIndex = 54;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Text = "Show errorclamp trials";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowErrorclampTrials_CheckedChanged);
-            // 
-            // checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly
-            // 
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Location = new System.Drawing.Point(150, 548);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Name = "checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Size = new System.Drawing.Size(71, 17);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.TabIndex = 53;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Text = "exclusivly";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.UseVisualStyleBackColor = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly_CheckedChanged);
-            // 
-            // checkBox_TrajectoryVelocity_ShowCatchTrials
-            // 
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Location = new System.Drawing.Point(15, 548);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Name = "checkBox_TrajectoryVelocity_ShowCatchTrials";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.TabIndex = 52;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Text = "Show catch trials";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.UseVisualStyleBackColor = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.CheckedChanged += new System.EventHandler(this.checkBox_TrajectoryVelocity_ShowCatchTrials_CheckedChanged);
             // 
             // ManipAnalysisGui
             // 

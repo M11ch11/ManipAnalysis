@@ -311,6 +311,38 @@ BEGIN
 END
 
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[getTrialID2]
+	@studyName varchar(max),
+	@groupName varchar(max),
+	@szenarioName varchar(max),
+	@subjectID int,
+	@turnDateTime datetime2,
+	@szenarioTrialNumber int,
+	@id int OUTPUT
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT @id = _trial.id FROM ( _trial
+				INNER JOIN _measure_file on _measure_file.id = _trial.measure_file_id
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _group on _group.id = _trial.group_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id)
+				WHERE study_name = @studyName AND
+				group_name = @groupName AND
+				subject_id = @subjectID AND
+				szenario_name = @szenarioName AND
+				creation_time = @turnDateTime AND
+				szenario_trial_number = @szenarioTrialNumber;
+END
+
 
 
 GO
