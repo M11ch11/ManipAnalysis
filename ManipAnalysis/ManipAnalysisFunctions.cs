@@ -365,193 +365,78 @@ namespace ManipAnalysis
                         StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCounter);
 
                         DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
-                                                                    tempStatisticPlotContainer.Group,
-                                                                    tempStatisticPlotContainer.Szenario,
-                                                                    tempStatisticPlotContainer.Subject,
-                                                                    Convert.ToInt32(
-                                                                        tempStatisticPlotContainer.Turn.Substring(
-                                                                            "Turn".Length)));
+                                                                tempStatisticPlotContainer.Group,
+                                                                tempStatisticPlotContainer.Szenario,
+                                                                tempStatisticPlotContainer.Subject,
+                                                                Convert.ToInt32(
+                                                                    tempStatisticPlotContainer.Turn.Substring(
+                                                                        "Turn".Length)));
 
-                        if (statisticType == "ErrorClamp")
-                        {
-                            List<double> pdData = new List<double>();
-
-                            foreach (int szenarioTrial in tempStatisticPlotContainer.Trials)
-                            {
-                                int trialID = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
-                                                                       tempStatisticPlotContainer.Group,
-                                                                       tempStatisticPlotContainer.Szenario,
-                                                                       tempStatisticPlotContainer.Subject, turnDateTime,
-                                                                       szenarioTrial);
-                                DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                                DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
-                                int sampleCount = measureDataSet.Tables[0].Rows.Count;
-                                var measureData = new double[sampleCount, 7];
-                                var timeStamp = new double[sampleCount];
-                                var target = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
-
-                                for (int i = 0; i < sampleCount; i++)
-                                {
-                                    timeStamp[i] =
-                                        Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
-                                    measureData[i, 0] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_x"]);
-                                    measureData[i, 1] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_y"]);
-                                    measureData[i, 2] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_z"]) * -1.0;
-
-                                    measureData[i, 3] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
-                                    measureData[i, 4] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
-                                    measureData[i, 5] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
-                                }
-
-                                List<double> tempTimeList = timeStamp.ToList();
-                                int time300MsIndex =
-                                    tempTimeList.IndexOf(
-                                        tempTimeList.OrderBy(
-                                            d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
-                                                    .ElementAt(0));
-
-                                double forceAbs300ms = Math.Sqrt(
-                                    Math.Pow(measureData[time300MsIndex, 0], 2) +
-                                    Math.Pow(measureData[time300MsIndex, 2], 2));
-
-                                double forceAngle300ms = 
-                                    Math.Atan2(measureData[time300MsIndex, 2], measureData[time300MsIndex, 0]);
-
-                                double forceNorm300ms = 0;
-
-                                switch (target)
-                                {
-                                    case 1:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 2.0)));
-                                        break;
-                                    case 2:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (7.0 / 4.0)));
-                                        break;
-                                    case 3:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (0)));
-                                        break;
-                                    case 4:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 4.0)));
-                                        break;
-                                    case 5:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 2.0)));
-                                        break;
-                                    case 6:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 4.0)));
-                                        break;
-                                    case 7:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1)));
-                                        break;
-                                    case 8:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (5.0 / 4.0)));
-                                        break;
-                                    case 9:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 2.0)));
-                                        break;
-                                    case 10:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 4.0)));
-                                        break;
-                                    case 11:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1)));
-                                        break;
-                                    case 12:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (5.0 / 4.0)));
-                                        break;
-                                    case 13:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 2.0)));
-                                        break;
-                                    case 14:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (7.0 / 4.0)));
-                                        break;
-                                    case 15:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (0)));
-                                        break;
-                                    case 16:
-                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 4.0)));
-                                        break;
-                                }
-                                _myManipAnalysisGui.WriteToLogBox("Target: " + target + 
-                                                                  ", Angle: " + forceAngle300ms +
-                                                                  ", Force: " + forceAbs300ms + 
-                                                                  ", Fx: " + measureData[time300MsIndex, 0] + 
-                                                                  ", Fz: " + measureData[time300MsIndex, 2] + 
-                                                                  ", ForceNorm: " + forceNorm300ms);
-
-                            }
-                        }
-                        else
-                        {
-                            DataSet statisticDataSet =
+                        
+                        DataSet statisticDataSet =
                                 _mySqlWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
                                                                   tempStatisticPlotContainer.Group,
                                                                   tempStatisticPlotContainer.Szenario,
                                                                   tempStatisticPlotContainer.Subject,
                                                                   turnDateTime);
 
-                            int trialListCounter = 0;
-                            foreach (DataRow row in statisticDataSet.Tables[0].Rows)
+                        int trialListCounter = 0;
+                        foreach (DataRow row in statisticDataSet.Tables[0].Rows)
+                        {
+                            int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                            if (trialList.Contains(szenarioTrialNumber))
                             {
-                                int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                                if (trialList.Contains(szenarioTrialNumber))
+                                switch (statisticType)
                                 {
-                                    switch (statisticType)
-                                    {
-                                        case "Vector correlation":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["velocity_vector_correlation"]);
-                                            break;
+                                    case "Vector correlation":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["velocity_vector_correlation"]);
+                                        break;
 
-                                        case "Perpendicular distance 300ms - Abs":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                            break;
+                                    case "Perpendicular distance 300ms - Abs":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                        break;
 
-                                        case "Mean perpendicular distance - Abs":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
-                                            break;
+                                    case "Mean perpendicular distance - Abs":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                        break;
 
-                                        case "Max perpendicular distance - Abs":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
-                                            break;
+                                    case "Max perpendicular distance - Abs":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                        break;
 
-                                        case "Perpendicular distance 300ms - Sign":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                            break;
+                                    case "Perpendicular distance 300ms - Sign":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                        break;
 
-                                        case "Max perpendicular distance - Sign":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
-                                            break;
+                                    case "Max perpendicular distance - Sign":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                        break;
 
-                                        case "Trajectory length abs":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["trajectory_length_abs"]);
-                                            break;
+                                    case "Trajectory length abs":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_abs"]);
+                                        break;
 
-                                        case "Trajectory length ratio":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
-                                            break;
+                                    case "Trajectory length ratio":
+                                        data[trialListCounter, meanCounter] =
+                                            Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                        break;
 
-                                        case "Enclosed area":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["enclosed_area"]);
-                                            break;
+                                    case "Enclosed area":
+                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["enclosed_area"]);
+                                        break;
 
-                                        case "RMSE":
-                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
-                                            break;
-                                    }
-                                    trialListCounter++;
+                                    case "RMSE":
+                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
+                                        break;
                                 }
+                                trialListCounter++;
                             }
                         }
                     }
@@ -3354,7 +3239,7 @@ namespace ManipAnalysis
                         var measureDataZ = new List<double>();
                         var forceDataX = new List<double>();
                         var forceDataZ = new List<double>();
-                      
+
                         foreach (DataRow row in measureDataSet.Tables[0].Rows)
                         {
                             if (showCatchTrialsExclusivly)
@@ -3455,8 +3340,8 @@ namespace ManipAnalysis
                                     });
                                 _myMatlabWrapper.SetWorkspaceData("vforce", new double[]
                                     {
-                                        forceDataX.ElementAt(i - 2) / 100.0,
-                                        forceDataZ.ElementAt(i - 2) / 100.0
+                                        forceDataX.ElementAt(i - 2)/100.0,
+                                        forceDataZ.ElementAt(i - 2)/100.0
                                     });
                                 if (showForceVectors)
                                 {
@@ -4614,6 +4499,71 @@ namespace ManipAnalysis
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
+        }
+
+        public void PlotErrorclampStiffness(string study, string group, string szenario,
+                                            SubjectInformationContainer subject, int turn)
+        {
+            List<double> pdData = new List<double>();
+
+            DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
+
+            IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true, true);
+            if (trialStringList != null)
+            {
+                List<int> trialList = new List<int>();
+                for (int i = 0; i < trialStringList.Count(); i++)
+                {
+                    trialList.Add(Convert.ToInt32(trialStringList.ElementAt(i).Substring(6, 3)));
+                }
+
+                foreach (int szenarioTrial in trialList)
+                {
+                    int trialID = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrial);
+                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                    DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                    int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                    var measureData = new double[sampleCount,7];
+                    var timeStamp = new double[sampleCount];
+                    var target = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
+
+                    for (int i = 0; i < sampleCount; i++)
+                    {
+                        timeStamp[i] =
+                            Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+                        measureData[i, 0] =
+                            Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_x"]);
+                        measureData[i, 1] =
+                            Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_y"]);
+                        measureData[i, 2] =
+                            Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_z"])*-1.0;
+
+                        measureData[i, 3] =
+                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
+                        measureData[i, 4] =
+                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
+                        measureData[i, 5] =
+                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+                    }
+
+                    List<double> tempTimeList = timeStamp.ToList();
+                    int time300MsIndex =
+                        tempTimeList.IndexOf(
+                            tempTimeList.OrderBy(
+                                d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
+                                        .ElementAt(0));
+
+                    /*
+                    double forceAbs300Ms = Math.Sqrt(
+                        Math.Pow(measureData[time300MsIndex, 0], 2) +
+                        Math.Pow(measureData[time300MsIndex, 2], 2));
+
+                    double forceAngle300Ms =
+                        Math.Atan2(measureData[time300MsIndex, 2], measureData[time300MsIndex, 0]);
+
+                    double forceNorm300Ms = 0;*/
+                }
+            }
         }
     }
 }
