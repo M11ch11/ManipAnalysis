@@ -434,7 +434,7 @@ namespace ManipAnalysis
 
         private void button_StatisticPlots_AddSelected_Click(object sender, EventArgs e)
         {
-            if (comboBox_DescriptiveStatistic1_Study.SelectedItem != null)
+            if (listBox_DescriptiveStatistic1_Trials.SelectedItems.Count > 0)
             {
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
@@ -516,7 +516,7 @@ namespace ManipAnalysis
 
         private void button_StatisticPlots_AddAll_Click(object sender, EventArgs e)
         {
-            if (comboBox_DescriptiveStatistic1_Study.SelectedItem != null)
+            if (listBox_DescriptiveStatistic1_Trials.SelectedItems.Count > 0)
             {
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
@@ -1377,7 +1377,8 @@ namespace ManipAnalysis
                             checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
                             checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
                         break;
                 }
             }
@@ -1681,7 +1682,10 @@ namespace ManipAnalysis
 
         public void SetSqlDatabases(IEnumerable<string> databases)
         {
-            comboBox_Start_Database.Items.AddRange(databases.ToArray());
+            if (databases != null)
+            {
+                comboBox_Start_Database.Items.AddRange(databases.ToArray());
+            }
         }
 
         private void button_BaselineMeantimeLi_PlotSzenarioMeanTimes_Click(object sender, EventArgs e)

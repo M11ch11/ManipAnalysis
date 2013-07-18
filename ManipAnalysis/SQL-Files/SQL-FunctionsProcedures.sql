@@ -1456,9 +1456,11 @@ RETURN
 			_measure_data_normalized.force_moment_x, _measure_data_normalized.force_moment_y, _measure_data_normalized.force_moment_z, 
 			_measure_data_normalized.force_nominal_x, _measure_data_normalized.force_nominal_y, _measure_data_normalized.force_nominal_z,
 			_measure_data_normalized.position_cartesian_x, _measure_data_normalized.position_cartesian_y, _measure_data_normalized.position_cartesian_z,			
-			_trial_information.faulty_trial, _trial_information.is_catch_trial, _trial_information.is_errorclamp_trial
+			_trial_information.faulty_trial, _trial_information.is_catch_trial, _trial_information.is_errorclamp_trial,
+			_target.target_number
 	FROM (_measure_data_normalized	INNER JOIN _trial ON _trial.id = @trialID 
-			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id) 
+			INNER JOIN _trial_information ON _trial.trial_information_id = _trial_information.id
+			INNER JOIN _target ON _trial.target_id = _target.id) 
 	WHERE _measure_data_normalized.trial_id = @trialID
 )
 

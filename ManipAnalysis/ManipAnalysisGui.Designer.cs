@@ -240,6 +240,7 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -368,6 +369,7 @@ namespace ManipAnalysis
             // 
             // tabPage_TrajectoryVelocity
             // 
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowPDForceVectors);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowErrorclampTrials);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly);
@@ -406,7 +408,7 @@ namespace ManipAnalysis
             // checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly
             // 
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Location = new System.Drawing.Point(150, 571);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Location = new System.Drawing.Point(150, 565);
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly";
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Size = new System.Drawing.Size(71, 17);
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.TabIndex = 55;
@@ -419,7 +421,7 @@ namespace ManipAnalysis
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.AutoSize = true;
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = true;
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Location = new System.Drawing.Point(15, 571);
+            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Location = new System.Drawing.Point(15, 565);
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrials";
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
             this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.TabIndex = 54;
@@ -2478,6 +2480,16 @@ namespace ManipAnalysis
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
             // 
+            // checkBox_TrajectoryVelocity_ShowPDForceVectors
+            // 
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.AutoSize = true;
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Location = new System.Drawing.Point(15, 582);
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Name = "checkBox_TrajectoryVelocity_ShowPDForceVectors";
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Size = new System.Drawing.Size(136, 17);
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.TabIndex = 56;
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Text = "Show PD force vectors";
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.UseVisualStyleBackColor = true;
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2757,6 +2769,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowErrorclampTrials;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowCatchTrials;
+        private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
     }
 }
 

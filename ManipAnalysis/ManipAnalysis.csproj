@@ -197,6 +197,9 @@
     <Content Include="MatlabFiles\enclosedArea.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MatlabFiles\normVectorLine.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\rootMeanSquareError.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

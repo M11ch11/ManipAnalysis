@@ -384,9 +384,11 @@ namespace ManipAnalysis
                                                                        tempStatisticPlotContainer.Subject, turnDateTime,
                                                                        szenarioTrial);
                                 DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                                DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
                                 int sampleCount = measureDataSet.Tables[0].Rows.Count;
-                                var measureData = new double[sampleCount,3];
+                                var measureData = new double[sampleCount, 7];
                                 var timeStamp = new double[sampleCount];
+                                var target = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
 
                                 for (int i = 0; i < sampleCount; i++)
                                 {
@@ -397,7 +399,14 @@ namespace ManipAnalysis
                                     measureData[i, 1] =
                                         Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_y"]);
                                     measureData[i, 2] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_z"]);
+                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["force_actual_z"]) * -1.0;
+
+                                    measureData[i, 3] =
+                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
+                                    measureData[i, 4] =
+                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
+                                    measureData[i, 5] =
+                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
                                 }
 
                                 List<double> tempTimeList = timeStamp.ToList();
@@ -406,6 +415,74 @@ namespace ManipAnalysis
                                         tempTimeList.OrderBy(
                                             d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
                                                     .ElementAt(0));
+
+                                double forceAbs300ms = Math.Sqrt(
+                                    Math.Pow(measureData[time300MsIndex, 0], 2) +
+                                    Math.Pow(measureData[time300MsIndex, 2], 2));
+
+                                double forceAngle300ms = 
+                                    Math.Atan2(measureData[time300MsIndex, 2], measureData[time300MsIndex, 0]);
+
+                                double forceNorm300ms = 0;
+
+                                switch (target)
+                                {
+                                    case 1:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 2.0)));
+                                        break;
+                                    case 2:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (7.0 / 4.0)));
+                                        break;
+                                    case 3:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (0)));
+                                        break;
+                                    case 4:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 4.0)));
+                                        break;
+                                    case 5:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 2.0)));
+                                        break;
+                                    case 6:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 4.0)));
+                                        break;
+                                    case 7:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1)));
+                                        break;
+                                    case 8:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (5.0 / 4.0)));
+                                        break;
+                                    case 9:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 2.0)));
+                                        break;
+                                    case 10:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 4.0)));
+                                        break;
+                                    case 11:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1)));
+                                        break;
+                                    case 12:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (5.0 / 4.0)));
+                                        break;
+                                    case 13:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (3.0 / 2.0)));
+                                        break;
+                                    case 14:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (7.0 / 4.0)));
+                                        break;
+                                    case 15:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (0)));
+                                        break;
+                                    case 16:
+                                        forceNorm300ms = forceAbs300ms * Math.Sin(forceAngle300ms - (Math.PI * (1.0 / 4.0)));
+                                        break;
+                                }
+                                _myManipAnalysisGui.WriteToLogBox("Target: " + target + 
+                                                                  ", Angle: " + forceAngle300ms +
+                                                                  ", Force: " + forceAbs300ms + 
+                                                                  ", Fx: " + measureData[time300MsIndex, 0] + 
+                                                                  ", Fz: " + measureData[time300MsIndex, 2] + 
+                                                                  ", ForceNorm: " + forceNorm300ms);
+
                             }
                         }
                         else
@@ -3239,7 +3316,7 @@ namespace ManipAnalysis
 
         public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
                                    bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-                                   bool showErrorclampTrialsExclusivly)
+                                   bool showErrorclampTrialsExclusivly, bool ShowPDForceVectors)
         {
             _myManipAnalysisGui.WriteProgressInfo("Getting data...");
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
@@ -3268,7 +3345,9 @@ namespace ManipAnalysis
 
                         var measureDataX = new List<double>();
                         var measureDataZ = new List<double>();
-
+                        var forceDataX = new List<double>();
+                        var forceDataZ = new List<double>();
+                      
                         foreach (DataRow row in measureDataSet.Tables[0].Rows)
                         {
                             if (showCatchTrialsExclusivly)
@@ -3277,6 +3356,11 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (ShowPDForceVectors)
+                                    {
+                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                    }
                                 }
                             }
                             else if (showErrorclampTrialsExclusivly)
@@ -3285,12 +3369,22 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (ShowPDForceVectors)
+                                    {
+                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                    }
                                 }
                             }
                             else if (showCatchTrials & showErrorclampTrials)
                             {
                                 measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                 measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                if (ShowPDForceVectors)
+                                {
+                                    forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                    forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                }
                             }
                             else if (!showCatchTrials & showErrorclampTrials)
                             {
@@ -3298,6 +3392,11 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (ShowPDForceVectors)
+                                    {
+                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                    }
                                 }
                             }
                             else if (showCatchTrials & !showErrorclampTrials)
@@ -3306,6 +3405,11 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (ShowPDForceVectors)
+                                    {
+                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                    }
                                 }
                             }
                             else if (!showCatchTrials & !showErrorclampTrials)
@@ -3315,6 +3419,11 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                    if (ShowPDForceVectors)
+                                    {
+                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
+                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
+                                    }
                                 }
                             }
                         }
@@ -3322,6 +3431,28 @@ namespace ManipAnalysis
                         _myMatlabWrapper.SetWorkspaceData("X", measureDataX.ToArray());
                         _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
                         _myMatlabWrapper.Plot("X", "Z", "black", 2);
+
+                        if (ShowPDForceVectors && measureDataX.Count > 1)
+                        {
+                            for (int i = 2; i < measureDataX.Count; i=i+10)
+                            {
+                                _myMatlabWrapper.SetWorkspaceData("vpos1", new double[]{
+                                                measureDataX.ElementAt(i - 2),
+                                                measureDataZ.ElementAt(i - 2)
+                                            });
+                                _myMatlabWrapper.SetWorkspaceData("vpos2", new double[]{
+                                                measureDataX.ElementAt(i - 1),
+                                                measureDataZ.ElementAt(i - 1)
+                                            });
+                                _myMatlabWrapper.SetWorkspaceData("vforce", new double[]{
+                                                forceDataX.ElementAt(i - 1),
+                                                forceDataZ.ElementAt(i - 1)
+                                            });
+                                _myMatlabWrapper.Execute("fPD = normVectorLine(vpos1, vpos2, vforce);");
+                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1)/200,fPD(2)/200,'Color','blue');");
+                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),vforce(1)/200,vforce(2)/200,'Color','red');");
+                            }
+                        }
                     }
                 }
             }
