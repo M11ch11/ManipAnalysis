@@ -1378,6 +1378,7 @@ namespace ManipAnalysis
                             checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
                             checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                             checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
                         break;
                 }

@@ -3316,14 +3316,21 @@ namespace ManipAnalysis
 
         public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
                                    bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-                                   bool showErrorclampTrialsExclusivly, bool ShowPDForceVectors)
+                                   bool showErrorclampTrialsExclusivly, bool showForceVectors, bool showPdForceVectors)
         {
             _myManipAnalysisGui.WriteProgressInfo("Getting data...");
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
 
             if (meanIndividual == "Individual")
             {
-                _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                if (showForceVectors || showPdForceVectors)
+                {
+                    _myMatlabWrapper.CreateTrajectoryForceFigure("XZ-Plot");
+                }
+                else
+                {
+                    _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                }
                 _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
 
@@ -3356,7 +3363,7 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (ShowPDForceVectors)
+                                    if (showForceVectors || showPdForceVectors)
                                     {
                                         forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                         forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3369,7 +3376,7 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (ShowPDForceVectors)
+                                    if (showForceVectors || showPdForceVectors)
                                     {
                                         forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                         forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3380,7 +3387,7 @@ namespace ManipAnalysis
                             {
                                 measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                 measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                if (ShowPDForceVectors)
+                                if (showForceVectors || showPdForceVectors)
                                 {
                                     forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                     forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3392,7 +3399,7 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (ShowPDForceVectors)
+                                    if (showForceVectors || showPdForceVectors)
                                     {
                                         forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                         forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3405,7 +3412,7 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (ShowPDForceVectors)
+                                    if (showForceVectors || showPdForceVectors)
                                     {
                                         forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                         forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3419,7 +3426,7 @@ namespace ManipAnalysis
                                 {
                                     measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
                                     measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (ShowPDForceVectors)
+                                    if (showForceVectors || showPdForceVectors)
                                     {
                                         forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
                                         forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
@@ -3432,25 +3439,37 @@ namespace ManipAnalysis
                         _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
                         _myMatlabWrapper.Plot("X", "Z", "black", 2);
 
-                        if (ShowPDForceVectors && measureDataX.Count > 1)
+                        if ((showForceVectors || showPdForceVectors) && measureDataX.Count > 1)
                         {
-                            for (int i = 2; i < measureDataX.Count; i=i+10)
+                            for (int i = 2; i < measureDataX.Count; i++)
                             {
-                                _myMatlabWrapper.SetWorkspaceData("vpos1", new double[]{
-                                                measureDataX.ElementAt(i - 2),
-                                                measureDataZ.ElementAt(i - 2)
-                                            });
-                                _myMatlabWrapper.SetWorkspaceData("vpos2", new double[]{
-                                                measureDataX.ElementAt(i - 1),
-                                                measureDataZ.ElementAt(i - 1)
-                                            });
-                                _myMatlabWrapper.SetWorkspaceData("vforce", new double[]{
-                                                forceDataX.ElementAt(i - 1),
-                                                forceDataZ.ElementAt(i - 1)
-                                            });
-                                _myMatlabWrapper.Execute("fPD = normVectorLine(vpos1, vpos2, vforce);");
-                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1)/200,fPD(2)/200,'Color','blue');");
-                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),vforce(1)/200,vforce(2)/200,'Color','red');");
+                                _myMatlabWrapper.SetWorkspaceData("vpos1", new double[]
+                                    {
+                                        measureDataX.ElementAt(i - 2),
+                                        measureDataZ.ElementAt(i - 2)
+                                    });
+                                _myMatlabWrapper.SetWorkspaceData("vpos2", new double[]
+                                    {
+                                        measureDataX.ElementAt(i - 1),
+                                        measureDataZ.ElementAt(i - 1)
+                                    });
+                                _myMatlabWrapper.SetWorkspaceData("vforce", new double[]
+                                    {
+                                        forceDataX.ElementAt(i - 2) / 100.0,
+                                        forceDataZ.ElementAt(i - 2) / 100.0
+                                    });
+                                if (showForceVectors)
+                                {
+                                    _myMatlabWrapper.Execute(
+                                        "quiver(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
+                                }
+                                if (showPdForceVectors)
+                                {
+
+                                    _myMatlabWrapper.Execute("fPD = normVectorLine(vpos1, vpos2, vforce);");
+                                    _myMatlabWrapper.Execute(
+                                        "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                }
                             }
                         }
                     }

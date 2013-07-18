@@ -28,10 +28,6 @@
 %       VforcePD = length of the 2dim trajectory
 
 function [VforcePD] = normVectorLine(Vpos1, Vpos2, Vforce)
-%
-%RotationMatrix90Degrees = [0 -1; 1 0];
-%
-%VposNorm = (Vpos2 - Vpos1) * RotationMatrix90Degrees ;
 
 AbsForce = sqrt(Vforce(1)^2 + Vforce(2)^2);
 

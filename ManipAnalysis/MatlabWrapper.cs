@@ -171,6 +171,41 @@ namespace ManipAnalysis
             }
         }
 
+        public void CreateTrajectoryForceFigure(string figureName)
+        {
+            try
+            {
+                Execute("figure");
+                Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+                Execute("axis1 = gca;");
+                Execute("set(axis1,'XColor','k','YColor','k')");
+                Execute("set(axis1,'YDir','rev'); ");
+                Execute("set(axis1, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
+                Execute("set(axis1, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
+                Execute("set(axis1, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+                Execute("axis([-0.13 0.13 -0.13 0.13]);");
+                Execute("axis manual;");
+                Execute("xlabel('Displacement [m]');");
+                Execute("ylabel('Displacement [m]');");
+                Execute("grid on");
+                Execute("axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
+                Execute("set(axis2, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
+                Execute("set(axis2, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
+                Execute("set(axis2, 'XTickLabel', {'--', '-', '--', '-', '--'});");
+                Execute("set(axis2, 'YTickLabel', {'--', '-', '--', '-', '--'});");
+                Execute("axis([-0.13 0.13 -0.13 0.13]);");
+                Execute("axis manual;");
+                Execute("xlabel('Force [100N]');");
+                Execute("ylabel('Force [100N]');");
+                Execute("axes(axis1);");
+                Execute("hold all");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateVelocityFigure(string figureName, int sampleCount)
         {
             try
@@ -356,6 +391,20 @@ namespace ManipAnalysis
             try
             {
                 Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," +
+                        lineWidth +
+                        ")");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+        public void Plot(string xVar, string yVar, string color, int lineWidth, string axis)
+        {
+            try
+            {
+                Execute("plot(" + axis + "," + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," +
                         lineWidth +
                         ")");
             }
