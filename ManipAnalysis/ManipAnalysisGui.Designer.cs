@@ -125,7 +125,7 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_Others = new System.Windows.Forms.TabPage();
-            this.button_Others_PlotErrorclampStiffness = new System.Windows.Forms.Button();
+            this.button_Others_PlotErrorclampForces = new System.Windows.Forms.Button();
             this.checkBox_Others_GroupAverage = new System.Windows.Forms.CheckBox();
             this.button_Others_ExportGroupLi = new System.Windows.Forms.Button();
             this.button_Others_PlotGroupLi = new System.Windows.Forms.Button();
@@ -1315,7 +1315,7 @@ namespace ManipAnalysis
             // 
             // tabPage_Others
             // 
-            this.tabPage_Others.Controls.Add(this.button_Others_PlotErrorclampStiffness);
+            this.tabPage_Others.Controls.Add(this.button_Others_PlotErrorclampForces);
             this.tabPage_Others.Controls.Add(this.checkBox_Others_GroupAverage);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportGroupLi);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotGroupLi);
@@ -1344,15 +1344,15 @@ namespace ManipAnalysis
             this.tabPage_Others.UseVisualStyleBackColor = true;
             this.tabPage_Others.Enter += new System.EventHandler(this.tabPage_Others_Enter);
             // 
-            // button_Others_PlotErrorclampStiffness
+            // button_Others_PlotErrorclampForces
             // 
-            this.button_Others_PlotErrorclampStiffness.Location = new System.Drawing.Point(15, 263);
-            this.button_Others_PlotErrorclampStiffness.Name = "button_Others_PlotErrorclampStiffness";
-            this.button_Others_PlotErrorclampStiffness.Size = new System.Drawing.Size(150, 23);
-            this.button_Others_PlotErrorclampStiffness.TabIndex = 53;
-            this.button_Others_PlotErrorclampStiffness.Text = "Errorclamp stiffness";
-            this.button_Others_PlotErrorclampStiffness.UseVisualStyleBackColor = true;
-            this.button_Others_PlotErrorclampStiffness.Click += new System.EventHandler(this.button_Others_PlotErrorclampStiffness_Click);
+            this.button_Others_PlotErrorclampForces.Location = new System.Drawing.Point(15, 263);
+            this.button_Others_PlotErrorclampForces.Name = "button_Others_PlotErrorclampForces";
+            this.button_Others_PlotErrorclampForces.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotErrorclampForces.TabIndex = 53;
+            this.button_Others_PlotErrorclampForces.Text = "Errorclamp forces";
+            this.button_Others_PlotErrorclampForces.UseVisualStyleBackColor = true;
+            this.button_Others_PlotErrorclampForces.Click += new System.EventHandler(this.button_Others_PlotErrorclampForces_Click);
             // 
             // checkBox_Others_GroupAverage
             // 
@@ -2794,7 +2794,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowCatchTrials;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
-        private System.Windows.Forms.Button button_Others_PlotErrorclampStiffness;
+        private System.Windows.Forms.Button button_Others_PlotErrorclampForces;
     }
 }
 

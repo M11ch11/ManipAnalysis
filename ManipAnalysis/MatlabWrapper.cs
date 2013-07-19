@@ -86,6 +86,26 @@ namespace ManipAnalysis
             }
         }
 
+        public void CreateErrorclampForceFigure(int trials)
+        {
+            try
+            {
+                Execute("figure");
+                Execute("set(gcf,'Name','Errorclamp forces','NumberTitle','off');");
+                Execute("grid on");
+                Execute("hold all");
+                Execute("xlabel('[Errorclamp trial]');");
+                Execute("ylabel('Force [N]');");
+                Execute("axis([0 " + (trials + 1) + " 0 10]);");
+                Execute("axis manual;");
+                Execute("set(gca,'YGrid','on','YTick',0:1:10,'XTick',1:1:" + trials + ");");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateLearningIndexFigure(int setCount)
         {
             try
@@ -164,6 +184,7 @@ namespace ManipAnalysis
                 Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(gca, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+                Execute("set(gca,'PlotBoxAspectRatio',[1 1 1]);");
             }
             catch (Exception ex)
             {
@@ -183,6 +204,7 @@ namespace ManipAnalysis
                 Execute("set(axis1, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis1, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis1, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+                Execute("set(axis1,'PlotBoxAspectRatio',[1 1 1]);");
                 Execute("axis([-0.13 0.13 -0.13 0.13]);");
                 Execute("axis manual;");
                 Execute("xlabel('Displacement [m]');");
@@ -191,8 +213,9 @@ namespace ManipAnalysis
                 Execute("axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
                 Execute("set(axis2, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(axis2, 'XTickLabel', {'--', '-', '--', '-', '--'});");
-                Execute("set(axis2, 'YTickLabel', {'--', '-', '--', '-', '--'});");
+                Execute("set(axis2, 'XTickLabel', {'', '', '', '', ''});");
+                Execute("set(axis2, 'YTickLabel', {'', '', '', '', ''});");
+                Execute("set(axis2,'PlotBoxAspectRatio',[1 1 1]);");
                 Execute("axis([-0.13 0.13 -0.13 0.13]);");
                 Execute("axis manual;");
                 Execute("xlabel('Force [100N]');");

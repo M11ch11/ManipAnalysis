@@ -2192,9 +2192,9 @@ namespace ManipAnalysis
                 !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
         }
 
-        private void button_Others_PlotErrorclampStiffness_Click(object sender, EventArgs e)
+        private void button_Others_PlotErrorclampForces_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.PlotErrorclampStiffness(comboBox_Others_Study.SelectedItem.ToString(),
+            _manipAnalysisFunctions.PlotErrorclampForces(comboBox_Others_Study.SelectedItem.ToString(),
                                                             comboBox_Others_Group.SelectedItem.ToString(),
                                                             comboBox_Others_Szenario.SelectedItem.ToString(),
                                                             (SubjectInformationContainer)
