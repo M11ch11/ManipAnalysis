@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis.exe" version="1.0.0.27" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis.exe" version="1.0.0.28" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="Logo.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis" version="1.0.4947.22148" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis" version="1.0.4948.23159" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis.exe" size="325120">
-      <assemblyIdentity name="ManipAnalysis" version="1.0.4947.22148" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis.exe" size="326144">
+      <assemblyIdentity name="ManipAnalysis" version="1.0.4948.23159" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>ZC7JdVnGBefLOFLqs04+AzzEXNQ=</dsig:DigestValue>
+        <dsig:DigestValue>7sZ76BLG0TPWGZkNRQzqZSjoAQg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -63,13 +63,13 @@
       <dsig:DigestValue>+2xok9OmgjfiE1FMmPzsfxSqbFM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ManipAnalysis.exe.config" size="174">
+  <file name="ManipAnalysis.exe.config" size="168">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>gzf47JtJv/5OCn++sS083v+HglU=</dsig:DigestValue>
+      <dsig:DigestValue>yiSQyjeFx9ee5NDxxD4POUenk5M=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\distance2curveAbs.m" size="5198">
@@ -108,13 +108,13 @@
       <dsig:DigestValue>0rkgFAYOnjxYVRrg6ruuszK5Xrc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\normVectorLine.m" size="1798">
+  <file name="MatlabFiles\normVectorLine.m" size="2621">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>HIHDzS/f3RX5LK722JSjxeX3tXA=</dsig:DigestValue>
+      <dsig:DigestValue>H4A0usdR30qknjyp0KGULdQ3Trg=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\rootMeanSquareError.m" size="1810">
@@ -162,13 +162,13 @@
       <dsig:DigestValue>VyhUmTYlUglXZf1rJharwf5p+FU=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="SQL-Files\SQL-FunctionsProcedures.sql" size="40761">
+  <file name="SQL-Files\SQL-FunctionsProcedures.sql" size="39003">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>WKCgz+cl2sBT+Gxg7dyOrisDpbA=</dsig:DigestValue>
+      <dsig:DigestValue>uqSmSOcXmzC63z2QBlk8Ca0Ifas=</dsig:DigestValue>
     </hash>
   </file>
   <file name="SQL-Files\SQL-Tables.sql" size="10951">
