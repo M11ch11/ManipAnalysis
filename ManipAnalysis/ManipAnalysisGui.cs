@@ -131,7 +131,10 @@ namespace ManipAnalysis
 
                     if (!_manipAnalysisFunctions.CheckIfMeasureFileHashAlreadyExists(tempFileHash))
                     {
-                        listBox_Import_SelectedMeasureFiles.Items.Add(filesList[i].FullName);
+                        if (!listBox_Import_SelectedMeasureFiles.Items.Contains(filesList[i].FullName))
+                        {
+                            listBox_Import_SelectedMeasureFiles.Items.Add(filesList[i].FullName);
+                        }
                     }
                 }
                 else
@@ -187,7 +190,10 @@ namespace ManipAnalysis
 
                         if (!_manipAnalysisFunctions.CheckIfMeasureFileHashAlreadyExists(tempFileHash))
                         {
-                            listBox_Import_SelectedMeasureFiles.Items.Add(fi.FullName);
+                            if (!listBox_Import_SelectedMeasureFiles.Items.Contains(fi.FullName))
+                            {
+                                listBox_Import_SelectedMeasureFiles.Items.Add(fi.FullName);
+                            }
                         }
                     }
                     else
@@ -998,7 +1004,8 @@ namespace ManipAnalysis
             _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>(),
                                                        Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
                                                        Convert.ToInt32(textBox_Import_FilterOrder.Text),
-                                                       Convert.ToInt32(textBox_Import_CutoffFreq.Text),
+                                                       Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text),
+                                                       Convert.ToInt32(textBox_Import_CutoffFreqForce.Text),
                                                        Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),
                                                        Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }

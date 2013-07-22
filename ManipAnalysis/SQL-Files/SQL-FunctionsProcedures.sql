@@ -1127,7 +1127,8 @@ CREATE PROCEDURE [dbo].[insertTrialInformation]
 	@isCatchTrial bit,
 	@isErrorclampTrial bit,
 	@butterworthFilterOrder int,
-	@butterworthCutOffFreq int,
+	@butterworthCutOffFreqPosition int,
+	@butterworthCutOffFreqForce int,
 	@velocityTrimThreshold int,
 	@id int OUTPUT
 AS
@@ -1140,7 +1141,8 @@ BEGIN
 		is_catch_trial = @isCatchTrial AND
 		is_errorclamp_trial = @isErrorclampTrial AND
 		butterworth_filterOrder = @butterworthFilterOrder AND
-		butterworth_cutOffFreq = @butterworthCutOffFreq AND
+		butterworth_cutOffFreqPosition = @butterworthCutOffFreqPosition AND
+		butterworth_cutOffFreqForce = @butterworthCutOffFreqForce AND
 		velocity_trim_threshold = @velocityTrimThreshold
 	)
 		BEGIN
@@ -1149,7 +1151,8 @@ BEGIN
 													is_catch_trial,
 													is_errorclamp_trial,
 													butterworth_filterOrder,
-													butterworth_cutOffFreq,
+													butterworth_cutOffFreqPosition,
+													butterworth_cutOffFreqForce,
 													velocity_trim_threshold
 												) 
 												VALUES
@@ -1158,7 +1161,8 @@ BEGIN
 													@isCatchTrial,
 													@isErrorclampTrial,
 													@butterworthFilterOrder,
-													@butterworthCutOffFreq,
+													@butterworthCutOffFreqPosition,
+													@butterworthCutOffFreqForce,
 													@velocityTrimThreshold
 												);
 
@@ -1171,10 +1175,12 @@ BEGIN
 			is_catch_trial = @isCatchTrial AND
 			is_errorclamp_trial = @isErrorclampTrial AND
 			butterworth_filterOrder = @butterworthFilterOrder AND
-			butterworth_cutOffFreq = @butterworthCutOffFreq AND
+			butterworth_cutOffFreqPosition = @butterworthCutOffFreqPosition AND
+			butterworth_cutOffFreqForce = @butterworthCutOffFreqForce AND
 			velocity_trim_threshold = @velocityTrimThreshold;
 		END
 END
+
 
 
 

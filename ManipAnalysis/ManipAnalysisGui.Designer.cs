@@ -160,8 +160,8 @@ namespace ManipAnalysis
             this.textBox_Import_NewSampleCount = new System.Windows.Forms.TextBox();
             this.groupBox_Import_ButterworthFilter = new System.Windows.Forms.GroupBox();
             this.label_Import_SamplesPerSec = new System.Windows.Forms.Label();
-            this.textBox_Import_CutoffFreq = new System.Windows.Forms.TextBox();
-            this.label_Import_CutoffFreq = new System.Windows.Forms.Label();
+            this.textBox_Import_CutoffFreqPosition = new System.Windows.Forms.TextBox();
+            this.label_Import_CutoffFreqPosition = new System.Windows.Forms.Label();
             this.textBox_Import_SamplesPerSec = new System.Windows.Forms.TextBox();
             this.textBox_Import_FilterOrder = new System.Windows.Forms.TextBox();
             this.label_Import_FilterOrder = new System.Windows.Forms.Label();
@@ -243,6 +243,10 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
+            this.textBox_Import_CutoffFreqForce = new System.Windows.Forms.TextBox();
+            this.label_Import_CutoffFreqForce = new System.Windows.Forms.Label();
+            this.label_Import_CutoffFreqPositionPosition = new System.Windows.Forms.Label();
+            this.label_Import_CutoffFreqForceForce = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1565,9 +1569,9 @@ namespace ManipAnalysis
             // 
             this.groupBox_Import_VelocityCropping.Controls.Add(this.label_Import_PercentPeakVelocity);
             this.groupBox_Import_VelocityCropping.Controls.Add(this.textBox_Import_PercentPeakVelocity);
-            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(572, 317);
+            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(566, 317);
             this.groupBox_Import_VelocityCropping.Name = "groupBox_Import_VelocityCropping";
-            this.groupBox_Import_VelocityCropping.Size = new System.Drawing.Size(155, 51);
+            this.groupBox_Import_VelocityCropping.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_VelocityCropping.TabIndex = 35;
             this.groupBox_Import_VelocityCropping.TabStop = false;
             this.groupBox_Import_VelocityCropping.Text = "Velocity cropping";
@@ -1592,9 +1596,9 @@ namespace ManipAnalysis
             // 
             // button_Import_ClearMeasureFileList
             // 
-            this.button_Import_ClearMeasureFileList.Location = new System.Drawing.Point(572, 67);
+            this.button_Import_ClearMeasureFileList.Location = new System.Drawing.Point(566, 67);
             this.button_Import_ClearMeasureFileList.Name = "button_Import_ClearMeasureFileList";
-            this.button_Import_ClearMeasureFileList.Size = new System.Drawing.Size(155, 23);
+            this.button_Import_ClearMeasureFileList.Size = new System.Drawing.Size(161, 23);
             this.button_Import_ClearMeasureFileList.TabIndex = 37;
             this.button_Import_ClearMeasureFileList.Text = "Clear measure-file-list";
             this.button_Import_ClearMeasureFileList.UseVisualStyleBackColor = true;
@@ -1606,9 +1610,9 @@ namespace ManipAnalysis
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_FixBrokenTrials);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_ImportMeasureFiles);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateStatistics);
-            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(572, 431);
+            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(566, 431);
             this.groupBox_Import_CalculationsImport.Name = "groupBox_Import_CalculationsImport";
-            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(155, 154);
+            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(161, 154);
             this.groupBox_Import_CalculationsImport.TabIndex = 36;
             this.groupBox_Import_CalculationsImport.TabStop = false;
             this.groupBox_Import_CalculationsImport.Text = "Calculations / Import";
@@ -1617,7 +1621,7 @@ namespace ManipAnalysis
             // 
             this.button_Import_AutoImport.Location = new System.Drawing.Point(6, 19);
             this.button_Import_AutoImport.Name = "button_Import_AutoImport";
-            this.button_Import_AutoImport.Size = new System.Drawing.Size(143, 41);
+            this.button_Import_AutoImport.Size = new System.Drawing.Size(149, 41);
             this.button_Import_AutoImport.TabIndex = 36;
             this.button_Import_AutoImport.Text = "Automatic import and calculation";
             this.button_Import_AutoImport.UseVisualStyleBackColor = true;
@@ -1627,7 +1631,7 @@ namespace ManipAnalysis
             // 
             this.button_Import_FixBrokenTrials.Location = new System.Drawing.Point(6, 124);
             this.button_Import_FixBrokenTrials.Name = "button_Import_FixBrokenTrials";
-            this.button_Import_FixBrokenTrials.Size = new System.Drawing.Size(143, 23);
+            this.button_Import_FixBrokenTrials.Size = new System.Drawing.Size(149, 23);
             this.button_Import_FixBrokenTrials.TabIndex = 19;
             this.button_Import_FixBrokenTrials.Text = "Fix broken Trials";
             this.button_Import_FixBrokenTrials.UseVisualStyleBackColor = true;
@@ -1637,7 +1641,7 @@ namespace ManipAnalysis
             // 
             this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(6, 66);
             this.button_Import_ImportMeasureFiles.Name = "button_Import_ImportMeasureFiles";
-            this.button_Import_ImportMeasureFiles.Size = new System.Drawing.Size(143, 23);
+            this.button_Import_ImportMeasureFiles.Size = new System.Drawing.Size(149, 23);
             this.button_Import_ImportMeasureFiles.TabIndex = 35;
             this.button_Import_ImportMeasureFiles.Text = "Import measure-files";
             this.button_Import_ImportMeasureFiles.UseVisualStyleBackColor = true;
@@ -1647,7 +1651,7 @@ namespace ManipAnalysis
             // 
             this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(6, 95);
             this.button_Import_CalculateStatistics.Name = "button_Import_CalculateStatistics";
-            this.button_Import_CalculateStatistics.Size = new System.Drawing.Size(143, 23);
+            this.button_Import_CalculateStatistics.Size = new System.Drawing.Size(149, 23);
             this.button_Import_CalculateStatistics.TabIndex = 0;
             this.button_Import_CalculateStatistics.Text = "Calculate statistics";
             this.button_Import_CalculateStatistics.UseVisualStyleBackColor = true;
@@ -1657,9 +1661,9 @@ namespace ManipAnalysis
             // 
             this.groupBox_Import_TimeNormalization.Controls.Add(this.label_Import_NewSampleCountText);
             this.groupBox_Import_TimeNormalization.Controls.Add(this.textBox_Import_NewSampleCount);
-            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(572, 374);
+            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(566, 374);
             this.groupBox_Import_TimeNormalization.Name = "groupBox_Import_TimeNormalization";
-            this.groupBox_Import_TimeNormalization.Size = new System.Drawing.Size(155, 51);
+            this.groupBox_Import_TimeNormalization.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_TimeNormalization.TabIndex = 34;
             this.groupBox_Import_TimeNormalization.TabStop = false;
             this.groupBox_Import_TimeNormalization.Text = "Time normalization";
@@ -1683,15 +1687,19 @@ namespace ManipAnalysis
             // 
             // groupBox_Import_ButterworthFilter
             // 
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_CutoffFreqForceForce);
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_CutoffFreqPositionPosition);
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_CutoffFreqForce);
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_CutoffFreqForce);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_SamplesPerSec);
-            this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_CutoffFreq);
-            this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_CutoffFreq);
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_CutoffFreqPosition);
+            this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_CutoffFreqPosition);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_SamplesPerSec);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_FilterOrder);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_FilterOrder);
-            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(572, 210);
+            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(566, 183);
             this.groupBox_Import_ButterworthFilter.Name = "groupBox_Import_ButterworthFilter";
-            this.groupBox_Import_ButterworthFilter.Size = new System.Drawing.Size(155, 101);
+            this.groupBox_Import_ButterworthFilter.Size = new System.Drawing.Size(161, 128);
             this.groupBox_Import_ButterworthFilter.TabIndex = 33;
             this.groupBox_Import_ButterworthFilter.TabStop = false;
             this.groupBox_Import_ButterworthFilter.Text = "Butterworth filter settings";
@@ -1705,22 +1713,22 @@ namespace ManipAnalysis
             this.label_Import_SamplesPerSec.TabIndex = 1;
             this.label_Import_SamplesPerSec.Text = "Samples/s:";
             // 
-            // textBox_Import_CutoffFreq
+            // textBox_Import_CutoffFreqPosition
             // 
-            this.textBox_Import_CutoffFreq.Location = new System.Drawing.Point(71, 74);
-            this.textBox_Import_CutoffFreq.Name = "textBox_Import_CutoffFreq";
-            this.textBox_Import_CutoffFreq.Size = new System.Drawing.Size(36, 20);
-            this.textBox_Import_CutoffFreq.TabIndex = 6;
-            this.textBox_Import_CutoffFreq.Text = "6";
+            this.textBox_Import_CutoffFreqPosition.Location = new System.Drawing.Point(71, 74);
+            this.textBox_Import_CutoffFreqPosition.Name = "textBox_Import_CutoffFreqPosition";
+            this.textBox_Import_CutoffFreqPosition.Size = new System.Drawing.Size(36, 20);
+            this.textBox_Import_CutoffFreqPosition.TabIndex = 6;
+            this.textBox_Import_CutoffFreqPosition.Text = "6";
             // 
-            // label_Import_CutoffFreq
+            // label_Import_CutoffFreqPosition
             // 
-            this.label_Import_CutoffFreq.AutoSize = true;
-            this.label_Import_CutoffFreq.Location = new System.Drawing.Point(6, 77);
-            this.label_Import_CutoffFreq.Name = "label_Import_CutoffFreq";
-            this.label_Import_CutoffFreq.Size = new System.Drawing.Size(62, 13);
-            this.label_Import_CutoffFreq.TabIndex = 5;
-            this.label_Import_CutoffFreq.Text = "Cutoff-Freq:";
+            this.label_Import_CutoffFreqPosition.AutoSize = true;
+            this.label_Import_CutoffFreqPosition.Location = new System.Drawing.Point(6, 77);
+            this.label_Import_CutoffFreqPosition.Name = "label_Import_CutoffFreqPosition";
+            this.label_Import_CutoffFreqPosition.Size = new System.Drawing.Size(62, 13);
+            this.label_Import_CutoffFreqPosition.TabIndex = 5;
+            this.label_Import_CutoffFreqPosition.Text = "Cutoff-Freq:";
             // 
             // textBox_Import_SamplesPerSec
             // 
@@ -1749,9 +1757,9 @@ namespace ManipAnalysis
             // 
             // button_Import_SelectMeasureFileFolder
             // 
-            this.button_Import_SelectMeasureFileFolder.Location = new System.Drawing.Point(572, 38);
+            this.button_Import_SelectMeasureFileFolder.Location = new System.Drawing.Point(566, 38);
             this.button_Import_SelectMeasureFileFolder.Name = "button_Import_SelectMeasureFileFolder";
-            this.button_Import_SelectMeasureFileFolder.Size = new System.Drawing.Size(155, 23);
+            this.button_Import_SelectMeasureFileFolder.Size = new System.Drawing.Size(161, 23);
             this.button_Import_SelectMeasureFileFolder.TabIndex = 32;
             this.button_Import_SelectMeasureFileFolder.Text = "Select measure-file-folder";
             this.button_Import_SelectMeasureFileFolder.UseVisualStyleBackColor = true;
@@ -1763,14 +1771,14 @@ namespace ManipAnalysis
             this.listBox_Import_SelectedMeasureFiles.HorizontalScrollbar = true;
             this.listBox_Import_SelectedMeasureFiles.Location = new System.Drawing.Point(6, 9);
             this.listBox_Import_SelectedMeasureFiles.Name = "listBox_Import_SelectedMeasureFiles";
-            this.listBox_Import_SelectedMeasureFiles.Size = new System.Drawing.Size(560, 576);
+            this.listBox_Import_SelectedMeasureFiles.Size = new System.Drawing.Size(554, 576);
             this.listBox_Import_SelectedMeasureFiles.TabIndex = 1;
             // 
             // button_Import_SelectMeasureFiles
             // 
-            this.button_Import_SelectMeasureFiles.Location = new System.Drawing.Point(572, 9);
+            this.button_Import_SelectMeasureFiles.Location = new System.Drawing.Point(566, 9);
             this.button_Import_SelectMeasureFiles.Name = "button_Import_SelectMeasureFiles";
-            this.button_Import_SelectMeasureFiles.Size = new System.Drawing.Size(155, 23);
+            this.button_Import_SelectMeasureFiles.Size = new System.Drawing.Size(161, 23);
             this.button_Import_SelectMeasureFiles.TabIndex = 0;
             this.button_Import_SelectMeasureFiles.Text = "Select measure-file(s)";
             this.button_Import_SelectMeasureFiles.UseVisualStyleBackColor = true;
@@ -2513,6 +2521,41 @@ namespace ManipAnalysis
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
             // 
+            // textBox_Import_CutoffFreqForce
+            // 
+            this.textBox_Import_CutoffFreqForce.Location = new System.Drawing.Point(71, 100);
+            this.textBox_Import_CutoffFreqForce.Name = "textBox_Import_CutoffFreqForce";
+            this.textBox_Import_CutoffFreqForce.Size = new System.Drawing.Size(36, 20);
+            this.textBox_Import_CutoffFreqForce.TabIndex = 8;
+            this.textBox_Import_CutoffFreqForce.Text = "18";
+            // 
+            // label_Import_CutoffFreqForce
+            // 
+            this.label_Import_CutoffFreqForce.AutoSize = true;
+            this.label_Import_CutoffFreqForce.Location = new System.Drawing.Point(6, 103);
+            this.label_Import_CutoffFreqForce.Name = "label_Import_CutoffFreqForce";
+            this.label_Import_CutoffFreqForce.Size = new System.Drawing.Size(62, 13);
+            this.label_Import_CutoffFreqForce.TabIndex = 7;
+            this.label_Import_CutoffFreqForce.Text = "Cutoff-Freq:";
+            // 
+            // label_Import_CutoffFreqPositionPosition
+            // 
+            this.label_Import_CutoffFreqPositionPosition.AutoSize = true;
+            this.label_Import_CutoffFreqPositionPosition.Location = new System.Drawing.Point(113, 77);
+            this.label_Import_CutoffFreqPositionPosition.Name = "label_Import_CutoffFreqPositionPosition";
+            this.label_Import_CutoffFreqPositionPosition.Size = new System.Drawing.Size(44, 13);
+            this.label_Import_CutoffFreqPositionPosition.TabIndex = 9;
+            this.label_Import_CutoffFreqPositionPosition.Text = "Position";
+            // 
+            // label_Import_CutoffFreqForceForce
+            // 
+            this.label_Import_CutoffFreqForceForce.AutoSize = true;
+            this.label_Import_CutoffFreqForceForce.Location = new System.Drawing.Point(113, 103);
+            this.label_Import_CutoffFreqForceForce.Name = "label_Import_CutoffFreqForceForce";
+            this.label_Import_CutoffFreqForceForce.Size = new System.Drawing.Size(34, 13);
+            this.label_Import_CutoffFreqForceForce.TabIndex = 10;
+            this.label_Import_CutoffFreqForceForce.Text = "Force";
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2652,8 +2695,8 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_Import_NewSampleCount;
         private System.Windows.Forms.GroupBox groupBox_Import_ButterworthFilter;
         private System.Windows.Forms.Label label_Import_SamplesPerSec;
-        private System.Windows.Forms.TextBox textBox_Import_CutoffFreq;
-        private System.Windows.Forms.Label label_Import_CutoffFreq;
+        private System.Windows.Forms.TextBox textBox_Import_CutoffFreqPosition;
+        private System.Windows.Forms.Label label_Import_CutoffFreqPosition;
         private System.Windows.Forms.TextBox textBox_Import_SamplesPerSec;
         private System.Windows.Forms.TextBox textBox_Import_FilterOrder;
         private System.Windows.Forms.Label label_Import_FilterOrder;
@@ -2795,6 +2838,10 @@ namespace ManipAnalysis
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
         private System.Windows.Forms.Button button_Others_PlotErrorclampForces;
+        private System.Windows.Forms.Label label_Import_CutoffFreqForceForce;
+        private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
+        private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
+        private System.Windows.Forms.Label label_Import_CutoffFreqForce;
     }
 }
 

@@ -1725,8 +1725,7 @@ namespace ManipAnalysis
         }
 
         public int InsertTrialInformation(bool faultyTrial, bool isCatchTrial, bool isErrorclampTrial,
-                                          int butterworthFilterOrder, int butterworthFilterFreq,
-                                          int velocityTrimThreshold)
+                                          int butterworthFilterOrder, int butterworthFilterFreqPosition, int butterworthFilterFreqForce, int velocityTrimThreshold)
         {
             int retVal = -1;
 
@@ -1742,7 +1741,8 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@isCatchTrial", isCatchTrial));
             _sqlCmd.Parameters.Add(new SqlParameter("@isErrorclampTrial", isErrorclampTrial));
             _sqlCmd.Parameters.Add(new SqlParameter("@butterworthFilterOrder", butterworthFilterOrder));
-            _sqlCmd.Parameters.Add(new SqlParameter("@butterworthCutOffFreq", butterworthFilterFreq));
+            _sqlCmd.Parameters.Add(new SqlParameter("@butterworthCutOffFreqPosition", butterworthFilterFreqPosition));
+            _sqlCmd.Parameters.Add(new SqlParameter("@butterworthCutOffFreqForce", butterworthFilterFreqForce));
             _sqlCmd.Parameters.Add(new SqlParameter("@velocityTrimThreshold", velocityTrimThreshold));
 
 

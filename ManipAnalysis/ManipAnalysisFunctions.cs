@@ -903,21 +903,21 @@ namespace ManipAnalysis
         }
 
         public void ImportMeasureFiles(IEnumerable<string> measureFiles, int samplesPerSecond, int butterFilterOrder,
-                                       int butterFilterCutOff, int percentPeakVelocity, int timeNormalizationSamples)
+                                       int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity, int timeNormalizationSamples)
         {
             List<string> measureFilesList = measureFiles.ToList();
 
             var newTask =
                 new Task(
                     () => ImportMeasureFilesThread(measureFilesList, samplesPerSecond, butterFilterOrder,
-                                                   butterFilterCutOff, percentPeakVelocity, timeNormalizationSamples));
+                                                   butterFilterCutOffPosition, butterFilterCutOffForce, percentPeakVelocity, timeNormalizationSamples));
 
             TaskManager.PushBack(newTask);
             newTask.Start();
         }
 
         private void ImportMeasureFilesThread(List<string> measureFilesList, int samplesPerSecond, int butterFilterOrder,
-                                              int butterFilterCutOff, int percentPeakVelocity,
+                                              int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
                                               int timeNormalizationSamples)
         {
             while (TaskManager.GetIndex(Task.CurrentId) != 0)
@@ -1037,10 +1037,13 @@ namespace ManipAnalysis
                             #region Butterworth filter
 
                             _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
-                            _myMatlabWrapper.SetWorkspaceData("cutoffFreq", Convert.ToDouble(butterFilterCutOff));
+                            _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition", Convert.ToDouble(butterFilterCutOffPosition));
+                            _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce", Convert.ToDouble(butterFilterCutOffForce));
                             _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
                             _myMatlabWrapper.Execute(
-                                "[b,a] = butter(filterOrder,(cutoffFreq/(samplesPerSecond/2)));");
+                                "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
+                            _myMatlabWrapper.Execute(
+                                "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
 
                             for (int core = 0; core < Environment.ProcessorCount; core++)
                             {
@@ -1250,7 +1253,8 @@ namespace ManipAnalysis
                                         measureDataRawList.ElementAt(0).IsCatchTrial,
                                         measureDataRawList.ElementAt(0).IsErrorclampTrial,
                                         butterFilterOrder,
-                                        butterFilterCutOff,
+                                        butterFilterCutOffPosition,
+                                        butterFilterCutOffForce,
                                         percentPeakVelocity);
 
                                 int trialID = _mySqlWrapper.InsertTrial(
@@ -1737,54 +1741,54 @@ namespace ManipAnalysis
 
                     _myMatlabWrapper.Execute("force_actual_x" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_actual_x" +
+                                             " = filtfilt(bForce, aForce, force_actual_x" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_actual_y" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_actual_y" +
+                                             " = filtfilt(bForce, aForce, force_actual_y" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_actual_z" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_actual_z" +
+                                             " = filtfilt(bForce, aForce, force_actual_z" +
                                              threadTrials.ElementAt(i) + ");");
 
                     _myMatlabWrapper.Execute("force_nominal_x" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a,force_nominal_x" +
+                                             " = filtfilt(bForce, aForce,force_nominal_x" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_nominal_y" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a,force_nominal_y" +
+                                             " = filtfilt(bForce, aForce,force_nominal_y" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_nominal_z" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a,force_nominal_z" +
+                                             " = filtfilt(bForce, aForce,force_nominal_z" +
                                              threadTrials.ElementAt(i) + ");");
 
                     _myMatlabWrapper.Execute("force_moment_x" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_moment_x" +
+                                             " = filtfilt(bForce, aForce, force_moment_x" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_moment_y" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_moment_y" +
+                                             " = filtfilt(bForce, aForce, force_moment_y" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("force_moment_z" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, force_moment_z" +
+                                             " = filtfilt(bForce, aForce, force_moment_z" +
                                              threadTrials.ElementAt(i) + ");");
 
                     _myMatlabWrapper.Execute("position_cartesian_x" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, position_cartesian_x" +
+                                             " = filtfilt(bPosition, aPosition, position_cartesian_x" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("position_cartesian_y" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, position_cartesian_y" +
+                                             " = filtfilt(bPosition, aPosition, position_cartesian_y" +
                                              threadTrials.ElementAt(i) + ");");
                     _myMatlabWrapper.Execute("position_cartesian_z" +
                                              threadTrials.ElementAt(i) +
-                                             " = filtfilt(b, a, position_cartesian_z" +
+                                             " = filtfilt(bPosition, aPosition, position_cartesian_z" +
                                              threadTrials.ElementAt(i) + ");");
 
 
