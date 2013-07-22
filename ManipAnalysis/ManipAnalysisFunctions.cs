@@ -3215,10 +3215,11 @@ namespace ManipAnalysis
                 if (showForceVectors || showPdForceVectors)
                 {
                     _myMatlabWrapper.CreateTrajectoryForceFigure("XZ-Plot");
+                    //_myMatlabWrapper.CreateFigure("Forces", "[Sample]", "Force [N]");
                 }
                 else
                 {
-                    _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                    _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");                    
                 }
                 _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
@@ -3328,6 +3329,12 @@ namespace ManipAnalysis
                         _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
                         _myMatlabWrapper.Plot("X", "Z", "black", 2);
 
+                        //_myMatlabWrapper.SetWorkspaceData("X", forceDataX.ToArray());
+                        //_myMatlabWrapper.SetWorkspaceData("Z", forceDataZ.ToArray());
+                        //_myMatlabWrapper.Plot("X", "red", 1);
+                        //_myMatlabWrapper.Plot("Z", "green", 1);
+
+                        
                         if ((showForceVectors || showPdForceVectors) && measureDataX.Count > 1)
                         {
                             for (int i = 2; i < measureDataX.Count; i++)
@@ -3359,7 +3366,7 @@ namespace ManipAnalysis
                                     _myMatlabWrapper.Execute(
                                         "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                 }
-                            }
+                            }                        
                         }
                     }
                 }
