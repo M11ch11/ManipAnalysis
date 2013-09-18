@@ -4553,74 +4553,80 @@ namespace ManipAnalysis
                     var measureData = new double[sampleCount,9];
                     var timeStamp = new double[sampleCount];
 
-                    for (int sample = 0; sample < sampleCount; sample++)
+                    if (measureDataSet.Tables[0].Rows.Count > 0)
                     {
-                        timeStamp[sample] =
-                            Convert.ToDateTime(measureDataSet.Tables[0].Rows[sample]["time_stamp"]).Ticks;
 
-                        measureData[sample, 0] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_x"]);
-                        measureData[sample, 1] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_y"]);
-                        measureData[sample, 2] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_z"]);
+                        int targetNumber = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
 
-                        measureData[sample, 3] =
-                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_x"]);
-                        measureData[sample, 4] =
-                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_y"]);
-                        measureData[sample, 5] =
-                            Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_z"]);
+                        for (int sample = 0; sample < sampleCount; sample++)
+                        {
+                            timeStamp[sample] =
+                                Convert.ToDateTime(measureDataSet.Tables[0].Rows[sample]["time_stamp"]).Ticks;
 
-                        measureData[sample, 6] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
-                        measureData[sample, 7] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_y"]);
-                        measureData[sample, 8] =
-                            Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
-                    }
+                            measureData[sample, 0] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_x"]);
+                            measureData[sample, 1] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_y"]);
+                            measureData[sample, 2] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_z"]);
 
-                    List<double> tempTimeList = timeStamp.ToList();
-                    int time300MsIndex =
-                        tempTimeList.IndexOf(
-                            tempTimeList.OrderBy(
-                                d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
-                                        .ElementAt(0));
+                            measureData[sample, 3] =
+                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_x"]);
+                            measureData[sample, 4] =
+                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_y"]);
+                            measureData[sample, 5] =
+                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_z"]);
 
-                    _myMatlabWrapper.SetWorkspaceData("pos1", new double[]
+                            measureData[sample, 6] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
+                            measureData[sample, 7] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_y"]);
+                            measureData[sample, 8] =
+                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
+                        }
+
+                        List<double> tempTimeList = timeStamp.ToList();
+                        int time300MsIndex =
+                            tempTimeList.IndexOf(
+                                tempTimeList.OrderBy(
+                                    d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
+                                            .ElementAt(0));
+
+                        _myMatlabWrapper.SetWorkspaceData("pos1", new double[]
                         {
                             measureData[time300MsIndex - 1, 0],
                             measureData[time300MsIndex - 1, 2]
                         });
 
-                    _myMatlabWrapper.SetWorkspaceData("pos2", new double[]
+                        _myMatlabWrapper.SetWorkspaceData("pos2", new double[]
                         {
                             measureData[time300MsIndex, 0],
                             measureData[time300MsIndex, 2]
                         });
 
-                    _myMatlabWrapper.SetWorkspaceData("force", new double[]
+                        _myMatlabWrapper.SetWorkspaceData("force", new double[]
                         {
                             measureData[time300MsIndex, 6],
                             measureData[time300MsIndex, 8]
                         });
 
-                    if (szenario == "Szenario40") // CW
-                    {
-                        _myMatlabWrapper.SetWorkspaceData("vforce", new double[]
+                        if (szenario == "Szenario44_N" || szenario == "Szenario44_R" || szenario == "Szenario45_N" || szenario == "Szenario45_R") // CW
+                        {
+                            _myMatlabWrapper.SetWorkspaceData("vforce", new double[]
                             {
                                 measureData[time300MsIndex, 3] * 20, // CW
                                 measureData[time300MsIndex, 5] * -20 // CW
                             });
+                        }
+                        _myMatlabWrapper.Execute("fPD = normVectorLine_CS(" + targetNumber + ", force');");
+                        _myMatlabWrapper.Execute("fvPD = normVectorLine_CS(" + targetNumber + ", vforce');");
+                        _myMatlabWrapper.Execute("trials(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ") = " +
+                                                 (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ";");
+                        _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
+                                                 ",1) = sqrt(fPD(1)^2+fPD(2)^2);");
+                        _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
+                                                 ",2) = sqrt(fvPD(1)^2+fvPD(2)^2);");
                     }
-                    _myMatlabWrapper.Execute("fPD = normVectorLine(pos1, pos2, force);");
-                    _myMatlabWrapper.Execute("fvPD = normVectorLine(pos1, pos2, vforce);");
-                    _myMatlabWrapper.Execute("trials(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ") = " +
-                                             (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ";");
-                    _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                             ",1) = sqrt(fPD(1)^2+fPD(2)^2);");
-                    _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                             ",2) = sqrt(fvPD(1)^2+fvPD(2)^2);");
                 }
                 _myMatlabWrapper.Execute("bar(trials - 0.125,bars(:,1),0.25,'r');");
                 _myMatlabWrapper.Execute("bar(trials + 0.125,bars(:,2),0.25,'g');");
