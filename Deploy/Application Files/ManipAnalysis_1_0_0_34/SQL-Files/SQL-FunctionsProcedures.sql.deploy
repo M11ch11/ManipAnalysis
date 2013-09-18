@@ -251,8 +251,8 @@ BEGIN
 	
 	DECLARE @upperSzenarioTrialNumberID int, @lowerSzenarioTrialNumberID int;
 	
-	SELECT @upperSzenarioTrialNumberID = id FROM _szenario_trial_number WHERE szenario_trial_number = @szenarioTrialNumber-1;
-	SELECT @lowerSzenarioTrialNumberID = id FROM _szenario_trial_number WHERE szenario_trial_number = @szenarioTrialNumber+1;
+	SELECT @upperSzenarioTrialNumberID = id FROM _szenario_trial_number WHERE szenario_trial_number = @szenarioTrialNumber+1;
+	SELECT @lowerSzenarioTrialNumberID = id FROM _szenario_trial_number WHERE szenario_trial_number = @szenarioTrialNumber-1;
 
 	IF(@upperSzenarioTrialNumberID IS NULL)
 	BEGIN
@@ -266,6 +266,16 @@ BEGIN
 
 	SELECT @upperTrialID = id FROM _trial WHERE measure_file_id = @measureFileID AND szenario_trial_number_id = @upperSzenarioTrialNumberID;
 	SELECT @lowerTrialID = id FROM _trial WHERE measure_file_id = @measureFileID AND szenario_trial_number_id = @lowerSzenarioTrialNumberID;
+
+	IF(@upperTrialID IS NULL)
+	BEGIN
+		SELECT @upperTrialID = @lowerTrialID;
+	END
+
+	IF(@lowerTrialID IS NULL)
+	BEGIN
+		SELECT @lowerTrialID = @upperTrialID;
+	END
 
 END
 
