@@ -8,7 +8,7 @@ namespace ManipAnalysis
 {
     internal class MeasureFileParser
     {
-        private readonly DataContainer _dataContainer;
+        private DataContainer _dataContainer;
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private string _measureFilePath;
 
@@ -87,7 +87,10 @@ namespace ManipAnalysis
                 int expectedTargetTrialCount = 0;
 
                 if (_dataContainer.SzenarioName == "Szenario02" ||
-                    _dataContainer.SzenarioName == "Szenario30")
+                    _dataContainer.SzenarioName == "Szenario30" ||
+                    _dataContainer.SzenarioName == "Szenario42_N" ||
+                    _dataContainer.SzenarioName == "Szenario42_R"
+                    )
                 {
                     expectedSzenarioTrialCount = 96;
                     expectedTargetTrialCount = 6;
@@ -121,20 +124,29 @@ namespace ManipAnalysis
                          _dataContainer.SzenarioName == "Szenario17" ||
                          _dataContainer.SzenarioName == "Szenario18" ||
                          _dataContainer.SzenarioName == "Szenario19" ||
-                         _dataContainer.SzenarioName == "Szenario20"
+                         _dataContainer.SzenarioName == "Szenario20" ||
+                         _dataContainer.SzenarioName == "Szenario50" ||
+                         _dataContainer.SzenarioName == "Szenario51"
                     )
                 {
                     expectedSzenarioTrialCount = 400;
                     expectedTargetTrialCount = 25;
                 }
-                else if (_dataContainer.SzenarioName == "Szenario40" ||
-                         _dataContainer.SzenarioName == "Szenario41" ||
-                         _dataContainer.SzenarioName == "Szenario42" ||
-                         _dataContainer.SzenarioName == "Szenario43"
+                else if (_dataContainer.SzenarioName == "Szenario43_N" ||
+                         _dataContainer.SzenarioName == "Szenario43_R" ||
+                         _dataContainer.SzenarioName == "Szenario44_N" ||
+                         _dataContainer.SzenarioName == "Szenario44_R"
                     )
                 {
                     expectedSzenarioTrialCount = 480;
                     expectedTargetTrialCount = 30;
+                }
+                else if (_dataContainer.SzenarioName == "Szenario45_N" ||
+                         _dataContainer.SzenarioName == "Szenario45_R"
+                        )
+                {
+                    expectedSzenarioTrialCount = 32;
+                    expectedTargetTrialCount = 2;
                 }
 
                 //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, isCatchTrial, hasLeftTarget";  // Study 1
@@ -232,15 +244,92 @@ namespace ManipAnalysis
                             }
                             else
                             {
-                                //("Measure file line error: invalid column count");
+                                _myManipAnalysisGui.WriteToLogBox("Measure file header error: invalid column count");
                                 retVal = false;
                             }
                         }
                     }
 
+                    /*
+                    //-------------------- 30.07.2013
+                    if (_dataContainer.MeasureFileCreationDate == "24.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "25.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "26.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "27.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "28.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "29.07.2013" ||
+                        _dataContainer.MeasureFileCreationDate == "30.07.2013"
+                       )
+                    {
+                        int sztrnmbr = -1;
+                        int addsztrnmbr = -1;
+
+                        if (_dataContainer.SzenarioName.Contains("Szenario42"))
+                        {
+                            sztrnmbr = 67;
+                            addsztrnmbr = 97;
+                        }
+                        else if (_dataContainer.SzenarioName.Contains("Szenario43") ||
+                                    _dataContainer.SzenarioName.Contains("Szenario44")
+                                )
+                        {
+                            sztrnmbr = 455;
+                            addsztrnmbr = 481;
+                        }
+                        else if (_dataContainer.SzenarioName.Contains("Szenario45"))
+                        {
+                            sztrnmbr = 3;
+                            addsztrnmbr = 33;
+                        }
+
+                        if (sztrnmbr != -1)
+                        {
+                            DateTime startTime = _dataContainer.MeasureDataRaw.Last().TimeStamp;
+                            startTime.AddSeconds(1.0);
+
+                            List<MeasureDataContainer> bufferList = _dataContainer.MeasureDataRaw.Where(t => t.SzenarioTrialNumber == sztrnmbr).ToList();
+
+                            for (int blc = 0; blc < bufferList.Count; blc++)
+                            {
+                                MeasureDataContainer tmdc = new MeasureDataContainer(
+                                    startTime.AddMilliseconds(blc * 5),
+                                    bufferList[blc].ForceActualX,
+                                    bufferList[blc].ForceActualY,
+                                    bufferList[blc].ForceActualZ,
+                                    bufferList[blc].ForceNominalX,
+                                    bufferList[blc].ForceNominalY,
+                                    bufferList[blc].ForceNominalZ,
+                                    bufferList[blc].ForceMomentX,
+                                    bufferList[blc].ForceMomentY,
+                                    bufferList[blc].ForceMomentZ,
+                                    bufferList[blc].PositionCartesianX,
+                                    bufferList[blc].PositionCartesianY,
+                                    bufferList[blc].PositionCartesianZ,
+                                    bufferList[blc].TargetNumber,
+                                    bufferList[blc].TargetTrialNumber,
+                                    addsztrnmbr,
+                                    bufferList[blc].IsCatchTrial,
+                                    bufferList[blc].IsErrorclampTrial,
+                                    bufferList[blc].PositionStatus);
+
+                                tmdc.ContainsDuplicates = true;
+
+                                _dataContainer.MeasureDataRaw.Add(tmdc);
+                            }
+                        }
+
+                        for (int stn = 0; stn < _dataContainer.MeasureDataRaw.Count; stn++)
+                        {
+                            _dataContainer.MeasureDataRaw.ElementAt(stn).SzenarioTrialNumber--;
+                        }
+                    }
+                    //--------------------
+                    */
                     int maxTrialCount = _dataContainer.MeasureDataRaw.Max(t => t.SzenarioTrialNumber);
                     int realTrialCount =
                         _dataContainer.MeasureDataRaw.Select(t => t.SzenarioTrialNumber).Distinct().Count();
+                    
+                    
                     if ((maxTrialCount != expectedSzenarioTrialCount) || (realTrialCount != expectedSzenarioTrialCount))
                     {
                         _myManipAnalysisGui.WriteToLogBox("Trial count error: expected " + expectedSzenarioTrialCount +

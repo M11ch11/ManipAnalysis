@@ -159,6 +159,10 @@ namespace ManipAnalysis
             this.label_Import_NewSampleCountText = new System.Windows.Forms.Label();
             this.textBox_Import_NewSampleCount = new System.Windows.Forms.TextBox();
             this.groupBox_Import_ButterworthFilter = new System.Windows.Forms.GroupBox();
+            this.label_Import_CutoffFreqForceForce = new System.Windows.Forms.Label();
+            this.label_Import_CutoffFreqPositionPosition = new System.Windows.Forms.Label();
+            this.textBox_Import_CutoffFreqForce = new System.Windows.Forms.TextBox();
+            this.label_Import_CutoffFreqForce = new System.Windows.Forms.Label();
             this.label_Import_SamplesPerSec = new System.Windows.Forms.Label();
             this.textBox_Import_CutoffFreqPosition = new System.Windows.Forms.TextBox();
             this.label_Import_CutoffFreqPosition = new System.Windows.Forms.Label();
@@ -243,10 +247,6 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
-            this.textBox_Import_CutoffFreqForce = new System.Windows.Forms.TextBox();
-            this.label_Import_CutoffFreqForce = new System.Windows.Forms.Label();
-            this.label_Import_CutoffFreqPositionPosition = new System.Windows.Forms.Label();
-            this.label_Import_CutoffFreqForceForce = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1704,6 +1704,41 @@ namespace ManipAnalysis
             this.groupBox_Import_ButterworthFilter.TabStop = false;
             this.groupBox_Import_ButterworthFilter.Text = "Butterworth filter settings";
             // 
+            // label_Import_CutoffFreqForceForce
+            // 
+            this.label_Import_CutoffFreqForceForce.AutoSize = true;
+            this.label_Import_CutoffFreqForceForce.Location = new System.Drawing.Point(113, 103);
+            this.label_Import_CutoffFreqForceForce.Name = "label_Import_CutoffFreqForceForce";
+            this.label_Import_CutoffFreqForceForce.Size = new System.Drawing.Size(34, 13);
+            this.label_Import_CutoffFreqForceForce.TabIndex = 10;
+            this.label_Import_CutoffFreqForceForce.Text = "Force";
+            // 
+            // label_Import_CutoffFreqPositionPosition
+            // 
+            this.label_Import_CutoffFreqPositionPosition.AutoSize = true;
+            this.label_Import_CutoffFreqPositionPosition.Location = new System.Drawing.Point(113, 77);
+            this.label_Import_CutoffFreqPositionPosition.Name = "label_Import_CutoffFreqPositionPosition";
+            this.label_Import_CutoffFreqPositionPosition.Size = new System.Drawing.Size(44, 13);
+            this.label_Import_CutoffFreqPositionPosition.TabIndex = 9;
+            this.label_Import_CutoffFreqPositionPosition.Text = "Position";
+            // 
+            // textBox_Import_CutoffFreqForce
+            // 
+            this.textBox_Import_CutoffFreqForce.Location = new System.Drawing.Point(71, 100);
+            this.textBox_Import_CutoffFreqForce.Name = "textBox_Import_CutoffFreqForce";
+            this.textBox_Import_CutoffFreqForce.Size = new System.Drawing.Size(36, 20);
+            this.textBox_Import_CutoffFreqForce.TabIndex = 8;
+            this.textBox_Import_CutoffFreqForce.Text = "10";
+            // 
+            // label_Import_CutoffFreqForce
+            // 
+            this.label_Import_CutoffFreqForce.AutoSize = true;
+            this.label_Import_CutoffFreqForce.Location = new System.Drawing.Point(6, 103);
+            this.label_Import_CutoffFreqForce.Name = "label_Import_CutoffFreqForce";
+            this.label_Import_CutoffFreqForce.Size = new System.Drawing.Size(62, 13);
+            this.label_Import_CutoffFreqForce.TabIndex = 7;
+            this.label_Import_CutoffFreqForce.Text = "Cutoff-Freq:";
+            // 
             // label_Import_SamplesPerSec
             // 
             this.label_Import_SamplesPerSec.AutoSize = true;
@@ -2520,41 +2555,6 @@ namespace ManipAnalysis
             this.listBox_LogBox.ScrollAlwaysVisible = true;
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
-            // 
-            // textBox_Import_CutoffFreqForce
-            // 
-            this.textBox_Import_CutoffFreqForce.Location = new System.Drawing.Point(71, 100);
-            this.textBox_Import_CutoffFreqForce.Name = "textBox_Import_CutoffFreqForce";
-            this.textBox_Import_CutoffFreqForce.Size = new System.Drawing.Size(36, 20);
-            this.textBox_Import_CutoffFreqForce.TabIndex = 8;
-            this.textBox_Import_CutoffFreqForce.Text = "18";
-            // 
-            // label_Import_CutoffFreqForce
-            // 
-            this.label_Import_CutoffFreqForce.AutoSize = true;
-            this.label_Import_CutoffFreqForce.Location = new System.Drawing.Point(6, 103);
-            this.label_Import_CutoffFreqForce.Name = "label_Import_CutoffFreqForce";
-            this.label_Import_CutoffFreqForce.Size = new System.Drawing.Size(62, 13);
-            this.label_Import_CutoffFreqForce.TabIndex = 7;
-            this.label_Import_CutoffFreqForce.Text = "Cutoff-Freq:";
-            // 
-            // label_Import_CutoffFreqPositionPosition
-            // 
-            this.label_Import_CutoffFreqPositionPosition.AutoSize = true;
-            this.label_Import_CutoffFreqPositionPosition.Location = new System.Drawing.Point(113, 77);
-            this.label_Import_CutoffFreqPositionPosition.Name = "label_Import_CutoffFreqPositionPosition";
-            this.label_Import_CutoffFreqPositionPosition.Size = new System.Drawing.Size(44, 13);
-            this.label_Import_CutoffFreqPositionPosition.TabIndex = 9;
-            this.label_Import_CutoffFreqPositionPosition.Text = "Position";
-            // 
-            // label_Import_CutoffFreqForceForce
-            // 
-            this.label_Import_CutoffFreqForceForce.AutoSize = true;
-            this.label_Import_CutoffFreqForceForce.Location = new System.Drawing.Point(113, 103);
-            this.label_Import_CutoffFreqForceForce.Name = "label_Import_CutoffFreqForceForce";
-            this.label_Import_CutoffFreqForceForce.Size = new System.Drawing.Size(34, 13);
-            this.label_Import_CutoffFreqForceForce.TabIndex = 10;
-            this.label_Import_CutoffFreqForceForce.Text = "Force";
             // 
             // ManipAnalysisGui
             // 

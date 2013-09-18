@@ -21,7 +21,7 @@ namespace ManipAnalysis.Container
         public readonly double PositionCartesianY;
         public readonly double PositionCartesianZ;
         public readonly int PositionStatus;
-        public readonly int SzenarioTrialNumber;
+        public int SzenarioTrialNumber;
 
         public readonly int TargetNumber;
         public bool ContainsDuplicates;

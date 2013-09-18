@@ -75,7 +75,7 @@ namespace ManipAnalysis
         {
             bool retVal = false;
 
-            if (CheckSqlServerAvailability(server, 2000))
+            if (CheckSqlServerAvailability(server, 6000))
             {
                 _myManipAnalysisGui.WriteToLogBox("Connected to SQL-Server.");
                 _mySqlWrapper.SetSqlServer(server);
@@ -454,8 +454,17 @@ namespace ManipAnalysis
                         _myMatlabWrapper.Execute("dataPlot = data;");
                     }
 
-                    double[,] dataPlot = _myMatlabWrapper.GetWorkspaceData("dataPlot");
-
+                    double[,] dataPlot = null;
+                    if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("dataPlot").GetType(), typeof(double[,])))
+                    {
+                        dataPlot = _myMatlabWrapper.GetWorkspaceData("dataPlot");
+                    }
+                    else if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("dataPlot").GetType(), typeof(double)))
+                    {
+                        dataPlot = new double[1, 1];
+                        dataPlot[0, 0] = _myMatlabWrapper.GetWorkspaceData("dataPlot");
+                    }
+                    
                     switch (statisticType)
                     {
                         case "Vector correlation":
@@ -1132,7 +1141,10 @@ namespace ManipAnalysis
                             #region Calculate baselines
 
                             if (myDataContainter.SzenarioName == "Szenario02" ||
-                                myDataContainter.SzenarioName == "Szenario30") // Szenario 30 == EEG-Baseline
+                                myDataContainter.SzenarioName == "Szenario30" || // Szenario 30 == EEG-Baseline
+                                myDataContainter.SzenarioName == "Szenario42_R" || // Study 4 rotated seat
+                                myDataContainter.SzenarioName == "Szenario42_N" // Study 4 normal seat
+                                ) 
                             {
                                 myDataContainter.BaselineData = new List<BaselineDataContainer>();
 
@@ -1638,6 +1650,8 @@ namespace ManipAnalysis
                                         tempRawData[j + 1].TimeStamp.Subtract(
                                             tempRawData[j].TimeStamp).TotalSeconds);
                         }
+
+                        while (diffXYZ.Remove(double.PositiveInfinity) | diffXYZ.Remove(double.NegativeInfinity));
 
                         int maxIndex = diffXYZ.IndexOf(diffXYZ.Max());
 
@@ -2751,7 +2765,7 @@ namespace ManipAnalysis
                 }
 
                 int[] tempSzenarioTrialNumbers =
-                    tempNormalisedDataEnum.Where(t => t.TargetTrialNumber > 1) // Szenario 2-6
+                    tempNormalisedDataEnum.Where(t => t.TargetTrialNumber > 1) // Sets 2-6
                                           .Select(t => t.SzenarioTrialNumber)
                                           .OrderBy(t => t)
                                           .Distinct()
@@ -3135,60 +3149,62 @@ namespace ManipAnalysis
                             _mySqlWrapper.GetFaultyTrialFixInformation(
                                 Convert.ToInt32(faultyTrialInformation[trialIDCounter][1]),
                                 Convert.ToInt32(faultyTrialInformation[trialIDCounter][7]));
+                        if (trialFixInformation != null)
+                        {
+                            DataSet upperStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[0]);
+                            DataSet lowerStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[1]);
 
-                        DataSet upperStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[0]);
-                        DataSet lowerStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[1]);
+                            double velocityVectorCorrelation =
+                                (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
+                                 Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"])) / 2;
+                            double trajectoryLengthAbs =
+                                (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) +
+                                 Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"])) / 2;
+                            double trajectoryLengthRatioBaseline =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"])) / 2;
+                            double perpendicularDisplacement300MsAbs =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"])) / 2;
+                            double maximalPerpendicularDisplacementAbs =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"])) / 2;
+                            double meanPerpendicularDisplacementAbs =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"])) / 2;
+                            double perpendicularDisplacement300MsSign =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"])) / 2;
+                            double maximalPerpendicularDisplacementSign =
+                                (Convert.ToDouble(
+                                    upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]) +
+                                 Convert.ToDouble(
+                                     lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"])) / 2;
+                            double enclosedArea =
+                                (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]) +
+                                 Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["enclosed_area"])) / 2;
+                            double rmse = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["rmse"]) +
+                                           Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"])) / 2;
 
-                        double velocityVectorCorrelation =
-                            (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
-                             Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]))/2;
-                        double trajectoryLengthAbs =
-                            (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) +
-                             Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]))/2;
-                        double trajectoryLengthRatioBaseline =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]))/2;
-                        double perpendicularDisplacement300MsAbs =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]))/2;
-                        double maximalPerpendicularDisplacementAbs =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"]))/2;
-                        double meanPerpendicularDisplacementAbs =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]))/2;
-                        double perpendicularDisplacement300MsSign =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]))/2;
-                        double maximalPerpendicularDisplacementSign =
-                            (Convert.ToDouble(
-                                upperStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]) +
-                             Convert.ToDouble(
-                                 lowerStatisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]))/2;
-                        double enclosedArea =
-                            (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]) +
-                             Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["enclosed_area"]))/2;
-                        double rmse = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["rmse"]) +
-                                       Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"]))/2;
-
-                        _mySqlWrapper.InsertStatisticData(Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
-                                                          velocityVectorCorrelation, trajectoryLengthAbs,
-                                                          trajectoryLengthRatioBaseline,
-                                                          perpendicularDisplacement300MsAbs,
-                                                          maximalPerpendicularDisplacementAbs,
-                                                          meanPerpendicularDisplacementAbs,
-                                                          perpendicularDisplacement300MsSign,
-                                                          maximalPerpendicularDisplacementSign, enclosedArea, rmse);
+                            _mySqlWrapper.InsertStatisticData(Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
+                                                              velocityVectorCorrelation, trajectoryLengthAbs,
+                                                              trajectoryLengthRatioBaseline,
+                                                              perpendicularDisplacement300MsAbs,
+                                                              maximalPerpendicularDisplacementAbs,
+                                                              meanPerpendicularDisplacementAbs,
+                                                              perpendicularDisplacement300MsSign,
+                                                              maximalPerpendicularDisplacementSign, enclosedArea, rmse);
+                        }
                     }
                 }
             }
@@ -3329,11 +3345,6 @@ namespace ManipAnalysis
                         _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
                         _myMatlabWrapper.Plot("X", "Z", "black", 2);
 
-                        //_myMatlabWrapper.SetWorkspaceData("X", forceDataX.ToArray());
-                        //_myMatlabWrapper.SetWorkspaceData("Z", forceDataZ.ToArray());
-                        //_myMatlabWrapper.Plot("X", "red", 1);
-                        //_myMatlabWrapper.Plot("Z", "green", 1);
-
                         
                         if ((showForceVectors || showPdForceVectors) && measureDataX.Count > 1)
                         {
@@ -3361,8 +3372,8 @@ namespace ManipAnalysis
                                 }
                                 if (showPdForceVectors)
                                 {
-
-                                    _myMatlabWrapper.Execute("fPD = normVectorLine(vpos1, vpos2, vforce);");
+                                    //_myMatlabWrapper.Execute("fPD = normVectorLine(vpos1, vpos2, vforce);");
+                                    _myMatlabWrapper.Execute("fPD = normVectorLine_CS(" + tempContainer.Target + ", vforce);");
                                     _myMatlabWrapper.Execute(
                                         "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                 }

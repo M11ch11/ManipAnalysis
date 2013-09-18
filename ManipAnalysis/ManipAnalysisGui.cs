@@ -121,6 +121,8 @@ namespace ManipAnalysis
             filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
             filesList.RemoveAll(t => (t.Name.Contains("Szenario00")));
             filesList.RemoveAll(t => (t.Name.Contains("Szenario01")));
+            filesList.RemoveAll(t => (t.Name.Contains("Szenario40")));
+            filesList.RemoveAll(t => (t.Name.Contains("Szenario41")));
 
 
             for (int i = 0; i < filesList.Count; i++)
@@ -177,6 +179,8 @@ namespace ManipAnalysis
                 filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
                 filesList.RemoveAll(t => (t.Name.Contains("Szenario00")));
                 filesList.RemoveAll(t => (t.Name.Contains("Szenario01")));
+                filesList.RemoveAll(t => (t.Name.Contains("Szenario40")));
+                filesList.RemoveAll(t => (t.Name.Contains("Szenario41")));
 
                 bool isValid = true;
 
@@ -596,22 +600,22 @@ namespace ManipAnalysis
                 {
                     List<string[]> cache = faultyTrialInfoList.Select(t => new string[]
                         {
-                            Convert.ToString(t[3]), Convert.ToString(t[4]), Convert.ToString(t[6]),
-                            Convert.ToString(t[5]),
-                            Convert.ToString(Convert.ToDateTime(t[7])), Convert.ToString(Convert.ToInt32(t[8]))
+                            Convert.ToString(t[0]), Convert.ToString(t[1]), Convert.ToString(t[2]),
+                            Convert.ToString(t[3]),  Convert.ToString(t[4]),  Convert.ToString(t[5]),
+                            Convert.ToString(Convert.ToDateTime(t[6])), Convert.ToString(Convert.ToInt32(t[7]))
                         }).ToList();
 
                     string output =
                         cache.OrderBy(t => t[4])
                              .Select(
                                  t =>
-                                 t[0] + " - " + t[1] + " - " + t[2] + " - " + t[3] + " - " + t[4] + " - Trial " + t[5])
+                                 " TrialID " + t[0] + " - FileID " + t[1] + " -" + t[2] + " - " + t[3] + " - SubjectID " + t[4] + " - " + t[5] + " - " + t[6] + " - Trial " + t[7])
                              .ToArray()
                              .Aggregate(
-                                 "------------------------------------------------------- Faulty trial list -------------------------------------------------------\n",
+                                 "\n------------------------------------------------------- Faulty trial list -------------------------------------------------------\n",
                                  (current, line) => current + (line + "\n"));
                     output +=
-                        "---------------------------------------------------------------------------------------------------------------------------------";
+                        "-----------------------------------------------------------------------------------------------------------------------------------";
 
                     WriteToLogBox(output);
                 }
@@ -1676,6 +1680,8 @@ namespace ManipAnalysis
 
         private void button_Start_ConnectToSQlServer_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Connecting to server...");
+
             comboBox_Start_Database.Items.Clear();
 
             if (_manipAnalysisFunctions.ConnectToSqlServer(ServerName))
