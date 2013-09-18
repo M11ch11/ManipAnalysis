@@ -103,4 +103,4 @@ rotVforce = [];
 
 rotVforce = R * Vforce;  % Rotation of force point with the ankle alpha (to x-axis)
 
-VforcePD = rotVforce(2);
+VforcePD = rotVforce;
