@@ -10,7 +10,6 @@ namespace ManipAnalysis
 {
     public partial class ManipAnalysisGui : Form
     {
-        private const string ServerName = "IFS96";
         private ManipAnalysisFunctions _manipAnalysisFunctions;
         private delegate void LogBoxCallbackAddString(string text);
         private delegate void LogBoxCallbackClearItems();
@@ -228,7 +227,7 @@ namespace ManipAnalysis
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
-                if (Environment.MachineName != ServerName)
+                if (Environment.MachineName != textBox_Start_SqlServer.Text)
                 {
                     MessageBox.Show(@"Import and Calculations only possible when running on ManipServer!");
                 }
@@ -1684,7 +1683,7 @@ namespace ManipAnalysis
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToSqlServer(ServerName))
+            if (_manipAnalysisFunctions.ConnectToSqlServer(textBox_Start_SqlServer.Text))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;

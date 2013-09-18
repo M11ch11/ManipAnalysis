@@ -247,6 +247,7 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
+            this.textBox_Start_SqlServer = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -284,6 +285,7 @@ namespace ManipAnalysis
             // 
             // tabPage_Start
             // 
+            this.tabPage_Start.Controls.Add(this.textBox_Start_SqlServer);
             this.tabPage_Start.Controls.Add(this.button_Start_SelectDatabase);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_Database);
             this.tabPage_Start.Controls.Add(this.label_Start_Database);
@@ -334,9 +336,9 @@ namespace ManipAnalysis
             // 
             this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(14, 78);
             this.button_Start_ConnectToSQlServer.Name = "button_Start_ConnectToSQlServer";
-            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(377, 23);
+            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(193, 23);
             this.button_Start_ConnectToSQlServer.TabIndex = 16;
-            this.button_Start_ConnectToSQlServer.Text = "Connect to Server (IFS96)";
+            this.button_Start_ConnectToSQlServer.Text = "Connect to Server";
             this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
             this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
             // 
@@ -2556,6 +2558,14 @@ namespace ManipAnalysis
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
             // 
+            // textBox_Start_SqlServer
+            // 
+            this.textBox_Start_SqlServer.Location = new System.Drawing.Point(213, 80);
+            this.textBox_Start_SqlServer.Name = "textBox_Start_SqlServer";
+            this.textBox_Start_SqlServer.Size = new System.Drawing.Size(178, 20);
+            this.textBox_Start_SqlServer.TabIndex = 22;
+            this.textBox_Start_SqlServer.Text = "IFS96";
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2842,6 +2852,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
         private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqForce;
+        private System.Windows.Forms.TextBox textBox_Start_SqlServer;
     }
 }
 
