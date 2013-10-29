@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis.exe" version="1.0.0.35" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis.exe" version="1.0.0.37" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="Logo.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis" version="1.0.5009.24474" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis" version="1.0.5050.29710" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis.exe" size="330752">
-      <assemblyIdentity name="ManipAnalysis" version="1.0.5009.24474" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis.exe" size="349184">
+      <assemblyIdentity name="ManipAnalysis" version="1.0.5050.29710" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>isYWlga6uh3GUzgxi7kHSW67ZJA=</dsig:DigestValue>
+        <dsig:DigestValue>wjMPcZobAa8A+ltly6wxpNS4Lao=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -63,130 +63,139 @@
       <dsig:DigestValue>+2xok9OmgjfiE1FMmPzsfxSqbFM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ManipAnalysis.exe.config" size="168">
+  <file name="ManipAnalysis.exe.config" size="174">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>yiSQyjeFx9ee5NDxxD4POUenk5M=</dsig:DigestValue>
+      <dsig:DigestValue>gzf47JtJv/5OCn++sS083v+HglU=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\distance2curveAbs.m" size="5198">
+  <file name="MatlabFiles\distance2curveAbs.m" size="5326">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>tTZcQ3zWHAIcGAd+8Z308IoC/1s=</dsig:DigestValue>
+      <dsig:DigestValue>oEoezujwX2KDWuWD1v2pD45U0gw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\distance2curveSign.m" size="6614">
+  <file name="MatlabFiles\distance2curveSign.m" size="6786">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>C2XCXcgigi4g5N4N4hWfgpxJ2JA=</dsig:DigestValue>
+      <dsig:DigestValue>LZcDdqSZEUthW0A/tQneCMt3ZFA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\drawCircle.m" size="1381">
+  <file name="MatlabFiles\drawCircle.m" size="1410">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>gjQWF8y1brmoBQqUJbMXjhzyR50=</dsig:DigestValue>
+      <dsig:DigestValue>LttwA5Po+Sshn1EocXSKApW+Pbw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\enclosedArea.m" size="1386">
+  <file name="MatlabFiles\enclosedArea.m" size="1417">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>0rkgFAYOnjxYVRrg6ruuszK5Xrc=</dsig:DigestValue>
+      <dsig:DigestValue>cqUBIDZlahxynytGkyR+xgss8KQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\normVectorLine_CS.m" size="3543">
+  <file name="MatlabFiles\normVectorLine_CS.m" size="3649">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>rowE1wmhroWC62u7uinQtJY1FI0=</dsig:DigestValue>
+      <dsig:DigestValue>OGs8RDfIK0mMui9pJ6Rl30CDd4I=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\rootMeanSquareError.m" size="1810">
+  <file name="MatlabFiles\rootMeanSquareError.m" size="1855">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>2qNKCgS99BoSsWQpyOh1OWnrRac=</dsig:DigestValue>
+      <dsig:DigestValue>iVlm2YpdeV1yjbg/Ti9QFq5+zg8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\showMatlabCommandWindow.m" size="1196">
+  <file name="MatlabFiles\showMatlabCommandWindow.m" size="1225">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>pN3rtk3nP6ZZ26RzEIdL8r3a2i8=</dsig:DigestValue>
+      <dsig:DigestValue>hICFORPNUnglVxWWyW93Iq2qigU=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\timeNorm.m" size="3359">
+  <file name="MatlabFiles\timeNorm.m" size="3438">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>E8dIlbRcwsiUwthJe7ANck1prhI=</dsig:DigestValue>
+      <dsig:DigestValue>8pLaXDiumgvAW/PjVM2nkmn5EyM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\trajectLength.m" size="2193">
+  <file name="MatlabFiles\trajectLength.m" size="2243">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>BkwJJiebHkHqxVWZxu1791v8YQc=</dsig:DigestValue>
+      <dsig:DigestValue>niXuOztFaFuHufqow1EhF14Myh8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\vectorCorrelation.m" size="459">
+  <file name="MatlabFiles\vectorCorrelation.m" size="466">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>VyhUmTYlUglXZf1rJharwf5p+FU=</dsig:DigestValue>
+      <dsig:DigestValue>b97DfVEwteUnx5PkkHCTyeDJSLw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="SQL-Files\SQL-FunctionsProcedures.sql" size="39467">
+  <file name="MatlabFiles\vectorCorrelationFisherZTransform.m" size="2207">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>CiR2X8tqs7gvkExhPjmxzAxMx2I=</dsig:DigestValue>
+      <dsig:DigestValue>erWzmj+MWqhse8Juhs49p5siUP0=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="SQL-Files\SQL-Tables.sql" size="11010">
+  <file name="SQL-Files\SQL-FunctionsProcedures.sql" size="43366">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>McIHLJ7a+dQdF9cg/kMryKKA1iU=</dsig:DigestValue>
+      <dsig:DigestValue>bau8ND0h5p/myIJzrQLs56ZPG8E=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="SQL-Files\SQL-WipeDatabase.sql" size="1327">
+  <file name="SQL-Files\SQL-Tables.sql" size="11296">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>FYcBxlX0uDh5tXh+HkvBv8+cigk=</dsig:DigestValue>
+      <dsig:DigestValue>6oadhv2DYpmc9j59fzLc++2TD98=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="SQL-Files\SQL-WipeDatabase.sql" size="1383">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>8tQjfocYSxGJ4ac+Jzkw55s1xD4=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
