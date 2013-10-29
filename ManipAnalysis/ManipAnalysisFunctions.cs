@@ -383,60 +383,68 @@ namespace ManipAnalysis
                         int trialListCounter = 0;
                         foreach (DataRow row in statisticDataSet.Tables[0].Rows)
                         {
-                            int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                            if (trialList.Contains(szenarioTrialNumber))
+                            if (!row["szenario_trial_number"].GetType().IsInstanceOfType(DBNull.Value))
                             {
-                                switch (statisticType)
+                                int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                                if (trialList.Contains(szenarioTrialNumber))
                                 {
-                                    case "Vector correlation":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["velocity_vector_correlation"]);
-                                        break;
+                                    switch (statisticType)
+                                    {
+                                        case "Vector correlation":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["velocity_vector_correlation"]);
+                                            break;
 
-                                    case "Perpendicular distance 300ms - Abs":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                        break;
+                                        case "Vector correlation fisher z":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
+                                            break;
 
-                                    case "Mean perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
-                                        break;
+                                        case "Perpendicular distance 300ms - Abs":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                            break;
 
-                                    case "Max perpendicular distance - Abs":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
-                                        break;
+                                        case "Mean perpendicular distance - Abs":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                            break;
 
-                                    case "Perpendicular distance 300ms - Sign":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                        break;
+                                        case "Max perpendicular distance - Abs":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                            break;
 
-                                    case "Max perpendicular distance - Sign":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
-                                        break;
+                                        case "Perpendicular distance 300ms - Sign":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                            break;
 
-                                    case "Trajectory length abs":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["trajectory_length_abs"]);
-                                        break;
+                                        case "Max perpendicular distance - Sign":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                            break;
 
-                                    case "Trajectory length ratio":
-                                        data[trialListCounter, meanCounter] =
-                                            Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
-                                        break;
+                                        case "Trajectory length abs":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["trajectory_length_abs"]);
+                                            break;
 
-                                    case "Enclosed area":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["enclosed_area"]);
-                                        break;
+                                        case "Trajectory length ratio":
+                                            data[trialListCounter, meanCounter] =
+                                                Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                            break;
 
-                                    case "RMSE":
-                                        data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
-                                        break;
+                                        case "Enclosed area":
+                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["enclosed_area"]);
+                                            break;
+
+                                        case "RMSE":
+                                            data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
+                                            break;
+                                    }
+                                    trialListCounter++;
                                 }
-                                trialListCounter++;
                             }
                         }
                     }
@@ -473,6 +481,17 @@ namespace ManipAnalysis
                                                                    fitEquation + "')",
                                                                    "dataStdPlot", "[Trial]",
                                                                    "Velocity Vector Correlation", 1, dataPlot.Length,
+                                                                   0.5, 0.9,
+                                                                   plotFit,
+                                                                   plotErrorbars);
+                            break;
+
+                        case "Vector correlation fisher z":
+                            _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation Fisher Z plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   fitEquation + "')",
+                                                                   "dataStdPlot", "[Trial]",
+                                                                   "Velocity Vector Correlation Fisher Z", 1, dataPlot.Length,
                                                                    0.5, 0.9,
                                                                    plotFit,
                                                                    plotErrorbars);
@@ -789,6 +808,11 @@ namespace ManipAnalysis
                             case "Vector correlation":
                                 data[trialListCounter, meanCounter] =
                                     Convert.ToDouble(row["velocity_vector_correlation"]);
+                                break;
+
+                            case "Vector correlation fisher z":
+                                data[trialListCounter, meanCounter] =
+                                    Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
                                 break;
 
                             case "Perpendicular distance 300ms - Abs":
@@ -3047,6 +3071,8 @@ namespace ManipAnalysis
                                 _myMatlabWrapper.Execute(
                                     "vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
                                 _myMatlabWrapper.Execute(
+                                    "vector_correlation_fisher_z = vectorCorrelationFisherZTransform([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
+                                _myMatlabWrapper.Execute(
                                     "enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
                                 _myMatlabWrapper.Execute(
                                     "length_abs = trajectLength(measureData(:,1),measureData(:,3));");
@@ -3066,6 +3092,7 @@ namespace ManipAnalysis
                                     "rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
 
                                 double vectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                double vectorCorrelationFisherZ = _myMatlabWrapper.GetWorkspaceData("vector_correlation_fisher_z");
                                 double enclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
                                 double lengthAbs = _myMatlabWrapper.GetWorkspaceData("length_abs");
                                 double lengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
@@ -3076,7 +3103,7 @@ namespace ManipAnalysis
                                 double maxDistanceSign = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
                                 double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
 
-                                _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, lengthAbs,
+                                _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, vectorCorrelationFisherZ, lengthAbs,
                                                                   lengthRatio, distance300MsAbs, maxDistanceAbs,
                                                                   meanDistanceAbs, distance300MsSign, maxDistanceSign,
                                                                   enclosedArea, rmse);
@@ -3157,6 +3184,9 @@ namespace ManipAnalysis
                             double velocityVectorCorrelation =
                                 (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
                                  Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"])) / 2;
+                            double velocityVectorCorrelationFisherZ =
+                                (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation_fisher_z"]) +
+                                 Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation_fisher_z"])) / 2;
                             double trajectoryLengthAbs =
                                 (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) +
                                  Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"])) / 2;
@@ -3197,13 +3227,17 @@ namespace ManipAnalysis
                                            Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"])) / 2;
 
                             _mySqlWrapper.InsertStatisticData(Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
-                                                              velocityVectorCorrelation, trajectoryLengthAbs,
+                                                              velocityVectorCorrelation, 
+                                                              velocityVectorCorrelationFisherZ,
+                                                              trajectoryLengthAbs,
                                                               trajectoryLengthRatioBaseline,
                                                               perpendicularDisplacement300MsAbs,
                                                               maximalPerpendicularDisplacementAbs,
                                                               meanPerpendicularDisplacementAbs,
                                                               perpendicularDisplacement300MsSign,
-                                                              maximalPerpendicularDisplacementSign, enclosedArea, rmse);
+                                                              maximalPerpendicularDisplacementSign, 
+                                                              enclosedArea, 
+                                                              rmse);
                         }
                     }
                 }

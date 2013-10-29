@@ -2133,6 +2133,7 @@ namespace ManipAnalysis
         public int InsertStatisticData(
             int trialID,
             double velocityVectorCorrelation,
+            double velocityVectorCorrelationFisherZ,
             double trajectoryLengthAbs,
             double trajectoryLengthRatio,
             double perpendicularDisplacement300MsAbs,
@@ -2156,6 +2157,7 @@ namespace ManipAnalysis
 
             _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
             _sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelation", velocityVectorCorrelation));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelationFisherZ", velocityVectorCorrelationFisherZ));
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", trajectoryLengthAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", trajectoryLengthRatio));
             _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs",

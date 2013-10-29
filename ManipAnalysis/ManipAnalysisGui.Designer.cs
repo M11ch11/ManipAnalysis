@@ -35,6 +35,7 @@ namespace ManipAnalysis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManipAnalysisGui));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage_Start = new System.Windows.Forms.TabPage();
+            this.textBox_Start_SqlServer = new System.Windows.Forms.TextBox();
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
             this.comboBox_Start_Database = new System.Windows.Forms.ComboBox();
             this.label_Start_Database = new System.Windows.Forms.Label();
@@ -247,7 +248,6 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
-            this.textBox_Start_SqlServer = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -297,6 +297,14 @@ namespace ManipAnalysis
             this.tabPage_Start.TabIndex = 9;
             this.tabPage_Start.Text = "Start";
             this.tabPage_Start.UseVisualStyleBackColor = true;
+            // 
+            // textBox_Start_SqlServer
+            // 
+            this.textBox_Start_SqlServer.Location = new System.Drawing.Point(213, 80);
+            this.textBox_Start_SqlServer.Name = "textBox_Start_SqlServer";
+            this.textBox_Start_SqlServer.Size = new System.Drawing.Size(178, 20);
+            this.textBox_Start_SqlServer.TabIndex = 22;
+            this.textBox_Start_SqlServer.Text = "IFS96";
             // 
             // button_Start_SelectDatabase
             // 
@@ -881,7 +889,8 @@ namespace ManipAnalysis
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
-            "Vector correlation"});
+            "Vector correlation",
+            "Vector correlation fisher z"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
@@ -1172,7 +1181,8 @@ namespace ManipAnalysis
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
-            "Vector correlation"});
+            "Vector correlation",
+            "Vector correlation fisher z"});
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Name = "comboBox_DescriptiveStatistic2_DataTypeSelect";
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
@@ -2557,14 +2567,6 @@ namespace ManipAnalysis
             this.listBox_LogBox.ScrollAlwaysVisible = true;
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
-            // 
-            // textBox_Start_SqlServer
-            // 
-            this.textBox_Start_SqlServer.Location = new System.Drawing.Point(213, 80);
-            this.textBox_Start_SqlServer.Name = "textBox_Start_SqlServer";
-            this.textBox_Start_SqlServer.Size = new System.Drawing.Size(178, 20);
-            this.textBox_Start_SqlServer.TabIndex = 22;
-            this.textBox_Start_SqlServer.Text = "IFS96";
             // 
             // ManipAnalysisGui
             // 
