@@ -2984,10 +2984,10 @@ namespace ManipAnalysis
             _myManipAnalysisGui.EnableTabPages(false);
             _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
 
-            //List<int[]> trialInfos = _mySqlWrapper.GetStatisticCalculationInformation();
-            ///*
+            List<int[]> trialInfos = _mySqlWrapper.GetStatisticCalculationInformation();
+            /*
             List<int[]> trialInfos = _mySqlWrapper.GetStatisticUpdateInformation();
-            //*/
+            */
             if (trialInfos != null)
             {
                 int counter = 1;
@@ -3005,9 +3005,9 @@ namespace ManipAnalysis
                     DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialInfo[0]);
                     DataSet baselineDataSet = _mySqlWrapper.GetBaselineDataSet(trialInfo[1], trialInfo[2], trialInfo[3],
                                                                                trialInfo[4]);
-                    ///*
+                    /*
                     DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialInfo[0]);
-                    //*/
+                    */
 
                     int targetNumber = trialInfo[5];
 
@@ -3109,15 +3109,14 @@ namespace ManipAnalysis
                                 double maxDistanceSign = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
                                 double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
 
-                                /*
+                                
                                 _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, vectorCorrelationFisherZ, lengthAbs,
                                                                   lengthRatio, distance300MsAbs, maxDistanceAbs,
                                                                   meanDistanceAbs, distance300MsSign, maxDistanceSign,
                                                                   enclosedArea, rmse);
 
 
-                                */
-                                ///*
+                                /*
                                 _mySqlWrapper.UpdateStatisticData(trialInfo[0], 
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]), 
                                     vectorCorrelationFisherZ, 
@@ -3130,7 +3129,7 @@ namespace ManipAnalysis
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]),
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["enclosed_area"]),
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["rmse"]));
-                                //*/
+                                */
                             }
                             catch (Exception statisticException)
                             {
