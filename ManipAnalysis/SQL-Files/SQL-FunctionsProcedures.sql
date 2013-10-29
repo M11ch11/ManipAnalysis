@@ -1,3 +1,5 @@
+USE 
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -695,6 +697,45 @@ BEGIN
 		SELECT @id = Scope_Identity();
 END
 
+
+
+
+CREATE PROCEDURE [dbo].[updateStatisticData]
+	@trialID int,
+	@velocityVectorCorrelation float, 
+	@velocityVectorCorrelationFisherZ float,
+	@trajectoryLengthAbs float,
+	@trajectoryLengthRatioBaseline float,
+	@perpendicularDisplacement300msAbs float,
+	@maximalPerpendicularDisplacementAbs float,
+	@meanPerpendicularDisplacementAbs float,
+	@perpendicularDisplacement300msSign float,
+	@maximalPerpendicularDisplacementSign float,
+	@enclosedArea float,
+	@rmse float,
+	@id int OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE dbo._statistic_data 
+	SET velocity_vector_correlation = @velocityVectorCorrelation, 
+												velocity_vector_correlation_fisher_z = @velocityVectorCorrelationFisherZ,
+												trajectory_length_abs = @trajectoryLengthAbs, 
+												trajectory_length_ratio_baseline = @trajectoryLengthRatioBaseline,
+												perpendicular_displacement_300ms_abs = @perpendicularDisplacement300msAbs, 
+												maximal_perpendicular_displacement_abs = @maximalPerpendicularDisplacementAbs,
+												mean_perpendicular_displacement_abs = @meanPerpendicularDisplacementAbs,
+												perpendicular_displacement_300ms_sign = @perpendicularDisplacement300msSign,
+												maximal_perpendicular_displacement_sign = @maximalPerpendicularDisplacementSign,
+												enclosed_area = @enclosedArea,
+												rmse = @rmse
+	WHERE trial_id = @trialID;
+
+	IF Scope_Identity() IS NULL
+		SELECT @id = -1; 
+	ELSE
+		SELECT @id = Scope_Identity();
+END
 
 
 
@@ -1518,6 +1559,27 @@ RETURN
 )
 
 
+
+CREATE FUNCTION [dbo].[getStatisticUpdateInformation]
+(
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+	SELECT	_trial.id,
+			_trial.subject_id,
+			_trial.study_id,
+			_trial.group_id,
+			_trial.target_id,
+			_target.target_number
+			
+	FROM	(	_trial
+				INNER JOIN _trial_information on _trial_information.id = _trial.trial_information_id
+				INNER JOIN _target on _target.id = _trial.target_id
+				INNER JOIN _statistic_data on _statistic_data.trial_id = _trial.id
+			)
+)
 
 
 

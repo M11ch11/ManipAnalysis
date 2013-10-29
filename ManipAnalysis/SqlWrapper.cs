@@ -637,6 +637,95 @@ namespace ManipAnalysis
             return retVal;
         }
 
+
+        public List<int[]> GetStatisticUpdateInformation()
+        {
+            List<int[]> retVal = null;
+
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.Text;
+
+            _sqlCmd.CommandText = "SELECT * FROM getStatisticUpdateInformation()";
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
+
+                    if (sqlRdr.HasRows)
+                    {
+                        retVal = new List<int[]>();
+
+                        while (sqlRdr.Read())
+                        {
+                            bool hasNullValues = false;
+                            for (int i = 0; i < 6; i++)
+                            {
+                                if (sqlRdr.IsDBNull(i))
+                                {
+                                    if (i > 0)
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("Trial " + sqlRdr.GetInt32(0) +
+                                                                          " has NULL values as id.");
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("There are NULL values.");
+                                    }
+                                    hasNullValues = true;
+                                }
+                            }
+
+                            if (!hasNullValues)
+                            {
+                                retVal.Add(new int[]
+                                    {
+                                        sqlRdr.GetInt32(0), //trial_id
+                                        sqlRdr.GetInt32(1), //subject_id
+                                        sqlRdr.GetInt32(2), //study_id
+                                        sqlRdr.GetInt32(3), //group_id
+                                        sqlRdr.GetInt32(4), //target_id
+                                        sqlRdr.GetInt32(5) //target_number
+                                    });
+                            }
+                        }
+                        sqlRdr.Close();
+                    }
+                    else
+                    {
+                        sqlRdr.Close();
+                    }
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    _sqlCmd.Cancel();
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+
+            return retVal;
+        }
+
+
+
         public List<object[]> GetFaultyTrialInformation()
         {
             List<object[]> retVal = null;
@@ -2152,6 +2241,82 @@ namespace ManipAnalysis
             _sqlCmd.CommandType = CommandType.StoredProcedure;
 
             _sqlCmd.CommandText = "insertStatisticData";
+            _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
+            _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
+
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialID", trialID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelation", velocityVectorCorrelation));
+            _sqlCmd.Parameters.Add(new SqlParameter("@velocityVectorCorrelationFisherZ", velocityVectorCorrelationFisherZ));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", trajectoryLengthAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", trajectoryLengthRatio));
+            _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs",
+                                                    perpendicularDisplacement300MsAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementAbs",
+                                                    maximalPerpendicularDisplacementAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@meanPerpendicularDisplacementAbs",
+                                                    meanPerpendicularDisplacementAbs));
+            _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msSign",
+                                                    perpendicularDisplacement300MsSign));
+            _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementSign",
+                                                    maximalPerpendicularDisplacementSign));
+            _sqlCmd.Parameters.Add(new SqlParameter("@enclosedArea", enclosedArea));
+            _sqlCmd.Parameters.Add(new SqlParameter("@rmse", rmse));
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@id"].Value);
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                                                              @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+
+            return retVal;
+        }
+
+        public int UpdateStatisticData(
+            int trialID,
+            double velocityVectorCorrelation,
+            double velocityVectorCorrelationFisherZ,
+            double trajectoryLengthAbs,
+            double trajectoryLengthRatio,
+            double perpendicularDisplacement300MsAbs,
+            double maximalPerpendicularDisplacementAbs,
+            double meanPerpendicularDisplacementAbs,
+            double perpendicularDisplacement300MsSign,
+            double maximalPerpendicularDisplacementSign,
+            double enclosedArea,
+            double rmse
+            )
+        {
+            int retVal = -1;
+
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "updateStatisticData";
             _sqlCmd.Parameters.Add("@id", SqlDbType.Int);
             _sqlCmd.Parameters["@id"].Direction = ParameterDirection.Output;
 
