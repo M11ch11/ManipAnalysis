@@ -492,7 +492,7 @@ namespace ManipAnalysis
                                                                    fitEquation + "')",
                                                                    "dataStdPlot", "[Trial]",
                                                                    "Velocity Vector Correlation Fisher Z", 1, dataPlot.Length,
-                                                                   0.5, 0.9,
+                                                                   0.0, 2.0,
                                                                    plotFit,
                                                                    plotErrorbars);
                             break;
