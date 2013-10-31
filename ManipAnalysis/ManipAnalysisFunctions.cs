@@ -653,6 +653,11 @@ namespace ManipAnalysis
                                         Convert.ToDouble(row["velocity_vector_correlation"]);
                                     break;
 
+                                case "Vector correlation fisher z":
+                                    data[trialListCounter, meanCounter] =
+                                        Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
+                                    break;
+
                                 case "Perpendicular distance 300ms - Abs":
                                     data[trialListCounter, meanCounter] =
                                         Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
@@ -866,7 +871,7 @@ namespace ManipAnalysis
             double[,] dataMean;
             double[,] dataStd;
 
-            if (trialListCounter > 1)
+            if (trialList.Count > 1 & selectedTrialsList.Count() > 1)
             {
                 _myMatlabWrapper.SetWorkspaceData("data", data);
 
