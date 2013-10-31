@@ -155,6 +155,8 @@ namespace ManipAnalysis
             folderBrowserDialog.Reset();
             folderBrowserDialog.ShowDialog();
 
+            WriteProgressInfo("Checking for new files...");
+
             var directoriesList = new List<DirectoryInfo>();
             var filesList = new List<FileInfo>();
 
@@ -210,6 +212,8 @@ namespace ManipAnalysis
                     WriteToLogBox("One or more filenames are invalid!");
                 }
             }
+
+            WriteProgressInfo("Ready.");
         }
 
         private void button_ShowMatlabWindow_Click(object sender, EventArgs e)

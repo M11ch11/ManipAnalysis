@@ -45,7 +45,6 @@
             this.Name = "ManipAnalysisSplash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SplashScreen";
-            this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.Crimson;
             this.UseWaitCursor = true;
             this.ResumeLayout(false);
