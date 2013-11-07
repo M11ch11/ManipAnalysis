@@ -890,7 +890,8 @@ namespace ManipAnalysis
             "Trajectory length abs",
             "Trajectory length ratio",
             "Vector correlation",
-            "Vector correlation fisher z"});
+            "Vector correlation fisher-z",
+            "Vector correlation fisher-z to r-values"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
@@ -1182,7 +1183,8 @@ namespace ManipAnalysis
             "Trajectory length abs",
             "Trajectory length ratio",
             "Vector correlation",
-            "Vector correlation fisher z"});
+            "Vector correlation fisher-z",
+            "Vector correlation fisher-z to r-values"});
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Name = "comboBox_DescriptiveStatistic2_DataTypeSelect";
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Size = new System.Drawing.Size(196, 21);

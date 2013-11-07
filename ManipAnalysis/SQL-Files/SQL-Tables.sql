@@ -91,8 +91,7 @@ CREATE TABLE dbo._study (
   
 CREATE TABLE dbo._statistic_data (
   trial_id                                int NOT NULL, 
-  velocity_vector_correlation             float NOT NULL, 
-  velocity_vector_correlation_fisher_z    float NOT NULL, 
+  velocity_vector_correlation             float NOT NULL,
   trajectory_length_abs                   float NOT NULL, 
   trajectory_length_ratio_baseline        float NOT NULL, 
   perpendicular_displacement_300ms_abs    float NOT NULL, 

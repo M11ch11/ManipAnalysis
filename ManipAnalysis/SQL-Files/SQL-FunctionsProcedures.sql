@@ -647,7 +647,6 @@ GO
 CREATE PROCEDURE [dbo].[insertStatisticData]
 	@trialID int,
 	@velocityVectorCorrelation float, 
-	@velocityVectorCorrelationFisherZ float,
 	@trajectoryLengthAbs float,
 	@trajectoryLengthRatioBaseline float,
 	@perpendicularDisplacement300msAbs float,
@@ -664,7 +663,6 @@ BEGIN
 	INSERT INTO dbo._statistic_data	(	
 												trial_id,
 												velocity_vector_correlation,
-												velocity_vector_correlation_fisher_z,
 												trajectory_length_abs,
 												trajectory_length_ratio_baseline,
 												perpendicular_displacement_300ms_abs,
@@ -679,7 +677,6 @@ BEGIN
 											(
 												@trialID,
 												@velocityVectorCorrelation,
-												@velocityVectorCorrelationFisherZ,
 												@trajectoryLengthAbs,
 												@trajectoryLengthRatioBaseline,
 												@perpendicularDisplacement300msAbs,
@@ -703,7 +700,6 @@ END
 CREATE PROCEDURE [dbo].[updateStatisticData]
 	@trialID int,
 	@velocityVectorCorrelation float, 
-	@velocityVectorCorrelationFisherZ float,
 	@trajectoryLengthAbs float,
 	@trajectoryLengthRatioBaseline float,
 	@perpendicularDisplacement300msAbs float,
@@ -719,7 +715,6 @@ BEGIN
 	SET NOCOUNT ON;
 	UPDATE dbo._statistic_data 
 	SET velocity_vector_correlation = @velocityVectorCorrelation, 
-												velocity_vector_correlation_fisher_z = @velocityVectorCorrelationFisherZ,
 												trajectory_length_abs = @trajectoryLengthAbs, 
 												trajectory_length_ratio_baseline = @trajectoryLengthRatioBaseline,
 												perpendicular_displacement_300ms_abs = @perpendicularDisplacement300msAbs, 

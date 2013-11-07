@@ -395,9 +395,18 @@ namespace ManipAnalysis
                                                 Convert.ToDouble(row["velocity_vector_correlation"]);
                                             break;
 
-                                        case "Vector correlation fisher z":
-                                            data[trialListCounter, meanCounter] =
-                                                Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
+                                        case "Vector correlation fisher-z":
+                                            _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                            data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                            _myMatlabWrapper.ClearWorkspace();
+                                            break;
+
+                                        case "Vector correlation fisher-z to r-values":
+                                            _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                            data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                            _myMatlabWrapper.ClearWorkspace();
                                             break;
 
                                         case "Perpendicular distance 300ms - Abs":
@@ -453,13 +462,27 @@ namespace ManipAnalysis
 
                     if (meanCounter > 1)
                     {
-                        _myMatlabWrapper.Execute("dataPlot = mean(transpose(data));");
-                        _myMatlabWrapper.Execute("dataStdPlot = std(transpose(data));");
-                        _myMatlabWrapper.GetWorkspaceData("dataStdPlot");
+                        if (statisticType == "Vector correlation fisher-z to r-values")
+                        {
+                            _myMatlabWrapper.Execute("dataPlot = fisherZVectorCorrelationTransform(mean(transpose(data)));");
+                            _myMatlabWrapper.Execute("dataStdPlot = fisherZVectorCorrelationTransform(std(transpose(data)));");
+                        }
+                        else
+                        {
+                            _myMatlabWrapper.Execute("dataPlot = mean(transpose(data));");
+                            _myMatlabWrapper.Execute("dataStdPlot = std(transpose(data));");
+                        }
                     }
                     else
                     {
-                        _myMatlabWrapper.Execute("dataPlot = data;");
+                        if (statisticType == "Vector correlation fisher-z to r-values")
+                        {
+                            _myMatlabWrapper.Execute("dataPlot = fisherZVectorCorrelationTransform(data);");
+                        }
+                        else
+                        {
+                            _myMatlabWrapper.Execute("dataPlot = data;");
+                        }                        
                     }
 
                     double[,] dataPlot = null;
@@ -481,18 +504,29 @@ namespace ManipAnalysis
                                                                    fitEquation + "')",
                                                                    "dataStdPlot", "[Trial]",
                                                                    "Velocity Vector Correlation", 1, dataPlot.Length,
-                                                                   0.5, 0.9,
+                                                                   0.5, 1,
                                                                    plotFit,
                                                                    plotErrorbars);
                             break;
 
-                        case "Vector correlation fisher z":
+                        case "Vector correlation fisher-z":
                             _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation Fisher Z plot", "dataPlot",
                                                                    "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
                                                                    fitEquation + "')",
                                                                    "dataStdPlot", "[Trial]",
                                                                    "Velocity Vector Correlation Fisher Z", 1, dataPlot.Length,
                                                                    0.0, 2.0,
+                                                                   plotFit,
+                                                                   plotErrorbars);
+                            break;
+
+                        case "Vector correlation fisher-z to r-values":
+                            _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation Fisher Z to r-Values  plot", "dataPlot",
+                                                                   "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                                                   fitEquation + "')",
+                                                                   "dataStdPlot", "[Trial]",
+                                                                   "Velocity Vector Correlation Fisher Z", 1, dataPlot.Length,
+                                                                   0.5, 1,
                                                                    plotFit,
                                                                    plotErrorbars);
                             break;
@@ -653,9 +687,18 @@ namespace ManipAnalysis
                                         Convert.ToDouble(row["velocity_vector_correlation"]);
                                     break;
 
-                                case "Vector correlation fisher z":
-                                    data[trialListCounter, meanCounter] =
-                                        Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
+                                case "Vector correlation fisher-z":
+                                    _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                    _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                    data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                    _myMatlabWrapper.ClearWorkspace();
+                                    break;
+
+                                case "Vector correlation fisher-z to r-values":
+                                    _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                    _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                    data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                    _myMatlabWrapper.ClearWorkspace();
                                     break;
 
                                 case "Perpendicular distance 300ms - Abs":
@@ -713,8 +756,16 @@ namespace ManipAnalysis
 
                 if (meanCounter > 1)
                 {
-                    _myMatlabWrapper.Execute("dataMean = mean(transpose(data));");
-                    _myMatlabWrapper.Execute("dataStd = std(transpose(data));");
+                    if (statisticType == "Vector correlation fisher-z to r-values")
+                    {
+                        _myMatlabWrapper.Execute("dataMean = fisherZVectorCorrelationTransform(mean(transpose(data)));");
+                        _myMatlabWrapper.Execute("dataStd = fisherZVectorCorrelationTransform(std(transpose(data)));");
+                    }
+                    else
+                    {
+                        _myMatlabWrapper.Execute("dataMean = mean(transpose(data));");
+                        _myMatlabWrapper.Execute("dataStd = std(transpose(data));");
+                    }
                     dataMean = _myMatlabWrapper.GetWorkspaceData("dataMean");
                     dataStd = _myMatlabWrapper.GetWorkspaceData("dataStd");
                 }
@@ -815,9 +866,18 @@ namespace ManipAnalysis
                                     Convert.ToDouble(row["velocity_vector_correlation"]);
                                 break;
 
-                            case "Vector correlation fisher z":
-                                data[trialListCounter, meanCounter] =
-                                    Convert.ToDouble(row["velocity_vector_correlation_fisher_z"]);
+                            case "Vector correlation fisher-z":
+                                 _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                 _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                 data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                 _myMatlabWrapper.ClearWorkspace();
+                                break;
+
+                            case "Vector correlation fisher-z to r-values":
+                                _myMatlabWrapper.SetWorkspaceData("vcorr", Convert.ToDouble(row["velocity_vector_correlation"]));
+                                _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                data[trialListCounter, meanCounter] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                _myMatlabWrapper.ClearWorkspace();
                                 break;
 
                             case "Perpendicular distance 300ms - Abs":
@@ -875,8 +935,16 @@ namespace ManipAnalysis
             {
                 _myMatlabWrapper.SetWorkspaceData("data", data);
 
-                _myMatlabWrapper.Execute("dataMean = mean(data);");
-                _myMatlabWrapper.Execute("dataStd = std(data);");
+                if (statisticType == "Vector correlation fisher-z to r-values")
+                {
+                    _myMatlabWrapper.Execute("dataMean = fisherZVectorCorrelationTransform(mean(transpose(data)));");
+                    _myMatlabWrapper.Execute("dataStd = fisherZVectorCorrelationTransform(std(transpose(data)));");
+                }
+                else
+                {
+                    _myMatlabWrapper.Execute("dataMean = mean(transpose(data));");
+                    _myMatlabWrapper.Execute("dataStd = std(transpose(data));");
+                }
 
                 dataMean = _myMatlabWrapper.GetWorkspaceData("dataMean");
                 dataStd = _myMatlabWrapper.GetWorkspaceData("dataStd");
@@ -3082,8 +3150,6 @@ namespace ManipAnalysis
                                 _myMatlabWrapper.Execute(
                                     "vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
                                 _myMatlabWrapper.Execute(
-                                    "vector_correlation_fisher_z = vectorCorrelationFisherZTransform([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
-                                _myMatlabWrapper.Execute(
                                     "enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
                                 _myMatlabWrapper.Execute(
                                     "length_abs = trajectLength(measureData(:,1),measureData(:,3));");
@@ -3103,7 +3169,6 @@ namespace ManipAnalysis
                                     "rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
 
                                 double vectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
-                                double vectorCorrelationFisherZ = _myMatlabWrapper.GetWorkspaceData("vector_correlation_fisher_z");
                                 double enclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
                                 double lengthAbs = _myMatlabWrapper.GetWorkspaceData("length_abs");
                                 double lengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
@@ -3115,7 +3180,7 @@ namespace ManipAnalysis
                                 double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
 
                                 
-                                _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, vectorCorrelationFisherZ, lengthAbs,
+                                _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, lengthAbs,
                                                                   lengthRatio, distance300MsAbs, maxDistanceAbs,
                                                                   meanDistanceAbs, distance300MsSign, maxDistanceSign,
                                                                   enclosedArea, rmse);
@@ -3123,8 +3188,7 @@ namespace ManipAnalysis
 
                                 /*
                                 _mySqlWrapper.UpdateStatisticData(trialInfo[0], 
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]), 
-                                    vectorCorrelationFisherZ, 
+                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]),
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]),
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]),
                                     Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]),
@@ -3212,9 +3276,6 @@ namespace ManipAnalysis
                             double velocityVectorCorrelation =
                                 (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
                                  Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"])) / 2;
-                            double velocityVectorCorrelationFisherZ =
-                                (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation_fisher_z"]) +
-                                 Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation_fisher_z"])) / 2;
                             double trajectoryLengthAbs =
                                 (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]) +
                                  Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"])) / 2;
@@ -3255,8 +3316,7 @@ namespace ManipAnalysis
                                            Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"])) / 2;
 
                             _mySqlWrapper.InsertStatisticData(Convert.ToInt32(faultyTrialInformation[trialIDCounter][0]),
-                                                              velocityVectorCorrelation, 
-                                                              velocityVectorCorrelationFisherZ,
+                                                              velocityVectorCorrelation,
                                                               trajectoryLengthAbs,
                                                               trajectoryLengthRatioBaseline,
                                                               perpendicularDisplacement300MsAbs,
