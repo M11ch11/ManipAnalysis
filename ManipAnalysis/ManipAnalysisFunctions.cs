@@ -3494,7 +3494,8 @@ namespace ManipAnalysis
                                 }
                                 if (showPdForceVectors)
                                 {
-                                    _myMatlabWrapper.Execute("fPD = normVectorLine_CS(" + tempContainer.Target + ", vforce');");
+                                    //_myMatlabWrapper.Execute("fPD = normVectorLine_CS(" + tempContainer.Target + ", vforce');");
+                                    _myMatlabWrapper.Execute("fPD = pdForceLineSegment(vforce, vpos1, vpos2);");
                                     _myMatlabWrapper.Execute(
                                         "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                 }
