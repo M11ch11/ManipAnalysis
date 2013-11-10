@@ -153,7 +153,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -224,7 +224,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -268,7 +268,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -306,7 +306,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -344,7 +344,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -384,7 +384,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -423,7 +423,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -462,7 +462,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -501,7 +501,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -540,7 +540,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -595,15 +595,15 @@ namespace ManipAnalysis
 
                             if (!hasNullValues)
                             {
-                                retVal.Add(new int[]
-                                    {
-                                        sqlRdr.GetInt32(0), //trial_id
-                                        sqlRdr.GetInt32(1), //subject_id
-                                        sqlRdr.GetInt32(2), //study_id
-                                        sqlRdr.GetInt32(3), //group_id
-                                        sqlRdr.GetInt32(4), //target_id
-                                        sqlRdr.GetInt32(5) //target_number
-                                    });
+                                retVal.Add(new[]
+                                {
+                                    sqlRdr.GetInt32(0), //trial_id
+                                    sqlRdr.GetInt32(1), //subject_id
+                                    sqlRdr.GetInt32(2), //study_id
+                                    sqlRdr.GetInt32(3), //group_id
+                                    sqlRdr.GetInt32(4), //target_id
+                                    sqlRdr.GetInt32(5) //target_number
+                                });
                             }
                         }
                         sqlRdr.Close();
@@ -624,7 +624,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -682,15 +682,15 @@ namespace ManipAnalysis
 
                             if (!hasNullValues)
                             {
-                                retVal.Add(new int[]
-                                    {
-                                        sqlRdr.GetInt32(0), //trial_id
-                                        sqlRdr.GetInt32(1), //subject_id
-                                        sqlRdr.GetInt32(2), //study_id
-                                        sqlRdr.GetInt32(3), //group_id
-                                        sqlRdr.GetInt32(4), //target_id
-                                        sqlRdr.GetInt32(5) //target_number
-                                    });
+                                retVal.Add(new[]
+                                {
+                                    sqlRdr.GetInt32(0), //trial_id
+                                    sqlRdr.GetInt32(1), //subject_id
+                                    sqlRdr.GetInt32(2), //study_id
+                                    sqlRdr.GetInt32(3), //group_id
+                                    sqlRdr.GetInt32(4), //target_id
+                                    sqlRdr.GetInt32(5) //target_number
+                                });
                             }
                         }
                         sqlRdr.Close();
@@ -711,7 +711,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -723,7 +723,6 @@ namespace ManipAnalysis
 
             return retVal;
         }
-
 
 
         public List<object[]> GetFaultyTrialInformation()
@@ -750,16 +749,16 @@ namespace ManipAnalysis
                         while (sqlRdr.Read())
                         {
                             retVal.Add(new object[]
-                                {
-                                    sqlRdr.GetInt32(0), //trial_id
-                                    sqlRdr.GetInt32(1), //measure_file_id
-                                    sqlRdr.GetString(2), //study_name
-                                    sqlRdr.GetString(3), //group_name
-                                    sqlRdr.GetInt32(4), //subject_id
-                                    sqlRdr.GetString(5), //szenario_name
-                                    sqlRdr.GetDateTime(6), //measure_file_creation_time
-                                    sqlRdr.GetInt32(7) //szenario_trial_number
-                                });
+                            {
+                                sqlRdr.GetInt32(0), //trial_id
+                                sqlRdr.GetInt32(1), //measure_file_id
+                                sqlRdr.GetString(2), //study_name
+                                sqlRdr.GetString(3), //group_name
+                                sqlRdr.GetInt32(4), //subject_id
+                                sqlRdr.GetString(5), //szenario_name
+                                sqlRdr.GetDateTime(6), //measure_file_creation_time
+                                sqlRdr.GetInt32(7) //szenario_trial_number
+                            });
                         }
                         sqlRdr.Close();
                     }
@@ -778,7 +777,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -816,11 +815,11 @@ namespace ManipAnalysis
                 {
                     OpenSqlConnection();
                     _sqlCmd.ExecuteNonQuery();
-                    retVal = new int[]
-                        {
-                            Convert.ToInt32(_sqlCmd.Parameters["@upperTrialID"].Value),
-                            Convert.ToInt32(_sqlCmd.Parameters["@lowerTrialID"].Value)
-                        };
+                    retVal = new[]
+                    {
+                        Convert.ToInt32(_sqlCmd.Parameters["@upperTrialID"].Value),
+                        Convert.ToInt32(_sqlCmd.Parameters["@lowerTrialID"].Value)
+                    };
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
@@ -832,7 +831,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -846,7 +845,7 @@ namespace ManipAnalysis
         }
 
         public DateTime GetTurnDateTime(string study, string group, string szenario, SubjectInformationContainer subject,
-                                        int turn)
+            int turn)
         {
             var retVal = new DateTime();
 
@@ -884,7 +883,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -929,7 +928,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -943,8 +942,8 @@ namespace ManipAnalysis
         }
 
         public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
-                              DateTime turnDateTime,
-                              int target, int trial)
+            DateTime turnDateTime,
+            int target, int trial)
         {
             int retVal = -1;
 
@@ -984,7 +983,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -998,7 +997,7 @@ namespace ManipAnalysis
         }
 
         public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
-                              DateTime turnDateTime, int szenarioTrialNumber)
+            DateTime turnDateTime, int szenarioTrialNumber)
         {
             int retVal = -1;
 
@@ -1037,7 +1036,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1051,7 +1050,7 @@ namespace ManipAnalysis
         }
 
         public int GetBaselineID(string study, string group, string szenario, SubjectInformationContainer subject,
-                                 int target)
+            int target)
         {
             int retVal = -1;
 
@@ -1089,7 +1088,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1134,7 +1133,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1179,7 +1178,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1193,8 +1192,8 @@ namespace ManipAnalysis
         }
 
         public DataSet GetStatisticDataSet(string studyName, string groupName, string szenarioName,
-                                           SubjectInformationContainer subject,
-                                           DateTime turn)
+            SubjectInformationContainer subject,
+            DateTime turn)
         {
             DataSet retVal = null;
 
@@ -1231,7 +1230,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1280,7 +1279,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1294,7 +1293,7 @@ namespace ManipAnalysis
         }
 
         public DataSet GetBaselineDataSet(string studyName, string groupName, string szenarioName,
-                                          SubjectInformationContainer subject)
+            SubjectInformationContainer subject)
         {
             DataSet retVal = null;
 
@@ -1330,7 +1329,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1344,8 +1343,8 @@ namespace ManipAnalysis
         }
 
         public DataSet GetMeanTimeDataSet(string studyName, string groupName, string szenarioName,
-                                          SubjectInformationContainer subject,
-                                          DateTime turnDateTime)
+            SubjectInformationContainer subject,
+            DateTime turnDateTime)
         {
             DataSet retVal = null;
 
@@ -1382,7 +1381,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1429,7 +1428,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1475,7 +1474,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1521,7 +1520,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1567,7 +1566,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1614,7 +1613,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1660,7 +1659,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1707,7 +1706,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1754,7 +1753,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1800,7 +1799,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1814,7 +1813,8 @@ namespace ManipAnalysis
         }
 
         public int InsertTrialInformation(bool faultyTrial, bool isCatchTrial, bool isErrorclampTrial,
-                                          int butterworthFilterOrder, int butterworthFilterFreqPosition, int butterworthFilterFreqForce, int velocityTrimThreshold)
+            int butterworthFilterOrder, int butterworthFilterFreqPosition, int butterworthFilterFreqForce,
+            int velocityTrimThreshold)
         {
             int retVal = -1;
 
@@ -1855,7 +1855,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1897,15 +1897,15 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", trajectoryLengthAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", trajectoryLengthRatio));
             _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs",
-                                                    perpendicularDisplacement300MsAbs));
+                perpendicularDisplacement300MsAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementAbs",
-                                                    maximalPerpendicularDisplacementAbs));
+                maximalPerpendicularDisplacementAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@meanPerpendicularDisplacementAbs",
-                                                    meanPerpendicularDisplacementAbs));
+                meanPerpendicularDisplacementAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msSign",
-                                                    perpendicularDisplacement300MsSign));
+                perpendicularDisplacement300MsSign));
             _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementSign",
-                                                    maximalPerpendicularDisplacementSign));
+                maximalPerpendicularDisplacementSign));
             _sqlCmd.Parameters.Add(new SqlParameter("@enclosedArea", enclosedArea));
             _sqlCmd.Parameters.Add(new SqlParameter("@rmse", rmse));
 
@@ -1929,7 +1929,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -1971,15 +1971,15 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthAbs", trajectoryLengthAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@trajectoryLengthRatioBaseline", trajectoryLengthRatio));
             _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msAbs",
-                                                    perpendicularDisplacement300MsAbs));
+                perpendicularDisplacement300MsAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementAbs",
-                                                    maximalPerpendicularDisplacementAbs));
+                maximalPerpendicularDisplacementAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@meanPerpendicularDisplacementAbs",
-                                                    meanPerpendicularDisplacementAbs));
+                meanPerpendicularDisplacementAbs));
             _sqlCmd.Parameters.Add(new SqlParameter("@perpendicularDisplacement300msSign",
-                                                    perpendicularDisplacement300MsSign));
+                perpendicularDisplacement300MsSign));
             _sqlCmd.Parameters.Add(new SqlParameter("@maximalPerpendicularDisplacementSign",
-                                                    maximalPerpendicularDisplacementSign));
+                maximalPerpendicularDisplacementSign));
             _sqlCmd.Parameters.Add(new SqlParameter("@enclosedArea", enclosedArea));
             _sqlCmd.Parameters.Add(new SqlParameter("@rmse", rmse));
 
@@ -2003,7 +2003,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2068,7 +2068,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2082,7 +2082,7 @@ namespace ManipAnalysis
         }
 
         public int InsertSzenarioMeanTimeData(int szenarioMeanTimeID, TimeSpan szenarioMeanTime,
-                                              TimeSpan szenarioMeanTimeStd)
+            TimeSpan szenarioMeanTimeStd)
         {
             int retVal = -1;
 
@@ -2118,7 +2118,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2177,7 +2177,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2240,7 +2240,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2299,7 +2299,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2340,7 +2340,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2379,7 +2379,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2418,7 +2418,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2457,7 +2457,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2496,7 +2496,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2541,7 +2541,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2596,7 +2596,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2652,7 +2652,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2709,7 +2709,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2723,7 +2723,7 @@ namespace ManipAnalysis
         }
 
         public SubjectInformationContainer[] GetSubjectInformations(string studyName, string groupName,
-                                                                    string szenarioName)
+            string szenarioName)
         {
             SubjectInformationContainer[] retVal = null;
 
@@ -2748,7 +2748,7 @@ namespace ManipAnalysis
                         while (sqlRdr.Read())
                         {
                             rows.Add(new SubjectInformationContainer(sqlRdr.GetInt32(0), sqlRdr.GetString(1),
-                                                                     sqlRdr.GetString(2)));
+                                sqlRdr.GetString(2)));
                         }
                         sqlRdr.Close();
                         retVal = rows.ToArray();
@@ -2769,7 +2769,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2783,7 +2783,7 @@ namespace ManipAnalysis
         }
 
         public string[] GetTurns(string studyName, string groupName, string szenarioName,
-                                 SubjectInformationContainer subject)
+            SubjectInformationContainer subject)
         {
             string[] retVal = null;
 
@@ -2831,7 +2831,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2845,8 +2845,8 @@ namespace ManipAnalysis
         }
 
         public string[] GetSzenarioTrials(string studyName, string szenarioName, bool showCatchTrials,
-                                          bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-                                          bool showErrorclampTrialsExclusivly)
+            bool showCatchTrialsExclusivly, bool showErrorclampTrials,
+            bool showErrorclampTrialsExclusivly)
         {
             string[] retVal = null;
 
@@ -2896,7 +2896,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -2951,7 +2951,7 @@ namespace ManipAnalysis
 
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {
@@ -3010,7 +3010,7 @@ namespace ManipAnalysis
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
-                                                              @"Try again?", buttons);
+                            @"Try again?", buttons);
 
                         if (result == DialogResult.Yes)
                         {

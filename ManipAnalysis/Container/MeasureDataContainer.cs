@@ -21,33 +21,33 @@ namespace ManipAnalysis.Container
         public readonly double PositionCartesianY;
         public readonly double PositionCartesianZ;
         public readonly int PositionStatus;
-        public int SzenarioTrialNumber;
 
         public readonly int TargetNumber;
         public bool ContainsDuplicates;
+        public int SzenarioTrialNumber;
 
         public int TargetTrialNumber;
         public DateTime TimeStamp;
 
         public MeasureDataContainer(DateTime timeStamp,
-                                    double forceActualX,
-                                    double forceActualY,
-                                    double forceActualZ,
-                                    double forceNominalX,
-                                    double forceNominalY,
-                                    double forceNominalZ,
-                                    double forceMomentX,
-                                    double forceMomentY,
-                                    double forceMomentZ,
-                                    double positionCartesianX,
-                                    double positionCartesianY,
-                                    double positionCartesianZ,
-                                    int targetNumber,
-                                    int targetTrialNumber,
-                                    int szenarioTrialNumber,
-                                    bool isCatchTrial,
-                                    bool isErrorclampTrial,
-                                    int positionStatus)
+            double forceActualX,
+            double forceActualY,
+            double forceActualZ,
+            double forceNominalX,
+            double forceNominalY,
+            double forceNominalZ,
+            double forceMomentX,
+            double forceMomentY,
+            double forceMomentZ,
+            double positionCartesianX,
+            double positionCartesianY,
+            double positionCartesianZ,
+            int targetNumber,
+            int targetTrialNumber,
+            int szenarioTrialNumber,
+            bool isCatchTrial,
+            bool isErrorclampTrial,
+            int positionStatus)
         {
             TimeStamp = timeStamp;
             ForceActualX = forceActualX;

@@ -127,8 +127,8 @@ namespace ManipAnalysis
         }
 
         public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
-                                          string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit,
-                                          double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
+            string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit,
+            double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
         {
             try
             {
@@ -210,7 +210,8 @@ namespace ManipAnalysis
                 Execute("xlabel('Displacement [m]');");
                 Execute("ylabel('Displacement [m]');");
                 Execute("grid on");
-                Execute("axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
+                Execute(
+                    "axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
                 Execute("set(axis2, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'XTickLabel', {'', '', '', '', ''});");
@@ -362,7 +363,7 @@ namespace ManipAnalysis
             try
             {
                 MatlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
-                                        new Object[] {name, "base", variable});
+                    new[] {name, "base", variable});
             }
             catch (Exception ex)
             {
@@ -375,7 +376,7 @@ namespace ManipAnalysis
             try
             {
                 return MatlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
-                                               new Object[] {name, "base"}, null);
+                    new Object[] {name, "base"}, null);
             }
             catch (Exception ex)
             {

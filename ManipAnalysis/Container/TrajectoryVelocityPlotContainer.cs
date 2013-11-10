@@ -16,8 +16,8 @@ namespace ManipAnalysis.Container
         private readonly int _turn;
 
         public TrajectoryVelocityPlotContainer(string study, string group, string szenario,
-                                               SubjectInformationContainer subject, string turn, string target,
-                                               IEnumerable<string> trials)
+            SubjectInformationContainer subject, string turn, string target,
+            IEnumerable<string> trials)
         {
             _study = study;
             _group = group;
@@ -70,8 +70,8 @@ namespace ManipAnalysis.Container
         }
 
         public bool UpdateTrajectoryVelocityPlotContainer(string study, string group, string szenario,
-                                                          SubjectInformationContainer subject, string turn,
-                                                          string target, IEnumerable<string> trials)
+            SubjectInformationContainer subject, string turn,
+            string target, IEnumerable<string> trials)
         {
             bool retval = false;
 

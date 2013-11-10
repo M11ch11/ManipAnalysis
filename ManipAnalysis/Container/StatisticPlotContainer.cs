@@ -15,7 +15,7 @@ namespace ManipAnalysis.Container
         private readonly string _turn;
 
         public StatisticPlotContainer(string study, string group, string szenario, SubjectInformationContainer subject,
-                                      string turn, IEnumerable<string> trials)
+            string turn, IEnumerable<string> trials)
         {
             _study = study;
             _group = group;
@@ -62,8 +62,8 @@ namespace ManipAnalysis.Container
         }
 
         public bool UpdateStatisticPlotContainer(string study, string group, string szenario,
-                                                 SubjectInformationContainer subject, string turn,
-                                                 IEnumerable<string> trials)
+            SubjectInformationContainer subject, string turn,
+            IEnumerable<string> trials)
         {
             bool retval = false;
 

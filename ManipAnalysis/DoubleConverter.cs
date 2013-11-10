@@ -236,11 +236,11 @@ namespace ManipAnalysis
                 // before the decimal point, part comes after it,
                 // eg 3.5
                 return new string(digitString, 0,
-                                  digitString.Length - _decimalPoint) +
+                    digitString.Length - _decimalPoint) +
                        "." +
                        new string(digitString,
-                                  digitString.Length - _decimalPoint,
-                                  _decimalPoint);
+                           digitString.Length - _decimalPoint,
+                           _decimalPoint);
             }
         }
     }

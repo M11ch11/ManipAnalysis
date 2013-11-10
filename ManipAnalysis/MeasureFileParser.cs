@@ -8,7 +8,7 @@ namespace ManipAnalysis
 {
     internal class MeasureFileParser
     {
-        private DataContainer _dataContainer;
+        private readonly DataContainer _dataContainer;
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private string _measureFilePath;
 
@@ -143,7 +143,7 @@ namespace ManipAnalysis
                 }
                 else if (_dataContainer.SzenarioName == "Szenario45_N" ||
                          _dataContainer.SzenarioName == "Szenario45_R"
-                        )
+                    )
                 {
                     expectedSzenarioTrialCount = 32;
                     expectedTargetTrialCount = 2;
@@ -153,7 +153,7 @@ namespace ManipAnalysis
                 //const string checkHeader = "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, PositionStatus"; // Study 2 & 3
                 const string checkHeader =
                     "Time, ForceActualX, ForceActualY, ForceActualZ, ForceNominalX, ForceNominalY, ForceNominalZ, ForceMomentX, ForceMomentY, ForceMomentZ, PositionCartesianX, PositionCartesianY, PositionCartesianZ, OldTarget, ActiveTarget, TargetNumber, TrialNumber, IsCatchTrial, IsErrorClampTrial, PositionStatus";
-                    // Study 4
+                // Study 4
 
 
                 if (checkHeader == measureFileReader.ReadLine())
@@ -163,14 +163,14 @@ namespace ManipAnalysis
                         string readLine = measureFileReader.ReadLine();
                         if (readLine != null)
                         {
-                            string[] measureFileLine = readLine.Split(new string[] {", "}, StringSplitOptions.None);
+                            string[] measureFileLine = readLine.Split(new[] {", "}, StringSplitOptions.None);
 
                             if (measureFileLine.Count() == 20) // Study 4
                             {
                                 if ((_dataContainer.MeasureDataRaw.Count > 0) &&
                                     (DateTime.Parse(_dataContainer.MeasureFileCreationDate + " " + measureFileLine[0])
-                                             .Subtract(_dataContainer.MeasureDataRaw.Last().TimeStamp)
-                                             .TotalMilliseconds > 500)
+                                        .Subtract(_dataContainer.MeasureDataRaw.Last().TimeStamp)
+                                        .TotalMilliseconds > 500)
                                     )
                                 {
                                     while ((Convert.ToInt32(measureFileLine[16]) ==
@@ -182,8 +182,8 @@ namespace ManipAnalysis
                                         if (readLine != null)
                                         {
                                             measureFileLine = readLine
-                                                .Split(new string[] {", "},
-                                                       StringSplitOptions.None);
+                                                .Split(new[] {", "},
+                                                    StringSplitOptions.None);
                                         }
                                     }
                                 }
@@ -206,8 +206,8 @@ namespace ManipAnalysis
                                         if (readLine != null)
                                         {
                                             measureFileLine = readLine
-                                                .Split(new string[] {", "},
-                                                       StringSplitOptions.None);
+                                                .Split(new[] {", "},
+                                                    StringSplitOptions.None);
                                         }
                                     }
                                 }
@@ -215,31 +215,31 @@ namespace ManipAnalysis
                                 if (Convert.ToInt32(measureFileLine[16]) <= expectedSzenarioTrialCount)
                                 {
                                     _dataContainer.MeasureDataRaw.Add(new MeasureDataContainer(
-                                                                          DateTime.Parse(
-                                                                              _dataContainer.MeasureFileCreationDate +
-                                                                              " " +
-                                                                              measureFileLine[0]),
-                                                                          //Forces in Newton
-                                                                          Convert.ToDouble(measureFileLine[1])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[2])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[3])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[4])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[5])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[6])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[7])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[8])/1E3,
-                                                                          Convert.ToDouble(measureFileLine[9])/1E3,
-                                                                          //Positions in Meter
-                                                                          Convert.ToDouble(measureFileLine[10])/1E6,
-                                                                          Convert.ToDouble(measureFileLine[11])/1E6,
-                                                                          Convert.ToDouble(measureFileLine[12])/1E6,
-                                                                          Convert.ToInt32(measureFileLine[15]),
-                                                                          -1,
-                                                                          Convert.ToInt32(measureFileLine[16]),
-                                                                          Convert.ToBoolean(measureFileLine[17]),
-                                                                          Convert.ToBoolean(measureFileLine[18]),
-                                                                          Convert.ToInt32(measureFileLine[19])
-                                                                          ));
+                                        DateTime.Parse(
+                                            _dataContainer.MeasureFileCreationDate +
+                                            " " +
+                                            measureFileLine[0]),
+                                        //Forces in Newton
+                                        Convert.ToDouble(measureFileLine[1])/1E3,
+                                        Convert.ToDouble(measureFileLine[2])/1E3,
+                                        Convert.ToDouble(measureFileLine[3])/1E3,
+                                        Convert.ToDouble(measureFileLine[4])/1E3,
+                                        Convert.ToDouble(measureFileLine[5])/1E3,
+                                        Convert.ToDouble(measureFileLine[6])/1E3,
+                                        Convert.ToDouble(measureFileLine[7])/1E3,
+                                        Convert.ToDouble(measureFileLine[8])/1E3,
+                                        Convert.ToDouble(measureFileLine[9])/1E3,
+                                        //Positions in Meter
+                                        Convert.ToDouble(measureFileLine[10])/1E6,
+                                        Convert.ToDouble(measureFileLine[11])/1E6,
+                                        Convert.ToDouble(measureFileLine[12])/1E6,
+                                        Convert.ToInt32(measureFileLine[15]),
+                                        -1,
+                                        Convert.ToInt32(measureFileLine[16]),
+                                        Convert.ToBoolean(measureFileLine[17]),
+                                        Convert.ToBoolean(measureFileLine[18]),
+                                        Convert.ToInt32(measureFileLine[19])
+                                        ));
                                 }
                             }
                             else
@@ -328,8 +328,8 @@ namespace ManipAnalysis
                     int maxTrialCount = _dataContainer.MeasureDataRaw.Max(t => t.SzenarioTrialNumber);
                     int realTrialCount =
                         _dataContainer.MeasureDataRaw.Select(t => t.SzenarioTrialNumber).Distinct().Count();
-                    
-                    
+
+
                     if ((maxTrialCount != expectedSzenarioTrialCount) || (realTrialCount != expectedSzenarioTrialCount))
                     {
                         _myManipAnalysisGui.WriteToLogBox("Trial count error: expected " + expectedSzenarioTrialCount +
@@ -350,10 +350,10 @@ namespace ManipAnalysis
                 {
                     int[] szenarioTrialNumberArray =
                         _dataContainer.MeasureDataRaw.Where(t => t.TargetNumber == targetArray[i])
-                                      .Select(t => t.SzenarioTrialNumber)
-                                      .Distinct()
-                                      .OrderBy(t => t)
-                                      .ToArray();
+                            .Select(t => t.SzenarioTrialNumber)
+                            .Distinct()
+                            .OrderBy(t => t)
+                            .ToArray();
 
                     if (expectedTargetTrialCount == szenarioTrialNumberArray.Length)
                     {
@@ -362,8 +362,8 @@ namespace ManipAnalysis
                             List<MeasureDataContainer> tempList =
                                 _dataContainer.MeasureDataRaw.Where(
                                     t => t.SzenarioTrialNumber == szenarioTrialNumberArray[j])
-                                              .OrderBy(t => t.TimeStamp)
-                                              .ToList();
+                                    .OrderBy(t => t.TimeStamp)
+                                    .ToList();
 
                             for (int k = 0; k < tempList.Count; k++)
                             {

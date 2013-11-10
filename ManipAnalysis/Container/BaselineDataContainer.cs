@@ -16,10 +16,10 @@ namespace ManipAnalysis.Container
         public DateTime PseudoTimeStamp;
 
         public BaselineDataContainer(DateTime pseudoTimeStamp,
-                                     double baselinePositionCartesianX, double baselinePositionCartesianY,
-                                     double baselinePositionCartesianZ,
-                                     double baselineVelocityX, double baselineVelocityY, double baselineVelocityZ,
-                                     int targetNumber)
+            double baselinePositionCartesianX, double baselinePositionCartesianY,
+            double baselinePositionCartesianZ,
+            double baselineVelocityX, double baselineVelocityY, double baselineVelocityZ,
+            int targetNumber)
         {
             PseudoTimeStamp = pseudoTimeStamp;
 
