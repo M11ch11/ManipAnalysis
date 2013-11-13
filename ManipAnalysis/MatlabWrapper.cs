@@ -86,19 +86,19 @@ namespace ManipAnalysis
             }
         }
 
-        public void CreateErrorclampForceFigure(int trials)
+        public void CreateForcefieldCompensationIndexFigure(int trials)
         {
             try
             {
                 Execute("figure");
-                Execute("set(gcf,'Name','Errorclamp forces','NumberTitle','off');");
+                Execute("set(gcf,'Name','Forcefield compensation index','NumberTitle','off');");
                 Execute("grid on");
                 Execute("hold all");
                 Execute("xlabel('[Errorclamp trial]');");
-                Execute("ylabel('Force [N]');");
-                Execute("axis([0 " + (trials + 1) + " 0 10]);");
+                Execute("ylabel('Compensation [%]');");
+                Execute("axis([0 " + (trials + 1) + " 0 250]);");
                 Execute("axis manual;");
-                Execute("set(gca,'YGrid','on','YTick',0:1:10,'XTick',1:1:" + trials + ");");
+                Execute("set(gca,'YGrid','on','YTick',0:25:250,'XTick',1:1:" + trials + ");");
             }
             catch (Exception ex)
             {

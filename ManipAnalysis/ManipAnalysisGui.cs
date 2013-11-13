@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -2203,16 +2204,17 @@ namespace ManipAnalysis
                 !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
         }
 
-        private void button_Others_PlotErrorclampForces_Click(object sender, EventArgs e)
+        private void button_Others_ForcefieldCompensationFactor_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.PlotErrorclampForces(comboBox_Others_Study.SelectedItem.ToString(),
+            _manipAnalysisFunctions.ForcefieldCompensationFactor(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
                 (SubjectInformationContainer)
                     comboBox_Others_Subject.SelectedItem,
                 Convert.ToInt32(
                     comboBox_Others_Turn.SelectedItem.ToString()
-                        .Substring("Turn".Length)));
+                        .Substring("Turn".Length)),
+                        Convert.ToInt32(textBox_Others_PlotErrorclampForces_MsIndex.Text));
         }
 
         private delegate void LogBoxCallbackAddString(string text);
@@ -2226,5 +2228,17 @@ namespace ManipAnalysis
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void button_Debug_ShowMatlabFiles_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\MatlabFiles");
+            }
+            catch (Exception ex)
+            {
+                WriteToLogBox(ex.ToString());
+            }
+        }
     }
 }

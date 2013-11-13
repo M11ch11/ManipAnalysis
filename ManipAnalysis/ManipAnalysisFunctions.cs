@@ -4674,120 +4674,99 @@ namespace ManipAnalysis
             _myManipAnalysisGui.SetProgressBarValue(0);
         }
 
-        public void PlotErrorclampForces(string study, string group, string szenario,
-            SubjectInformationContainer subject, int turn)
+        public void ForcefieldCompensationFactor(string study, string group, string szenario,
+            SubjectInformationContainer subject, int turn, int msIndex)
         {
-            // Info output
-            _myManipAnalysisGui.WriteProgressInfo("Getting data...");
-            _myManipAnalysisGui.SetProgressBarValue(0);
-
-            DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
-
-            IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true, true);
-            if (trialStringList != null)
+            if (szenario == "Szenario44_N" || szenario == "Szenario44_R" || szenario == "Szenario45_N" ||
+                szenario == "Szenario45_R")
             {
-                var trialList = new List<int>();
-                for (int i = 0; i < trialStringList.Count(); i++)
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Getting data...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
+
+                IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true, true);
+                if (trialStringList != null)
                 {
-                    trialList.Add(Convert.ToInt32(trialStringList.ElementAt(i).Substring(6, 3)));
-                }
-
-                _myMatlabWrapper.CreateErrorclampForceFigure(trialList.Count);
-
-                for (int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
-                {
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*trialCounter);
-                    int szenarioTrial = trialList.ElementAt(trialCounter);
-                    int trialID = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrial);
-                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                    DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
-                    int sampleCount = measureDataSet.Tables[0].Rows.Count;
-                    var measureData = new double[sampleCount, 9];
-                    var timeStamp = new double[sampleCount];
-
-                    if (measureDataSet.Tables[0].Rows.Count > 0)
+                    var trialList = new List<int>();
+                    for (int i = 0; i < trialStringList.Count(); i++)
                     {
-                        int targetNumber = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
-
-                        for (int sample = 0; sample < sampleCount; sample++)
-                        {
-                            timeStamp[sample] =
-                                Convert.ToDateTime(measureDataSet.Tables[0].Rows[sample]["time_stamp"]).Ticks;
-
-                            measureData[sample, 0] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_x"]);
-                            measureData[sample, 1] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_y"]);
-                            measureData[sample, 2] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_z"]);
-
-                            measureData[sample, 3] =
-                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_x"]);
-                            measureData[sample, 4] =
-                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_y"]);
-                            measureData[sample, 5] =
-                                Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_z"]);
-
-                            measureData[sample, 6] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
-                            measureData[sample, 7] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_y"]);
-                            measureData[sample, 8] =
-                                Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
-                        }
-
-                        List<double> tempTimeList = timeStamp.ToList();
-                        int time300MsIndex =
-                            tempTimeList.IndexOf(
-                                tempTimeList.OrderBy(
-                                    d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
-                                    .ElementAt(0));
-
-                        _myMatlabWrapper.SetWorkspaceData("pos1", new[]
-                        {
-                            measureData[time300MsIndex - 1, 0],
-                            measureData[time300MsIndex - 1, 2]
-                        });
-
-                        _myMatlabWrapper.SetWorkspaceData("pos2", new[]
-                        {
-                            measureData[time300MsIndex, 0],
-                            measureData[time300MsIndex, 2]
-                        });
-
-                        _myMatlabWrapper.SetWorkspaceData("force", new[]
-                        {
-                            measureData[time300MsIndex, 6],
-                            measureData[time300MsIndex, 8]
-                        });
-
-                        if (szenario == "Szenario44_N" || szenario == "Szenario44_R" || szenario == "Szenario45_N" ||
-                            szenario == "Szenario45_R") // CW
-                        {
-                            _myMatlabWrapper.SetWorkspaceData("vforce", new[]
-                            {
-                                measureData[time300MsIndex, 3]*20, // CW
-                                measureData[time300MsIndex, 5]*-20 // CW
-                            });
-                        }
-                        _myMatlabWrapper.Execute("fPD = normVectorLine_CS(" + targetNumber + ", force');");
-                        _myMatlabWrapper.Execute("fvPD = normVectorLine_CS(" + targetNumber + ", vforce');");
-                        _myMatlabWrapper.Execute("trials(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                                 ") = " +
-                                                 (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ";");
-                        _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                                 ",1) = sqrt(fPD(1)^2+fPD(2)^2);");
-                        _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                                 ",2) = sqrt(fvPD(1)^2+fvPD(2)^2);");
+                        trialList.Add(Convert.ToInt32(trialStringList.ElementAt(i).Substring(6, 3)));
                     }
+
+                    _myMatlabWrapper.CreateForcefieldCompensationIndexFigure(trialList.Count);
+
+                    for (int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
+                    {
+                        _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*trialCounter);
+                        int szenarioTrial = trialList.ElementAt(trialCounter);
+                        int trialID = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime,
+                            szenarioTrial);
+                        DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                        DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                        int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                        var positionData = new double[sampleCount, 2];
+                        var velocityData = new double[sampleCount, 2];
+                        var forceIstData = new double[sampleCount, 2];
+                        var timeStamp = new double[sampleCount];
+
+                        if (measureDataSet.Tables[0].Rows.Count > 0)
+                        {
+                            int targetNumber = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
+
+                            for (int sample = 0; sample < sampleCount; sample++)
+                            {
+                                timeStamp[sample] =
+                                    Convert.ToDateTime(measureDataSet.Tables[0].Rows[sample]["time_stamp"]).Ticks;
+
+                                positionData[sample, 0] =
+                                    Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_x"]);
+                                positionData[sample, 1] =
+                                    Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_z"]);
+
+                                velocityData[sample, 0] =
+                                    Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_x"]);
+                                velocityData[sample, 1] =
+                                    Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_z"]);
+
+                                forceIstData[sample, 0] =
+                                    Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
+                                forceIstData[sample, 1] =
+                                    Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
+                            }
+
+                            List<double> tempTimeList = timeStamp.ToList();
+                            int timeMsIndex =
+                                tempTimeList.IndexOf(
+                                    tempTimeList.OrderBy(
+                                        d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(msIndex).Ticks)))
+                                        .ElementAt(0));
+
+                            _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
+                            _myMatlabWrapper.SetWorkspaceData("positionData", positionData);
+                            _myMatlabWrapper.SetWorkspaceData("velocityData", velocityData);
+                            _myMatlabWrapper.SetWorkspaceData("forceIstData", forceIstData);
+                            _myMatlabWrapper.Execute("forceSollData = bsxfun(@times, velocityData, [20 -20]);"); // CW-ForceField
+
+                            _myMatlabWrapper.Execute("trials(" +
+                                                     (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ") = " +
+                                                     (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ";");
+                            _myMatlabWrapper.Execute("bars(" + (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
+                                                     ",1) = forcefieldCompensationFactor(positionData,velocityData,forceIstData,forceSollData,timeMsIndex);");
+                        }
+                    }
+                    _myMatlabWrapper.Execute("bar(trials - 0.125,bars(:,1),0.25,'b');");
+                    _myMatlabWrapper.Execute("legend('Forcefield compensation factor');");
                 }
-                _myMatlabWrapper.Execute("bar(trials - 0.125,bars(:,1),0.25,'r');");
-                _myMatlabWrapper.Execute("bar(trials + 0.125,bars(:,2),0.25,'g');");
-                _myMatlabWrapper.Execute("legend('Subject forces PD300','Projected forcefield forces PD300');");
+                _myMatlabWrapper.ClearWorkspace();
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
             }
-            _myMatlabWrapper.ClearWorkspace();
-            _myManipAnalysisGui.WriteProgressInfo("Ready.");
-            _myManipAnalysisGui.SetProgressBarValue(0);
+            else
+            {
+                _myManipAnalysisGui.WriteToLogBox("Szenario doesn't contain any ErrorClamp-Trials.");
+            }
         }
     }
 }

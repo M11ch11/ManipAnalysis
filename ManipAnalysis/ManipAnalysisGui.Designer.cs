@@ -126,7 +126,10 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_Others = new System.Windows.Forms.TabPage();
-            this.button_Others_PlotErrorclampForces = new System.Windows.Forms.Button();
+            this.label_Others_PlotErrorclampForces_At = new System.Windows.Forms.Label();
+            this.label_Others_PlotErrorclampForces_Ms = new System.Windows.Forms.Label();
+            this.textBox_Others_PlotErrorclampForces_MsIndex = new System.Windows.Forms.TextBox();
+            this.button_Others_PlotForcefieldCompensationFactor = new System.Windows.Forms.Button();
             this.checkBox_Others_GroupAverage = new System.Windows.Forms.CheckBox();
             this.button_Others_ExportGroupLi = new System.Windows.Forms.Button();
             this.button_Others_PlotGroupLi = new System.Windows.Forms.Button();
@@ -248,6 +251,7 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
+            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1333,7 +1337,10 @@ namespace ManipAnalysis
             // 
             // tabPage_Others
             // 
-            this.tabPage_Others.Controls.Add(this.button_Others_PlotErrorclampForces);
+            this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_At);
+            this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_Ms);
+            this.tabPage_Others.Controls.Add(this.textBox_Others_PlotErrorclampForces_MsIndex);
+            this.tabPage_Others.Controls.Add(this.button_Others_PlotForcefieldCompensationFactor);
             this.tabPage_Others.Controls.Add(this.checkBox_Others_GroupAverage);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportGroupLi);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotGroupLi);
@@ -1362,15 +1369,41 @@ namespace ManipAnalysis
             this.tabPage_Others.UseVisualStyleBackColor = true;
             this.tabPage_Others.Enter += new System.EventHandler(this.tabPage_Others_Enter);
             // 
-            // button_Others_PlotErrorclampForces
+            // label_Others_PlotErrorclampForces_At
             // 
-            this.button_Others_PlotErrorclampForces.Location = new System.Drawing.Point(15, 263);
-            this.button_Others_PlotErrorclampForces.Name = "button_Others_PlotErrorclampForces";
-            this.button_Others_PlotErrorclampForces.Size = new System.Drawing.Size(150, 23);
-            this.button_Others_PlotErrorclampForces.TabIndex = 53;
-            this.button_Others_PlotErrorclampForces.Text = "Errorclamp forces";
-            this.button_Others_PlotErrorclampForces.UseVisualStyleBackColor = true;
-            this.button_Others_PlotErrorclampForces.Click += new System.EventHandler(this.button_Others_PlotErrorclampForces_Click);
+            this.label_Others_PlotErrorclampForces_At.AutoSize = true;
+            this.label_Others_PlotErrorclampForces_At.Location = new System.Drawing.Point(186, 268);
+            this.label_Others_PlotErrorclampForces_At.Name = "label_Others_PlotErrorclampForces_At";
+            this.label_Others_PlotErrorclampForces_At.Size = new System.Drawing.Size(16, 13);
+            this.label_Others_PlotErrorclampForces_At.TabIndex = 56;
+            this.label_Others_PlotErrorclampForces_At.Text = "at";
+            // 
+            // label_Others_PlotErrorclampForces_Ms
+            // 
+            this.label_Others_PlotErrorclampForces_Ms.AutoSize = true;
+            this.label_Others_PlotErrorclampForces_Ms.Location = new System.Drawing.Point(300, 268);
+            this.label_Others_PlotErrorclampForces_Ms.Name = "label_Others_PlotErrorclampForces_Ms";
+            this.label_Others_PlotErrorclampForces_Ms.Size = new System.Drawing.Size(20, 13);
+            this.label_Others_PlotErrorclampForces_Ms.TabIndex = 55;
+            this.label_Others_PlotErrorclampForces_Ms.Text = "ms";
+            // 
+            // textBox_Others_PlotErrorclampForces_MsIndex
+            // 
+            this.textBox_Others_PlotErrorclampForces_MsIndex.Location = new System.Drawing.Point(208, 265);
+            this.textBox_Others_PlotErrorclampForces_MsIndex.Name = "textBox_Others_PlotErrorclampForces_MsIndex";
+            this.textBox_Others_PlotErrorclampForces_MsIndex.Size = new System.Drawing.Size(86, 20);
+            this.textBox_Others_PlotErrorclampForces_MsIndex.TabIndex = 54;
+            this.textBox_Others_PlotErrorclampForces_MsIndex.Text = "300";
+            // 
+            // button_Others_PlotForcefieldCompensationFactor
+            // 
+            this.button_Others_PlotForcefieldCompensationFactor.Location = new System.Drawing.Point(15, 263);
+            this.button_Others_PlotForcefieldCompensationFactor.Name = "button_Others_PlotForcefieldCompensationFactor";
+            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(165, 23);
+            this.button_Others_PlotForcefieldCompensationFactor.TabIndex = 53;
+            this.button_Others_PlotForcefieldCompensationFactor.Text = "Forcefield compensation factor";
+            this.button_Others_PlotForcefieldCompensationFactor.UseVisualStyleBackColor = true;
+            this.button_Others_PlotForcefieldCompensationFactor.Click += new System.EventHandler(this.button_Others_ForcefieldCompensationFactor_Click);
             // 
             // checkBox_Others_GroupAverage
             // 
@@ -1856,6 +1889,7 @@ namespace ManipAnalysis
             // 
             // tabPage_Debug_MatlabAndLogs
             // 
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_showFaultyTrials);
@@ -1890,7 +1924,7 @@ namespace ManipAnalysis
             // 
             // button_Debug_showFaultyTrials
             // 
-            this.button_Debug_showFaultyTrials.Location = new System.Drawing.Point(6, 105);
+            this.button_Debug_showFaultyTrials.Location = new System.Drawing.Point(6, 149);
             this.button_Debug_showFaultyTrials.Name = "button_Debug_showFaultyTrials";
             this.button_Debug_showFaultyTrials.Size = new System.Drawing.Size(178, 23);
             this.button_Debug_showFaultyTrials.TabIndex = 7;
@@ -1900,7 +1934,7 @@ namespace ManipAnalysis
             // 
             // button_Debug_SaveLogToFile
             // 
-            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 134);
+            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 178);
             this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
             this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
             this.button_Debug_SaveLogToFile.TabIndex = 8;
@@ -2570,6 +2604,16 @@ namespace ManipAnalysis
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
             // 
+            // button_Debug_ShowMatlabFiles
+            // 
+            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
+            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
+            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
+            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
+            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2851,12 +2895,16 @@ namespace ManipAnalysis
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowCatchTrials;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
-        private System.Windows.Forms.Button button_Others_PlotErrorclampForces;
+        private System.Windows.Forms.Button button_Others_PlotForcefieldCompensationFactor;
         private System.Windows.Forms.Label label_Import_CutoffFreqForceForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
         private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqForce;
         private System.Windows.Forms.TextBox textBox_Start_SqlServer;
+        private System.Windows.Forms.Label label_Others_PlotErrorclampForces_At;
+        private System.Windows.Forms.Label label_Others_PlotErrorclampForces_Ms;
+        private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
+        private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
     }
 }
 
