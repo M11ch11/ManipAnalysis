@@ -179,6 +179,7 @@ namespace ManipAnalysis
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
+            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
             this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
             this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
             this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
@@ -251,7 +252,7 @@ namespace ManipAnalysis
             this.label_Log = new System.Windows.Forms.Label();
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
-            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
+            this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1372,7 +1373,7 @@ namespace ManipAnalysis
             // label_Others_PlotErrorclampForces_At
             // 
             this.label_Others_PlotErrorclampForces_At.AutoSize = true;
-            this.label_Others_PlotErrorclampForces_At.Location = new System.Drawing.Point(186, 268);
+            this.label_Others_PlotErrorclampForces_At.Location = new System.Drawing.Point(192, 268);
             this.label_Others_PlotErrorclampForces_At.Name = "label_Others_PlotErrorclampForces_At";
             this.label_Others_PlotErrorclampForces_At.Size = new System.Drawing.Size(16, 13);
             this.label_Others_PlotErrorclampForces_At.TabIndex = 56;
@@ -1399,7 +1400,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotForcefieldCompensationFactor.Location = new System.Drawing.Point(15, 263);
             this.button_Others_PlotForcefieldCompensationFactor.Name = "button_Others_PlotForcefieldCompensationFactor";
-            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(165, 23);
+            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(171, 23);
             this.button_Others_PlotForcefieldCompensationFactor.TabIndex = 53;
             this.button_Others_PlotForcefieldCompensationFactor.Text = "Forcefield compensation factor";
             this.button_Others_PlotForcefieldCompensationFactor.UseVisualStyleBackColor = true;
@@ -1901,6 +1902,16 @@ namespace ManipAnalysis
             this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
             this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
             this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_ShowMatlabFiles
+            // 
+            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
+            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
+            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
+            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
+            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
             // 
             // button_Debug_ShowMatlabWindow
             // 
@@ -2543,7 +2554,7 @@ namespace ManipAnalysis
             // 
             this.progressBar.Location = new System.Drawing.Point(1, 672);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(948, 23);
+            this.progressBar.Size = new System.Drawing.Size(892, 23);
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 3;
             // 
@@ -2556,7 +2567,7 @@ namespace ManipAnalysis
             this.label_ProgressInfo.AutoSize = true;
             this.label_ProgressInfo.BackColor = System.Drawing.SystemColors.Control;
             this.label_ProgressInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label_ProgressInfo.Location = new System.Drawing.Point(500, 674);
+            this.label_ProgressInfo.Location = new System.Drawing.Point(450, 674);
             this.label_ProgressInfo.Name = "label_ProgressInfo";
             this.label_ProgressInfo.Size = new System.Drawing.Size(83, 15);
             this.label_ProgressInfo.TabIndex = 4;
@@ -2567,7 +2578,7 @@ namespace ManipAnalysis
             // 
             this.checkBox_PauseThread.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBox_PauseThread.AutoSize = true;
-            this.checkBox_PauseThread.Location = new System.Drawing.Point(955, 672);
+            this.checkBox_PauseThread.Location = new System.Drawing.Point(899, 672);
             this.checkBox_PauseThread.Name = "checkBox_PauseThread";
             this.checkBox_PauseThread.Size = new System.Drawing.Size(47, 23);
             this.checkBox_PauseThread.TabIndex = 5;
@@ -2604,21 +2615,24 @@ namespace ManipAnalysis
             this.listBox_LogBox.Size = new System.Drawing.Size(422, 641);
             this.listBox_LogBox.TabIndex = 9;
             // 
-            // button_Debug_ShowMatlabFiles
+            // checkBox_Cancel
             // 
-            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
-            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
-            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
-            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
-            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
+            this.checkBox_Cancel.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox_Cancel.AutoSize = true;
+            this.checkBox_Cancel.Location = new System.Drawing.Point(952, 672);
+            this.checkBox_Cancel.Name = "checkBox_Cancel";
+            this.checkBox_Cancel.Size = new System.Drawing.Size(50, 23);
+            this.checkBox_Cancel.TabIndex = 16;
+            this.checkBox_Cancel.Text = "Cancel";
+            this.checkBox_Cancel.UseVisualStyleBackColor = true;
+            this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1172, 699);
+            this.Controls.Add(this.checkBox_Cancel);
             this.Controls.Add(this.listBox_LogBox);
             this.Controls.Add(this.button_ClearLog);
             this.Controls.Add(this.label_Log);
@@ -2905,6 +2919,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.Label label_Others_PlotErrorclampForces_Ms;
         private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
+        private System.Windows.Forms.CheckBox checkBox_Cancel;
     }
 }
 

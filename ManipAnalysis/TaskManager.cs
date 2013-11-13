@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ManipAnalysis
@@ -7,6 +8,7 @@ namespace ManipAnalysis
     {
         private static readonly List<Task> RunningTasks = new List<Task>();
         public static bool Pause;
+        public static bool Cancel;
 
         public static void PushBack(Task task)
         {

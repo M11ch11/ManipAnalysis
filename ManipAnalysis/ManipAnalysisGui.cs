@@ -2240,5 +2240,10 @@ namespace ManipAnalysis
                 WriteToLogBox(ex.ToString());
             }
         }
+
+        private void checkBox_Cancel_CheckedChanged(object sender, EventArgs e)
+        {
+            TaskManager.Cancel = checkBox_Cancel.Checked;
+        }
     }
 }
