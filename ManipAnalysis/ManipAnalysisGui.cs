@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -957,9 +958,46 @@ namespace ManipAnalysis
             SetProgressBarValue(0);
         }
 
+        private void button_Debug_ShowMatlabFiles_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\MatlabFiles");
+            }
+            catch (Exception ex)
+            {
+                WriteToLogBox(ex.ToString());
+            }
+        }
+
+        private void checkBox_Cancel_CheckedChanged(object sender, EventArgs e)
+        {
+            TaskManager.Cancel = checkBox_Cancel.Checked;
+            if (checkBox_Cancel.Checked)
+            {
+                checkBox_Cancel.BackColor = Color.Red;
+                checkBox_Cancel.ForeColor = Color.White;
+            }
+            else
+            {
+                checkBox_Cancel.BackColor = SystemColors.Control;
+                checkBox_Cancel.ForeColor = Color.Black;
+            }
+        }
+
         private void checkBox_PauseThread_CheckedChanged(object sender, EventArgs e)
         {
             TaskManager.Pause = checkBox_PauseThread.Checked;
+            if (checkBox_PauseThread.Checked)
+            {
+                checkBox_PauseThread.BackColor = Color.Red;
+                checkBox_PauseThread.ForeColor = Color.White;
+            }
+            else
+            {
+                checkBox_PauseThread.BackColor = SystemColors.Control;
+                checkBox_PauseThread.ForeColor = Color.Black;
+            }
         }
 
         private void button_DataManipulation_UpdateGroupID_Click(object sender, EventArgs e)
@@ -2228,22 +2266,5 @@ namespace ManipAnalysis
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
-
-        private void button_Debug_ShowMatlabFiles_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Process.Start(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\MatlabFiles");
-            }
-            catch (Exception ex)
-            {
-                WriteToLogBox(ex.ToString());
-            }
-        }
-
-        private void checkBox_Cancel_CheckedChanged(object sender, EventArgs e)
-        {
-            TaskManager.Cancel = checkBox_Cancel.Checked;
-        }
     }
 }
