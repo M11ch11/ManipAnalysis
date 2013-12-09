@@ -1,0 +1,18 @@
+11.0
+16
+1       SQLCHAR             0       12      ","      1     id                                           ""
+2       SQLCHAR             0       12      ","      2     trial_id                                     ""
+3       SQLCHAR             0       255      ","      3     time_stamp                                   ""
+4       SQLCHAR             0       255      ","      4     force_actual_x                               ""
+5       SQLCHAR             0       255      ","      5     force_actual_y                               ""
+6       SQLCHAR             0       255      ","      6     force_actual_z                               ""
+7       SQLCHAR             0       255      ","      7     force_nominal_x                              ""
+8       SQLCHAR             0       255      ","      8     force_nominal_y                              ""
+9       SQLCHAR             0       255      ","      9     force_nominal_z                              ""
+10      SQLCHAR             0       255      ","      10    force_moment_x                               ""
+11      SQLCHAR             0       255      ","      11    force_moment_y                               ""
+12      SQLCHAR             0       255      ","      12    force_moment_z                               ""
+13      SQLCHAR             0       255      ","      13    position_cartesian_x                         ""
+14      SQLCHAR             0       255      ","      14    position_cartesian_y                         ""
+15      SQLCHAR             0       255      ","      15    position_cartesian_z                         ""
+16      SQLCHAR             0       12      "\r\n"   16    position_status                              ""
