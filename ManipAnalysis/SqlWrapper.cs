@@ -996,6 +996,53 @@ namespace ManipAnalysis
             return retVal;
         }
 
+        public int GetTargetNumber(int trialID)
+        {
+            int retVal = -1;
+
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "getTargetNumber";
+
+            _sqlCmd.Parameters.Add(new SqlParameter("@trialId", trialID));
+            _sqlCmd.Parameters.Add("@targetNumber", SqlDbType.Int);
+
+            _sqlCmd.Parameters["@targetNumber"].Direction = ParameterDirection.Output;
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    _sqlCmd.ExecuteNonQuery();
+                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@targetNumber"].Value);
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                            @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+
+            return retVal;
+        }
+
         public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
             DateTime turnDateTime, int szenarioTrialNumber)
         {

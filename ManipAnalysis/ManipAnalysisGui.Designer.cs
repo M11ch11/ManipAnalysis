@@ -698,6 +698,7 @@ namespace ManipAnalysis
             // 
             // comboBox_TrajectoryVelocity_Szenario
             // 
+            this.comboBox_TrajectoryVelocity_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_TrajectoryVelocity_Szenario.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_Szenario.Location = new System.Drawing.Point(71, 140);
             this.comboBox_TrajectoryVelocity_Szenario.Name = "comboBox_TrajectoryVelocity_Szenario";
@@ -708,6 +709,7 @@ namespace ManipAnalysis
             // 
             // comboBox_TrajectoryVelocity_Study
             // 
+            this.comboBox_TrajectoryVelocity_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_TrajectoryVelocity_Study.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_Study.Location = new System.Drawing.Point(71, 12);
             this.comboBox_TrajectoryVelocity_Study.Name = "comboBox_TrajectoryVelocity_Study";
@@ -889,6 +891,8 @@ namespace ManipAnalysis
             "Max perpendicular distance - Abs",
             "Max perpendicular distance - Sign",
             "Mean perpendicular distance - Abs",
+            "Perpendicular distance ?ms - Abs",
+            "Perpendicular distance ?ms - Sign",
             "Perpendicular distance 300ms - Abs",
             "Perpendicular distance 300ms - Sign",
             "RMSE",
@@ -1023,6 +1027,7 @@ namespace ManipAnalysis
             // 
             // comboBox_DescriptiveStatistic1_Szenario
             // 
+            this.comboBox_DescriptiveStatistic1_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_DescriptiveStatistic1_Szenario.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_Szenario.Location = new System.Drawing.Point(71, 140);
             this.comboBox_DescriptiveStatistic1_Szenario.Name = "comboBox_DescriptiveStatistic1_Szenario";
@@ -1033,6 +1038,7 @@ namespace ManipAnalysis
             // 
             // comboBox_DescriptiveStatistic1_Study
             // 
+            this.comboBox_DescriptiveStatistic1_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_DescriptiveStatistic1_Study.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_Study.Location = new System.Drawing.Point(71, 12);
             this.comboBox_DescriptiveStatistic1_Study.Name = "comboBox_DescriptiveStatistic1_Study";
@@ -1306,6 +1312,7 @@ namespace ManipAnalysis
             // 
             // comboBox_DescriptiveStatistic2_Szenario
             // 
+            this.comboBox_DescriptiveStatistic2_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_DescriptiveStatistic2_Szenario.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_Szenario.Location = new System.Drawing.Point(71, 140);
             this.comboBox_DescriptiveStatistic2_Szenario.Name = "comboBox_DescriptiveStatistic2_Szenario";
@@ -1316,6 +1323,7 @@ namespace ManipAnalysis
             // 
             // comboBox_DescriptiveStatistic2_Study
             // 
+            this.comboBox_DescriptiveStatistic2_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_DescriptiveStatistic2_Study.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_Study.Location = new System.Drawing.Point(71, 12);
             this.comboBox_DescriptiveStatistic2_Study.Name = "comboBox_DescriptiveStatistic2_Study";
