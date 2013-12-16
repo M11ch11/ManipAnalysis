@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis.Container;
+using Microsoft.Win32;
 
 namespace ManipAnalysis
 {
@@ -350,9 +351,9 @@ namespace ManipAnalysis
             return _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly,
                 showErrorclampTrials, showErrorclampTrialsExclusivly);
         }
-
+        
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
-            string fitEquation, bool plotFit, bool plotErrorbars)
+            string fitEquation, int pdTime, bool plotFit, bool plotErrorbars)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -379,7 +380,7 @@ namespace ManipAnalysis
                             meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel;
                             meanCounter++)
                         {
-                            _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCounter);
+                            _myManipAnalysisGui.SetProgressBarValue((100.0 / selectedTrialsList.Count()) * meanCounter);
                             StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCounter);
 
                             DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
@@ -390,98 +391,213 @@ namespace ManipAnalysis
                                     tempStatisticPlotContainer.Turn.Substring(
                                         "Turn".Length)));
 
-
-                            DataSet statisticDataSet =
-                                _mySqlWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
-                                    tempStatisticPlotContainer.Group,
-                                    tempStatisticPlotContainer.Szenario,
-                                    tempStatisticPlotContainer.Subject,
-                                    turnDateTime);
-
-                            int trialListCounter = 0;
-                            foreach (DataRow row in statisticDataSet.Tables[0].Rows)
+                            if (pdTime == -1)
                             {
-                                if (TaskManager.Cancel)
+
+                                DataSet statisticDataSet =
+                                    _mySqlWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group,
+                                        tempStatisticPlotContainer.Szenario,
+                                        tempStatisticPlotContainer.Subject,
+                                        turnDateTime);
+
+
+                                int trialListCounter = 0;
+                                foreach (DataRow row in statisticDataSet.Tables[0].Rows)
                                 {
-                                    break;
-                                }
-                                if (!row["szenario_trial_number"].GetType().IsInstanceOfType(DBNull.Value))
-                                {
-                                    int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                                    if (trialList.Contains(szenarioTrialNumber))
+                                    if (TaskManager.Cancel)
                                     {
+                                        break;
+                                    }
+                                    if (!row["szenario_trial_number"].GetType().IsInstanceOfType(DBNull.Value))
+                                    {
+                                        int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                                        if (trialList.Contains(szenarioTrialNumber))
+                                        {
+                                            switch (statisticType)
+                                            {
+                                                case "Vector correlation":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["velocity_vector_correlation"]);
+                                                    break;
+
+                                                case "Vector correlation fisher-z":
+                                                    _myMatlabWrapper.SetWorkspaceData("vcorr",
+                                                        Convert.ToDouble(row["velocity_vector_correlation"]));
+                                                    _myMatlabWrapper.Execute(
+                                                        "fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                                    data[trialListCounter, meanCounter] =
+                                                        _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                                    _myMatlabWrapper.ClearWorkspace();
+                                                    break;
+
+                                                case "Vector correlation fisher-z to r-values":
+                                                    _myMatlabWrapper.SetWorkspaceData("vcorr",
+                                                        Convert.ToDouble(row["velocity_vector_correlation"]));
+                                                    _myMatlabWrapper.Execute(
+                                                        "fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                                    data[trialListCounter, meanCounter] =
+                                                        _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                                    _myMatlabWrapper.ClearWorkspace();
+                                                    break;
+
+                                                case "Perpendicular distance 300ms - Abs":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                                    break;
+
+                                                case "Mean perpendicular distance - Abs":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
+                                                    break;
+
+                                                case "Max perpendicular distance - Abs":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
+                                                    break;
+
+                                                case "Perpendicular distance 300ms - Sign":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                                    break;
+
+                                                case "Max perpendicular distance - Sign":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
+                                                    break;
+
+                                                case "Trajectory length abs":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["trajectory_length_abs"]);
+                                                    break;
+
+                                                case "Trajectory length ratio":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
+                                                    break;
+
+                                                case "Enclosed area":
+                                                    data[trialListCounter, meanCounter] =
+                                                        Convert.ToDouble(row["enclosed_area"]);
+                                                    break;
+
+                                                case "RMSE":
+                                                    data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
+                                                    break;
+                                            }
+                                            trialListCounter++;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                DataSet baselineDataSet =
+                                           _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                               tempStatisticPlotContainer.Group, "Szenario02",
+                                               tempStatisticPlotContainer.Subject);
+                                LinkedList<BaselineDataContainer> baselineDataList = new LinkedList<BaselineDataContainer>();
+
+                                for (int baselineSamples = 0; baselineSamples < baselineDataSet.Tables[0].Rows.Count; baselineSamples++)
+                                {
+                                    baselineDataList.AddLast(new BaselineDataContainer(
+                                        Convert.ToDateTime(baselineDataSet.Tables[0].Rows[baselineSamples]["pseudo_time_stamp"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_x"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_y"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_z"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_x"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_y"]),
+                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_z"]),
+                                        Convert.ToInt32(baselineDataSet.Tables[0].Rows[baselineSamples]["target_number"])));
+                                }
+
+                                for(int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
+                                {
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count) * trialCounter);
+
+                                    int szenarioTrialNumber = trialList.ElementAt(trialCounter);
+                                    int trialId = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
+                                        tempStatisticPlotContainer.Subject, turnDateTime, szenarioTrialNumber);
+
+                                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialId);
+                                    int targetNumber = _mySqlWrapper.GetTargetNumber(trialId);
+
+
+                                    if (baselineDataList.Count > 0 &
+                                        measureDataSet.Tables[0].Rows.Count > 0)
+                                    {
+
+                                        int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                                        var measureData = new double[sampleCount, 3];
+                                        var baselineData = new double[sampleCount, 3];
+                                        var baselineDataArray =
+                                            baselineDataList.Where(t => t.TargetNumber == targetNumber)
+                                                .OrderBy(t => t.PseudoTimeStamp)
+                                                .Select(
+                                                    t =>
+                                                        new double[]
+                                                        {
+                                                            t.BaselinePositionCartesianX, 
+                                                            t.BaselinePositionCartesianY,
+                                                            t.BaselinePositionCartesianZ
+                                                        }).ToArray();
+                                        var timeStamp = new double[sampleCount];
+
+                                        for (int i = 0; i < sampleCount; i++)
+                                        {
+                                            timeStamp[i] =
+                                                Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+
+                                            measureData[i, 0] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
+                                            measureData[i, 1] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
+                                            measureData[i, 2] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+
+                                            baselineData[i, 0] = baselineDataArray[i][0];
+                                            baselineData[i, 1] = baselineDataArray[i][1];
+                                            baselineData[i, 2] = baselineDataArray[i][2];
+                                        }
+
+                                        List<double> tempTimeList = timeStamp.ToList();
+                                        int timeMsIndex =
+                                            tempTimeList.IndexOf(
+                                                tempTimeList.OrderBy(
+                                                    d =>
+                                                        Math.Abs(d -
+                                                                 (timeStamp[0] + TimeSpan.FromMilliseconds(pdTime).Ticks)))
+                                                    .ElementAt(0));
+
+                                        _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
+                                        _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
+                                        _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
+                                        _myMatlabWrapper.SetWorkspaceData("baselineData", baselineData);
+
+                                        _myMatlabWrapper.Execute(
+                                            "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute(
+                                            "distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute("distanceMsAbs = distanceAbs(timeMsIndex);");
+                                        _myMatlabWrapper.Execute("distanceMsSign = distanceSign(timeMsIndex);");
+
                                         switch (statisticType)
                                         {
-                                            case "Vector correlation":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["velocity_vector_correlation"]);
+                                            case "Perpendicular distance ?ms - Abs":
+                                                data[trialCounter, meanCounter] =
+                                                    _myMatlabWrapper.GetWorkspaceData("distanceMsAbs");
                                                 break;
 
-                                            case "Vector correlation fisher-z":
-                                                _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                    Convert.ToDouble(row["velocity_vector_correlation"]));
-                                                _myMatlabWrapper.Execute(
-                                                    "fisherZ = vectorCorrelationFisherZTransform(vcorr);");
-                                                data[trialListCounter, meanCounter] =
-                                                    _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                                _myMatlabWrapper.ClearWorkspace();
+                                            case "Perpendicular distance ?ms - Sign":
+                                                data[trialCounter, meanCounter] =
+                                                    _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
                                                 break;
 
-                                            case "Vector correlation fisher-z to r-values":
-                                                _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                    Convert.ToDouble(row["velocity_vector_correlation"]));
-                                                _myMatlabWrapper.Execute(
-                                                    "fisherZ = vectorCorrelationFisherZTransform(vcorr);");
-                                                data[trialListCounter, meanCounter] =
-                                                    _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                                _myMatlabWrapper.ClearWorkspace();
-                                                break;
-
-                                            case "Perpendicular distance 300ms - Abs":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                                break;
-
-                                            case "Mean perpendicular distance - Abs":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["mean_perpendicular_displacement_abs"]);
-                                                break;
-
-                                            case "Max perpendicular distance - Abs":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["maximal_perpendicular_displacement_abs"]);
-                                                break;
-
-                                            case "Perpendicular distance 300ms - Sign":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                                break;
-
-                                            case "Max perpendicular distance - Sign":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["maximal_perpendicular_displacement_sign"]);
-                                                break;
-
-                                            case "Trajectory length abs":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["trajectory_length_abs"]);
-                                                break;
-
-                                            case "Trajectory length ratio":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["trajectory_length_ratio_baseline"]);
-                                                break;
-
-                                            case "Enclosed area":
-                                                data[trialListCounter, meanCounter] =
-                                                    Convert.ToDouble(row["enclosed_area"]);
-                                                break;
-
-                                            case "RMSE":
-                                                data[trialListCounter, meanCounter] = Convert.ToDouble(row["rmse"]);
-                                                break;
                                         }
-                                        trialListCounter++;
                                     }
                                 }
                             }
@@ -579,6 +695,16 @@ namespace ManipAnalysis
                                         plotErrorbars);
                                     break;
 
+                                case "Perpendicular distance ?ms - Abs":
+                                    _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " abs plot", "dataPlot",
+                                        "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                        fitEquation + "')",
+                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                        dataPlot.Length, 0, 0.05,
+                                        plotFit,
+                                        plotErrorbars);
+                                    break;
+
                                 case "Mean perpendicular distance - Abs":
                                     _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "dataPlot",
                                         "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
@@ -604,6 +730,16 @@ namespace ManipAnalysis
                                         "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
                                         fitEquation + "')",
                                         "dataStdPlot", "[Trial]", "PD300 [m]", 1,
+                                        dataPlot.Length, -0.05, 0.05,
+                                        plotFit,
+                                        plotErrorbars);
+                                    break;
+
+                                case "Perpendicular distance ?ms - Sign":
+                                    _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " sign plot", "dataPlot",
+                                        "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                        fitEquation + "')",
+                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
                                         dataPlot.Length, -0.05, 0.05,
                                         plotFit,
                                         plotErrorbars);
@@ -716,7 +852,9 @@ namespace ManipAnalysis
                             turn);
 
                         trialListCounter = 0;
-                        for (int rowCounter = 0; rowCounter < statisticDataSet.Tables[0].Rows.Count & !TaskManager.Cancel; rowCounter++)
+                        for (int rowCounter = 0;
+                            rowCounter < statisticDataSet.Tables[0].Rows.Count & !TaskManager.Cancel;
+                            rowCounter++)
                         {
                             DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
 
@@ -3143,7 +3281,7 @@ namespace ManipAnalysis
                     {
                         Thread.Sleep(100);
                     }
-                    
+
                     _myManipAnalysisGui.SetProgressBarValue((100.0/trialInfos.Count())*counter);
                     counter++;
 
@@ -3329,7 +3467,9 @@ namespace ManipAnalysis
                 }
                 else
                 {
-                    for (int trialIdCounter = 0; trialIdCounter < faultyTrialInformation.Count & !TaskManager.Cancel; trialIdCounter++)
+                    for (int trialIdCounter = 0;
+                        trialIdCounter < faultyTrialInformation.Count & !TaskManager.Cancel;
+                        trialIdCounter++)
                     {
                         while (TaskManager.Pause & !TaskManager.Cancel)
                         {
@@ -3611,7 +3751,9 @@ namespace ManipAnalysis
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
 
-                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
+                        for (int targetCounter = 0;
+                            targetCounter < targetArray.Length & !TaskManager.Cancel;
+                            targetCounter++)
                         {
                             int targetCounterVar = targetCounter;
                             int meanCounter = 0;
@@ -3814,7 +3956,9 @@ namespace ManipAnalysis
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
 
-                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
+                        for (int targetCounter = 0;
+                            targetCounter < targetArray.Length & !TaskManager.Cancel;
+                            targetCounter++)
                         {
                             int targetCounterVar = targetCounter;
                             int meanCounter = 0;
@@ -3989,7 +4133,9 @@ namespace ManipAnalysis
 
 
                         int counter = 0;
-                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
+                        for (int targetCounter = 0;
+                            targetCounter < targetArray.Length & !TaskManager.Cancel;
+                            targetCounter++)
                         {
                             int meanCounter = 0;
                             var dataX = new List<double>();
@@ -4192,7 +4338,9 @@ namespace ManipAnalysis
 
 
                         int counter = 0;
-                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
+                        for (int targetCounter = 0;
+                            targetCounter < targetArray.Length & !TaskManager.Cancel;
+                            targetCounter++)
                         {
                             int meanCounter = 0;
                             var dataXZ = new List<double>();
@@ -4621,7 +4769,9 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue(0);
 
                 // Loops over all subjects. Can also be only one.
-                for (int subjectCounter = 0; subjectCounter < subjectList.Count() & !TaskManager.Cancel; subjectCounter++)
+                for (int subjectCounter = 0;
+                    subjectCounter < subjectList.Count() & !TaskManager.Cancel;
+                    subjectCounter++)
                 {
                     _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
 
@@ -4643,7 +4793,9 @@ namespace ManipAnalysis
                             var fieldPdAbs = new List<double>();
 
                             // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
-                            for (int rowCounter = (setCounter * 16); rowCounter < ((setCounter + 1) * 16) & !TaskManager.Cancel; rowCounter++)
+                            for (int rowCounter = (setCounter*16);
+                                rowCounter < ((setCounter + 1)*16) & !TaskManager.Cancel;
+                                rowCounter++)
                             {
                                 DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
                                 int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
@@ -4717,127 +4869,133 @@ namespace ManipAnalysis
         public void ExportLearningIndex(string fileName, string study, string group, string szenario,
             IEnumerable<SubjectInformationContainer> subjects, int turn)
         {
-             TaskManager.PushBack(Task.Factory.StartNew(() =>
-             {
-                 List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
-                 string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
-                 // List of all trials in the szenario
-                 int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
-                 var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
+            TaskManager.PushBack(Task.Factory.StartNew(() =>
+            {
+                List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
+                string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
+                // List of all trials in the szenario
+                int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
+                var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
 
-                 // Info output
-                 _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
-                 _myManipAnalysisGui.SetProgressBarValue(0);
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
 
-                 // Loops over all subjects. Can also be only one.
-                 for (int subjectCounter = 0; subjectCounter < subjectList.Count() & !TaskManager.Cancel; subjectCounter++)
-                 {
-                     _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
+                // Loops over all subjects. Can also be only one.
+                for (int subjectCounter = 0;
+                    subjectCounter < subjectList.Count() & !TaskManager.Cancel;
+                    subjectCounter++)
+                {
+                    _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
 
-                     // Gets the statistic-data for the subject
-                     DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario,
-                         subjectList[subjectCounter], turn);
-                     DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario,
-                         subjectList[subjectCounter],
-                         turnDateTime);
+                    // Gets the statistic-data for the subject
+                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario,
+                        subjectList[subjectCounter], turn);
+                    DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario,
+                        subjectList[subjectCounter],
+                        turnDateTime);
 
-                     // Checks wether the amount of statistic-data equals the amount of szenario-trials
-                     if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
-                     {
-                         // Loops over all sets in the szenario
-                         for (int setCounter = 0; setCounter < setCount; setCounter++)
-                         {
-                             var catchPdSign = new List<double>();
-                             var catchPdAbs = new List<double>();
-                             var fieldPdAbs = new List<double>();
+                    // Checks wether the amount of statistic-data equals the amount of szenario-trials
+                    if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
+                    {
+                        // Loops over all sets in the szenario
+                        for (int setCounter = 0; setCounter < setCount; setCounter++)
+                        {
+                            var catchPdSign = new List<double>();
+                            var catchPdAbs = new List<double>();
+                            var fieldPdAbs = new List<double>();
 
-                             // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
-                             for (int rowCounter = (setCounter * 16); rowCounter < ((setCounter + 1) * 16) & !TaskManager.Cancel; rowCounter++)
-                             {
-                                 DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
-                                 int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                                 double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                 double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                 bool isCatchTrial =
-                                     szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") +
-                                                             " - CatchTrial");
+                            // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
+                            for (int rowCounter = (setCounter*16);
+                                rowCounter < ((setCounter + 1)*16) & !TaskManager.Cancel;
+                                rowCounter++)
+                            {
+                                DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
+                                int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
+                                double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
+                                double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
+                                bool isCatchTrial =
+                                    szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") +
+                                                            " - CatchTrial");
 
-                                 if (isCatchTrial)
-                                 {
-                                     catchPdAbs.Add(pd300Abs);
-                                     catchPdSign.Add(pd300Sign);
-                                 }
-                                 else
-                                 {
-                                     fieldPdAbs.Add(pd300Abs);
-                                 }
-                             }
+                                if (isCatchTrial)
+                                {
+                                    catchPdAbs.Add(pd300Abs);
+                                    catchPdSign.Add(pd300Sign);
+                                }
+                                else
+                                {
+                                    fieldPdAbs.Add(pd300Abs);
+                                }
+                            }
 
-                             // If a catch-trial was present in the set, the learning-index is calculated and saved
-                             if (catchPdAbs.Count > 0)
-                             {
-                                 if (liData[setCounter] == null)
-                                 {
-                                     liData[setCounter] = new List<double>();
-                                 }
+                            // If a catch-trial was present in the set, the learning-index is calculated and saved
+                            if (catchPdAbs.Count > 0)
+                            {
+                                if (liData[setCounter] == null)
+                                {
+                                    liData[setCounter] = new List<double>();
+                                }
 
-                                 liData[setCounter].Add(catchPdSign.Average()/
-                                                        (catchPdAbs.Average() + fieldPdAbs.Average()));
-                             }
-                         }
-                     }
-                 }
+                                liData[setCounter].Add(catchPdSign.Average()/
+                                                       (catchPdAbs.Average() + fieldPdAbs.Average()));
+                            }
+                        }
+                    }
+                }
 
-                 // Create write-cache and header-line
-                 var cache = new List<string>();
-                 string line = "SzenarioSetNumber,";
-                 for (int subjectCounter = 0; subjectCounter < subjectList.Count & !TaskManager.Cancel; subjectCounter++)
-                 {
-                     line += subjectList.ElementAt(subjectCounter).SubjectID + ",";
-                 }
-                 line += "Mean,Std";
-                 cache.Add(line);
+                // Create write-cache and header-line
+                var cache = new List<string>();
+                string line = "SzenarioSetNumber,";
+                for (int subjectCounter = 0; subjectCounter < subjectList.Count & !TaskManager.Cancel; subjectCounter++)
+                {
+                    line += subjectList.ElementAt(subjectCounter).SubjectID + ",";
+                }
+                line += "Mean,Std";
+                cache.Add(line);
 
 
-                 // Loops over all sets and adds the data to the cache
-                 for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                 {
-                     if (liData[setCounter] != null)
-                     {
-                         line = (setCounter + 1).ToString(CultureInfo.InvariantCulture) + ",";
+                // Loops over all sets and adds the data to the cache
+                for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
+                {
+                    if (liData[setCounter] != null)
+                    {
+                        line = (setCounter + 1).ToString(CultureInfo.InvariantCulture) + ",";
 
-                         for (int subjectCounter = 0; subjectCounter < liData[setCounter].Count & !TaskManager.Cancel; subjectCounter++)
-                         {
-                             line += DoubleConverter.ToExactString(liData[setCounter].ElementAt(subjectCounter)) + ",";
-                         }
+                        for (int subjectCounter = 0;
+                            subjectCounter < liData[setCounter].Count & !TaskManager.Cancel;
+                            subjectCounter++)
+                        {
+                            line += DoubleConverter.ToExactString(liData[setCounter].ElementAt(subjectCounter)) + ",";
+                        }
 
-                         line += DoubleConverter.ToExactString(liData[setCounter].Average()) + ",";
+                        line += DoubleConverter.ToExactString(liData[setCounter].Average()) + ",";
 
-                         line +=
-                             DoubleConverter.ToExactString(
-                                 Math.Sqrt((liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
-                                           /
-                                           (liData[setCounter].Count - 1)
-                                     ));
+                        line +=
+                            DoubleConverter.ToExactString(
+                                Math.Sqrt((liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
+                                          /
+                                          (liData[setCounter].Count - 1)
+                                    ));
 
-                         cache.Add(line);
-                     }
-                 }
+                        cache.Add(line);
+                    }
+                }
 
-                 var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                 var dataFileWriter = new StreamWriter(dataFileStream);
+                var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                var dataFileWriter = new StreamWriter(dataFileStream);
 
-                 for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
-                 {
-                     dataFileWriter.WriteLine(cache[i]);
-                 }
+                for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
+                {
+                    dataFileWriter.WriteLine(cache[i]);
+                }
 
-                 dataFileWriter.Close();
+                dataFileWriter.Close();
 
-                 _myManipAnalysisGui.WriteProgressInfo("Ready.");
-                 _myManipAnalysisGui.SetProgressBarValue(0);
-                 TaskManager.Remove(Task.CurrentId);
-             }));
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void ForcefieldCompensationFactor(string study, string group, string szenario,
@@ -4908,7 +5066,8 @@ namespace ManipAnalysis
                                         Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_x"]);
                                     forceSollData[sample, 1] =
                                         Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_z"]);
-                                     */                                }
+                                     */
+                                }
 
                                 List<double> tempTimeList = timeStamp.ToList();
                                 int timeMsIndex =
@@ -4922,10 +5081,10 @@ namespace ManipAnalysis
                                 _myMatlabWrapper.SetWorkspaceData("velocityData", velocityData);
                                 _myMatlabWrapper.SetWorkspaceData("forceIstData", forceIstData);
                                 //_myMatlabWrapper.SetWorkspaceData("forceSollDataData", forceSollData);
-                                
+
                                 _myMatlabWrapper.Execute("forceSollData = bsxfun(@times, velocityData, [20 -20]);");
-                                    // CW-ForceField
-                                
+                                // CW-ForceField
+
                                 _myMatlabWrapper.Execute("trials(" +
                                                          (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
                                                          ") = " +
@@ -4933,7 +5092,7 @@ namespace ManipAnalysis
                                 _myMatlabWrapper.Execute("bars(" +
                                                          (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
                                                          ",1) = forcefieldCompensationFactor(positionData,velocityData,forceIstData,forceSollData,timeMsIndex);");
-                                 
+
                                 /*
                                 _myMatlabWrapper.Execute("figure;");
                                 _myMatlabWrapper.Execute("hold all;");

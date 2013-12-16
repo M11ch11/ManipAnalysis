@@ -521,10 +521,23 @@ namespace ManipAnalysis
 
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
+            int pdTime = -1;
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" || 
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Sign")
+            {
+                var inputForm = new PerpendicularDisplacementTimeInputForm();
+                if (inputForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    pdTime = inputForm.getMilliseconds();
+                    inputForm.Dispose();
+                }
+            }
+
             _manipAnalysisFunctions.PlotDescriptiveStatistic1(
                 listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
                 comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
                 textBox_DescriptiveStatistic1_FitEquation.Text,
+                pdTime,
                 checkBox_DescriptiveStatistic1_PlotFit.Checked,
                 checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
         }

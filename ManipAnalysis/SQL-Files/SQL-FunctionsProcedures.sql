@@ -17,6 +17,21 @@ BEGIN
 	DELETE FROM _group WHERE id = @oldGroupID;
 END
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[getTargetNumber]
+	@trialId int,
+	@targetNumber int OUTPUT
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT @targetNumber = target_number FROM ( _trial INNER JOIN _target ON _target.id = _trial.target_id)
+	WHERE _trial.id = @trialId;
+END
 
 GO
 SET ANSI_NULLS ON
