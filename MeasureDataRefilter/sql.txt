@@ -1,5 +1,11 @@
-USE [Study 02 - Catch Trial Rate]
-GO
+Export:
+
+bcp "[Study 04 - Generalization and Seat Position].[dbo].[_measure_data_filtered]" out C:\Study4Filtered.dat -T -c
+
+Import:
+
+--USE [Study 02 - Catch Trial Rate]
+--GO
 --DELETE FROM _measure_data_normalized
 --SELECT COUNT (*) FROM _measure_data_filtered
 --BULK INSERT dbo._measure_data_normalized FROM 'C:\measureDataNormalized.dat' WITH  ( FIELDTERMINATOR =',', ROWTERMINATOR ='\r\n', FORMATFILE = 'c:\bulk.fmt')
