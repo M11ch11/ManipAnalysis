@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace ManipAnalysis.MongoDb
 {
-    class MeasureFile
+    class MeasureFileContainer
     {
-        public ObjectId Id { get; set; }
         public string FileName { get; set; }
-        public int FileHash { get; set; }
-
+        public string FileHash { get; set; }
+        private DateTime _creationTime;
         /// <summary>
         /// Convert to UTC First!!!
         /// </summary>
-        public DateTime CreationTime { get; set; }
+        public DateTime CreationTime
+        {
+            get { return _creationTime.ToLocalTime(); }
+            set { _creationTime = value.ToUniversalTime(); }
+        }
     }
 }

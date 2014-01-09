@@ -7,9 +7,9 @@ using MongoDB.Bson;
 
 namespace ManipAnalysis.MongoDb
 {
-    class Study
+    class SubjectContainer
     {
-        public ObjectId Id { get; set; }
         public string Name { get; set; }
+        public string PId { get; set; }
     }
 }

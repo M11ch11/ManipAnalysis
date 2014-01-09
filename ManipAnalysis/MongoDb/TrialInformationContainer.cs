@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ManipAnalysis.MongoDb
 {
-    class TrialInformation
+    class TrialInformationContainer
     {
-        public ObjectId Id { get; set; }
         public bool FaultyTrial { get; set; }
         public bool CatchTrial { get; set; }
         public bool ErrorClampTrial { get; set; }

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ManipAnalysis.MongoDb.Baseline">
+    <Position X="2.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAAAQAAAAgAIAABCAAAAAAAAAAAAAAAAEEAAA=</HashCode>
+      <FileName>MongoDb\Baseline.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.ForceContainer">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAE=</HashCode>
+      <FileName>MongoDb\ForceContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.MeasureFileContainer">
+    <Position X="2.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAgABAAAA=</HashCode>
+      <FileName>MongoDb\MeasureFileContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.PositionContainer">
+    <Position X="7.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAE=</HashCode>
+      <FileName>MongoDb\PositionContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.StatisticContainer">
+    <Position X="0.5" Y="6" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAQABIAAAAggAIBAAwAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>MongoDb\StatisticContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.SubjectContainer">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>MongoDb\SubjectContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.SzenarioMeanTime">
+    <Position X="0.5" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAAAQAAAABAIAABCAAAAAAAAAAAQAAAAEAAAA=</HashCode>
+      <FileName>MongoDb\SzenarioMeanTime.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.TargetContainer">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAEAAAAAAgAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>MongoDb\TargetContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.Trial">
+    <Position X="4.75" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAECAEAAkAQAAgTEAIBgDCIgACEEAIAAEgAAAAEAAAA=</HashCode>
+      <FileName>MongoDb\Trial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.TrialInformationContainer">
+    <Position X="7.5" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIBAAAAAAABAAAAAAAAAEAAAAAAEAAAAAAEAACAEAA=</HashCode>
+      <FileName>MongoDb\TrialInformationContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManipAnalysis.MongoDb.VelocityContainer">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAE=</HashCode>
+      <FileName>MongoDb\VelocityContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

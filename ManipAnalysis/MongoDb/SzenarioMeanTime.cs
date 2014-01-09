@@ -10,17 +10,14 @@ namespace ManipAnalysis.MongoDb
     class SzenarioMeanTime
     {
         public ObjectId Id { get; set; }
-        public ObjectId StudyObjectId { get; set; }
-        public ObjectId GroupObjectId { get; set; }
-        public ObjectId SubjectObjectId { get; set; }
-        public ObjectId SzenarioObjectId { get; set; }
-        public ObjectId TargetObjectId { get; set; }
-        public ObjectId MeasureFileObjectId { get; set; }
-
-        /// <summary>
-        /// Convert to UTC First!!!
-        /// </summary>
+        public string Study { get; set; }
+        public string Group { get; set; }
+        public SubjectContainer Subject { get; set; }
+        public string Szenario { get; set; }
+        public TargetContainer Target { get; set; }
+        public MeasureFileContainer MeasureFile { get; set; }
         public TimeSpan MeanTime { get; set; }
         public TimeSpan MeanTimeStd { get; set; }
+        }
     }
 }

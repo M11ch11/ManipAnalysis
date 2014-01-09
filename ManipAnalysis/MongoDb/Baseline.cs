@@ -10,12 +10,12 @@ namespace ManipAnalysis.MongoDb
     class Baseline
     {
         public ObjectId Id { get; set; }
-        public ObjectId StudyObjectId { get; set; }
-        public ObjectId GroupObjectId { get; set; }
-        public ObjectId SubjectObjectId { get; set; }
-        public ObjectId SzenarioObjectId { get; set; }
-        public ObjectId TargetObjectId { get; set; }
-        public ObjectId MeasureFileObjectId { get; set; }
+        public string Study { get; set; }
+        public string Group { get; set; }
+        public SubjectContainer Subject { get; set; }
+        public string Szenario { get; set; }
+        public TargetContainer Target { get; set; }
+        public MeasureFileContainer MeasureFile { get; set; }
 
         public List<PositionContainer> Position = new List<PositionContainer>();
         public List<VelocityContainer> Velocity = new List<VelocityContainer>(); 

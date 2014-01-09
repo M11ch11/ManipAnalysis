@@ -7,9 +7,11 @@ using MongoDB.Bson;
 
 namespace ManipAnalysis.MongoDb
 {
-    class Group
+    class TargetContainer
     {
-        public ObjectId Id { get; set; }
-        public string Name { get; set; }
+        public int Number { get; set; }
+        public int XPos { get; set; }
+        public int YPos { get; set; }
+        public int ZPos { get; set; }
     }
 }

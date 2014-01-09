@@ -1324,19 +1324,18 @@ namespace ManipAnalysis
                                             filename,
                                             myDataContainter)
                                     ));
-
-                                foreach (Task t in multiCoreTasks)
-                                {
-                                    t.Start();
-                                }
-
-                                foreach (Task t in multiCoreTasks)
-                                {
-                                    t.Wait();
-                                }
-
-                                multiCoreTasks.Clear();
                             }
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Start();
+                            }
+
+                            foreach (Task t in multiCoreTasks)
+                            {
+                                t.Wait();
+                            }
+
+                            multiCoreTasks.Clear();
 
                             #endregion
 

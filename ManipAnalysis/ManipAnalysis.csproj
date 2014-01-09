@@ -193,17 +193,14 @@
     <Compile Include="BioMotionBotMeasureFileParser.cs" />
     <Compile Include="MongoDb\Baseline.cs" />
     <Compile Include="MongoDb\ForceContainer.cs" />
-    <Compile Include="MongoDb\Group.cs" />
-    <Compile Include="MongoDb\MeasureFile.cs" />
+    <Compile Include="MongoDb\MeasureFileContainer.cs" />
     <Compile Include="MongoDb\PositionContainer.cs" />
     <Compile Include="MongoDb\StatisticContainer.cs" />
-    <Compile Include="MongoDb\Study.cs" />
-    <Compile Include="MongoDb\Subject.cs" />
-    <Compile Include="MongoDb\Szenario.cs" />
+    <Compile Include="MongoDb\SubjectContainer.cs" />
     <Compile Include="MongoDb\SzenarioMeanTime.cs" />
-    <Compile Include="MongoDb\Target.cs" />
+    <Compile Include="MongoDb\TargetContainer.cs" />
     <Compile Include="MongoDb\Trial.cs" />
-    <Compile Include="MongoDb\TrialInformation.cs" />
+    <Compile Include="MongoDb\TrialInformationContainer.cs" />
     <Compile Include="MongoDb\VelocityContainer.cs" />
     <Compile Include="ParameterModel.cs" />
     <Compile Include="PerpendicularDisplacementTimeInputForm.cs">
@@ -216,6 +213,7 @@
     <Compile Include="SqlWrapper.cs" />
     <Compile Include="TaskManager.cs" />
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
