@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ManipAnalysis</RootNamespace>
     <AssemblyName>ManipAnalysis</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
     </SccProjectName>
@@ -142,15 +143,27 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\packages\mongocsharpdriver.1.8.3\lib\net35\MongoDB.Bson.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\packages\mongocsharpdriver.1.8.3\lib\net35\MongoDB.Driver.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayComparer.cs" />
+    <Compile Include="C3dHeader.cs" />
+    <Compile Include="C3dReader.cs" />
+    <Compile Include="C3dWriter.cs" />
     <Compile Include="Container\BaselineDataContainer.cs" />
     <Compile Include="Container\DataContainer.cs" />
     <Compile Include="Container\MeasureDataContainer.cs" />
@@ -160,6 +173,7 @@
     <Compile Include="Container\TrajectoryVelocityPlotContainer.cs" />
     <Compile Include="Container\VelocityDataContainer.cs" />
     <Compile Include="DoubleConverter.cs" />
+    <Compile Include="KinarmMeasureFileParser.cs" />
     <Compile Include="ManipAnalysisMain.cs" />
     <Compile Include="ManipAnalysisGui.cs">
       <SubType>Form</SubType>
@@ -176,7 +190,22 @@
     </Compile>
     <Compile Include="MatlabWrapper.cs" />
     <Compile Include="MD5.cs" />
-    <Compile Include="MeasureFileParser.cs" />
+    <Compile Include="BioMotionBotMeasureFileParser.cs" />
+    <Compile Include="MongoDb\Baseline.cs" />
+    <Compile Include="MongoDb\ForceContainer.cs" />
+    <Compile Include="MongoDb\Group.cs" />
+    <Compile Include="MongoDb\MeasureFile.cs" />
+    <Compile Include="MongoDb\PositionContainer.cs" />
+    <Compile Include="MongoDb\StatisticContainer.cs" />
+    <Compile Include="MongoDb\Study.cs" />
+    <Compile Include="MongoDb\Subject.cs" />
+    <Compile Include="MongoDb\Szenario.cs" />
+    <Compile Include="MongoDb\SzenarioMeanTime.cs" />
+    <Compile Include="MongoDb\Target.cs" />
+    <Compile Include="MongoDb\Trial.cs" />
+    <Compile Include="MongoDb\TrialInformation.cs" />
+    <Compile Include="MongoDb\VelocityContainer.cs" />
+    <Compile Include="ParameterModel.cs" />
     <Compile Include="PerpendicularDisplacementTimeInputForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,22 +259,13 @@
     <Content Include="MatlabFiles\vectorCorrelationFisherZTransform.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="SQL-Files\SQL-FunctionsProcedures.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SQL-Files\SQL-Tables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SQL-Files\SQL-WipeDatabase.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\SplashLogo.png" />
     <None Include="Resources\KITLogo.png" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 und x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

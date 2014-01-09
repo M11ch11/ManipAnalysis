@@ -1253,7 +1253,7 @@ namespace ManipAnalysis
                     if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                     {
                         var myDataContainter = new DataContainer();
-                        var myParser = new MeasureFileParser(myDataContainter, _myManipAnalysisGui);
+                        var myParser = new BioMotionBotMeasureFileParser(myDataContainter, _myManipAnalysisGui);
 
                         if (myParser.ParseFile(filename))
                         {

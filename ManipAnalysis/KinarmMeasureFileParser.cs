@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 using ManipAnalysis.Container;
 
 namespace ManipAnalysis
 {
-    internal class MeasureFileParser
+    internal class KinarmMeasureFileParser
     {
-        private readonly DataContainer _dataContainer;
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private string _measureFilePath;
+        private string[] _c3dFiles;
 
-        public MeasureFileParser(DataContainer container, ManipAnalysisGui myManipAnalysisGui)
+
+        public KinarmMeasureFileParser(DataContainer container, ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
             _dataContainer = container;
@@ -36,40 +41,45 @@ namespace ManipAnalysis
         {
             bool retVal = false;
 
-            string filenameInfoString =
-                _measureFilePath.Substring(_measureFilePath.LastIndexOf("\\Szenario", StringComparison.Ordinal) + 1);
-            filenameInfoString = filenameInfoString.Remove(filenameInfoString.IndexOf(".csv", StringComparison.Ordinal));
-            string[] filenameInfoStringArray = filenameInfoString.Split('-');
+            string creationDate = null;
+            string creationTime = null;
+            string szenarioName = null;
+            string studyName = null;
+            string probandId = null;
+            
 
-            /*
-            if (filenameInfoStringArray.Count() == 6)   // Study 1
+            string tempPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\temp";
+            if (Directory.Exists(tempPath))
             {
-                dataContainer.measureFileHash = MD5.computeHash(measureFilePath);
-                dataContainer.studyName = "Study 1";
-                dataContainer.szenarioName = filenameInfoStringArray[0].Trim();
-                dataContainer.groupName = filenameInfoStringArray[5].Trim();
-                dataContainer.subjectName = filenameInfoStringArray[4].Trim();
-                dataContainer.subjectID = filenameInfoStringArray[3].Trim();
-                dataContainer.measureFileCreationDate = filenameInfoStringArray[1];
-                dataContainer.measureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
-
-                retVal = true;
-            }
-            */
-            if (filenameInfoStringArray.Count() == 7) // Study 2 and above
-            {
-                _dataContainer.MeasureFileHash = Md5.ComputeHash(_measureFilePath);
-                _dataContainer.StudyName = filenameInfoStringArray[3].Trim();
-                _dataContainer.SzenarioName = filenameInfoStringArray[0].Trim();
-                _dataContainer.GroupName = filenameInfoStringArray[4].Trim();
-                _dataContainer.SubjectName = filenameInfoStringArray[5].Trim();
-                _dataContainer.SubjectID = filenameInfoStringArray[6].Trim();
-                _dataContainer.MeasureFileCreationDate = filenameInfoStringArray[1];
-                _dataContainer.MeasureFileCreationTime = filenameInfoStringArray[2].Replace('.', ':');
-
-                retVal = true;
+                Directory.Delete(tempPath, true);
             }
 
+            Directory.CreateDirectory(tempPath);
+            ZipFile.ExtractToDirectory(_measureFilePath, tempPath);
+
+            _c3dFiles = Directory.EnumerateFiles(tempPath + @"\raw", "*_*_*.c3d*").ToArray();
+
+            using (var fs = new FileStream(tempPath + @"\exam_info_3.txt", FileMode.Open))
+            {
+                var sr = new StreamReader(fs);
+                string[] szenarioInfo = szenarioInfo = sr.ReadToEnd().Split(new[] { ';' });
+                szenarioName = szenarioInfo[1];
+                studyName = szenarioInfo[4];
+                probandId = szenarioInfo[10];
+            }
+
+            creationDate = _measureFilePath.Split('_')[1].Replace('-', '.'); //Date
+            creationTime = _measureFilePath.Split('_')[2].Replace('-', ':'); //Time
+            
+            _dataContainer.MeasureFileHash = Md5.ComputeHash(_measureFilePath);
+            _dataContainer.StudyName = studyName.Trim();
+            _dataContainer.SzenarioName = szenarioName.Trim();
+            _dataContainer.SubjectID = probandId.Trim();
+            _dataContainer.MeasureFileCreationDate = creationDate;
+            _dataContainer.MeasureFileCreationTime = creationTime;
+
+            retVal = true;
+            
             return retVal;
         }
 
@@ -77,8 +87,83 @@ namespace ManipAnalysis
         {
             bool retVal = true;
 
+            foreach (string c3dFile in _c3dFiles)
+            {
+                var c3dReader = new C3dReader();
+                c3dReader.Open(c3dFile);
+
+                string startTime = c3dReader.GetParameter<string[]>("TRIAL:TIME")[0];
+                float[] eventTimes = c3dReader.GetParameter<float[]>("EVENTS:TIMES");
+                string[] eventLabels = c3dReader.GetParameter<string[]>("EVENTS:LABELS");
+                float frameTimeInc = 1.0f / c3dReader.Header.FrameRate;
+                int targetNumber = c3dReader.GetParameter<Int16>("TRIAL:TP");
+                int targetTrialNumber = c3dReader.GetParameter<Int16>("TRIAL:TP_NUM");
+                int szenarioTrialNumber = c3dReader.GetParameter<Int16>("TRIAL:TRIAL_NUM");
+                //_dataContainer.GroupName = filenameInfoStringArray[4].Trim();
+                //_dataContainer.SubjectName = filenameInfoStringArray[5].Trim();
+                _dataContainer.
+                var positionData = new Vector3[c3dReader.FramesCount];
+                var forceX = new float[c3dReader.FramesCount];
+                var forceY = new float[c3dReader.FramesCount];
+                var forceZ = new float[c3dReader.FramesCount];
+                var momentX = new float[c3dReader.FramesCount];
+                var momentY = new float[c3dReader.FramesCount];
+                var momentZ = new float[c3dReader.FramesCount];
+                var timeStamp = new DateTime[c3dReader.FramesCount];
+                var positionStatus = new int[c3dReader.FramesCount];
+
+                for (int frame = 0; frame < c3dReader.FramesCount; frame++)
+                {
+                    // returns an array of all points, it is necessary to call this method in each cycle
+                    positionData[frame] = c3dReader.ReadFrame()[0]; // Right Hand
+
+                    // get analog data for this frame
+                    forceX[frame] = c3dReader.AnalogData["Right_FS_ForceX", 0];
+                    forceY[frame] = c3dReader.AnalogData["Right_FS_ForceY", 0];
+                    forceZ[frame] = c3dReader.AnalogData["Right_FS_ForceZ", 0];
+
+                    momentX[frame] = c3dReader.AnalogData["Right_FS_TorqueX", 0];
+                    momentY[frame] = c3dReader.AnalogData["Right_FS_TorqueX", 0];
+                    momentZ[frame] = c3dReader.AnalogData["Right_FS_TorqueX", 0];
+
+                    float timeOffset = frameTimeInc * frame;
+                    timeStamp[frame] = DateTime.Parse(startTime).AddSeconds(timeOffset);
+                    //var temp = c3dReader.AnalogData["Right_FS_TimeStamp", 0];
+
+                    for (int eventCounter = 0; eventCounter < eventTimes.Length; eventCounter++)
+                    {
+                        if (eventTimes[eventCounter] <= timeOffset)
+                        {
+                            switch (eventLabels[eventCounter])
+                            {
+                                case "SUBJECT_IS_IN_FIRST_TARGET":
+                                    positionStatus[frame] = 0;
+                                    break;
+                                case "SUBJECT_HAS_LEFT_FIRST_TARGET":
+                                    positionStatus[frame] = 1;
+                                    break;
+                                case "SUBJECT_IS_IN_SECOND_TARGET":
+                                    positionStatus[frame] = 2;
+                                    break;
+                                case "SUBJECT_HAS_LEFT_SECOND_TARGET":
+                                    positionStatus[frame] = 3;
+                                    break;
+                                default:
+                                    MessageBox.Show("PositionStatus Error");
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                // Don't forget to close the reader
+                c3dReader.Close();
+            }
+
+            /*
             if (_dataContainer.MeasureFileHash != null)
             {
+                
                 var measureFileStream = new FileStream(_measureFilePath, FileMode.Open, FileAccess.Read);
                 var measureFileReader = new StreamReader(measureFileStream);
                 _dataContainer.MeasureDataRaw.Clear();
@@ -163,7 +248,7 @@ namespace ManipAnalysis
                         string readLine = measureFileReader.ReadLine();
                         if (readLine != null)
                         {
-                            string[] measureFileLine = readLine.Split(new[] {", "}, StringSplitOptions.None);
+                            string[] measureFileLine = readLine.Split(new[] { ", " }, StringSplitOptions.None);
 
                             if (measureFileLine.Count() == 20) // Study 4
                             {
@@ -182,7 +267,7 @@ namespace ManipAnalysis
                                         if (readLine != null)
                                         {
                                             measureFileLine = readLine
-                                                .Split(new[] {", "},
+                                                .Split(new[] { ", " },
                                                     StringSplitOptions.None);
                                         }
                                     }
@@ -204,7 +289,7 @@ namespace ManipAnalysis
                                     {
                                         readLine = measureFileReader.ReadLine();
                                         if (readLine != null)
-                                        {
+                                      {
                                             measureFileLine = readLine
                                                 .Split(new[] {", "},
                                                     StringSplitOptions.None);
@@ -249,82 +334,8 @@ namespace ManipAnalysis
                             }
                         }
                     }
-
-                    /*
-                    //-------------------- 30.07.2013
-                    if (_dataContainer.MeasureFileCreationDate == "24.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "25.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "26.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "27.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "28.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "29.07.2013" ||
-                        _dataContainer.MeasureFileCreationDate == "30.07.2013"
-                       )
-                    {
-                        int sztrnmbr = -1;
-                        int addsztrnmbr = -1;
-
-                        if (_dataContainer.SzenarioName.Contains("Szenario42"))
-                        {
-                            sztrnmbr = 67;
-                            addsztrnmbr = 97;
-                        }
-                        else if (_dataContainer.SzenarioName.Contains("Szenario43") ||
-                                    _dataContainer.SzenarioName.Contains("Szenario44")
-                                )
-                        {
-                            sztrnmbr = 455;
-                            addsztrnmbr = 481;
-                        }
-                        else if (_dataContainer.SzenarioName.Contains("Szenario45"))
-                        {
-                            sztrnmbr = 3;
-                            addsztrnmbr = 33;
-                        }
-
-                        if (sztrnmbr != -1)
-                        {
-                            DateTime startTime = _dataContainer.MeasureDataRaw.Last().TimeStamp;
-                            startTime.AddSeconds(1.0);
-
-                            List<MeasureDataContainer> bufferList = _dataContainer.MeasureDataRaw.Where(t => t.SzenarioTrialNumber == sztrnmbr).ToList();
-
-                            for (int blc = 0; blc < bufferList.Count; blc++)
-                            {
-                                MeasureDataContainer tmdc = new MeasureDataContainer(
-                                    startTime.AddMilliseconds(blc * 5),
-                                    bufferList[blc].ForceActualX,
-                                    bufferList[blc].ForceActualY,
-                                    bufferList[blc].ForceActualZ,
-                                    bufferList[blc].ForceNominalX,
-                                    bufferList[blc].ForceNominalY,
-                                    bufferList[blc].ForceNominalZ,
-                                    bufferList[blc].ForceMomentX,
-                                    bufferList[blc].ForceMomentY,
-                                    bufferList[blc].ForceMomentZ,
-                                    bufferList[blc].PositionCartesianX,
-                                    bufferList[blc].PositionCartesianY,
-                                    bufferList[blc].PositionCartesianZ,
-                                    bufferList[blc].TargetNumber,
-                                    bufferList[blc].TargetTrialNumber,
-                                    addsztrnmbr,
-                                    bufferList[blc].IsCatchTrial,
-                                    bufferList[blc].IsErrorclampTrial,
-                                    bufferList[blc].PositionStatus);
-
-                                tmdc.ContainsDuplicates = true;
-
-                                _dataContainer.MeasureDataRaw.Add(tmdc);
-                            }
-                        }
-
-                        for (int stn = 0; stn < _dataContainer.MeasureDataRaw.Count; stn++)
-                        {
-                            _dataContainer.MeasureDataRaw.ElementAt(stn).SzenarioTrialNumber--;
-                        }
-                    }
-                    //--------------------
-                    */
+             
+            
                     int maxTrialCount = _dataContainer.MeasureDataRaw.Max(t => t.SzenarioTrialNumber);
                     int realTrialCount =
                         _dataContainer.MeasureDataRaw.Select(t => t.SzenarioTrialNumber).Distinct().Count();
@@ -387,7 +398,7 @@ namespace ManipAnalysis
             {
                 _dataContainer.MeasureDataRaw.Clear();
             }
-
+            */
             return retVal;
         }
     }
