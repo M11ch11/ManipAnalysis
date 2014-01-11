@@ -22,11 +22,15 @@ namespace ManipAnalysis
         private string _szenarioName;
         private Trial[] _trialsContainer;
 
-        public KinarmMeasureFileParser(Trial[] trialsContainer, ManipAnalysisGui myManipAnalysisGui)
+        public KinarmMeasureFileParser(ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
-            _trialsContainer = trialsContainer;
             _probandName = "----NOT_IMPLEMENTED---";
+        }
+
+        public Trial[] TrialsContainer
+        {
+            get { return _trialsContainer; }
         }
 
         public bool ParseFile(string path)
@@ -111,7 +115,7 @@ namespace ManipAnalysis
                     int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM");
 
 
-                    _trialsContainer[filesCounter] = new Trial();
+                    TrialsContainer[filesCounter] = new Trial();
                     var measureFileContainer = new MeasureFileContainer();
                     var subjectContainer = new SubjectContainer();
                     var targetContainer = new TargetContainer();
@@ -125,29 +129,17 @@ namespace ManipAnalysis
 
                     targetContainer.Number = targetNumber;
 
-                    _trialsContainer[filesCounter].MeasuredForcesRaw = new List<ForceContainer>();
-                    _trialsContainer[filesCounter].MomentForcesRaw = new List<ForceContainer>();
-                    _trialsContainer[filesCounter].PositionRaw = new List<PositionContainer>();
-                    _trialsContainer[filesCounter].Group = _groupName;
-                    _trialsContainer[filesCounter].MeasureFile = measureFileContainer;
-                    _trialsContainer[filesCounter].Study = _studyName;
-                    _trialsContainer[filesCounter].Subject = subjectContainer;
-                    _trialsContainer[filesCounter].Szenario = _szenarioName;
-                    _trialsContainer[filesCounter].Target = targetContainer;
-                    _trialsContainer[filesCounter].TargetTrialNumberInSzenario = targetTrialNumber;
-                    _trialsContainer[filesCounter].TrialNumberInSzenario = szenarioTrialNumber;
-
-                    /*
-                    var positionData = new Vector3[c3dReader.FramesCount];
-                    var forceX = new float[c3dReader.FramesCount];
-                    var forceY = new float[c3dReader.FramesCount];
-                    var forceZ = new float[c3dReader.FramesCount];
-                    var momentX = new float[c3dReader.FramesCount];
-                    var momentY = new float[c3dReader.FramesCount];
-                    var momentZ = new float[c3dReader.FramesCount];
-                    var timeStamp = new DateTime[c3dReader.FramesCount];
-                    var positionStatus = new int[c3dReader.FramesCount];
-                    */
+                    TrialsContainer[filesCounter].MeasuredForcesRaw = new List<ForceContainer>();
+                    TrialsContainer[filesCounter].MomentForcesRaw = new List<ForceContainer>();
+                    TrialsContainer[filesCounter].PositionRaw = new List<PositionContainer>();
+                    TrialsContainer[filesCounter].Group = _groupName;
+                    TrialsContainer[filesCounter].MeasureFile = measureFileContainer;
+                    TrialsContainer[filesCounter].Study = _studyName;
+                    TrialsContainer[filesCounter].Subject = subjectContainer;
+                    TrialsContainer[filesCounter].Szenario = _szenarioName;
+                    TrialsContainer[filesCounter].Target = targetContainer;
+                    TrialsContainer[filesCounter].TargetTrialNumberInSzenario = targetTrialNumber;
+                    TrialsContainer[filesCounter].TrialNumberInSzenario = szenarioTrialNumber;
 
                     for (int frame = 0; frame < c3DReader.FramesCount; frame++)
                     {
@@ -206,9 +198,9 @@ namespace ManipAnalysis
                         momentForcesRaw.Z = c3DReader.AnalogData["Right_FS_TorqueX", 0];
 
                         // Fill Trial
-                        _trialsContainer[filesCounter].MeasuredForcesRaw.Add(measuredForcesRaw);
-                        _trialsContainer[filesCounter].MomentForcesRaw.Add(momentForcesRaw);
-                        _trialsContainer[filesCounter].PositionRaw.Add(positionRaw);
+                        TrialsContainer[filesCounter].MeasuredForcesRaw.Add(measuredForcesRaw);
+                        TrialsContainer[filesCounter].MomentForcesRaw.Add(momentForcesRaw);
+                        TrialsContainer[filesCounter].PositionRaw.Add(positionRaw);
                     }
 
                     // Don't forget to close the reader
