@@ -1,13 +1,9 @@
-﻿using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using MongoDB.Bson;
 
 namespace ManipAnalysis.MongoDb
 {
-    class SzenarioMeanTime
+    internal class SzenarioMeanTime
     {
         public ObjectId Id { get; set; }
         public string Study { get; set; }
@@ -18,6 +14,5 @@ namespace ManipAnalysis.MongoDb
         public MeasureFileContainer MeasureFile { get; set; }
         public TimeSpan MeanTime { get; set; }
         public TimeSpan MeanTimeStd { get; set; }
-        }
     }
 }

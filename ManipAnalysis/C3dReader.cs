@@ -182,8 +182,8 @@ namespace ManipAnalysis
                 _pointsLabels.Insert(i, label);
             }
 
-            
-            _dataStart = 512 * (Header.DataStart - 1); // Parameter Section Data Start Value doesnt work
+
+            _dataStart = 512*(Header.DataStart - 1); // Parameter Section Data Start Value doesnt work
             //_dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
 
             _pointsNumber = GetParameter<Int16>("POINT:USED");

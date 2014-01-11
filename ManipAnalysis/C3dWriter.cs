@@ -20,10 +20,10 @@ namespace ManipAnalysis
         private HashSet<Parameter> _allParameters;
         private string _c3dFile;
 
-        private int _dataStartOffset;
+        //private int _dataStartOffset;
         private FileStream _fs;
         private sbyte _nextGroupId = -1;
-        private int _pointFramesOffset;
+        //private int _pointFramesOffset;
 
         private int _writePos;
         private BinaryWriter _writer;
@@ -156,7 +156,7 @@ namespace ManipAnalysis
                                     + 5 // size of the last group
                 )/ParameterModel.BLOCK_SIZE)
                             + 2;
-                // 1 because we are counting from zero and 1 because we want to point on to the next block
+            // 1 because we are counting from zero and 1 because we want to point on to the next block
 
 
             SetParameter("POINT:DATA_START", (Int16) dataStart);
@@ -164,7 +164,7 @@ namespace ManipAnalysis
             long position = _writer.BaseStream.Position;
             _writer.Seek(512, 0);
             parameters[2] = (byte) (dataStart - 2);
-                // number of blocks with parameters is one less than the number of the data starting block without first block
+            // number of blocks with parameters is one less than the number of the data starting block without first block
             _writer.Write(parameters, 0, 4);
             _writer.Seek((int) position, 0);
 

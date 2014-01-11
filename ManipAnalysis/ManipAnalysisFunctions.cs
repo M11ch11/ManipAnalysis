@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis.Container;
-using Microsoft.Win32;
 
 namespace ManipAnalysis
 {
@@ -351,7 +350,7 @@ namespace ManipAnalysis
             return _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly,
                 showErrorclampTrials, showErrorclampTrialsExclusivly);
         }
-        
+
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
             string fitEquation, int pdTime, bool plotFit, bool plotErrorbars)
         {
@@ -380,7 +379,7 @@ namespace ManipAnalysis
                             meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel;
                             meanCounter++)
                         {
-                            _myManipAnalysisGui.SetProgressBarValue((100.0 / selectedTrialsList.Count()) * meanCounter);
+                            _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCounter);
                             StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCounter);
 
                             DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
@@ -393,7 +392,6 @@ namespace ManipAnalysis
 
                             if (pdTime == -1)
                             {
-
                                 DataSet statisticDataSet =
                                     _mySqlWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
                                         tempStatisticPlotContainer.Group,
@@ -493,27 +491,39 @@ namespace ManipAnalysis
                             else
                             {
                                 DataSet baselineDataSet =
-                                           _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
-                                               tempStatisticPlotContainer.Group, "Szenario02",
-                                               tempStatisticPlotContainer.Subject);
-                                LinkedList<BaselineDataContainer> baselineDataList = new LinkedList<BaselineDataContainer>();
+                                    _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group, "Szenario02",
+                                        tempStatisticPlotContainer.Subject);
+                                var baselineDataList = new LinkedList<BaselineDataContainer>();
 
-                                for (int baselineSamples = 0; baselineSamples < baselineDataSet.Tables[0].Rows.Count; baselineSamples++)
+                                for (int baselineSamples = 0;
+                                    baselineSamples < baselineDataSet.Tables[0].Rows.Count;
+                                    baselineSamples++)
                                 {
                                     baselineDataList.AddLast(new BaselineDataContainer(
-                                        Convert.ToDateTime(baselineDataSet.Tables[0].Rows[baselineSamples]["pseudo_time_stamp"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_x"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_y"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_position_cartesian_z"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_x"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_y"]),
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_z"]),
+                                        Convert.ToDateTime(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples]["pseudo_time_stamp"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples][
+                                                "baseline_position_cartesian_x"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples][
+                                                "baseline_position_cartesian_y"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples][
+                                                "baseline_position_cartesian_z"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_x"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_y"]),
+                                        Convert.ToDouble(
+                                            baselineDataSet.Tables[0].Rows[baselineSamples]["baseline_velocity_z"]),
                                         Convert.ToInt32(baselineDataSet.Tables[0].Rows[baselineSamples]["target_number"])));
                                 }
 
-                                for(int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
+                                for (int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
                                 {
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count) * trialCounter);
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count)*trialCounter);
 
                                     int szenarioTrialNumber = trialList.ElementAt(trialCounter);
                                     int trialId = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
@@ -527,18 +537,17 @@ namespace ManipAnalysis
                                     if (baselineDataList.Count > 0 &
                                         measureDataSet.Tables[0].Rows.Count > 0)
                                     {
-
                                         int sampleCount = measureDataSet.Tables[0].Rows.Count;
                                         var measureData = new double[sampleCount, 3];
                                         var baselineData = new double[sampleCount, 3];
-                                        var baselineDataArray =
+                                        double[][] baselineDataArray =
                                             baselineDataList.Where(t => t.TargetNumber == targetNumber)
                                                 .OrderBy(t => t.PseudoTimeStamp)
                                                 .Select(
                                                     t =>
-                                                        new double[]
+                                                        new[]
                                                         {
-                                                            t.BaselinePositionCartesianX, 
+                                                            t.BaselinePositionCartesianX,
                                                             t.BaselinePositionCartesianY,
                                                             t.BaselinePositionCartesianZ
                                                         }).ToArray();
@@ -596,7 +605,6 @@ namespace ManipAnalysis
                                                 data[trialCounter, meanCounter] =
                                                     _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
                                                 break;
-
                                         }
                                     }
                                 }

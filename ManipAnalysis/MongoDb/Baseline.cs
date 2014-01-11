@@ -1,14 +1,12 @@
-﻿using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using MongoDB.Bson;
 
 namespace ManipAnalysis.MongoDb
 {
-    class Baseline
+    internal class Baseline
     {
+        public List<PositionContainer> Position = new List<PositionContainer>();
+        public List<VelocityContainer> Velocity = new List<VelocityContainer>();
         public ObjectId Id { get; set; }
         public string Study { get; set; }
         public string Group { get; set; }
@@ -16,8 +14,5 @@ namespace ManipAnalysis.MongoDb
         public string Szenario { get; set; }
         public TargetContainer Target { get; set; }
         public MeasureFileContainer MeasureFile { get; set; }
-
-        public List<PositionContainer> Position = new List<PositionContainer>();
-        public List<VelocityContainer> Velocity = new List<VelocityContainer>(); 
     }
 }

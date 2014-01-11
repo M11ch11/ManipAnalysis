@@ -1,13 +1,6 @@
-﻿using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManipAnalysis.MongoDb
+﻿namespace ManipAnalysis.MongoDb
 {
-    class TrialInformationContainer
+    internal class TrialInformationContainer
     {
         public bool FaultyTrial { get; set; }
         public bool CatchTrial { get; set; }

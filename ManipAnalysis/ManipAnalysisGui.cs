@@ -522,8 +522,10 @@ namespace ManipAnalysis
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
             int pdTime = -1;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" || 
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Sign")
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() ==
+                "Perpendicular distance ?ms - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() ==
+                "Perpendicular distance ?ms - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
@@ -2265,7 +2267,7 @@ namespace ManipAnalysis
                 Convert.ToInt32(
                     comboBox_Others_Turn.SelectedItem.ToString()
                         .Substring("Turn".Length)),
-                        Convert.ToInt32(textBox_Others_PlotErrorclampForces_MsIndex.Text));
+                Convert.ToInt32(textBox_Others_PlotErrorclampForces_MsIndex.Text));
         }
 
         private delegate void LogBoxCallbackAddString(string text);

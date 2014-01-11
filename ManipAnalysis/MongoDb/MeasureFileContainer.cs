@@ -1,19 +1,15 @@
-﻿using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ManipAnalysis.MongoDb
 {
-    class MeasureFileContainer
+    internal class MeasureFileContainer
     {
+        private DateTime _creationTime;
         public string FileName { get; set; }
         public string FileHash { get; set; }
-        private DateTime _creationTime;
+
         /// <summary>
-        /// Convert to UTC First!!!
+        ///     Convert to UTC First!!!
         /// </summary>
         public DateTime CreationTime
         {

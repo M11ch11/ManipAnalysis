@@ -10,7 +10,6 @@
 
 
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -583,7 +582,8 @@ namespace ManipAnalysis
 
             for (int i = 0; i < _dimensions[1]; i++)
             {
-                retArray[i] = Encoding.UTF8.GetString(_vectorData, i * _dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
+                retArray[i] =
+                    Encoding.UTF8.GetString(_vectorData, i*_dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
             }
             return retArray;
         }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManipAnalysis.MongoDb
+﻿namespace ManipAnalysis.MongoDb
 {
-    class StatisticContainer
+    internal class StatisticContainer
     {
         public double VelocityVectorCorrelation { get; set; }
         public double AbsoluteTrajectoryLength { get; set; }
