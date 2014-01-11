@@ -236,6 +236,9 @@
     <Content Include="MatlabFiles\fisherZVectorCorrelationTransform.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MatlabFiles\numDiff.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\pdForceLineSegment.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -20,7 +20,6 @@ namespace ManipAnalysis.MongoDb
         public List<StatisticContainer> Statistics = new List<StatisticContainer>();
         public List<VelocityContainer> VelocityFiltered = new List<VelocityContainer>();
         public List<VelocityContainer> VelocityNormalized = new List<VelocityContainer>();
-        public List<VelocityContainer> VelocityRaw = new List<VelocityContainer>();
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
 

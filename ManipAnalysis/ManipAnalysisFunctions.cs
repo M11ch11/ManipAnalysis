@@ -1267,7 +1267,7 @@ namespace ManipAnalysis
 
                         if (myParser.ParseFile(filename))
                         {
-                            MongoDb.Trial[] trialsContainer = myParser.TrialsContainer;
+                            Trial[] trialsContainer = myParser.TrialsContainer;
 
                             _myManipAnalysisGui.WriteProgressInfo("Running duplicate entry detection...");
                             
@@ -1952,146 +1952,64 @@ namespace ManipAnalysis
         }
 
 
-        private void VelocityCalculation(List<int>[] trialCoreDistribution, int coreVar,
-            DataContainer myDataContainter, int samplesPerSecond)
+        private void VelocityCalculation(Trial[] trialsContainer, int samplesPerSecond)
         {
-            var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
-
-            for (int i = 0; i < threadTrials.Count(); i++)
+            for (int trialCounter = 0; trialCounter < trialsContainer.Length; trialCounter++)
             {
-                List<MeasureDataContainer> tempFilteredDataEnum;
-                lock (myDataContainter)
+                _myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
+                    trialsContainer[trialCounter].PositionFiltered.Select(t => t.X).ToArray());
+                _myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
+                    trialsContainer[trialCounter].PositionFiltered.Select(t => t.Y).ToArray());
+                _myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
+                    trialsContainer[trialCounter].PositionFiltered.Select(t => t.Z).ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData("sampleRate",samplesPerSecond);
+                
+                _myMatlabWrapper.Execute("velocity_x = numDiff(position_cartesian_x, sampleRate;");
+                _myMatlabWrapper.Execute("velocity_y = numDiff(position_cartesian_y, sampleRate;");
+                _myMatlabWrapper.Execute("velocity_z = numDiff(position_cartesian_z, sampleRate;");
+
+                double[,] velocityX = _myMatlabWrapper.GetWorkspaceData("velocity_x");
+                double[,] velocityY = _myMatlabWrapper.GetWorkspaceData("velocity_y");
+                double[,] velocityZ = _myMatlabWrapper.GetWorkspaceData("velocity_z");
+
+                trialsContainer[trialCounter].VelocityFiltered = new List<VelocityContainer>();
+
+                for (int frameCount = 0; frameCount < trialsContainer[trialCounter].PositionFiltered.Count; frameCount++)
                 {
-                    int iVar = i;
-                    tempFilteredDataEnum =
-                        new List<MeasureDataContainer>(
-                            myDataContainter.MeasureDataFiltered.Where(
-                                t =>
-                                    t.SzenarioTrialNumber == threadTrials.ElementAt(iVar))
-                                .OrderBy(t => t.TimeStamp));
+                    VelocityContainer velocityFiltered = new VelocityContainer();
+                    velocityFiltered.PositionStatus = trialsContainer[trialCounter].PositionFiltered[frameCount].PositionStatus;
+                    velocityFiltered.TimeStamp = trialsContainer[trialCounter].PositionFiltered[frameCount].TimeStamp;
+                    velocityFiltered.X = velocityX[0, frameCount];
+                    velocityFiltered.Y = velocityY[0, frameCount];
+                    velocityFiltered.Z = velocityZ[0, frameCount];
+
+                    trialsContainer[trialCounter].VelocityFiltered.Add(velocityFiltered);
                 }
-                if (tempFilteredDataEnum.Count > 0)
-                {
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "time_stamp" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.Select(
-                            t => Convert.ToDouble(t.TimeStamp.Ticks)).ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "position_cartesian_x" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.Select(t => t.PositionCartesianX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "position_cartesian_y" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.Select(t => t.PositionCartesianY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "position_cartesian_z" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.Select(t => t.PositionCartesianZ)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData("sampleRate",
-                        (1.0/
-                         Convert.ToDouble(
-                             samplesPerSecond)));
 
-                    _myMatlabWrapper.Execute("time_stamp" + threadTrials.ElementAt(i) +
-                                             " = time_stamp" + threadTrials.ElementAt(i) +
-                                             "(1:end-1) +  (diff(time_stamp" +
-                                             threadTrials.ElementAt(i) + ") ./ 2);");
-                    _myMatlabWrapper.Execute("velocity_x" + threadTrials.ElementAt(i) +
-                                             " = diff(position_cartesian_x" +
-                                             threadTrials.ElementAt(i) +
-                                             ") ./ sampleRate;");
-                    _myMatlabWrapper.Execute("velocity_y" + threadTrials.ElementAt(i) +
-                                             " = diff(position_cartesian_y" +
-                                             threadTrials.ElementAt(i) +
-                                             ") ./ sampleRate;");
-                    _myMatlabWrapper.Execute("velocity_z" + threadTrials.ElementAt(i) +
-                                             " = diff(position_cartesian_z" +
-                                             threadTrials.ElementAt(i) +
-                                             ") ./ sampleRate;");
-
-                    double[,] timeStamp =
-                        _myMatlabWrapper.GetWorkspaceData("time_stamp" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityX =
-                        _myMatlabWrapper.GetWorkspaceData("velocity_x" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityY =
-                        _myMatlabWrapper.GetWorkspaceData("velocity_y" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityZ =
-                        _myMatlabWrapper.GetWorkspaceData("velocity_z" +
-                                                          threadTrials.ElementAt(i));
-
-                    for (int j = 0; j < velocityX.Length; j++)
-                    {
-                        lock (myDataContainter)
-                        {
-                            myDataContainter.VelocityDataFiltered.Add(new VelocityDataContainer
-                                (
-                                new DateTime(
-                                    Convert
-                                        .ToInt64
-                                        (timeStamp
-                                            [
-                                                0,
-                                                j
-                                            ])),
-                                velocityX[0, j
-                                    ],
-                                velocityY[0, j
-                                    ],
-                                velocityZ[0, j
-                                    ],
-                                threadTrials
-                                    .ElementAt
-                                    (i),
-                                tempFilteredDataEnum
-                                    .ElementAt
-                                    (0)
-                                    .TargetNumber,
-                                tempFilteredDataEnum
-                                    .ElementAt
-                                    (j)
-                                    .PositionStatus
-                                ));
-                        }
-                    }
-
-                    _myMatlabWrapper.ClearWorkspaceData("time_stamp" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocity_x" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocity_y" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocity_z" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_x" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_y" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z" +
-                                                        threadTrials.ElementAt(i));
-                }
+                _myMatlabWrapper.ClearWorkspace();
             }
         }
 
-        private void TimeNormalization(List<int>[] trialCoreDistribution, int coreVar,
-            DataContainer myDataContainter, int timeNormalizationSamples,
-            int percentPeakVelocity, string filename)
+        private void TimeNormalization(Trial[] trialsContainer, int timeNormalizationSamples, int percentPeakVelocity)
         {
-            var threadTrials = new List<int>(trialCoreDistribution[coreVar]);
-            _myMatlabWrapper.SetWorkspaceData("newSampleCount",
+            _myMatlabWrapper.SetWorkspaceData("newSampleRate",
                 Convert.ToDouble(
                     timeNormalizationSamples));
 
-            for (int i = 0; i < threadTrials.Count(); i++)
-            {
-                List<MeasureDataContainer> tempFilteredDataEnum;
-                List<VelocityDataContainer> tempVelocityDataEnum;
+            
 
-                lock (myDataContainter)
-                {
+            for (int trialCounter = 0; trialCounter < trialsContainer.Length; trialCounter++)
+            {
+
+                double velocityCropThreshold =
+                        trialsContainer[trialCounter].VelocityFiltered.Max(
+                            t =>
+                                Math.Sqrt(Math.Pow(t.X, 2) +
+                                          Math.Pow(t.Z, 2))) / 100.0 *
+                        percentPeakVelocity;
+                /*
+
                     int iVar = i;
                     tempFilteredDataEnum =
                         new List<MeasureDataContainer>(
@@ -2132,635 +2050,629 @@ namespace ManipAnalysis
                                 .OrderBy(t => t.TimeStamp));
                 }
 
-                if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
-                {
-                    var tempVelocityDataEnumCropped = new List<VelocityDataContainer>();
+            if ((tempFilteredDataEnum.Count > 0) && (tempVelocityDataEnum.Count > 0))
+            {
+                var tempVelocityDataEnumCropped = new List<VelocityDataContainer>();
 
-                    if (percentPeakVelocity > 0)
+                if (percentPeakVelocity > 0)
+                {
+                    
+
+                    if (
+                        tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
+                            .Count(
+                                t =>
+                                    Math.Sqrt(
+                                        Math.Pow(t.VelocityX, 2) +
+                                        Math.Pow(t.VelocityZ, 2)) >
+                                    velocityCropThreshold) > 0)
                     {
-                        double velocityCropThreshold =
-                            tempVelocityDataEnum.Max(
+                        DateTime startTime =
+                            tempVelocityDataEnum.Where(
                                 t =>
                                     Math.Sqrt(Math.Pow(t.VelocityX, 2) +
-                                              Math.Pow(t.VelocityZ, 2)))/100.0*
-                            percentPeakVelocity;
-
-                        if (
-                            tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
-                                .Count(
-                                    t =>
-                                        Math.Sqrt(
-                                            Math.Pow(t.VelocityX, 2) +
-                                            Math.Pow(t.VelocityZ, 2)) >
-                                        velocityCropThreshold) > 0)
-                        {
-                            DateTime startTime =
-                                tempVelocityDataEnum.Where(
-                                    t =>
-                                        Math.Sqrt(Math.Pow(t.VelocityX, 2) +
-                                                  Math.Pow(t.VelocityZ, 2)) >
-                                        velocityCropThreshold)
-                                    .OrderBy(t => t.TimeStamp)
-                                    .First()
-                                    .TimeStamp;
-                            tempVelocityDataEnumCropped.AddRange(
-                                tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
-                                    .Where(
-                                        t => t.TimeStamp >= startTime));
-                        }
-
+                                              Math.Pow(t.VelocityZ, 2)) >
+                                    velocityCropThreshold)
+                                .OrderBy(t => t.TimeStamp)
+                                .First()
+                                .TimeStamp;
                         tempVelocityDataEnumCropped.AddRange(
-                            tempVelocityDataEnum.Where(t => t.PositionStatus == 1));
+                            tempVelocityDataEnum.Where(t => t.PositionStatus == 0)
+                                .Where(
+                                    t => t.TimeStamp >= startTime));
+                    }
 
-                        if (
+                    tempVelocityDataEnumCropped.AddRange(
+                        tempVelocityDataEnum.Where(t => t.PositionStatus == 1));
+
+                    if (
+                        tempVelocityDataEnum.Where(t => t.PositionStatus == 2)
+                            .Count(
+                                t =>
+                                    Math.Sqrt(
+                                        Math.Pow(t.VelocityX, 2) +
+                                        Math.Pow(t.VelocityZ, 2)) <
+                                    velocityCropThreshold) > 0)
+                    {
+                        DateTime stopTime =
                             tempVelocityDataEnum.Where(t => t.PositionStatus == 2)
-                                .Count(
+                                .Where(
                                     t =>
                                         Math.Sqrt(
                                             Math.Pow(t.VelocityX, 2) +
                                             Math.Pow(t.VelocityZ, 2)) <
-                                        velocityCropThreshold) > 0)
-                        {
-                            DateTime stopTime =
-                                tempVelocityDataEnum.Where(t => t.PositionStatus == 2)
-                                    .Where(
-                                        t =>
-                                            Math.Sqrt(
-                                                Math.Pow(t.VelocityX, 2) +
-                                                Math.Pow(t.VelocityZ, 2)) <
-                                            velocityCropThreshold)
-                                    .OrderBy(t => t.TimeStamp)
-                                    .First()
-                                    .TimeStamp;
-                            tempVelocityDataEnumCropped.AddRange(
-                                tempVelocityDataEnum.Where(t => t.PositionStatus > 1)
-                                    .Where(t => t.TimeStamp <= stopTime));
-                        }
-                        else
-                        {
-                            if (tempVelocityDataEnum.Exists(t => t.PositionStatus == 3))
-                            {
-                                DateTime stopTime =
-                                    tempVelocityDataEnum.Where(
-                                        t => t.PositionStatus == 3)
-                                        .OrderBy(t => t.TimeStamp)
-                                        .Last()
-                                        .TimeStamp;
-                                tempVelocityDataEnumCropped.AddRange(
-                                    tempVelocityDataEnum.Where(
-                                        t => t.TimeStamp <= stopTime));
-                            }
-                        }
-
-                        tempVelocityDataEnum =
-                            tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
-                                .ToList();
+                                        velocityCropThreshold)
+                                .OrderBy(t => t.TimeStamp)
+                                .First()
+                                .TimeStamp;
+                        tempVelocityDataEnumCropped.AddRange(
+                            tempVelocityDataEnum.Where(t => t.PositionStatus > 1)
+                                .Where(t => t.TimeStamp <= stopTime));
                     }
-                    else if (percentPeakVelocity < 0)
+                    else
                     {
                         if (tempVelocityDataEnum.Exists(t => t.PositionStatus == 3))
                         {
                             DateTime stopTime =
-                                tempVelocityDataEnum.Where(t => t.PositionStatus == 3)
+                                tempVelocityDataEnum.Where(
+                                    t => t.PositionStatus == 3)
                                     .OrderBy(t => t.TimeStamp)
                                     .Last()
                                     .TimeStamp;
-                            tempVelocityDataEnumCropped =
-                                tempVelocityDataEnum.Where(t => t.PositionStatus > 0)
-                                    .Where(t => t.TimeStamp <= stopTime)
-                                    .ToList();
+                            tempVelocityDataEnumCropped.AddRange(
+                                tempVelocityDataEnum.Where(
+                                    t => t.TimeStamp <= stopTime));
                         }
-                        else
-                        {
-                            tempVelocityDataEnumCropped =
-                                tempVelocityDataEnum.Where(t => t.PositionStatus == 1)
-                                    .ToList();
-                        }
+                    }
 
-                        tempVelocityDataEnum =
-                            tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
+                    tempVelocityDataEnum =
+                        tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
+                            .ToList();
+                }
+                else if (percentPeakVelocity < 0)
+                {
+                    if (tempVelocityDataEnum.Exists(t => t.PositionStatus == 3))
+                    {
+                        DateTime stopTime =
+                            tempVelocityDataEnum.Where(t => t.PositionStatus == 3)
+                                .OrderBy(t => t.TimeStamp)
+                                .Last()
+                                .TimeStamp;
+                        tempVelocityDataEnumCropped =
+                            tempVelocityDataEnum.Where(t => t.PositionStatus > 0)
+                                .Where(t => t.TimeStamp <= stopTime)
+                                .ToList();
+                    }
+                    else
+                    {
+                        tempVelocityDataEnumCropped =
+                            tempVelocityDataEnum.Where(t => t.PositionStatus == 1)
                                 .ToList();
                     }
 
+                    tempVelocityDataEnum =
+                        tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
+                            .ToList();
+                }
 
-                    int tempTargetNumber =
-                        tempFilteredDataEnum.Select(t => t.TargetNumber).ElementAt(0);
-                    int tempTargetTrialNumber =
-                        tempFilteredDataEnum.Select(t => t.TargetTrialNumber)
-                            .ElementAt(0);
-                    int tempSzenarioTrialNumber =
-                        tempFilteredDataEnum.Select(t => t.SzenarioTrialNumber)
-                            .ElementAt(0);
-                    bool tempIsCatchTrial =
-                        tempFilteredDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
 
-                    bool tempIsErrorclampTrial =
-                        tempFilteredDataEnum.Select(t => t.IsErrorclampTrial).ElementAt(0);
+                int tempTargetNumber =
+                    tempFilteredDataEnum.Select(t => t.TargetNumber).ElementAt(0);
+                int tempTargetTrialNumber =
+                    tempFilteredDataEnum.Select(t => t.TargetTrialNumber)
+                        .ElementAt(0);
+                int tempSzenarioTrialNumber =
+                    tempFilteredDataEnum.Select(t => t.SzenarioTrialNumber)
+                        .ElementAt(0);
+                bool tempIsCatchTrial =
+                    tempFilteredDataEnum.Select(t => t.IsCatchTrial).ElementAt(0);
 
-                    var errorList = new List<string>();
+                bool tempIsErrorclampTrial =
+                    tempFilteredDataEnum.Select(t => t.IsErrorclampTrial).ElementAt(0);
+                */
+                var errorList = new List<string>();
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "measure_data_time" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                _myMatlabWrapper.SetWorkspaceData(
+                    "measure_data_time" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(
+                            t =>
+                                Convert.ToDouble(t.TimeStamp.Ticks))
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceActualX" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceActualX)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceActualY" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceActualY)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceActualZ" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceActualZ)
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceNominalX" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceNominalX)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceNominalY" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceNominalY)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceNominalZ" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceNominalZ)
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceMomentX" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceMomentX)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceMomentY" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceMomentY)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "forceMomentZ" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.ForceMomentZ)
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "positionCartesianX" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.PositionCartesianX)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "positionCartesianY" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.PositionCartesianY)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "positionCartesianZ" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.PositionCartesianZ)
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "positionStatus" + threadTrials.ElementAt(i),
+                    tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(
+                            t => Convert.ToDouble(t.PositionStatus))
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "velocity_data_time" + threadTrials.ElementAt(i),
+                    tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(
+                            t =>
+                                Convert.ToDouble(t.TimeStamp.Ticks))
+                        .ToArray());
+
+                _myMatlabWrapper.SetWorkspaceData(
+                    "velocityX" + threadTrials.ElementAt(i),
+                    tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.VelocityX)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "velocityY" + threadTrials.ElementAt(i),
+                    tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.VelocityY)
+                        .ToArray());
+                _myMatlabWrapper.SetWorkspaceData(
+                    "velocityZ" + threadTrials.ElementAt(i),
+                    tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
+                        .Select(t => t.VelocityZ)
+                        .ToArray());
+
+                //-----
+
+                _myMatlabWrapper.Execute("[errorvar1_" + threadTrials.ElementAt(i) +
+                                         ", forceActualX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceActualX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar2_" + threadTrials.ElementAt(i) +
+                                         ", forceActualY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceActualY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar3_" + threadTrials.ElementAt(i) +
+                                         ", forceActualZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceActualZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                _myMatlabWrapper.Execute("[errorvar4_" + threadTrials.ElementAt(i) +
+                                         ", forceNominalX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceNominalX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar5_" + threadTrials.ElementAt(i) +
+                                         ", forceNominalY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceNominalY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar6_" + threadTrials.ElementAt(i) +
+                                         ", forceNominalZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceNominalZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                _myMatlabWrapper.Execute("[errorvar7_" + threadTrials.ElementAt(i) +
+                                         ", forceMomentX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceMomentX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar8_" + threadTrials.ElementAt(i) +
+                                         ", forceMomentY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceMomentY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar9_" + threadTrials.ElementAt(i) +
+                                         ", forceMomentZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(forceMomentZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                _myMatlabWrapper.Execute("[errorvar10_" + threadTrials.ElementAt(i) +
+                                         ", positionCartesianX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(positionCartesianX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar11_" + threadTrials.ElementAt(i) +
+                                         ", positionCartesianY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(positionCartesianY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar12_" + threadTrials.ElementAt(i) +
+                                         ", positionCartesianZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(positionCartesianZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                _myMatlabWrapper.Execute("[errorvar13_" + threadTrials.ElementAt(i) +
+                                         ", positionStatus" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newMeasureTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(positionStatus" +
+                                         threadTrials.ElementAt(i) +
+                                         ",measure_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                _myMatlabWrapper.Execute("[errorvar14_" + threadTrials.ElementAt(i) +
+                                         ", velocityX" + threadTrials.ElementAt(i) +
+                                         ",newVelocityTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(velocityX" +
+                                         threadTrials.ElementAt(i) +
+                                         ",velocity_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar15_" + threadTrials.ElementAt(i) +
+                                         ", velocityY" + threadTrials.ElementAt(i) +
+                                         ",newVelocityTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(velocityY" +
+                                         threadTrials.ElementAt(i) +
+                                         ",velocity_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+                _myMatlabWrapper.Execute("[errorvar16_" + threadTrials.ElementAt(i) +
+                                         ", velocityZ" + threadTrials.ElementAt(i) +
+                                         ",newVelocityTime" +
+                                         threadTrials.ElementAt(i) +
+                                         "] = timeNorm(velocityZ" +
+                                         threadTrials.ElementAt(i) +
+                                         ",velocity_data_time" +
+                                         threadTrials.ElementAt(i) +
+                                         ",newSampleRate);");
+
+                //-----
+
+                for (int errorVarCounterCounter = 1;
+                    errorVarCounterCounter <= 16;
+                    errorVarCounterCounter++)
+                {
+                    errorList.Add(
+                        Convert.ToString(
+                            _myMatlabWrapper.GetWorkspaceData("errorvar" +
+                                                              errorVarCounterCounter +
+                                                              "_" +
+                                                              threadTrials.ElementAt
+                                                                  (i))));
+                    _myMatlabWrapper.ClearWorkspaceData("errorvar" +
+                                                        errorVarCounterCounter + "_" +
+                                                        threadTrials.ElementAt(i));
+                }
+
+                if (errorList.Any(t => !string.IsNullOrEmpty(t)))
+                {
+                    string output =
+                        errorList.Where(t => !string.IsNullOrEmpty(t))
                             .Select(
                                 t =>
-                                    Convert.ToDouble(t.TimeStamp.Ticks))
-                            .ToArray());
+                                    t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber)
+                            .Aggregate("", (current, line) => current + line);
+                    _myManipAnalysisGui.WriteToLogBox(output);
+                }
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceActualX" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceActualX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceActualY" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceActualY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceActualZ" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceActualZ)
-                            .ToArray());
+                //-----
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceNominalX" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceNominalX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceNominalY" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceNominalY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceNominalZ" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceNominalZ)
-                            .ToArray());
+                double[,] measureDataTime =
+                    _myMatlabWrapper.GetWorkspaceData("newMeasureTime" +
+                                                      threadTrials.ElementAt(i));
+                double[,] velocityDataTime =
+                    _myMatlabWrapper.GetWorkspaceData("newVelocityTime" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceMomentX" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceMomentX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceMomentY" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceMomentY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "forceMomentZ" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.ForceMomentZ)
-                            .ToArray());
+                double[,] forceActualX =
+                    _myMatlabWrapper.GetWorkspaceData("forceActualX" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceActualY =
+                    _myMatlabWrapper.GetWorkspaceData("forceActualY" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceActualZ =
+                    _myMatlabWrapper.GetWorkspaceData("forceActualZ" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "positionCartesianX" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.PositionCartesianX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "positionCartesianY" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.PositionCartesianY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "positionCartesianZ" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.PositionCartesianZ)
-                            .ToArray());
+                double[,] forceNominalX =
+                    _myMatlabWrapper.GetWorkspaceData("forceNominalX" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceNominalY =
+                    _myMatlabWrapper.GetWorkspaceData("forceNominalY" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceNominalZ =
+                    _myMatlabWrapper.GetWorkspaceData("forceNominalZ" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "positionStatus" + threadTrials.ElementAt(i),
-                        tempFilteredDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(
-                                t => Convert.ToDouble(t.PositionStatus))
-                            .ToArray());
+                double[,] forceMomentX =
+                    _myMatlabWrapper.GetWorkspaceData("forceMomentX" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceMomentY =
+                    _myMatlabWrapper.GetWorkspaceData("forceMomentY" +
+                                                      threadTrials.ElementAt(i));
+                double[,] forceMomentZ =
+                    _myMatlabWrapper.GetWorkspaceData("forceMomentZ" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "velocity_data_time" + threadTrials.ElementAt(i),
-                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(
-                                t =>
-                                    Convert.ToDouble(t.TimeStamp.Ticks))
-                            .ToArray());
+                double[,] positionCartesianX =
+                    _myMatlabWrapper.GetWorkspaceData("positionCartesianX" +
+                                                      threadTrials.ElementAt(i));
+                double[,] positionCartesianY =
+                    _myMatlabWrapper.GetWorkspaceData("positionCartesianY" +
+                                                      threadTrials.ElementAt(i));
+                double[,] positionCartesianZ =
+                    _myMatlabWrapper.GetWorkspaceData("positionCartesianZ" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "velocityX" + threadTrials.ElementAt(i),
-                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.VelocityX)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "velocityY" + threadTrials.ElementAt(i),
-                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.VelocityY)
-                            .ToArray());
-                    _myMatlabWrapper.SetWorkspaceData(
-                        "velocityZ" + threadTrials.ElementAt(i),
-                        tempVelocityDataEnum.OrderBy(t => t.TimeStamp)
-                            .Select(t => t.VelocityZ)
-                            .ToArray());
+                double[,] positionStatus =
+                    _myMatlabWrapper.GetWorkspaceData("positionStatus" +
+                                                      threadTrials.ElementAt(i));
 
-                    //-----
+                double[,] velocityX =
+                    _myMatlabWrapper.GetWorkspaceData("velocityX" +
+                                                      threadTrials.ElementAt(i));
+                double[,] velocityY =
+                    _myMatlabWrapper.GetWorkspaceData("velocityY" +
+                                                      threadTrials.ElementAt(i));
+                double[,] velocityZ =
+                    _myMatlabWrapper.GetWorkspaceData("velocityZ" +
+                                                      threadTrials.ElementAt(i));
 
-                    _myMatlabWrapper.Execute("[errorvar1_" + threadTrials.ElementAt(i) +
-                                             ", forceActualX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceActualX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar2_" + threadTrials.ElementAt(i) +
-                                             ", forceActualY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceActualY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar3_" + threadTrials.ElementAt(i) +
-                                             ", forceActualZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceActualZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
+                //-----
 
-                    _myMatlabWrapper.Execute("[errorvar4_" + threadTrials.ElementAt(i) +
-                                             ", forceNominalX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceNominalX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar5_" + threadTrials.ElementAt(i) +
-                                             ", forceNominalY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceNominalY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar6_" + threadTrials.ElementAt(i) +
-                                             ", forceNominalZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceNominalZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-
-                    _myMatlabWrapper.Execute("[errorvar7_" + threadTrials.ElementAt(i) +
-                                             ", forceMomentX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceMomentX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar8_" + threadTrials.ElementAt(i) +
-                                             ", forceMomentY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceMomentY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar9_" + threadTrials.ElementAt(i) +
-                                             ", forceMomentZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(forceMomentZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-
-                    _myMatlabWrapper.Execute("[errorvar10_" + threadTrials.ElementAt(i) +
-                                             ", positionCartesianX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(positionCartesianX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar11_" + threadTrials.ElementAt(i) +
-                                             ", positionCartesianY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(positionCartesianY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar12_" + threadTrials.ElementAt(i) +
-                                             ", positionCartesianZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(positionCartesianZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-
-                    _myMatlabWrapper.Execute("[errorvar13_" + threadTrials.ElementAt(i) +
-                                             ", positionStatus" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newMeasureTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(positionStatus" +
-                                             threadTrials.ElementAt(i) +
-                                             ",measure_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-
-                    _myMatlabWrapper.Execute("[errorvar14_" + threadTrials.ElementAt(i) +
-                                             ", velocityX" + threadTrials.ElementAt(i) +
-                                             ",newVelocityTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(velocityX" +
-                                             threadTrials.ElementAt(i) +
-                                             ",velocity_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar15_" + threadTrials.ElementAt(i) +
-                                             ", velocityY" + threadTrials.ElementAt(i) +
-                                             ",newVelocityTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(velocityY" +
-                                             threadTrials.ElementAt(i) +
-                                             ",velocity_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-                    _myMatlabWrapper.Execute("[errorvar16_" + threadTrials.ElementAt(i) +
-                                             ", velocityZ" + threadTrials.ElementAt(i) +
-                                             ",newVelocityTime" +
-                                             threadTrials.ElementAt(i) +
-                                             "] = timeNorm(velocityZ" +
-                                             threadTrials.ElementAt(i) +
-                                             ",velocity_data_time" +
-                                             threadTrials.ElementAt(i) +
-                                             ",newSampleCount);");
-
-                    //-----
-
-                    for (int errorVarCounterCounter = 1;
-                        errorVarCounterCounter <= 16;
-                        errorVarCounterCounter++)
+                for (int j = 0; j < measureDataTime.Length; j++)
+                {
+                    lock (myDataContainter)
                     {
-                        errorList.Add(
-                            Convert.ToString(
-                                _myMatlabWrapper.GetWorkspaceData("errorvar" +
-                                                                  errorVarCounterCounter +
-                                                                  "_" +
-                                                                  threadTrials.ElementAt
-                                                                      (i))));
-                        _myMatlabWrapper.ClearWorkspaceData("errorvar" +
-                                                            errorVarCounterCounter + "_" +
-                                                            threadTrials.ElementAt(i));
-                    }
-
-                    if (errorList.Any(t => !string.IsNullOrEmpty(t)))
-                    {
-                        string output =
-                            errorList.Where(t => !string.IsNullOrEmpty(t))
-                                .Select(
-                                    t =>
-                                        t + " in " + filename + " at szenario-trial-number " + tempSzenarioTrialNumber)
-                                .Aggregate("", (current, line) => current + line);
-                        _myManipAnalysisGui.WriteToLogBox(output);
-                    }
-
-                    //-----
-
-                    double[,] measureDataTime =
-                        _myMatlabWrapper.GetWorkspaceData("newMeasureTime" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityDataTime =
-                        _myMatlabWrapper.GetWorkspaceData("newVelocityTime" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] forceActualX =
-                        _myMatlabWrapper.GetWorkspaceData("forceActualX" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceActualY =
-                        _myMatlabWrapper.GetWorkspaceData("forceActualY" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceActualZ =
-                        _myMatlabWrapper.GetWorkspaceData("forceActualZ" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] forceNominalX =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalX" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceNominalY =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalY" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceNominalZ =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalZ" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] forceMomentX =
-                        _myMatlabWrapper.GetWorkspaceData("forceMomentX" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceMomentY =
-                        _myMatlabWrapper.GetWorkspaceData("forceMomentY" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] forceMomentZ =
-                        _myMatlabWrapper.GetWorkspaceData("forceMomentZ" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] positionCartesianX =
-                        _myMatlabWrapper.GetWorkspaceData("positionCartesianX" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] positionCartesianY =
-                        _myMatlabWrapper.GetWorkspaceData("positionCartesianY" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] positionCartesianZ =
-                        _myMatlabWrapper.GetWorkspaceData("positionCartesianZ" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] positionStatus =
-                        _myMatlabWrapper.GetWorkspaceData("positionStatus" +
-                                                          threadTrials.ElementAt(i));
-
-                    double[,] velocityX =
-                        _myMatlabWrapper.GetWorkspaceData("velocityX" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityY =
-                        _myMatlabWrapper.GetWorkspaceData("velocityY" +
-                                                          threadTrials.ElementAt(i));
-                    double[,] velocityZ =
-                        _myMatlabWrapper.GetWorkspaceData("velocityZ" +
-                                                          threadTrials.ElementAt(i));
-
-                    //-----
-
-                    for (int j = 0; j < measureDataTime.Length; j++)
-                    {
-                        lock (myDataContainter)
-                        {
-                            myDataContainter.MeasureDataNormalized.Add(new MeasureDataContainer
-                                (
-                                new DateTime(
-                                    Convert
-                                        .ToInt64
-                                        (measureDataTime
-                                            [
-                                                j,
-                                                0
-                                            ])),
-                                forceActualX[
-                                    j, 0],
-                                forceActualY[
-                                    j, 0],
-                                forceActualZ[
-                                    j, 0],
-                                forceNominalX
-                                    [j, 0],
-                                forceNominalY
-                                    [j, 0],
-                                forceNominalZ
-                                    [j, 0],
-                                forceMomentX[
-                                    j, 0],
-                                forceMomentY[
-                                    j, 0],
-                                forceMomentZ[
-                                    j, 0],
-                                positionCartesianX
-                                    [j, 0],
-                                positionCartesianY
-                                    [j, 0],
-                                positionCartesianZ
-                                    [j, 0],
-                                tempTargetNumber,
-                                tempTargetTrialNumber,
-                                tempSzenarioTrialNumber,
-                                tempIsCatchTrial,
-                                tempIsErrorclampTrial,
+                        myDataContainter.MeasureDataNormalized.Add(new MeasureDataContainer
+                            (
+                            new DateTime(
                                 Convert
-                                    .ToInt32(
-                                        positionStatus
-                                            [
-                                                j,
-                                                0
-                                            ])
-                                ));
-                        }
-                    }
-
-                    for (int j = 0; j < velocityDataTime.Length; j++)
-                    {
-                        lock (myDataContainter)
-                        {
-                            myDataContainter.VelocityDataNormalized.Add(new VelocityDataContainer
-                                (
-                                new DateTime
-                                    (Convert
-                                        .ToInt64
-                                        (velocityDataTime
-                                            [
-                                                j,
-                                                0
-                                            ])),
-                                velocityX[
-                                    j, 0],
-                                velocityY[
-                                    j, 0],
-                                velocityZ[
-                                    j, 0],
-                                threadTrials
-                                    .ElementAt
-                                    (i),
-                                tempFilteredDataEnum
-                                    .ElementAt
-                                    (0)
-                                    .TargetNumber,
-                                Convert
-                                    .ToInt32
-                                    (positionStatus
+                                    .ToInt64
+                                    (measureDataTime
+                                        [
+                                            j,
+                                            0
+                                        ])),
+                            forceActualX[
+                                j, 0],
+                            forceActualY[
+                                j, 0],
+                            forceActualZ[
+                                j, 0],
+                            forceNominalX
+                                [j, 0],
+                            forceNominalY
+                                [j, 0],
+                            forceNominalZ
+                                [j, 0],
+                            forceMomentX[
+                                j, 0],
+                            forceMomentY[
+                                j, 0],
+                            forceMomentZ[
+                                j, 0],
+                            positionCartesianX
+                                [j, 0],
+                            positionCartesianY
+                                [j, 0],
+                            positionCartesianZ
+                                [j, 0],
+                            tempTargetNumber,
+                            tempTargetTrialNumber,
+                            tempSzenarioTrialNumber,
+                            tempIsCatchTrial,
+                            tempIsErrorclampTrial,
+                            Convert
+                                .ToInt32(
+                                    positionStatus
                                         [
                                             j,
                                             0
                                         ])
-                                ));
-                        }
+                            ));
                     }
-
-                    _myMatlabWrapper.ClearWorkspaceData("newMeasureTime" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("measure_data_time" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocity_data_time" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("forceActualX" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceActualY" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceActualZ" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("forceNominalX" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceNominalY" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceNominalZ" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("forceMomentX" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceMomentY" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("forceMomentZ" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianX" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianY" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("positionCartesianZ" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("positionStatus" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("newVelocityTime" +
-                                                        threadTrials.ElementAt(i));
-
-                    _myMatlabWrapper.ClearWorkspaceData("velocityX" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocityY" +
-                                                        threadTrials.ElementAt(i));
-                    _myMatlabWrapper.ClearWorkspaceData("velocityZ" +
-                                                        threadTrials.ElementAt(i));
                 }
+
+                for (int j = 0; j < velocityDataTime.Length; j++)
+                {
+                    lock (myDataContainter)
+                    {
+                        myDataContainter.VelocityDataNormalized.Add(new VelocityDataContainer
+                            (
+                            new DateTime
+                                (Convert
+                                    .ToInt64
+                                    (velocityDataTime
+                                        [
+                                            j,
+                                            0
+                                        ])),
+                            velocityX[
+                                j, 0],
+                            velocityY[
+                                j, 0],
+                            velocityZ[
+                                j, 0],
+                            threadTrials
+                                .ElementAt
+                                (i),
+                            tempFilteredDataEnum
+                                .ElementAt
+                                (0)
+                                .TargetNumber,
+                            Convert
+                                .ToInt32
+                                (positionStatus
+                                    [
+                                        j,
+                                        0
+                                    ])
+                            ));
+                    }
+                }
+
+                _myMatlabWrapper.ClearWorkspaceData("newMeasureTime" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("measure_data_time" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("velocity_data_time" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("forceActualX" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceActualY" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceActualZ" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("forceNominalX" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceNominalY" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceNominalZ" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("forceMomentX" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceMomentY" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("forceMomentZ" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("positionCartesianX" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("positionCartesianY" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("positionCartesianZ" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("positionStatus" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("newVelocityTime" +
+                                                    threadTrials.ElementAt(i));
+
+                _myMatlabWrapper.ClearWorkspaceData("velocityX" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("velocityY" +
+                                                    threadTrials.ElementAt(i));
+                _myMatlabWrapper.ClearWorkspaceData("velocityZ" +
+                                                    threadTrials.ElementAt(i));
             }
         }
 
