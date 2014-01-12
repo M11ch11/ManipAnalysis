@@ -5,21 +5,21 @@ namespace ManipAnalysis.MongoDb
 {
     internal class Trial
     {
-        public List<ForceContainer> MeasuredForcesFiltered = new List<ForceContainer>();
-        public List<ForceContainer> MeasuredForcesNormalized = new List<ForceContainer>();
-        public List<ForceContainer> MeasuredForcesRaw = new List<ForceContainer>();
-        public List<ForceContainer> MomentForcesFiltered = new List<ForceContainer>();
-        public List<ForceContainer> MomentForcesNormalized = new List<ForceContainer>();
-        public List<ForceContainer> MomentForcesRaw = new List<ForceContainer>();
-        public List<ForceContainer> NominalForcesFiltered = new List<ForceContainer>();
-        public List<ForceContainer> NominalForcesNormalized = new List<ForceContainer>();
-        public List<ForceContainer> NominalForcesRaw = new List<ForceContainer>();
-        public List<PositionContainer> PositionFiltered = new List<PositionContainer>();
-        public List<PositionContainer> PositionNormalized = new List<PositionContainer>();
-        public List<PositionContainer> PositionRaw = new List<PositionContainer>();
-        public List<StatisticContainer> Statistics = new List<StatisticContainer>();
-        public List<VelocityContainer> VelocityFiltered = new List<VelocityContainer>();
-        public List<VelocityContainer> VelocityNormalized = new List<VelocityContainer>();
+        public List<ForceContainer> MeasuredForcesFiltered;
+        public List<ForceContainer> MeasuredForcesNormalized;
+        public List<ForceContainer> MeasuredForcesRaw;
+        public List<ForceContainer> MomentForcesFiltered;
+        public List<ForceContainer> MomentForcesNormalized;
+        public List<ForceContainer> MomentForcesRaw;
+        public List<ForceContainer> NominalForcesFiltered;
+        public List<ForceContainer> NominalForcesNormalized;
+        public List<ForceContainer> NominalForcesRaw;
+        public List<PositionContainer> PositionFiltered;
+        public List<PositionContainer> PositionNormalized;
+        public List<PositionContainer> PositionRaw;
+        public List<StatisticContainer> Statistics;
+        public List<VelocityContainer> VelocityFiltered;
+        public List<VelocityContainer> VelocityNormalized;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
 

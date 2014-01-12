@@ -105,7 +105,6 @@ namespace ManipAnalysis
                     var c3DReader = new C3dReader();
                     c3DReader.Open(_c3DFiles[filesCounter]);
 
-
                     string startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
                     var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
@@ -119,6 +118,7 @@ namespace ManipAnalysis
                     var measureFileContainer = new MeasureFileContainer();
                     var subjectContainer = new SubjectContainer();
                     var targetContainer = new TargetContainer();
+                    var trialInformationContainer = new TrialInformationContainer();
 
                     measureFileContainer.CreationTime = _measureFileCreationDateTime;
                     measureFileContainer.FileHash = _measureFileHash;
@@ -128,6 +128,8 @@ namespace ManipAnalysis
                     subjectContainer.PId = _probandId;
 
                     targetContainer.Number = targetNumber;
+
+                    trialInformationContainer.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
 
                     TrialsContainer[filesCounter].MeasuredForcesRaw = new List<ForceContainer>();
                     TrialsContainer[filesCounter].MomentForcesRaw = new List<ForceContainer>();
@@ -139,7 +141,9 @@ namespace ManipAnalysis
                     TrialsContainer[filesCounter].Szenario = _szenarioName;
                     TrialsContainer[filesCounter].Target = targetContainer;
                     TrialsContainer[filesCounter].TargetTrialNumberInSzenario = targetTrialNumber;
+                    TrialsContainer[filesCounter].TrialInformation = trialInformationContainer;
                     TrialsContainer[filesCounter].TrialNumberInSzenario = szenarioTrialNumber;
+
 
                     for (int frame = 0; frame < c3DReader.FramesCount; frame++)
                     {

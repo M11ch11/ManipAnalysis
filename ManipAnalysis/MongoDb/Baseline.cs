@@ -5,8 +5,11 @@ namespace ManipAnalysis.MongoDb
 {
     internal class Baseline
     {
-        public List<PositionContainer> Position = new List<PositionContainer>();
-        public List<VelocityContainer> Velocity = new List<VelocityContainer>();
+        public List<ForceContainer> MeasuredForces;
+        public List<ForceContainer> MomentForces;
+        public List<ForceContainer> NominalForces;
+        public List<PositionContainer> Position;
+        public List<VelocityContainer> Velocity;
         public ObjectId Id { get; set; }
         public string Study { get; set; }
         public string Group { get; set; }
