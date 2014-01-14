@@ -937,6 +937,20 @@ namespace ManipAnalysis
 
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
         {
+            int pdTime = -1;
+            string statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString();
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Sign")
+            {
+                var inputForm = new PerpendicularDisplacementTimeInputForm();
+                if (inputForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    pdTime = inputForm.getMilliseconds();
+                    statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString().Replace("?", pdTime.ToString());
+                    inputForm.Dispose();
+                }
+            }
+
             WriteProgressInfo("Getting data...");
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
@@ -955,7 +969,7 @@ namespace ManipAnalysis
                                       + "."
                                       + DateTime.Now.Minute.ToString("00")
                                       + "-mean-"
-                                      + comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem
+                                      + statisticType
                                       + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -964,11 +978,11 @@ namespace ManipAnalysis
                 {
                     _manipAnalysisFunctions.ExportDescriptiveStatistic1Data(
                         listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                        comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(), saveFileDialog.FileName);
+                        comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
+                        pdTime,
+                        saveFileDialog.FileName);
                 }
             }
-            WriteProgressInfo("Ready");
-            SetProgressBarValue(0);
         }
 
         private void button_Debug_ShowMatlabFiles_Click(object sender, EventArgs e)
