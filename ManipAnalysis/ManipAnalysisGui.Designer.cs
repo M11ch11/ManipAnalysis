@@ -177,7 +177,7 @@ namespace ManipAnalysis
             this.listBox_Import_SelectedMeasureFiles = new System.Windows.Forms.ListBox();
             this.button_Import_SelectMeasureFiles = new System.Windows.Forms.Button();
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl_Debug = new System.Windows.Forms.TabControl();
             this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
             this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
             this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
@@ -267,7 +267,7 @@ namespace ManipAnalysis
             this.groupBox_Import_TimeNormalization.SuspendLayout();
             this.groupBox_Import_ButterworthFilter.SuspendLayout();
             this.tabPage_Debug.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tabControl_Debug.SuspendLayout();
             this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
             this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
             this.tabPage_Debug_BaselineRecalculation.SuspendLayout();
@@ -1877,7 +1877,7 @@ namespace ManipAnalysis
             // 
             // tabPage_Debug
             // 
-            this.tabPage_Debug.Controls.Add(this.tabControl1);
+            this.tabPage_Debug.Controls.Add(this.tabControl_Debug);
             this.tabPage_Debug.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Debug.Name = "tabPage_Debug";
             this.tabPage_Debug.Size = new System.Drawing.Size(733, 637);
@@ -1885,16 +1885,16 @@ namespace ManipAnalysis
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
             // 
-            // tabControl1
+            // tabControl_Debug
             // 
-            this.tabControl1.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
-            this.tabControl1.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
-            this.tabControl1.Controls.Add(this.tabPage_Debug_BaselineRecalculation);
-            this.tabControl1.Location = new System.Drawing.Point(3, 3);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(727, 592);
-            this.tabControl1.TabIndex = 61;
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_BaselineRecalculation);
+            this.tabControl_Debug.Location = new System.Drawing.Point(3, 3);
+            this.tabControl_Debug.Name = "tabControl_Debug";
+            this.tabControl_Debug.SelectedIndex = 0;
+            this.tabControl_Debug.Size = new System.Drawing.Size(727, 592);
+            this.tabControl_Debug.TabIndex = 61;
             // 
             // tabPage_Debug_MatlabAndLogs
             // 
@@ -2677,7 +2677,7 @@ namespace ManipAnalysis
             this.groupBox_Import_ButterworthFilter.ResumeLayout(false);
             this.groupBox_Import_ButterworthFilter.PerformLayout();
             this.tabPage_Debug.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
+            this.tabControl_Debug.ResumeLayout(false);
             this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
             this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
             this.tabPage_Debug_DatabaseManipulation.PerformLayout();
@@ -2881,7 +2881,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectIdId;
         private System.Windows.Forms.Label label_DataManipulation_SubjectIdId;
         private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectID;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControl_Debug;
         private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
         private System.Windows.Forms.TabPage tabPage_Debug_DatabaseManipulation;
         private System.Windows.Forms.TabPage tabPage_Debug_BaselineRecalculation;

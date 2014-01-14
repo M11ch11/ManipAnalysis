@@ -55,7 +55,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.WriteToLogBox(e.ToString());
         }
 
-        public void SetSqlServer(string serverUri)
+        public void SetDatabaseServer(string serverUri)
         {
             CloseSqlConnection();
             SetConnectionString(serverUri, _sqlDatabase, _sqlUsername, _sqlPassword);

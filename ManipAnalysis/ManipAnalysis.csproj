@@ -191,6 +191,7 @@
     <Compile Include="MatlabWrapper.cs" />
     <Compile Include="MD5.cs" />
     <Compile Include="BioMotionBotMeasureFileParser.cs" />
+    <Compile Include="MongoDbWrapper.cs" />
     <Compile Include="MongoDb\Baseline.cs" />
     <Compile Include="MongoDb\ForceContainer.cs" />
     <Compile Include="MongoDb\MeasureFileContainer.cs" />

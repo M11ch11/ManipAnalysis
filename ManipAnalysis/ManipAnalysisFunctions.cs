@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using ManipAnalysis.Container;
 using ManipAnalysis.MongoDb;
 
+
 namespace ManipAnalysis
 {
     /// <summary>
@@ -19,14 +20,16 @@ namespace ManipAnalysis
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private readonly MatlabWrapper _myMatlabWrapper;
-        private readonly SqlWrapper _mySqlWrapper;
+        private readonly SqlWrapper _myDatabaseWrapper;
+        private readonly MongoDbWrapper _myMongoDbWrapperWrapper;
 
         public ManipAnalysisFunctions(ManipAnalysisGui myManipAnalysisGui, MatlabWrapper myMatlabWrapper,
             SqlWrapper mySqlWrapper)
         {
             _myMatlabWrapper = myMatlabWrapper;
-            _mySqlWrapper = mySqlWrapper;
+            _myDatabaseWrapper = mySqlWrapper;
             _myManipAnalysisGui = myManipAnalysisGui;
+            _myMongoDbWrapperWrapper = new MongoDbWrapper();
         }
 
         /// <summary>
@@ -35,13 +38,14 @@ namespace ManipAnalysis
         /// <param name="server">The server that has to be checked</param>
         /// <param name="timeOutMilliSec">Timeout in milliseconds for the check</param>
         /// <returns></returns>
-        private bool CheckSqlServerAvailability(string server, int timeOutMilliSec)
+        private bool CheckDatabaseServerAvailability(string server, int timeOutMilliSec)
         {
             bool serverAvailable = false;
 
             using (var tcp = new TcpClient())
             {
-                IAsyncResult ar = tcp.BeginConnect(server, 1433, null, null);
+                //IAsyncResult ar = tcp.BeginConnect(server, 1433, null, null); // For MS-SQL
+                IAsyncResult ar = tcp.BeginConnect(server, 27017, null, null); // For MongoDB
                 WaitHandle wh = ar.AsyncWaitHandle;
                 try
                 {
@@ -67,25 +71,25 @@ namespace ManipAnalysis
         }
 
         /// <summary>
-        ///     Changes the SQL-Server-Value in the SQL-Wrapper.
+        ///     Changes the Database-Server-Value in the Database-Wrapper.
         ///     Checks wether the server is available first.
         /// </summary>
-        /// <param name="server">The new SQL-Server</param>
+        /// <param name="server">The new Database-Server</param>
         /// <returns></returns>
-        public bool ConnectToSqlServer(string server)
+        public bool ConnectToDatabaseServer(string server)
         {
             bool retVal = false;
 
-            if (CheckSqlServerAvailability(server, 6000))
+            if (CheckDatabaseServerAvailability(server, 6000))
             {
-                _myManipAnalysisGui.WriteToLogBox("Connected to SQL-Server.");
-                _mySqlWrapper.SetSqlServer(server);
-                _myManipAnalysisGui.SetSqlDatabases(_mySqlWrapper.GetDatabases());
+                _myManipAnalysisGui.WriteToLogBox("Connected to Database-Server.");
+                _myMongoDbWrapperWrapper.SetDatabaseServer(server);
+                _myManipAnalysisGui.SetSqlDatabases(_myMongoDbWrapperWrapper.GetDatabases());
                 retVal = true;
             }
             else
             {
-                _myManipAnalysisGui.WriteToLogBox("SQL-Server not reachable!");
+                _myManipAnalysisGui.WriteToLogBox("Database-Server not reachable!");
             }
 
             return retVal;
@@ -95,9 +99,9 @@ namespace ManipAnalysis
         ///     Sets a Database in the SQL-Wrapper
         /// </summary>
         /// <param name="database">The new Database</param>
-        public void SetSqlDatabase(string database)
+        public void SetDatabase(string database)
         {
-            _mySqlWrapper.SetDatabase(database);
+            _myMongoDbWrapperWrapper.SetDatabase(database);
         }
 
         /// <summary>
@@ -106,7 +110,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetStudys()
         {
-            return _mySqlWrapper.GetStudyNames();
+            return _myMongoDbWrapperWrapper.GetStudyNames();
         }
 
         /// <summary>
@@ -116,7 +120,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetGroups(string study)
         {
-            return _mySqlWrapper.GetGroupNames(study);
+            return _myMongoDbWrapperWrapper.GetGroupNames(study);
         }
 
         /// <summary>
@@ -127,7 +131,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetSzenarios(string study, string group)
         {
-            return _mySqlWrapper.GetSzenarioNames(study, group);
+            return _myDatabaseWrapper.GetSzenarioNames(study, group);
         }
 
         /// <summary>
@@ -139,7 +143,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<SubjectInformationContainer> GetSubjects(string study, string group, string szenario)
         {
-            return _mySqlWrapper.GetSubjectInformations(study, group, szenario);
+            return _myDatabaseWrapper.GetSubjectInformations(study, group, szenario);
         }
 
         /// <summary>
@@ -153,7 +157,7 @@ namespace ManipAnalysis
         public IEnumerable<string> GetTurns(string study, string group, string szenario,
             SubjectInformationContainer subject)
         {
-            return _mySqlWrapper.GetTurns(study, group, szenario, subject);
+            return _myDatabaseWrapper.GetTurns(study, group, szenario, subject);
         }
 
         /// <summary>
@@ -164,7 +168,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTargets(string study, string szenario)
         {
-            return _mySqlWrapper.GetTargets(study, szenario);
+            return _myDatabaseWrapper.GetTargets(study, szenario);
         }
 
         /// <summary>
@@ -175,7 +179,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
-            return _mySqlWrapper.GetTrials(study, szenario);
+            return _myDatabaseWrapper.GetTrials(study, szenario);
         }
 
         /// <summary>
@@ -185,7 +189,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public bool CheckIfMeasureFileHashAlreadyExists(string hash)
         {
-            return _mySqlWrapper.CheckIfMeasureFileHashExists(hash);
+            return _myDatabaseWrapper.CheckIfMeasureFileHashExists(hash);
         }
 
         /// <summary>
@@ -201,7 +205,7 @@ namespace ManipAnalysis
             SubjectInformationContainer subject,
             int turn)
         {
-            return _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+            return _myDatabaseWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
         }
 
         /// <summary>
@@ -210,7 +214,7 @@ namespace ManipAnalysis
         /// <param name="measureFileId"></param>
         public void DeleteMeasureFile(int measureFileId)
         {
-            _mySqlWrapper.DeleteMeasureFile(measureFileId);
+            _myDatabaseWrapper.DeleteMeasureFile(measureFileId);
         }
 
         public void PlotSzenarioMeanTimes(string study, string group, string szenario,
@@ -219,7 +223,7 @@ namespace ManipAnalysis
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
-                DataSet meanTimeDataSet = _mySqlWrapper.GetMeanTimeDataSet(study, group, szenario, subject, turnDateTime);
+                DataSet meanTimeDataSet = _myDatabaseWrapper.GetMeanTimeDataSet(study, group, szenario, subject, turnDateTime);
 
                 _myMatlabWrapper.CreateMeanTimeFigure();
 
@@ -257,9 +261,9 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
-                DataSet meanTimeDataSet = _mySqlWrapper.GetMeanTimeDataSet(study, group, szenario, subject, turnDateTime);
+                DataSet meanTimeDataSet = _myDatabaseWrapper.GetMeanTimeDataSet(study, group, szenario, subject, turnDateTime);
 
                 var cache = new List<string>
                 {
@@ -301,7 +305,7 @@ namespace ManipAnalysis
 
         public void InitializeSqlDatabase()
         {
-            _mySqlWrapper.InitializeDatabase();
+            _myDatabaseWrapper.InitializeDatabase();
         }
 
         public void PlotBaseline(string study, string group, string szenario, SubjectInformationContainer subject)
@@ -311,7 +315,7 @@ namespace ManipAnalysis
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
                 _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
-                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject);
+                DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
 
                 List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
                     select new object[]
@@ -348,7 +352,7 @@ namespace ManipAnalysis
             bool showCatchTrialsExclusivly, bool showErrorclampTrials,
             bool showErrorclampTrialsExclusivly)
         {
-            return _mySqlWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly,
+            return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly,
                 showErrorclampTrials, showErrorclampTrialsExclusivly);
         }
 
@@ -394,7 +398,7 @@ namespace ManipAnalysis
                             if (pdTime == -1)
                             {
                                 DataSet statisticDataSet =
-                                    _mySqlWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
+                                    _myDatabaseWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
                                         tempStatisticPlotContainer.Group,
                                         tempStatisticPlotContainer.Szenario,
                                         tempStatisticPlotContainer.Subject,
@@ -492,7 +496,7 @@ namespace ManipAnalysis
                             else
                             {
                                 DataSet baselineDataSet =
-                                    _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                    _myDatabaseWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
                                         tempStatisticPlotContainer.Group, "Szenario02",
                                         tempStatisticPlotContainer.Subject);
                                 var baselineDataList = new LinkedList<BaselineDataContainer>();
@@ -527,12 +531,12 @@ namespace ManipAnalysis
                                     _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count)*trialCounter);
 
                                     int szenarioTrialNumber = trialList.ElementAt(trialCounter);
-                                    int trialId = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
+                                    int trialId = _myDatabaseWrapper.GetTrailID(tempStatisticPlotContainer.Study,
                                         tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
                                         tempStatisticPlotContainer.Subject, turnDateTime, szenarioTrialNumber);
 
-                                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialId);
-                                    int targetNumber = _mySqlWrapper.GetTargetNumber(trialId);
+                                    DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialId);
+                                    int targetNumber = _myDatabaseWrapper.GetTargetNumber(trialId);
 
 
                                     if (baselineDataList.Count > 0 &
@@ -818,7 +822,7 @@ namespace ManipAnalysis
 
         public IEnumerable<object[]> GetFaultyTrialInformation()
         {
-            return _mySqlWrapper.GetFaultyTrialInformation();
+            return _myDatabaseWrapper.GetFaultyTrialInformation();
         }
 
         public void ExportDescriptiveStatistic1Data(IEnumerable<StatisticPlotContainer> selectedTrials,
@@ -851,12 +855,12 @@ namespace ManipAnalysis
 
                         StatisticPlotContainer temp = selectedTrialsList.ElementAt(meanCounter);
 
-                        DateTime turn = _mySqlWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
+                        DateTime turn = _myDatabaseWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
                             temp.Subject,
                             Convert.ToInt32(
                                 temp.Turn.Substring("Turn".Length)));
 
-                        DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(temp.Study, temp.Group,
+                        DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(temp.Study, temp.Group,
                             temp.Szenario, temp.Subject,
                             turn);
 
@@ -1045,10 +1049,10 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCounter);
                     StatisticPlotContainer temp = selectedTrialsList.ElementAt(meanCounter);
 
-                    DateTime turn = _mySqlWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
+                    DateTime turn = _myDatabaseWrapper.GetTurnDateTime(temp.Study, temp.Group, temp.Szenario,
                         temp.Subject,
                         Convert.ToInt32(temp.Turn.Substring("Turn".Length)));
-                    DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(temp.Study, temp.Group,
+                    DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(temp.Study, temp.Group,
                         temp.Szenario, temp.Subject,
                         turn);
 
@@ -1194,27 +1198,27 @@ namespace ManipAnalysis
 
         public void ChangeGroupId(int groupId, int newGroupId)
         {
-            _mySqlWrapper.ChangeGroupID(groupId, newGroupId);
+            _myDatabaseWrapper.ChangeGroupID(groupId, newGroupId);
         }
 
         public void ChangeGroupGroupName(int groupId, string newGroupName)
         {
-            _mySqlWrapper.ChangeGroupName(groupId, newGroupName);
+            _myDatabaseWrapper.ChangeGroupName(groupId, newGroupName);
         }
 
         public void ChangeSubjectId(int subjectId, int newSubjectId)
         {
-            _mySqlWrapper.ChangeSubjectID(subjectId, newSubjectId);
+            _myDatabaseWrapper.ChangeSubjectID(subjectId, newSubjectId);
         }
 
         public void ChangeSubjectSubjectName(int subjectId, string newSubjectName)
         {
-            _mySqlWrapper.ChangeSubjectName(subjectId, newSubjectName);
+            _myDatabaseWrapper.ChangeSubjectName(subjectId, newSubjectName);
         }
 
         public void ChangeSubjectSubjectId(int subjectId, string newSubjectSubjectId)
         {
-            _mySqlWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
+            _myDatabaseWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
         }
 
         public void ImportMeasureFiles(IEnumerable<string> measureFiles, int samplesPerSecond, int butterFilterOrder,
@@ -1260,7 +1264,7 @@ namespace ManipAnalysis
 
                     string tempFileHash = Md5.ComputeHash(filename);
 
-                    if (!_mySqlWrapper.CheckIfMeasureFileHashExists(tempFileHash))
+                    if (!_myDatabaseWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                     {
                         //var myParser = new BioMotionBotMeasureFileParser(trialsContainer, _myManipAnalysisGui);
                         var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
@@ -2552,7 +2556,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.EnableTabPages(false);
             _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
 
-            List<int[]> trialInfos = _mySqlWrapper.GetStatisticCalculationInformation();
+            List<int[]> trialInfos = _myDatabaseWrapper.GetStatisticCalculationInformation();
             /*
             List<int[]> trialInfos = _mySqlWrapper.GetStatisticUpdateInformation();
             */
@@ -2574,9 +2578,9 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.SetProgressBarValue((100.0/trialInfos.Count())*counter);
                     counter++;
 
-                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialInfo[0]);
-                    DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialInfo[0]);
-                    DataSet baselineDataSet = _mySqlWrapper.GetBaselineDataSet(trialInfo[1], trialInfo[2], trialInfo[3],
+                    DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialInfo[0]);
+                    DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialInfo[0]);
+                    DataSet baselineDataSet = _myDatabaseWrapper.GetBaselineDataSet(trialInfo[1], trialInfo[2], trialInfo[3],
                         trialInfo[4]);
                     /*
                     DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialInfo[0]);
@@ -2680,7 +2684,7 @@ namespace ManipAnalysis
                                 double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
 
 
-                                _mySqlWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, lengthAbs,
+                                _myDatabaseWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, lengthAbs,
                                     lengthRatio, distance300MsAbs, maxDistanceAbs,
                                     meanDistanceAbs, distance300MsSign, maxDistanceSign,
                                     enclosedArea, rmse);
@@ -2746,7 +2750,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.EnableTabPages(false);
             _myManipAnalysisGui.WriteProgressInfo("Fixing broken Trials...");
 
-            List<object[]> faultyTrialInformation = _mySqlWrapper.GetFaultyTrialInformation();
+            List<object[]> faultyTrialInformation = _myDatabaseWrapper.GetFaultyTrialInformation();
 
             if (faultyTrialInformation != null)
             {
@@ -2767,13 +2771,13 @@ namespace ManipAnalysis
                         _myManipAnalysisGui.SetProgressBarValue((100.0/faultyTrialInformation.Count)*trialIdCounter);
 
                         int[] trialFixInformation =
-                            _mySqlWrapper.GetFaultyTrialFixInformation(
+                            _myDatabaseWrapper.GetFaultyTrialFixInformation(
                                 Convert.ToInt32(faultyTrialInformation[trialIdCounter][1]),
                                 Convert.ToInt32(faultyTrialInformation[trialIdCounter][7]));
                         if (trialFixInformation != null)
                         {
-                            DataSet upperStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[0]);
-                            DataSet lowerStatisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialFixInformation[1]);
+                            DataSet upperStatisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(trialFixInformation[0]);
+                            DataSet lowerStatisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(trialFixInformation[1]);
 
                             double velocityVectorCorrelation =
                                 (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]) +
@@ -2821,7 +2825,7 @@ namespace ManipAnalysis
                             double rmse = (Convert.ToDouble(upperStatisticDataSet.Tables[0].Rows[0]["rmse"]) +
                                            Convert.ToDouble(lowerStatisticDataSet.Tables[0].Rows[0]["rmse"]))/2;
 
-                            _mySqlWrapper.InsertStatisticData(
+                            _myDatabaseWrapper.InsertStatisticData(
                                 Convert.ToInt32(faultyTrialInformation[trialIdCounter][0]),
                                 velocityVectorCorrelation,
                                 trajectoryLengthAbs,
@@ -2879,7 +2883,7 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                         counter++;
-                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
+                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
                             tempContainer.Szenario,
                             tempContainer.Subject,
                             tempContainer.Turn);
@@ -2889,10 +2893,10 @@ namespace ManipAnalysis
                             {
                                 break;
                             }
-                            int trialId = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                            int trialId = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                 tempContainer.Szenario, tempContainer.Subject,
                                 turnDateTime, tempContainer.Target, trial);
-                            DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialId);
+                            DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialId);
 
                             var measureDataX = new List<double>();
                             var measureDataZ = new List<double>();
@@ -3061,7 +3065,7 @@ namespace ManipAnalysis
                                 _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
                                                                         counter);
                                 counter++;
-                                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                                     tempContainer.Group,
                                     tempContainer.Szenario,
                                     tempContainer.Subject,
@@ -3074,11 +3078,11 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-                                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject, turnDateTime,
                                         tempContainer.Target, trial);
-                                    DataSet dataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                                    DataSet dataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
                                     for (int i = 0; i < dataSet.Tables[0].Rows.Count & !TaskManager.Cancel; i++)
                                     {
                                         DataRow row = dataSet.Tables[0].Rows[i];
@@ -3147,7 +3151,7 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                         counter++;
-                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
+                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
                             tempContainer.Szenario,
                             tempContainer.Subject,
                             tempContainer.Turn);
@@ -3157,11 +3161,11 @@ namespace ManipAnalysis
                             {
                                 break;
                             }
-                            int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                            int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                 tempContainer.Szenario,
                                 tempContainer.Subject, turnDateTime,
                                 tempContainer.Target, trial);
-                            DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                            DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
                             var velocityDataXZ = new List<double>();
 
                             foreach (DataRow row in velocityDataSet.Tables[0].Rows)
@@ -3264,7 +3268,7 @@ namespace ManipAnalysis
                                 _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
                                                                         counter);
                                 counter++;
-                                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                                     tempContainer.Group,
                                     tempContainer.Szenario,
                                     tempContainer.Subject,
@@ -3276,13 +3280,13 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-                                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject,
                                         turnDateTime, tempContainer.Target,
                                         trial);
-                                    DataSet dataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                                    DataSet dataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
 
                                     for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                     {
@@ -3338,7 +3342,7 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrailsList.Count)*counter);
                         counter++;
-                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                             tempContainer.Group,
                             tempContainer.Szenario,
                             tempContainer.Subject,
@@ -3349,11 +3353,11 @@ namespace ManipAnalysis
                             {
                                 break;
                             }
-                            int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                            int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                 tempContainer.Szenario,
                                 tempContainer.Subject, turnDateTime,
                                 tempContainer.Target, trial);
-                            DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                            DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
 
                             var cache = new List<string>
                             {
@@ -3441,7 +3445,7 @@ namespace ManipAnalysis
                                 {
                                     _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrailsList.Count)*counter);
                                     counter++;
-                                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject,
@@ -3454,13 +3458,13 @@ namespace ManipAnalysis
                                         {
                                             break;
                                         }
-                                        int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                        int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
                                             tempContainer.Group,
                                             tempContainer.Szenario,
                                             tempContainer.Subject,
                                             turnDateTime,
                                             tempContainer.Target, trial);
-                                        DataSet dataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                                        DataSet dataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
                                         for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
@@ -3542,7 +3546,7 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrailsList.Count)*counter);
                         counter++;
-                        DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                             tempContainer.Group,
                             tempContainer.Szenario,
                             tempContainer.Subject,
@@ -3553,11 +3557,11 @@ namespace ManipAnalysis
                             {
                                 break;
                             }
-                            int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
+                            int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                 tempContainer.Szenario,
                                 tempContainer.Subject, turnDateTime,
                                 tempContainer.Target, trial);
-                            DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                            DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
 
                             var cache = new List<string>
                             {
@@ -3645,7 +3649,7 @@ namespace ManipAnalysis
                                 {
                                     _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrailsList.Count)*counter);
                                     counter++;
-                                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject,
@@ -3658,7 +3662,7 @@ namespace ManipAnalysis
                                         {
                                             break;
                                         }
-                                        int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                                        int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
                                             tempContainer.Group,
                                             tempContainer.Szenario,
                                             tempContainer.Subject,
@@ -3666,7 +3670,7 @@ namespace ManipAnalysis
                                             tempContainer.Target, trial);
 
                                         DataSet dataSet =
-                                            _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                                            _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
                                         for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
@@ -3732,7 +3736,7 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject);
+                DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
 
                 List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
                     select new object[]
@@ -3788,7 +3792,7 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject);
+                DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
 
                 List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
                     select new object[]
@@ -3847,7 +3851,7 @@ namespace ManipAnalysis
                 _myMatlabWrapper.CreateVelocityFigure("Velocity baseline plot", 101);
                 _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
-                DataSet baseline = _mySqlWrapper.GetBaselineDataSet(study, group, szenario, subject);
+                DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
 
                 List<object[]> baselineData = (from DataRow row in baseline.Tables[0].Rows
                     select new object[]
@@ -3900,7 +3904,7 @@ namespace ManipAnalysis
                 TrajectoryVelocityPlotContainer tempContainer =
                     selectedTrialsList.Where(t => t.Target == targetArray[targetCounterVar]).ElementAt(0);
 
-                int baselineID = _mySqlWrapper.GetBaselineID(tempContainer.Study,
+                int baselineID = _myDatabaseWrapper.GetBaselineID(tempContainer.Study,
                     tempContainer.Group,
                     tempContainer.Szenario,
                     tempContainer.Subject,
@@ -3910,7 +3914,7 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
                                                         counter);
                 counter++;
-                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(tempContainer.Study,
+                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
                     tempContainer.Group,
                     tempContainer.Szenario,
                     tempContainer.Subject,
@@ -3919,7 +3923,7 @@ namespace ManipAnalysis
 
                 foreach (int trial in tempContainer.Trials)
                 {
-                    int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
+                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
                         tempContainer.Group,
                         tempContainer.Szenario,
                         tempContainer.Subject,
@@ -3927,8 +3931,8 @@ namespace ManipAnalysis
                         tempContainer.Target,
                         trial);
 
-                    DataSet measureDataNormalizedDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                    DataSet velocityDataNormalizedDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                    DataSet measureDataNormalizedDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                    DataSet velocityDataNormalizedDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
 
                     for (int i = 0; i < measureDataNormalizedDataSet.Tables[0].Rows.Count; i++)
                     {
@@ -4013,13 +4017,13 @@ namespace ManipAnalysis
 
                 if (measureDataNormalizedDataX.Count() == velocityDataNormalizedDataX.Count())
                 {
-                    _mySqlWrapper.DeleteBaselineData(baselineID);
+                    _myDatabaseWrapper.DeleteBaselineData(baselineID);
                     _myManipAnalysisGui.WriteToLogBox("Deleted old baseline of Target " + tempContainer.Target +
                                                       ", uploading new one...");
 
                     for (int i = 0; i < measureDataNormalizedDataX.Count(); i++)
                     {
-                        _mySqlWrapper.InsertBaselineData(baselineID,
+                        _myDatabaseWrapper.InsertBaselineData(baselineID,
                             turnDateTime.AddMilliseconds(i*5),
                             measureDataNormalizedDataX[i],
                             measureDataNormalizedDataY[i],
@@ -4034,7 +4038,7 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.WriteToLogBox("Trajectory- and Velocity-Baseline are of unequal length!");
                 }
             }
-            _mySqlWrapper.DeleteSubjectStatistics(subject);
+            _myDatabaseWrapper.DeleteSubjectStatistics(subject);
             _myManipAnalysisGui.WriteToLogBox("Deleted subjects (" + subject + ") statistics...");
 
 
@@ -4048,7 +4052,7 @@ namespace ManipAnalysis
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
-                string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
+                string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
                 // List of all trials in the szenario
                 int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
                 var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
@@ -4065,9 +4069,9 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
 
                     // Gets the statistic-data for the subject
-                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario,
+                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario,
                         subjectList[subjectCounter], turn);
-                    DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario,
+                    DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(study, group, szenario,
                         subjectList[subjectCounter],
                         turnDateTime);
 
@@ -4161,7 +4165,7 @@ namespace ManipAnalysis
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
-                string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
+                string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
                 // List of all trials in the szenario
                 int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
                 var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
@@ -4178,9 +4182,9 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
 
                     // Gets the statistic-data for the subject
-                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario,
+                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario,
                         subjectList[subjectCounter], turn);
-                    DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(study, group, szenario,
+                    DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(study, group, szenario,
                         subjectList[subjectCounter],
                         turnDateTime);
 
@@ -4316,10 +4320,10 @@ namespace ManipAnalysis
                         {
                             _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*trialCounter);
                             int szenarioTrial = trialList.ElementAt(trialCounter);
-                            int trialID = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime,
+                            int trialID = _myDatabaseWrapper.GetTrailID(study, group, szenario, subject, turnDateTime,
                                 szenarioTrial);
-                            DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                            DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                            DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
+                            DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
                             int sampleCount = measureDataSet.Tables[0].Rows.Count;
                             var positionData = new double[sampleCount, 2];
                             var velocityData = new double[sampleCount, 2];

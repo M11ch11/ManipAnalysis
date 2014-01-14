@@ -23,7 +23,7 @@ namespace ManipAnalysis.MongoDb
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
 
-        public string Study { get; set; }
+        public string  Study{ get; set; }
         public string Group { get; set; }
         public SubjectContainer Subject { get; set; }
         public string Szenario { get; set; }

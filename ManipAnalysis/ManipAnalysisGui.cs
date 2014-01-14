@@ -227,6 +227,7 @@ namespace ManipAnalysis
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
+                /*
                 if (Environment.MachineName != textBox_Start_SqlServer.Text)
                 {
                     MessageBox.Show(@"Import and Calculations only possible when running on ManipServer!");
@@ -234,7 +235,8 @@ namespace ManipAnalysis
                 else
                 {
                     tabControl.TabPages.Add(tabPage_ImportCalculations);
-                }
+                }*/
+                tabControl.TabPages.Add(tabPage_ImportCalculations);
                 tabControl.TabPages.Add(tabPage_Debug);
                 tabControl.TabPages.Add(tabPage_Impressum);
             }
@@ -1719,7 +1721,7 @@ namespace ManipAnalysis
 
         private void button_Start_SelectDatabase_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.SetSqlDatabase(comboBox_Start_Database.SelectedItem.ToString());
+            _manipAnalysisFunctions.SetDatabase(comboBox_Start_Database.SelectedItem.ToString());
 
             if (!tabControl.TabPages.Contains(tabPage_VisualizationExport))
             {
@@ -1736,7 +1738,7 @@ namespace ManipAnalysis
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToSqlServer(textBox_Start_SqlServer.Text))
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(textBox_Start_SqlServer.Text))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
