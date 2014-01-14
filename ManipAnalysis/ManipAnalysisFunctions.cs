@@ -492,10 +492,37 @@ namespace ManipAnalysis
                             }
                             else
                             {
-                                DataSet baselineDataSet =
-                                           _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
-                                               tempStatisticPlotContainer.Group, "Szenario02",
-                                               tempStatisticPlotContainer.Subject);
+                                DataSet baselineDataSet = null;
+
+                                if (tempStatisticPlotContainer.Study == "Study 2" ||
+                                    tempStatisticPlotContainer.Study == "Study 1" ||
+                                    tempStatisticPlotContainer.Study == "Study 5")
+                                {
+                                    baselineDataSet = _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group, "Szenario02",
+                                        tempStatisticPlotContainer.Subject);
+                                }
+                                else if(tempStatisticPlotContainer.Study == "Study 3")
+                                {
+                                    baselineDataSet = _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group, "Szenario30",
+                                        tempStatisticPlotContainer.Subject);
+                                }
+                                else if (tempStatisticPlotContainer.Study == "Study 4")
+                                {
+                                    if (tempStatisticPlotContainer.Szenario.Contains("_R"))
+                                    {
+                                        baselineDataSet = _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                          tempStatisticPlotContainer.Group, "Szenario42_R",
+                                          tempStatisticPlotContainer.Subject);  
+                                    }
+                                    else if (tempStatisticPlotContainer.Szenario.Contains("_N"))
+                                    {
+                                        baselineDataSet = _mySqlWrapper.GetBaselineDataSet(tempStatisticPlotContainer.Study,
+                                            tempStatisticPlotContainer.Group, "Szenario42_N",
+                                            tempStatisticPlotContainer.Subject);
+                                    }
+                                }
                                 LinkedList<BaselineDataContainer> baselineDataList = new LinkedList<BaselineDataContainer>();
 
                                 for (int baselineSamples = 0; baselineSamples < baselineDataSet.Tables[0].Rows.Count; baselineSamples++)
