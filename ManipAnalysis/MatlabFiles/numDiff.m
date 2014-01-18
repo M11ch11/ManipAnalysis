@@ -7,7 +7,7 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   11.01.2014                                                          %
+%   18.01.2014                                                          %
 %=======================================================================%
 
 %   numDiff.m for ManipAnalysis
@@ -28,13 +28,13 @@ function [ position_data_diff ] = numDiff(position_data, sampleRate)
 %- position_data (Positionsdaten) ist Zeilenvektor also 1xN (falls nicht, dann entsprechend , durch ; ersetzen, etc.)
 %- die samplingRate ist konstant (äquidistante Schrittweiten)
 
-sampleTime = 1.0 / sampleRate;
+sampleTime = 1.0 / double(sampleRate);
+N = length(position_data);
 
 position_data_help1 = [position_data(1), position_data];	% = [position_data(1), position_data(1), position_data(2), position_data(3), ..., position_data(N-1), position_data(N)],  1x(N+1)-Vektor, vorne ersten Einrag doppeln
 position_data_help2 = [position_data, position_data(N)];	% = [position_data(1), position_data(2), position_data(3), ..., position_data(N-1), position_data(N), position_data(N)],  1x(N+1)-Vektor, hinten letzten Einrag doppeln
 
 % damit ist diff(x_help1) + diff(x_help2) = [x(2)-x(1), x(3)-x(1), x(4)-x(2),...,x(N-1)-X(N-3), x(N)-X(N-2), X(N)-x(N-1)];  1xN-Vektor
-position_data_diff = ( diff(position_data_help1) + diff(position_data_help2) ) ./ ( sampleTime * [1,2*ones(1,N-2),1] );	% 1xN-Vektor, erster und letzter Wert werden durch samplingRate geteilt, alle anderen durch doppelte Schrittweite.
+position_data_diff = ( diff(position_data_help1) + diff(position_data_help2) ) ./ ( sampleTime .* [1,2 .* ones(1,N-2),1] );	% 1xN-Vektor, erster und letzter Wert werden durch samplingRate geteilt, alle anderen durch doppelte Schrittweite.
 
 end
-

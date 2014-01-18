@@ -26,9 +26,9 @@ namespace ManipAnalysis
             label_Impressum_Text.Text += Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        public void SetManipAnalysisModel(ManipAnalysisFunctions manipAnalysisModel)
+        public void SetManipAnalysisModel(ManipAnalysisFunctions manipAnalysisFunctions)
         {
-            _manipAnalysisFunctions = manipAnalysisModel;
+            _manipAnalysisFunctions = manipAnalysisFunctions;
         }
 
         public void WriteToLogBox(string text)
@@ -102,47 +102,28 @@ namespace ManipAnalysis
 
         private void button_OpenMeasureFiles_Click(object sender, EventArgs e)
         {
-            bool isValid = true;
-
             openFileDialog.Reset();
             openFileDialog.Multiselect = true;
             openFileDialog.Title = @"Select measure-file(s)";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            openFileDialog.Filter = @"MeasureData-files (*.csv)|*.csv";
+            openFileDialog.Filter = @"KINARM-files (*.zip)|*.zip|BioMotionBot-files (*.csv)|*.csv";
             openFileDialog.ShowDialog();
 
             var filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
 
-            filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
-            filesList.RemoveAll(t => (t.Name.Contains("Szenario00")));
-            filesList.RemoveAll(t => (t.Name.Contains("Szenario01")));
-            filesList.RemoveAll(t => (t.Name.Contains("Szenario40")));
-            filesList.RemoveAll(t => (t.Name.Contains("Szenario41")));
-
-
-            for (int i = 0; i < filesList.Count; i++)
+            for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter++)
             {
-                if (filesList[i].Name.Count(t => t == '-') == 6)
+                if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                 {
-                    string tempFileHash = Md5.ComputeHash(filesList[i].FullName);
-
-                    if (!_manipAnalysisFunctions.CheckIfMeasureFileHashAlreadyExists(tempFileHash))
+                    if (!listBox_Import_SelectedMeasureFiles.Items.Contains(filesList[filesCounter].FullName))
                     {
-                        if (!listBox_Import_SelectedMeasureFiles.Items.Contains(filesList[i].FullName))
-                        {
-                            listBox_Import_SelectedMeasureFiles.Items.Add(filesList[i].FullName);
-                        }
+                        listBox_Import_SelectedMeasureFiles.Items.Add(filesList[filesCounter].FullName);
                     }
                 }
                 else
                 {
-                    isValid = false;
+                    WriteToLogBox("File is invalid or already imported: " + filesList[filesCounter].FullName);
                 }
-            }
-
-            if (!isValid)
-            {
-                WriteToLogBox("One or more filenames are invalid!");
             }
         }
 
@@ -167,45 +148,24 @@ namespace ManipAnalysis
                 for (int i = 0; i < directoriesList.Count; i++)
                 {
                     DirectoryInfo di = directoriesList[i];
-
-                    FileInfo[] files = di.GetFiles("*.csv");
-
-                    filesList.AddRange(files);
+                    filesList.AddRange(di.GetFiles("*.csv"));
+                    filesList.AddRange(di.GetFiles("*.zip"));
                 }
                 directoriesList.Clear();
-                filesList.RemoveAll(t => (!t.Name.Contains("Szenario")));
-                filesList.RemoveAll(t => (t.Name.Contains("Szenario00")));
-                filesList.RemoveAll(t => (t.Name.Contains("Szenario01")));
-                filesList.RemoveAll(t => (t.Name.Contains("Szenario40")));
-                filesList.RemoveAll(t => (t.Name.Contains("Szenario41")));
 
-                bool isValid = true;
-
-                for (int i = 0; i < filesList.Count; i++)
+                for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter++)
                 {
-                    FileInfo fi = filesList[i];
-                    //if (fi.Name.Count(t => t == '-') == 5)  // Study 1
-                    if (fi.Name.Count(t => t == '-') == 6) // Study 2
+                    if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                     {
-                        string tempFileHash = Md5.ComputeHash(fi.FullName);
-
-                        if (!_manipAnalysisFunctions.CheckIfMeasureFileHashAlreadyExists(tempFileHash))
+                        if (!listBox_Import_SelectedMeasureFiles.Items.Contains(filesList[filesCounter].FullName))
                         {
-                            if (!listBox_Import_SelectedMeasureFiles.Items.Contains(fi.FullName))
-                            {
-                                listBox_Import_SelectedMeasureFiles.Items.Add(fi.FullName);
-                            }
+                            listBox_Import_SelectedMeasureFiles.Items.Add(filesList[filesCounter].FullName);
                         }
                     }
                     else
                     {
-                        isValid = false;
+                        WriteToLogBox("File is invalid or already imported: " + filesList[filesCounter].FullName);
                     }
-                }
-
-                if (!isValid)
-                {
-                    WriteToLogBox("One or more filenames are invalid!");
                 }
             }
 

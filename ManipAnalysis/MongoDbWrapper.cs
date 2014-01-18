@@ -80,5 +80,25 @@ namespace ManipAnalysis
             var query = _trialCollection.AsQueryable<Trial>().Where(t => t.Study == studyName).Select(t => t.Group).Distinct();
             return query.AsEnumerable();
         }
+
+        public bool CheckIfMeasureFileHashExists(string measureFileHash)
+        {
+            return _trialCollection.AsQueryable<Trial>().Any(t => t.MeasureFile.FileHash == measureFileHash);
+        }
+
+        public void Insert(IEnumerable<Trial> trials)
+        {
+            _trialCollection.InsertBatch(trials);
+        }
+
+        public void Insert(IEnumerable<SzenarioMeanTime> szenarioMeanTimes)
+        {
+            _szenarioMeanTimeCollection.InsertBatch(szenarioMeanTimes);
+        }
+
+        public void Insert(IEnumerable<Baseline> baselines)
+        {
+            _baselineCollection.InsertBatch(baselines);
+        }
     }
 }
