@@ -7,10 +7,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using ManipAnalysis.Container;
+using ManipAnalysis.MongoDb;
 
 namespace ManipAnalysis
 {
-    public partial class ManipAnalysisGui : Form
+    partial class ManipAnalysisGui : Form
     {
         private ManipAnalysisFunctions _manipAnalysisFunctions;
 
@@ -225,7 +226,7 @@ namespace ManipAnalysis
             _manipAnalysisFunctions.PlotBaseline(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectInformationContainer)
+                (SubjectContainer)
                     comboBox_Others_Subject.SelectedItem);
         }
 
@@ -333,7 +334,7 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
+                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
                     groups[i],
                     szenario);
                 if (tempSubjects != null)
@@ -352,8 +353,8 @@ namespace ManipAnalysis
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer[] subjects =
-                listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+            SubjectContainer[] subjects =
+                listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
@@ -416,14 +417,14 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.SelectedItems.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -513,14 +514,14 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.Items.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -686,7 +687,7 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                IEnumerable<SubjectInformationContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
+                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
                     groups[i],
                     szenario);
                 if (tempSubjects != null)
@@ -705,8 +706,8 @@ namespace ManipAnalysis
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer[] subjects =
-                listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+            SubjectContainer[] subjects =
+                listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
@@ -776,14 +777,14 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.SelectedItems.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -806,14 +807,14 @@ namespace ManipAnalysis
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.Items.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -1179,7 +1180,7 @@ namespace ManipAnalysis
 
             for (int i = 0; i < groups.Length; i++)
             {
-                IEnumerable<SubjectInformationContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
+                IEnumerable<SubjectContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
                     szenario);
                 if (subjects != null)
                 {
@@ -1199,8 +1200,8 @@ namespace ManipAnalysis
             string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
             string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-            SubjectInformationContainer[] subjects =
-                listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+            SubjectContainer[] subjects =
+                listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
             for (int i = 0; i < groups.Length; i++)
@@ -1262,15 +1263,15 @@ namespace ManipAnalysis
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.SelectedItems.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -1327,15 +1328,15 @@ namespace ManipAnalysis
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectInformationContainer[] subjects =
-                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectInformationContainer>().ToArray();
+                SubjectContainer[] subjects =
+                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.Items.Cast<string>().ToArray();
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectInformationContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects)
                     {
                         foreach (string turn in turns)
                         {
@@ -1409,20 +1410,18 @@ namespace ManipAnalysis
                         _manipAnalysisFunctions.PlotVelocity(
                             listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                             comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked);
                         break;
 
                     case "Trajectory":
                         _manipAnalysisFunctions.PlotTrajectory(
                             listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                             comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
                             checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked,
                             checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                             checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
                         break;
@@ -1492,7 +1491,7 @@ namespace ManipAnalysis
             string group = comboBox_Others_Group.SelectedItem.ToString();
             string szenario = comboBox_Others_Szenario.SelectedItem.ToString();
 
-            IEnumerable<SubjectInformationContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
+            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
                 szenario);
             if (subjectNames != null)
             {
@@ -1508,7 +1507,7 @@ namespace ManipAnalysis
             string study = comboBox_Others_Study.SelectedItem.ToString();
             string group = comboBox_Others_Group.SelectedItem.ToString();
             string szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-            var subject = (SubjectInformationContainer) comboBox_Others_Subject.SelectedItem;
+            var subject = (SubjectContainer)comboBox_Others_Subject.SelectedItem;
 
             IEnumerable<string> turnNames = _manipAnalysisFunctions.GetTurns(study, group, szenario, subject);
             if (turnNames != null)
@@ -1608,7 +1607,7 @@ namespace ManipAnalysis
                     comboBox_Others_Study.SelectedItem.ToString(),
                     comboBox_Others_Group.SelectedItem.ToString(),
                     comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectInformationContainer)
+                    (SubjectContainer)
                         comboBox_Others_Subject.SelectedItem,
                     saveFileDialog.FileName);
             }
@@ -1642,7 +1641,7 @@ namespace ManipAnalysis
                     comboBox_Others_Study.SelectedItem.ToString(),
                     comboBox_Others_Group.SelectedItem.ToString(),
                     comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectInformationContainer)
+                    (SubjectContainer)
                         comboBox_Others_Subject.SelectedItem,
                     Convert.ToInt32(
                         comboBox_Others_Turn.SelectedItem.ToString()
@@ -1726,6 +1725,8 @@ namespace ManipAnalysis
                 comboBox_Start_Database.Enabled = false;
                 button_Start_SelectDatabase.Enabled = false;
             }
+
+            WriteProgressInfo("Ready");
         }
 
         public void SetSqlDatabases(IEnumerable<string> databases)
@@ -1741,7 +1742,7 @@ namespace ManipAnalysis
             _manipAnalysisFunctions.PlotSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectInformationContainer)
+                (SubjectContainer)
                     comboBox_Others_Subject.SelectedItem,
                 Convert.ToInt32(
                     comboBox_Others_Turn.SelectedItem.ToString()
@@ -1776,7 +1777,7 @@ namespace ManipAnalysis
                     comboBox_Others_Study.SelectedItem.ToString(),
                     comboBox_Others_Group.SelectedItem.ToString(),
                     comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectInformationContainer)
+                    (SubjectContainer)
                         comboBox_Others_Subject.SelectedItem,
                     saveFileDialog.FileName);
             }
@@ -1787,7 +1788,7 @@ namespace ManipAnalysis
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectInformationContainer)
+                (SubjectContainer)
                     comboBox_Others_Subject.SelectedItem);
         }
 
@@ -1854,7 +1855,7 @@ namespace ManipAnalysis
             string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
 
-            IEnumerable<SubjectInformationContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
+            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
                 szenario);
             if (subjectNames != null)
             {
@@ -1896,7 +1897,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -1952,7 +1953,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
@@ -2072,17 +2073,17 @@ namespace ManipAnalysis
 
         private void button_Others_PlotGroupLi_Click(object sender, EventArgs e)
         {
-            IEnumerable<SubjectInformationContainer> subjects;
+            IEnumerable<SubjectContainer> subjects;
 
             if (checkBox_Others_GroupAverage.Checked)
             {
-                subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
+                subjects = comboBox_Others_Subject.Items.Cast<SubjectContainer>();
             }
             else
             {
-                subjects = new List<SubjectInformationContainer>
+                subjects = new List<SubjectContainer>
                 {
-                    (SubjectInformationContainer) comboBox_Others_Subject.SelectedItem
+                    (SubjectContainer) comboBox_Others_Subject.SelectedItem
                 };
             }
 
@@ -2123,17 +2124,17 @@ namespace ManipAnalysis
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                IEnumerable<SubjectInformationContainer> subjects;
+                IEnumerable<SubjectContainer> subjects;
 
                 if (checkBox_Others_GroupAverage.Checked)
                 {
-                    subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
+                    subjects = comboBox_Others_Subject.Items.Cast<SubjectContainer>();
                 }
                 else
                 {
-                    subjects = new List<SubjectInformationContainer>
+                    subjects = new List<SubjectContainer>
                     {
-                        (SubjectInformationContainer) comboBox_Others_Subject.SelectedItem
+                        (SubjectContainer) comboBox_Others_Subject.SelectedItem
                     };
                 }
 
@@ -2194,51 +2195,12 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
 
-        private void checkBox_TrajectoryVelocity_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Enabled =
-                checkBox_TrajectoryVelocity_ShowCatchTrials.Checked;
-        }
-
-        private void checkBox_TrajectoryVelocity_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Enabled =
-                checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked;
-        }
-
-        private void checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = false;
-            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked = false;
-
-            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled =
-                !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
-            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Enabled = false;
-
-            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled =
-                !checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked;
-        }
-
-        private void checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
-            EventArgs e)
-        {
-            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = false;
-            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked = false;
-
-            checkBox_TrajectoryVelocity_ShowCatchTrials.Enabled =
-                !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
-            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Enabled = false;
-
-            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Enabled =
-                !checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked;
-        }
-
         private void button_Others_ForcefieldCompensationFactor_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.ForcefieldCompensationFactor(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectInformationContainer)
+                (SubjectContainer)
                     comboBox_Others_Subject.SelectedItem,
                 Convert.ToInt32(
                     comboBox_Others_Turn.SelectedItem.ToString()

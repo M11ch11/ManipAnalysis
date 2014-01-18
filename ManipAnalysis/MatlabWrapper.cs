@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ManipAnalysis
 {
-    public class MatlabWrapper : IDisposable
+    class MatlabWrapper : IDisposable
     {
         private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
         private readonly ManipAnalysisGui _manipAnalysisGui;
@@ -180,7 +180,7 @@ namespace ManipAnalysis
                 Execute("axis manual;");
                 Execute("xlabel('Displacement [m]');");
                 Execute("ylabel('Displacement [m]');");
-                Execute("set(gca,'YDir','rev'); ");
+                //Execute("set(gca,'YDir','rev'); ");
                 Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(gca, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
@@ -415,6 +415,20 @@ namespace ManipAnalysis
             try
             {
                 Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," +
+                        lineWidth +
+                        ")");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+        public void Plot3d(string xVar, string yVar, string zVar, string color, int lineWidth)
+        {
+            try
+            {
+                Execute("plot3(" + xVar + "," + yVar + "," + zVar + ",'Color','" + color + "','LineWidth'," +
                         lineWidth +
                         ")");
             }

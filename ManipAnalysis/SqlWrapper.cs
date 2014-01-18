@@ -5,10 +5,11 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
 using ManipAnalysis.Container;
+using ManipAnalysis.MongoDb;
 
 namespace ManipAnalysis
 {
-    public class SqlWrapper
+    class SqlWrapper
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private SqlCommand _sqlCmd;
@@ -279,8 +280,9 @@ namespace ManipAnalysis
             }
         }
 
-        public void DeleteSubjectStatistics(SubjectInformationContainer subject)
+        public void DeleteSubjectStatistics(SubjectContainer subject)
         {
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.StoredProcedure;
@@ -315,6 +317,7 @@ namespace ManipAnalysis
                     }
                 }
             }
+             */
         }
 
         public void DeleteBaselineData(int baselineID)
@@ -844,11 +847,12 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public DateTime GetTurnDateTime(string study, string group, string szenario, SubjectInformationContainer subject,
+        public DateTime GetTurnDateTime(string study, string group, string szenario, SubjectContainer subject,
             int turn)
         {
+            
             var retVal = new DateTime();
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.StoredProcedure;
@@ -892,7 +896,7 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
@@ -941,12 +945,12 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
+        public int GetTrailID(string study, string group, string szenario, SubjectContainer subject,
             DateTime turnDateTime,
             int target, int trial)
         {
             int retVal = -1;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.StoredProcedure;
@@ -992,7 +996,7 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
@@ -1043,11 +1047,11 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int GetTrailID(string study, string group, string szenario, SubjectInformationContainer subject,
+        public int GetTrailID(string study, string group, string szenario, SubjectContainer subject,
             DateTime turnDateTime, int szenarioTrialNumber)
         {
             int retVal = -1;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.StoredProcedure;
@@ -1092,15 +1096,15 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
-        public int GetBaselineID(string study, string group, string szenario, SubjectInformationContainer subject,
+        public int GetBaselineID(string study, string group, string szenario, SubjectContainer subject,
             int target)
         {
             int retVal = -1;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.StoredProcedure;
@@ -1144,7 +1148,7 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
@@ -1239,11 +1243,11 @@ namespace ManipAnalysis
         }
 
         public DataSet GetStatisticDataSet(string studyName, string groupName, string szenarioName,
-            SubjectInformationContainer subject,
+            SubjectContainer subject,
             DateTime turn)
         {
             DataSet retVal = null;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.Text;
@@ -1287,6 +1291,7 @@ namespace ManipAnalysis
                 }
             }
 
+            */
             return retVal;
         }
 
@@ -1340,10 +1345,10 @@ namespace ManipAnalysis
         }
 
         public DataSet GetBaselineDataSet(string studyName, string groupName, string szenarioName,
-            SubjectInformationContainer subject)
+            SubjectContainer subject)
         {
             DataSet retVal = null;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.Text;
@@ -1385,16 +1390,16 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
         public DataSet GetMeanTimeDataSet(string studyName, string groupName, string szenarioName,
-            SubjectInformationContainer subject,
+            SubjectContainer subject,
             DateTime turnDateTime)
         {
             DataSet retVal = null;
-
+            /*
             _sqlCmd.Parameters.Clear();
 
             _sqlCmd.CommandType = CommandType.Text;
@@ -1437,7 +1442,7 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
@@ -2769,11 +2774,11 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public SubjectInformationContainer[] GetSubjectInformations(string studyName, string groupName,
+        public SubjectContainer[] GetSubjectInformations(string studyName, string groupName,
             string szenarioName)
         {
-            SubjectInformationContainer[] retVal = null;
-
+            SubjectContainer[] retVal = null;
+            /*
             _sqlCmd.Parameters.Clear();
             _sqlCmd.CommandType = CommandType.Text;
             _sqlCmd.CommandText = "SELECT * FROM getSubjectInformations(@studyName,@groupName,@szenarioName);";
@@ -2791,10 +2796,10 @@ namespace ManipAnalysis
 
                     if (sqlRdr.HasRows)
                     {
-                        var rows = new List<SubjectInformationContainer>();
+                        var rows = new List<SubjectContainer>();
                         while (sqlRdr.Read())
                         {
-                            rows.Add(new SubjectInformationContainer(sqlRdr.GetInt32(0), sqlRdr.GetString(1),
+                            rows.Add(new SubjectContainer(sqlRdr.GetInt32(0), sqlRdr.GetString(1),
                                 sqlRdr.GetString(2)));
                         }
                         sqlRdr.Close();
@@ -2825,12 +2830,12 @@ namespace ManipAnalysis
                     }
                 }
             }
-
+            */
             return retVal;
         }
 
         public string[] GetTurns(string studyName, string groupName, string szenarioName,
-            SubjectInformationContainer subject)
+            SubjectContainer subject)
         {
             string[] retVal = null;
 
@@ -2842,7 +2847,7 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@studyName", studyName));
             _sqlCmd.Parameters.Add(new SqlParameter("@groupName", groupName));
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenarioName));
-            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.PId));
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)

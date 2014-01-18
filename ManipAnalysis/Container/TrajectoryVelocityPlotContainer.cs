@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using ManipAnalysis.MongoDb;
 
 namespace ManipAnalysis.Container
 {
-    public class TrajectoryVelocityPlotContainer
+    class TrajectoryVelocityPlotContainer
     {
         private readonly string _group;
         private readonly string _study;
-        private readonly SubjectInformationContainer _subject;
+        private readonly SubjectContainer _subject;
         private readonly string _szenario;
         private readonly int _target;
         private readonly List<int> _trials;
         private readonly int _turn;
 
         public TrajectoryVelocityPlotContainer(string study, string group, string szenario,
-            SubjectInformationContainer subject, string turn, string target,
+            SubjectContainer subject, string turn, string target,
             IEnumerable<string> trials)
         {
             _study = study;
@@ -54,7 +55,7 @@ namespace ManipAnalysis.Container
             get { return _szenario; }
         }
 
-        public SubjectInformationContainer Subject
+        public SubjectContainer Subject
         {
             get { return _subject; }
         }
@@ -70,13 +71,12 @@ namespace ManipAnalysis.Container
         }
 
         public bool UpdateTrajectoryVelocityPlotContainer(string study, string group, string szenario,
-            SubjectInformationContainer subject, string turn,
+            SubjectContainer subject, string turn,
             string target, IEnumerable<string> trials)
         {
             bool retval = false;
 
-            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.ID == subject.ID) &&
-                (_subject.SubjectID == subject.SubjectID) && (_subject.SubjectName == subject.SubjectName) &&
+            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.PId == subject.PId) && (_subject.PId == subject.PId) &&
                 (_turn == Convert.ToInt32(turn.Substring(5, 1))) && (_target == Convert.ToInt32(target.Substring(7, 2))))
             {
                 foreach (string trial in trials)

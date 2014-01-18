@@ -16,7 +16,7 @@ namespace ManipAnalysis
     /// <summary>
     ///     This class provides all interactive functionality between the Gui and the programm.
     /// </summary>
-    public class ManipAnalysisFunctions
+    class ManipAnalysisFunctions
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private readonly MatlabWrapper _myMatlabWrapper;
@@ -131,7 +131,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetSzenarios(string study, string group)
         {
-            return _myDatabaseWrapper.GetSzenarioNames(study, group);
+            return _myMongoDbWrapperWrapper.GetSzenarioNames(study, group);
         }
 
         /// <summary>
@@ -141,9 +141,10 @@ namespace ManipAnalysis
         /// <param name="group"></param>
         /// <param name="szenario"></param>
         /// <returns></returns>
-        public IEnumerable<SubjectInformationContainer> GetSubjects(string study, string group, string szenario)
+        public IEnumerable<SubjectContainer> GetSubjects(string study, string group, string szenario)
         {
-            return _myDatabaseWrapper.GetSubjectInformations(study, group, szenario);
+            return _myMongoDbWrapperWrapper.GetSubjectInformations(study, group, szenario);
+            
         }
 
         /// <summary>
@@ -155,9 +156,15 @@ namespace ManipAnalysis
         /// <param name="subject"></param>
         /// <returns></returns>
         public IEnumerable<string> GetTurns(string study, string group, string szenario,
-            SubjectInformationContainer subject)
+            SubjectContainer subject)
         {
-            return _myDatabaseWrapper.GetTurns(study, group, szenario, subject);
+            var turnList = new List<string>();
+            int turns = _myMongoDbWrapperWrapper.GetTurns(study, group, szenario, subject).Count();
+            for (int turn = 1; turn <= turns; turn++)
+            {
+                turnList.Add("Turn " + turn);
+            }
+            return turnList;
         }
 
         /// <summary>
@@ -168,7 +175,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTargets(string study, string szenario)
         {
-            return _myDatabaseWrapper.GetTargets(study, szenario);
+            return _myMongoDbWrapperWrapper.GetTargetNumbers(study, szenario).Select(t => "Target " + t.ToString("00"));
         }
 
         /// <summary>
@@ -179,7 +186,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
-            return _myDatabaseWrapper.GetTrials(study, szenario);
+            return _myMongoDbWrapperWrapper.GetTrialNumbers(study, szenario).Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>
@@ -217,7 +224,7 @@ namespace ManipAnalysis
         /// <param name="turn"></param>
         /// <returns></returns>
         private DateTime GetTurnDateTime(string study, string group, string szenario,
-            SubjectInformationContainer subject,
+            SubjectContainer subject,
             int turn)
         {
             return _myDatabaseWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
@@ -233,7 +240,7 @@ namespace ManipAnalysis
         }
 
         public void PlotSzenarioMeanTimes(string study, string group, string szenario,
-            SubjectInformationContainer subject, int turn)
+            SubjectContainer subject, int turn)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -272,7 +279,7 @@ namespace ManipAnalysis
         }
 
         public void ExportSzenarioMeanTimes(string study, string group, string szenario,
-            SubjectInformationContainer subject, int turn, string fileName)
+            SubjectContainer subject, int turn, string fileName)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -323,7 +330,7 @@ namespace ManipAnalysis
             _myDatabaseWrapper.InitializeDatabase();
         }
 
-        public void PlotBaseline(string study, string group, string szenario, SubjectInformationContainer subject)
+        public void PlotBaseline(string study, string group, string szenario, SubjectContainer subject)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -2619,8 +2626,7 @@ namespace ManipAnalysis
         }
 
         public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-            bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-            bool showErrorclampTrialsExclusivly, bool showForceVectors, bool showPdForceVectors)
+            bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, bool showForceVectors, bool showPdForceVectors)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -2639,7 +2645,6 @@ namespace ManipAnalysis
                     }
                     _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
 
-
                     int counter = 0;
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
                     {
@@ -2649,6 +2654,33 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                         counter++;
+
+                            DateTime turnDateTime =
+                                _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
+                                    tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
+
+                            foreach (int trial in tempContainer.Trials)
+                            {
+                                if (TaskManager.Cancel)
+                                {
+                                    break;
+                                }
+
+                                var positionData = _myMongoDbWrapperWrapper.GetNormalizedPosition(tempContainer.Study,
+                                    tempContainer.Group,
+                                    tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
+                                    showNormalTrials, showCatchTrials, showErrorclampTrials);
+
+                                _myMatlabWrapper.SetWorkspaceData("positionDataX", positionData.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("positionDataY", positionData.Select(t => t.Y - 0.2).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("positionDataZ", positionData.Select(t => t.Z).ToArray());
+
+                                //_myMatlabWrapper.Execute("plot3(positionDataX, positionDataY, positionDataZ);");
+
+                                _myMatlabWrapper.Plot3d("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                            }
+                        }
+                        /*
                         DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
                             tempContainer.Szenario,
                             tempContainer.Subject,
@@ -2791,7 +2823,7 @@ namespace ManipAnalysis
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
                 else if (meanIndividual == "Mean")
                 {
@@ -2896,8 +2928,7 @@ namespace ManipAnalysis
         }
 
         public void PlotVelocity(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-            bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-            bool showErrorclampTrialsExclusivly)
+            bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -2906,7 +2937,7 @@ namespace ManipAnalysis
 
                 if (meanIndividual == "Individual")
                 {
-                    _myMatlabWrapper.CreateVelocityFigure("Velocity plot", 101);
+                    _myMatlabWrapper.CreateVelocityFigure("Individual velocity plot", 101);
 
                     int counter = 0;
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
@@ -2917,85 +2948,25 @@ namespace ManipAnalysis
                         }
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                         counter++;
-                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
-                            tempContainer.Szenario,
-                            tempContainer.Subject,
-                            tempContainer.Turn);
+
+                        DateTime turnDateTime =
+                            _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
+                                tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
+
                         foreach (int trial in tempContainer.Trials)
                         {
                             if (TaskManager.Cancel)
                             {
                                 break;
                             }
-                            int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
-                                tempContainer.Szenario,
-                                tempContainer.Subject, turnDateTime,
-                                tempContainer.Target, trial);
-                            DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
-                            var velocityDataXZ = new List<double>();
 
-                            foreach (DataRow row in velocityDataSet.Tables[0].Rows)
-                            {
-                                if (TaskManager.Cancel)
-                                {
-                                    break;
-                                }
-                                if (showCatchTrialsExclusivly)
-                                {
-                                    if (Convert.ToBoolean(row["is_catch_trial"]))
-                                    {
-                                        velocityDataXZ.Add(
-                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }
-                                }
-                                else if (showErrorclampTrialsExclusivly)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]))
-                                    {
-                                        velocityDataXZ.Add(
-                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }
-                                }
-                                else if (showCatchTrials & showErrorclampTrials)
-                                {
-                                    velocityDataXZ.Add(
-                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                }
-                                else if (!showCatchTrials & showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_catch_trial"]) == false)
-                                    {
-                                        velocityDataXZ.Add(
-                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }
-                                }
-                                else if (showCatchTrials & !showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
-                                    {
-                                        velocityDataXZ.Add(
-                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }
-                                }
-                                else if (!showCatchTrials & !showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
-                                        Convert.ToBoolean(row["is_catch_trial"]) == false)
-                                    {
-                                        velocityDataXZ.Add(
-                                            Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                      Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                    }
-                                }
-                            }
+                            var velocityData = _myMongoDbWrapperWrapper.GetNormalizedVelocity(tempContainer.Study,
+                                tempContainer.Group,
+                                tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
+                                showNormalTrials, showCatchTrials, showErrorclampTrials);
 
-                            _myMatlabWrapper.SetWorkspaceData("XZ", velocityDataXZ.ToArray());
-                            _myMatlabWrapper.Plot("XZ", "black", 2);
+                            _myMatlabWrapper.SetWorkspaceData("velocity", velocityData.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2))).ToArray());
+                            _myMatlabWrapper.Plot("velocity", "black", 2);
                         }
                     }
                 }
@@ -3021,6 +2992,7 @@ namespace ManipAnalysis
                         {
                             int targetCounterVar = targetCounter;
                             int meanCounter = 0;
+
                             var dataXZ = new List<double>();
 
                             foreach (
@@ -3175,7 +3147,7 @@ namespace ManipAnalysis
                             selectedTrailsList.Select(t => t.Group).Distinct().ToArray();
                         string[] szenarioArray =
                             selectedTrailsList.Select(t => t.Szenario).Distinct().ToArray();
-                        SubjectInformationContainer[] subjectArray =
+                        SubjectContainer[] subjectArray =
                             selectedTrailsList.Select(t => t.Subject).Distinct().ToArray();
                         int[] turnArray =
                             selectedTrailsList.Select(t => t.Turn)
@@ -3271,7 +3243,7 @@ namespace ManipAnalysis
                                     (t, i) =>
                                         String.Join(",", studyArray) + ";" + String.Join(",", groupArray) + ";" +
                                         String.Join(",", szenarioArray) + ";" +
-                                        String.Join<SubjectInformationContainer>(",", subjectArray) + ";" +
+                                        String.Join<SubjectContainer>(",", subjectArray) + ";" +
                                         String.Join(",", turnArray) + ";" + targetArray[counterVar] + ";" + trials +
                                         ";" + i + ";" + DoubleConverter.ToExactString(t) + ";" +
                                         DoubleConverter.ToExactString(dataZ[i])));
@@ -3380,7 +3352,7 @@ namespace ManipAnalysis
                             selectedTrailsList.Select(t => t.Group).Distinct().ToArray();
                         string[] szenarioArray =
                             selectedTrailsList.Select(t => t.Szenario).Distinct().ToArray();
-                        SubjectInformationContainer[] subjectArray =
+                        SubjectContainer[] subjectArray =
                             selectedTrailsList.Select(t => t.Subject).Distinct().ToArray();
                         int[] turnArray =
                             selectedTrailsList.Select(t => t.Turn)
@@ -3472,7 +3444,7 @@ namespace ManipAnalysis
                                     (t, i) => String.Join(",", studyArray) + ";" +
                                               String.Join(",", groupArray) + ";" +
                                               String.Join(",", szenarioArray) + ";" +
-                                              String.Join<SubjectInformationContainer>(",", subjectArray) +
+                                              String.Join<SubjectContainer>(",", subjectArray) +
                                               ";" +
                                               String.Join(",", turnArray) + ";" + targetArray[counterVar] +
                                               ";" + trials +
@@ -3498,7 +3470,7 @@ namespace ManipAnalysis
         }
 
         public void ExportTrajectoryBaseline(string study, string group, string szenario,
-            SubjectInformationContainer subject, string fileName)
+            SubjectContainer subject, string fileName)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -3554,7 +3526,7 @@ namespace ManipAnalysis
         }
 
         public void ExportVelocityBaseline(string study, string group, string szenario,
-            SubjectInformationContainer subject, string fileName)
+            SubjectContainer subject, string fileName)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -3610,7 +3582,7 @@ namespace ManipAnalysis
         }
 
         public void PlotVelocityBaselines(string study, string group, string szenario,
-            SubjectInformationContainer subject)
+            SubjectContainer subject)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -3650,7 +3622,7 @@ namespace ManipAnalysis
         {
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
-            SubjectInformationContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
+            SubjectContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
 
             int counter = 0;
 
@@ -3813,11 +3785,11 @@ namespace ManipAnalysis
         }
 
         public void PlotLearningIndex(string study, string group, string szenario,
-            IEnumerable<SubjectInformationContainer> subjects, int turn)
+            IEnumerable<SubjectContainer> subjects, int turn)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
+                List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
                 string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
                 // List of all trials in the szenario
                 int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
@@ -3926,11 +3898,11 @@ namespace ManipAnalysis
         }
 
         public void ExportLearningIndex(string fileName, string study, string group, string szenario,
-            IEnumerable<SubjectInformationContainer> subjects, int turn)
+            IEnumerable<SubjectContainer> subjects, int turn)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                List<SubjectInformationContainer> subjectList = subjects.ToList(); // Subject list
+                List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
                 string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
                 // List of all trials in the szenario
                 int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
@@ -4008,7 +3980,7 @@ namespace ManipAnalysis
                 string line = "SzenarioSetNumber,";
                 for (int subjectCounter = 0; subjectCounter < subjectList.Count & !TaskManager.Cancel; subjectCounter++)
                 {
-                    line += subjectList.ElementAt(subjectCounter).SubjectID + ",";
+                    line += subjectList.ElementAt(subjectCounter).PId + ",";
                 }
                 line += "Mean,Std";
                 cache.Add(line);
@@ -4058,7 +4030,7 @@ namespace ManipAnalysis
         }
 
         public void ForcefieldCompensationFactor(string study, string group, string szenario,
-            SubjectInformationContainer subject, int turn, int msIndex)
+            SubjectContainer subject, int turn, int msIndex)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {

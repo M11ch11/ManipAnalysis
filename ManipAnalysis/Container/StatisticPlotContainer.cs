@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using ManipAnalysis.MongoDb;
 
 namespace ManipAnalysis.Container
 {
-    public class StatisticPlotContainer
+    class StatisticPlotContainer
     {
         private readonly string _group;
         private readonly string _study;
-        private readonly SubjectInformationContainer _subject;
+        private readonly SubjectContainer _subject;
         private readonly string _szenario;
         private readonly List<int> _trials;
         private readonly string _turn;
 
-        public StatisticPlotContainer(string study, string group, string szenario, SubjectInformationContainer subject,
+        public StatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject,
             string turn, IEnumerable<string> trials)
         {
             _study = study;
@@ -51,7 +52,7 @@ namespace ManipAnalysis.Container
             get { return _szenario; }
         }
 
-        public SubjectInformationContainer Subject
+        public SubjectContainer Subject
         {
             get { return _subject; }
         }
@@ -62,13 +63,13 @@ namespace ManipAnalysis.Container
         }
 
         public bool UpdateStatisticPlotContainer(string study, string group, string szenario,
-            SubjectInformationContainer subject, string turn,
+            SubjectContainer subject, string turn,
             IEnumerable<string> trials)
         {
             bool retval = false;
 
-            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.ID == subject.ID) &&
-                (_subject.SubjectID == subject.SubjectID) && (_subject.SubjectName == subject.SubjectName) &&
+            if ((_study == study) && (_group == group) && (_szenario == szenario) &&
+                (_subject.PId == subject.PId) && (_subject.Name == subject.Name) &&
                 (_turn == turn))
             {
                 foreach (string trial in trials)
