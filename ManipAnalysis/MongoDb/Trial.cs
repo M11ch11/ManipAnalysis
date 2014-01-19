@@ -48,5 +48,7 @@ namespace ManipAnalysis.MongoDb
         public int NormalizedDataSampleRate { get; set; }
 
         public string TrialVersion { get; set; }
+
+        public PositionContainer PositionOffset = new PositionContainer();
     }
 }

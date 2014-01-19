@@ -137,16 +137,31 @@ namespace ManipAnalysis
                     var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
                     float frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
-                    int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
                     int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
                     int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM");
+                    int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
 
-                    if (targetNumber != 17 && _szenarioName != "Szenario01")
+                    if (targetNumber != 17 && _szenarioName != "Szenario01") // Target 17 == StartTrial
                     {
                         var currentTrial = new Trial();
                         var measureFileContainer = new MeasureFileContainer();
                         var subjectContainer = new SubjectContainer();
                         var targetContainer = new TargetContainer();
+
+                        if (targetNumber >= 21 && targetNumber <= 36) // PauseTrial
+                        {
+                            targetNumber = targetNumber - 20;
+                        }
+                        else if (targetNumber >= 41 && targetNumber <= 56) // CatchTrial NKR
+                        {
+                            targetNumber = targetNumber - 40;
+                            currentTrial.CatchTrial = true;
+                        }
+                        else if (targetNumber >= 61 && targetNumber <= 76) // ErrorClampTrial
+                        {
+                            targetNumber = targetNumber - 60;
+                            currentTrial.ErrorClampTrial = true;
+                        }
 
                         measureFileContainer.CreationTime = _measureFileCreationDateTime;
                         measureFileContainer.FileHash = _measureFileHash;
@@ -170,6 +185,7 @@ namespace ManipAnalysis
                         currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
                         currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                         currentTrial.TrialVersion = "KINARM_1.0";
+                        currentTrial.PositionOffset.Y = -0.2;
 
                         for (int frame = 0; frame < c3DReader.FramesCount; frame++)
                         {
@@ -210,9 +226,9 @@ namespace ManipAnalysis
 
                             positionRaw.PositionStatus = positionStatus;
                             positionRaw.TimeStamp = timeStamp;
-                            positionRaw.X = positionDataVector.X;
-                            positionRaw.Y = positionDataVector.Y;
-                            positionRaw.Z = positionDataVector.Z;
+                            positionRaw.X = positionDataVector.X + currentTrial.PositionOffset.X;
+                            positionRaw.Y = positionDataVector.Y + currentTrial.PositionOffset.Y;
+                            positionRaw.Z = positionDataVector.Z + currentTrial.PositionOffset.Z;
 
                             // Get analog data for this frame
                             measuredForcesRaw.PositionStatus = positionStatus;

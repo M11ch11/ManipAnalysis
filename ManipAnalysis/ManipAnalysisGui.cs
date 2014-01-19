@@ -1114,7 +1114,7 @@ namespace ManipAnalysis
             comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedIndex = 0;
 
             IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames != null)
+            if (studyNames.Any())
             {
                 comboBox_TrajectoryVelocity_Study.Items.AddRange(studyNames.ToArray());
                 comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
@@ -1132,7 +1132,7 @@ namespace ManipAnalysis
 
             IEnumerable<string> groupNames =
                 _manipAnalysisFunctions.GetGroups(comboBox_TrajectoryVelocity_Study.SelectedItem.ToString());
-            if (groupNames != null)
+            if (groupNames.Any())
             {
                 listBox_TrajectoryVelocity_Groups.Items.AddRange(groupNames.ToArray());
                 listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
@@ -1153,7 +1153,7 @@ namespace ManipAnalysis
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
 
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
-                if (szenarioIntersect != null)
+                if (szenarioIntersect.Any())
                 {
                     for (int i = 1; i < groups.Length; i++)
                     {
@@ -1243,13 +1243,13 @@ namespace ManipAnalysis
             IEnumerable<string> targets = _manipAnalysisFunctions.GetTargets(study, szenario);
             IEnumerable<string> trials = _manipAnalysisFunctions.GetTrials(study, szenario);
 
-            if (targets != null)
+            if (targets.Any())
             {
                 listBox_TrajectoryVelocity_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
                 listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
             }
 
-            if (trials != null)
+            if (trials.Any())
             {
                 listBox_TrajectoryVelocity_Trials.Items.AddRange(trials.OrderBy(t => t).ToArray());
                 listBox_TrajectoryVelocity_Trials.SelectedIndex = 0;

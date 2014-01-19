@@ -24,14 +24,16 @@ namespace ManipAnalysis
         private MongoCollection<Trial> _trialCollection;
         private MongoCollection<Baseline> _baselineCollection;
         private MongoCollection<SzenarioMeanTime> _szenarioMeanTimeCollection;
+        private ManipAnalysisGui _myManipAnalysisGui;
 
         private string _mongoDbDatabaseString;
         private string _mongoDbPasswordString;
         private string _mongoDbServerString;
         private string _mongoDbUsernameString;
 
-        public MongoDbWrapper()
+        public MongoDbWrapper(ManipAnalysisGui myManipAnalysisGui)
         {
+            _myManipAnalysisGui = myManipAnalysisGui;
             _mongoDbDatabaseString = "local";
             _mongoDbPasswordString = "!sport12";
             _mongoDbServerString = "localhost";
@@ -71,113 +73,376 @@ namespace ManipAnalysis
             _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
         }
 
-        public IEnumerable<string> GetStudyNames()
+        public IEnumerable<string> GetStudys()
         {
-            return _trialCollection.AsQueryable().Select(t => t.Study).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Select(t => t.Study).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetStudys: " + ex);
+                return new List<string>();
+            }
         }
 
-        public IEnumerable<string> GetGroupNames(string studyName)
+        public IEnumerable<string> GetGroups(string studyName)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName).Select(t => t.Group).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName).Select(t => t.Group).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetGroups: " + ex);
+                return new List<string>();
+            }
         }
 
-        public IEnumerable<string> GetSzenarioNames(string studyName, string groupName)
+        public IEnumerable<string> GetSzenarios(string studyName, string groupName)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName).Select(t => t.Szenario).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName).Select(t => t.Szenario).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarios: " + ex);
+                return new List<string>();
+            }
         }
 
-        public IEnumerable<SubjectContainer> GetSubjectInformations(string studyName, string groupName, string szenarioName)
+        public IEnumerable<SubjectContainer> GetSubjects(string studyName, string groupName, string szenarioName)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName).Select(t => t.Subject).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName).Select(t => t.Subject).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSubjects: " + ex);
+                return new List<SubjectContainer>();
+            }
         }
 
         public IEnumerable<DateTime> GetTurns(string studyName, string groupName, string szenarioName, SubjectContainer subject)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject).Select(t => t.MeasureFile.CreationTime).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject).Select(t => t.MeasureFile.CreationTime).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetTurns: " + ex);
+                return new List<DateTime>();
+            }
         }
 
-        public IEnumerable<int> GetTargetNumbers(string studyName, string szenarioName)
+        public IEnumerable<int> GetTargets(string studyName, string szenarioName)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.Target.Number).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.Target.Number).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetTargets: " + ex);
+                return new List<int>();
+            }
         }
 
-        public IEnumerable<int> GetTrialNumbers(string studyName, string szenarioName)
+        public IEnumerable<int> GetTrials(string studyName, string szenarioName)
         {
-            return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.TargetTrialNumberInSzenario).Distinct();
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.TargetTrialNumberInSzenario).Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetTrials: " + ex);
+                return new List<int>();
+            }
         }
 
         public List<VelocityContainer> GetNormalizedVelocity(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
-            if(showNormalTrials && showCatchTrials && showErrorclampTrials)
+            List<VelocityContainer> retVal;
+            try
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial).VelocityNormalized;
+                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial)
+                            .VelocityNormalized;
+                }
+                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial)
+                            .VelocityNormalized;
+                }
+                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial)
+                            .VelocityNormalized;
+                }
+                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial)
+                            .VelocityNormalized;
+                }
+                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial)
+                            .VelocityNormalized;
+                }
+                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial)
+                            .VelocityNormalized;
+                }
+                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial)
+                            .VelocityNormalized;
+                }
+                else
+                {
+                    retVal = new List<VelocityContainer>();
+                }
             }
-            else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+            catch (Exception)
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial).VelocityNormalized;
+                retVal = new List<VelocityContainer>();
             }
-            else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
+
+            return retVal;
+        }
+
+        public Trial GetTrial(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
+        {
+            Trial retVal;
+            try
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial).VelocityNormalized;
+                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial);
+                }
+                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial);
+                }
+                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial);
+                }
+                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial);
+                }
+                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial);
+                }
+                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial);
+                }
+                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial);
+                }
+                else
+                {
+                    retVal = null;
+                }
             }
-            else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
+            catch (Exception)
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial).VelocityNormalized;
+                retVal = null;
             }
-            else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial).VelocityNormalized;
-            }
-            else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial).VelocityNormalized;
-            }
-            else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial).VelocityNormalized;
-            }
-            else
-            {
-                return null;
-            }
+
+            return retVal;
         }
 
         public List<PositionContainer> GetNormalizedPosition(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
-            if (showNormalTrials && showCatchTrials && showErrorclampTrials)
+            List<PositionContainer> retVal;
+            try
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial).PositionNormalized;
+                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial)
+                            .PositionNormalized;
+                }
+                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial)
+                            .PositionNormalized;
+                }
+                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial)
+                            .PositionNormalized;
+                }
+                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial)
+                            .PositionNormalized;
+                }
+                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial)
+                            .PositionNormalized;
+                }
+                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial)
+                            .PositionNormalized;
+                }
+                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .SingleOrDefault(
+                                t =>
+                                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                                    t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial)
+                            .PositionNormalized;
+                }
+                else
+                {
+                    retVal = new List<PositionContainer>();
+                }
             }
-            else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+            catch (Exception)
             {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial).PositionNormalized;
+                retVal = new List<PositionContainer>();
             }
-            else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial).PositionNormalized;
-            }
-            else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial).PositionNormalized;
-            }
-            else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial).PositionNormalized;
-            }
-            else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial).PositionNormalized;
-            }
-            else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
-            {
-                return _trialCollection.AsQueryable().SingleOrDefault(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial).PositionNormalized;
-            }
-            else
-            {
-                return null;
-            }
+
+            return retVal;
         }
 
         public bool CheckIfMeasureFileHashExists(string measureFileHash)

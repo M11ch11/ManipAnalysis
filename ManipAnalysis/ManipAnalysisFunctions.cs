@@ -29,7 +29,7 @@ namespace ManipAnalysis
             _myMatlabWrapper = myMatlabWrapper;
             _myDatabaseWrapper = mySqlWrapper;
             _myManipAnalysisGui = myManipAnalysisGui;
-            _myMongoDbWrapperWrapper = new MongoDbWrapper();
+            _myMongoDbWrapperWrapper = new MongoDbWrapper(myManipAnalysisGui);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetStudys()
         {
-            return _myMongoDbWrapperWrapper.GetStudyNames();
+            return _myMongoDbWrapperWrapper.GetStudys();
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetGroups(string study)
         {
-            return _myMongoDbWrapperWrapper.GetGroupNames(study);
+            return _myMongoDbWrapperWrapper.GetGroups(study);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetSzenarios(string study, string group)
         {
-            return _myMongoDbWrapperWrapper.GetSzenarioNames(study, group);
+            return _myMongoDbWrapperWrapper.GetSzenarios(study, group);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<SubjectContainer> GetSubjects(string study, string group, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetSubjectInformations(study, group, szenario);
+            return _myMongoDbWrapperWrapper.GetSubjects(study, group, szenario);
             
         }
 
@@ -175,7 +175,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTargets(string study, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetTargetNumbers(study, szenario).Select(t => "Target " + t.ToString("00"));
+            return _myMongoDbWrapperWrapper.GetTargets(study, szenario).Select(t => "Target " + t.ToString("00"));
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetTrialNumbers(study, szenario).Select(t => "Trial " + t.ToString("000"));
+            return _myMongoDbWrapperWrapper.GetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>
@@ -2643,7 +2643,7 @@ namespace ManipAnalysis
                     {
                         _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
                     }
-                    _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
+                    _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
 
                     int counter = 0;
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
@@ -2666,18 +2666,61 @@ namespace ManipAnalysis
                                     break;
                                 }
 
-                                var positionData = _myMongoDbWrapperWrapper.GetNormalizedPosition(tempContainer.Study,
+                                var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                     tempContainer.Group,
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                     showNormalTrials, showCatchTrials, showErrorclampTrials);
 
-                                _myMatlabWrapper.SetWorkspaceData("positionDataX", positionData.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("positionDataY", positionData.Select(t => t.Y - 0.2).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("positionDataZ", positionData.Select(t => t.Z).ToArray());
+                                if (trialContainer != null)
+                                {
 
-                                //_myMatlabWrapper.Execute("plot3(positionDataX, positionDataY, positionDataZ);");
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataX",
+                                        trialContainer.PositionNormalized.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataY",
+                                        trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ",
+                                        trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
 
-                                _myMatlabWrapper.Plot3d("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+
+                                    if (showForceVectors || showPdForceVectors)
+                                    {
+                                        for (int i = 2; i < trialContainer.PositionNormalized.Count & !TaskManager.Pause; i++)
+                                        {
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
+                                            {
+                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
+                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
+                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
+                                            });
+
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
+                                            {
+                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
+                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
+                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
+                                            });
+
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[]
+                                            {
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/100.0,
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/100.0,
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/100.0
+                                            });
+
+                                            if (showForceVectors)
+                                            {
+                                                _myMatlabWrapper.Execute(
+                                                    "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                            }
+                                            if (showPdForceVectors)
+                                            {
+                                                _myMatlabWrapper.Execute("fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         /*
@@ -2960,12 +3003,12 @@ namespace ManipAnalysis
                                 break;
                             }
 
-                            var velocityData = _myMongoDbWrapperWrapper.GetNormalizedVelocity(tempContainer.Study,
+                            var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                 tempContainer.Group,
                                 tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                 showNormalTrials, showCatchTrials, showErrorclampTrials);
 
-                            _myMatlabWrapper.SetWorkspaceData("velocity", velocityData.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2))).ToArray());
+                            _myMatlabWrapper.SetWorkspaceData("velocity", trialContainer.VelocityNormalized.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2))).ToArray());
                             _myMatlabWrapper.Plot("velocity", "black", 2);
                         }
                     }

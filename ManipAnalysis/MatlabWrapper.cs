@@ -424,25 +424,11 @@ namespace ManipAnalysis
             }
         }
 
-        public void Plot3d(string xVar, string yVar, string zVar, string color, int lineWidth)
+        public void Plot(string xVar, string yVar, string zVar, string color, int lineWidth)
         {
             try
             {
                 Execute("plot3(" + xVar + "," + yVar + "," + zVar + ",'Color','" + color + "','LineWidth'," +
-                        lineWidth +
-                        ")");
-            }
-            catch (Exception ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
-        public void Plot(string xVar, string yVar, string color, int lineWidth, string axis)
-        {
-            try
-            {
-                Execute("plot(" + axis + "," + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," +
                         lineWidth +
                         ")");
             }
