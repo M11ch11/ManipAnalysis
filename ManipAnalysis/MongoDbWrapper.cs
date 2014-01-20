@@ -208,7 +208,7 @@ namespace ManipAnalysis
                 }
                 else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && t.CatchTrial && t.ErrorClampTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && (t.CatchTrial || t.ErrorClampTrial)).Select(t => t.TrialNumberInSzenario).Distinct();
                 }
                 else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
                 {
@@ -275,7 +275,7 @@ namespace ManipAnalysis
                     retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
                         t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
                         t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial))
+                        t.TargetTrialNumberInSzenario == trial && (t.CatchTrial || t.ErrorClampTrial)))
                         .SetFields(fields).SetLimit(1).First();
                 }
                 else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)

@@ -100,6 +100,9 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic1_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic1_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_DescriptiveStatistic2 = new System.Windows.Forms.TabPage();
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials = new System.Windows.Forms.CheckBox();
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials = new System.Windows.Forms.CheckBox();
             this.button_DescriptiveStatistic2_CalculateMeanValues = new System.Windows.Forms.Button();
             this.listBox_DescriptiveStatistic2_Turns = new System.Windows.Forms.ListBox();
             this.label_DescriptiveStatistic2_Turns = new System.Windows.Forms.Label();
@@ -247,9 +250,6 @@ namespace ManipAnalysis
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -384,7 +384,6 @@ namespace ManipAnalysis
             this.tabControl_VisualizationExport.SelectedIndex = 0;
             this.tabControl_VisualizationExport.Size = new System.Drawing.Size(727, 628);
             this.tabControl_VisualizationExport.TabIndex = 0;
-            this.tabControl_VisualizationExport.SelectedIndexChanged += new System.EventHandler(this.tabControl_VisualizationExport_SelectedIndexChanged);
             // 
             // tabPage_TrajectoryVelocity
             // 
@@ -775,7 +774,7 @@ namespace ManipAnalysis
             this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.TabIndex = 60;
             this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Text = "Show errorclamp trials";
             this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged_1);
+            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged);
             // 
             // checkBox_DescriptiveStatistic1_ShowCatchTrials
             // 
@@ -1067,6 +1066,45 @@ namespace ManipAnalysis
             this.tabPage_DescriptiveStatistic2.Text = "Descriptive Statistic 2";
             this.tabPage_DescriptiveStatistic2.UseVisualStyleBackColor = true;
             this.tabPage_DescriptiveStatistic2.Enter += new System.EventHandler(this.tabPage_DescriptiveStatistic2_Enter);
+            // 
+            // checkBox_DescriptiveStatistic2_ShowNormalTrials
+            // 
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.AutoSize = true;
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Checked = true;
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Location = new System.Drawing.Point(3, 547);
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Name = "checkBox_DescriptiveStatistic2_ShowNormalTrials";
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Size = new System.Drawing.Size(111, 17);
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.TabIndex = 64;
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Text = "Show normal trials";
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.UseVisualStyleBackColor = true;
+            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowNormalTrials_CheckedChanged);
+            // 
+            // checkBox_DescriptiveStatistic2_ShowErrorclampTrials
+            // 
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.AutoSize = true;
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = true;
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Location = new System.Drawing.Point(3, 582);
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Name = "checkBox_DescriptiveStatistic2_ShowErrorclampTrials";
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.TabIndex = 63;
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Text = "Show errorclamp trials";
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.UseVisualStyleBackColor = true;
+            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged);
+            // 
+            // checkBox_DescriptiveStatistic2_ShowCatchTrials
+            // 
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.AutoSize = true;
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = true;
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Location = new System.Drawing.Point(3, 565);
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic2_ShowCatchTrials";
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.TabIndex = 62;
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Text = "Show catch trials";
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.UseVisualStyleBackColor = true;
+            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged);
             // 
             // button_DescriptiveStatistic2_CalculateMeanValues
             // 
@@ -2564,42 +2602,6 @@ namespace ManipAnalysis
             this.checkBox_Cancel.Text = "Cancel";
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
-            // 
-            // checkBox_DescriptiveStatistic2_ShowNormalTrials
-            // 
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Location = new System.Drawing.Point(3, 547);
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Name = "checkBox_DescriptiveStatistic2_ShowNormalTrials";
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Size = new System.Drawing.Size(111, 17);
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.TabIndex = 64;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Text = "Show normal trials";
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_DescriptiveStatistic2_ShowErrorclampTrials
-            // 
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Location = new System.Drawing.Point(3, 582);
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Name = "checkBox_DescriptiveStatistic2_ShowErrorclampTrials";
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.TabIndex = 63;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Text = "Show errorclamp trials";
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_DescriptiveStatistic2_ShowCatchTrials
-            // 
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Location = new System.Drawing.Point(3, 565);
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic2_ShowCatchTrials";
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.TabIndex = 62;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Text = "Show catch trials";
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.UseVisualStyleBackColor = true;
             // 
             // ManipAnalysisGui
             // 

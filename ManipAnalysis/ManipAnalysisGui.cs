@@ -392,7 +392,7 @@ namespace ManipAnalysis
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-            bool showNormalTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
+            bool showNormalTrials = checkBox_DescriptiveStatistic1_ShowNormalTrials.Checked;
             bool showCatchTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
             bool showErrorclampTrials = checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
 
@@ -401,7 +401,7 @@ namespace ManipAnalysis
                 showCatchTrials,
                 showErrorclampTrials);
 
-            if (szenarioTrialNames != null)
+            if (szenarioTrialNames.Any())
             {
                 listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames.ToArray());
                 listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;
@@ -2126,24 +2126,34 @@ namespace ManipAnalysis
 
         private delegate void TabControlCallback(bool enable);
 
-        private void tabControl_VisualizationExport_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
         {
-
+            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
         }
 
         private void checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
         {
-
+            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
         }
 
-        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged_1(object sender, EventArgs e)
+        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
         {
+            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
+        }
 
+        private void checkBox_DescriptiveStatistic2_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
+        }
+
+        private void checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
+        }
+
+        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
+        {
+            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
         }
     }
 }
