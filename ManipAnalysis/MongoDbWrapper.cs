@@ -71,6 +71,23 @@ namespace ManipAnalysis
             _trialCollection = _mongoDatabase.GetCollection<Trial>("Trial");
             _baselineCollection = _mongoDatabase.GetCollection<Baseline>("Baseline");
             _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
+            CheckIndexes();
+        }
+
+        public void CheckIndexes()
+        {
+            IndexKeysBuilder<Trial> trialIndex = new IndexKeysBuilder<Trial>();
+            trialIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            _trialCollection.EnsureIndex(trialIndex);
+
+            IndexKeysBuilder<Baseline> baselineIndex = new IndexKeysBuilder<Baseline>();
+            baselineIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            _baselineCollection.EnsureIndex(baselineIndex);
+
+            IndexKeysBuilder<SzenarioMeanTime> szenarioMeanTimeIndex = new IndexKeysBuilder<SzenarioMeanTime>();
+            szenarioMeanTimeIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+
+            _szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeIndex);
         }
 
         public IEnumerable<string> GetStudys()
@@ -168,6 +185,7 @@ namespace ManipAnalysis
             SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
             List<VelocityContainer> retVal;
+            
             try
             {
                 if (showNormalTrials && showCatchTrials && showErrorclampTrials)
@@ -335,6 +353,81 @@ namespace ManipAnalysis
                                     t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
                                     t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
                                     t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial);
+                }
+                else
+                {
+                    retVal = null;
+                }
+            }
+            catch (Exception)
+            {
+                retVal = null;
+            }
+
+            return retVal;
+        }
+
+        public Trial GetTrial(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, FieldsBuilder<Trial> fields)
+        {
+            Trial retVal;
+            try
+            {
+                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && !t.CatchTrial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && !t.ErrorClampTrial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && !t.ErrorClampTrial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && t.CatchTrial && t.ErrorClampTrial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && !t.CatchTrial && t.ErrorClampTrial))
+                        .SetFields(fields).SetLimit(1).First();
+                }
+                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
+                {
+                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                        t.TargetTrialNumberInSzenario == trial && t.CatchTrial && !t.ErrorClampTrial))
+                        .SetFields(fields).SetLimit(1).First();
                 }
                 else
                 {

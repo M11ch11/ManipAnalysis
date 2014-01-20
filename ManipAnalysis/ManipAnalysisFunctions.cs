@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis.Container;
 using ManipAnalysis.MongoDb;
+using MongoDB.Driver.Builders;
+using MongoDB.Driver.Linq;
 
 
 namespace ManipAnalysis
@@ -2655,218 +2657,86 @@ namespace ManipAnalysis
                         _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                         counter++;
 
-                            DateTime turnDateTime =
-                                _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
-                                    tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
+                        DateTime turnDateTime =
+                            _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
+                                tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
-                            foreach (int trial in tempContainer.Trials)
-                            {
-                                if (TaskManager.Cancel)
-                                {
-                                    break;
-                                }
-
-                                var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
-                                    tempContainer.Group,
-                                    tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
-                                    showNormalTrials, showCatchTrials, showErrorclampTrials);
-
-                                if (trialContainer != null)
-                                {
-
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataX",
-                                        trialContainer.PositionNormalized.Select(t => t.X).ToArray());
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataY",
-                                        trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ",
-                                        trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
-
-                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
-
-                                    if (showForceVectors || showPdForceVectors)
-                                    {
-                                        for (int i = 2; i < trialContainer.PositionNormalized.Count & !TaskManager.Pause; i++)
-                                        {
-                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
-                                            {
-                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
-                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
-                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
-                                            });
-
-                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
-                                            {
-                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
-                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
-                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
-                                            });
-
-                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[]
-                                            {
-                                                trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/100.0,
-                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/100.0,
-                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/100.0
-                                            });
-
-                                            if (showForceVectors)
-                                            {
-                                                _myMatlabWrapper.Execute(
-                                                    "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
-                                            }
-                                            if (showPdForceVectors)
-                                            {
-                                                _myMatlabWrapper.Execute("fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        /*
-                        DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study, tempContainer.Group,
-                            tempContainer.Szenario,
-                            tempContainer.Subject,
-                            tempContainer.Turn);
                         foreach (int trial in tempContainer.Trials)
                         {
                             if (TaskManager.Cancel)
                             {
                                 break;
                             }
-                            int trialId = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
-                                tempContainer.Szenario, tempContainer.Subject,
-                                turnDateTime, tempContainer.Target, trial);
-                            DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialId);
 
-                            var measureDataX = new List<double>();
-                            var measureDataZ = new List<double>();
-                            var forceDataX = new List<double>();
-                            var forceDataZ = new List<double>();
-
-                            foreach (DataRow row in measureDataSet.Tables[0].Rows)
+                            FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
+                            if (showForceVectors || showPdForceVectors)
                             {
-                                if (TaskManager.Cancel)
-                                {
-                                    break;
-                                }
-                                if (showCatchTrialsExclusivly)
-                                {
-                                    if (Convert.ToBoolean(row["is_catch_trial"]))
-                                    {
-                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        if (showForceVectors || showPdForceVectors)
-                                        {
-                                            forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                            forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                        }
-                                    }
-                                }
-                                else if (showErrorclampTrialsExclusivly)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]))
-                                    {
-                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        if (showForceVectors || showPdForceVectors)
-                                        {
-                                            forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                            forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                        }
-                                    }
-                                }
-                                else if (showCatchTrials & showErrorclampTrials)
-                                {
-                                    measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                    measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                    if (showForceVectors || showPdForceVectors)
-                                    {
-                                        forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                        forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                    }
-                                }
-                                else if (!showCatchTrials & showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_catch_trial"]) == false)
-                                    {
-                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        if (showForceVectors || showPdForceVectors)
-                                        {
-                                            forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                            forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                        }
-                                    }
-                                }
-                                else if (showCatchTrials & !showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
-                                    {
-                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        if (showForceVectors || showPdForceVectors)
-                                        {
-                                            forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                            forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                        }
-                                    }
-                                }
-                                else if (!showCatchTrials & !showErrorclampTrials)
-                                {
-                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
-                                        Convert.ToBoolean(row["is_catch_trial"]) == false)
-                                    {
-                                        measureDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        measureDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        if (showForceVectors || showPdForceVectors)
-                                        {
-                                            forceDataX.Add(Convert.ToDouble(row["force_actual_x"]));
-                                            forceDataZ.Add(Convert.ToDouble(row["force_actual_z"]));
-                                        }
-                                    }
-                                }
+                                fields.Include(t1 => t1.PositionNormalized, t2 => t2.MeasuredForcesNormalized);
+
+                            }
+                            else
+                            {
+                                fields.Include(t1 => t1.PositionNormalized);
                             }
 
-                            _myMatlabWrapper.SetWorkspaceData("X", measureDataX.ToArray());
-                            _myMatlabWrapper.SetWorkspaceData("Z", measureDataZ.ToArray());
-                            _myMatlabWrapper.Plot("X", "Z", "black", 2);
+                            var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
+                                tempContainer.Group,
+                                tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
+                                showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
 
-
-                            if ((showForceVectors || showPdForceVectors) && measureDataX.Count > 1)
+                            if (trialContainer != null)
                             {
-                                for (int i = 2; i < measureDataX.Count & !TaskManager.Pause; i++)
+
+                                _myMatlabWrapper.SetWorkspaceData("positionDataX",
+                                    trialContainer.PositionNormalized.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("positionDataY",
+                                    trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("positionDataZ",
+                                    trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
+
+                                _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+
+                                if (showForceVectors || showPdForceVectors)
                                 {
-                                    _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
+                                    for (int i = 2; i < trialContainer.PositionNormalized.Count & !TaskManager.Pause; i++)
                                     {
-                                        measureDataX.ElementAt(i - 2),
-                                        measureDataZ.ElementAt(i - 2)
-                                    });
-                                    _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
-                                    {
-                                        measureDataX.ElementAt(i - 1),
-                                        measureDataZ.ElementAt(i - 1)
-                                    });
-                                    _myMatlabWrapper.SetWorkspaceData("vforce", new[]
-                                    {
-                                        forceDataX.ElementAt(i - 2)/100.0,
-                                        forceDataZ.ElementAt(i - 2)/100.0
-                                    });
-                                    if (showForceVectors)
-                                    {
-                                        _myMatlabWrapper.Execute(
-                                            "quiver(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
-                                    }
-                                    if (showPdForceVectors)
-                                    {
-                                        _myMatlabWrapper.Execute("fPD = pdForceLineSegment(vforce, vpos1, vpos2);");
-                                        _myMatlabWrapper.Execute(
-                                            "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                        _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
+                                        {
+                                            trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
+                                            trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
+                                            trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
+                                        });
+
+                                        _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
+                                        {
+                                            trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
+                                            trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
+                                            trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
+                                        });
+
+                                        _myMatlabWrapper.SetWorkspaceData("vforce", new[]
+                                        {
+                                            trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/100.0,
+                                            trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/100.0,
+                                            trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/100.0
+                                        });
+
+                                        if (showForceVectors)
+                                        {
+                                            _myMatlabWrapper.Execute(
+                                                "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                        }
+                                        if (showPdForceVectors)
+                                        {
+                                            _myMatlabWrapper.Execute(
+                                                "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                        }
                                     }
                                 }
                             }
                         }
-                    }*/
+                    }
                 }
                 else if (meanIndividual == "Mean")
                 {
@@ -2879,39 +2749,28 @@ namespace ManipAnalysis
                     else
                     {
                         _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
-                        _myMatlabWrapper.DrawTargets(0.005, 0.1, 0, 0);
-
+                        _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
 
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
 
-                        for (int targetCounter = 0;
-                            targetCounter < targetArray.Length & !TaskManager.Cancel;
-                            targetCounter++)
+                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
-                            int targetCounterVar = targetCounter;
-                            int meanCounter = 0;
-                            var dataX = new List<double>();
-                            var dataZ = new List<double>();
+                            var positionData = new List<List<PositionContainer>>();
 
-                            foreach (
-                                TrajectoryVelocityPlotContainer tempContainer in
-                                    selectedTrialsList.Where(
-                                        t => t.Target == targetArray[targetCounterVar]))
+                            foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
                             {
                                 if (TaskManager.Cancel)
                                 {
                                     break;
                                 }
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
-                                                                        counter);
+                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
                                 counter++;
-                                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
-                                    tempContainer.Group,
-                                    tempContainer.Szenario,
-                                    tempContainer.Subject,
-                                    tempContainer.Turn);
 
+                                DateTime turnDateTime =
+                                    _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
+                                        tempContainer.Szenario,
+                                        tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
                                 foreach (int trial in tempContainer.Trials)
                                 {
@@ -2919,49 +2778,55 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-                                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
-                                        tempContainer.Szenario,
-                                        tempContainer.Subject, turnDateTime,
-                                        tempContainer.Target, trial);
-                                    DataSet dataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                                    for (int i = 0; i < dataSet.Tables[0].Rows.Count & !TaskManager.Cancel; i++)
+
+                                    FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
+                                    fields.Include(t1 => t1.PositionNormalized);
+
+
+                                    var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
+                                        tempContainer.Group,
+                                        tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
+                                        showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
+
+                                    if (trialContainer != null)
                                     {
-                                        DataRow row = dataSet.Tables[0].Rows[i];
+                                        positionData.Add(trialContainer.PositionNormalized);
+                                    }
+                                }
 
-                                        if (dataX.Count <= i)
-                                        {
-                                            dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        }
-                                        else
-                                        {
-                                            dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
-                                        }
+                                if (positionData.Count > 0)
+                                {
+                                    var xPos = new double[positionData[0].Count];
+                                    var yPos = new double[positionData[0].Count];
+                                    var zPos = new double[positionData[0].Count];
 
-                                        if (dataZ.Count <= i)
+                                    for (int meanCounter = 0; meanCounter < positionData.Count; meanCounter++)
+                                    {
+                                        for (int frameCounter = 0; frameCounter < positionData[meanCounter].Count; frameCounter++)
                                         {
-                                            dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                                        }
-                                        else
-                                        {
-                                            dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                            xPos[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                            yPos[frameCounter] += positionData[meanCounter][frameCounter].Y;
+                                            zPos[frameCounter] += positionData[meanCounter][frameCounter].Z;
                                         }
                                     }
-                                    meanCounter++;
+
+                                    for (int frameCounter = 0; frameCounter < positionData[0].Count; frameCounter++)
+                                    {
+                                        xPos[frameCounter] /= positionData.Count;
+                                        yPos[frameCounter] /= positionData.Count;
+                                        zPos[frameCounter] /= positionData.Count;
+                                    }
+
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataX", xPos);
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataY", yPos);
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ", zPos);
+
+                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
                                 }
                             }
-                            for (int i = 0; i < dataX.Count; i++)
-                            {
-                                dataX[i] /= meanCounter;
-                                dataZ[i] /= meanCounter;
-                            }
-
-                            _myMatlabWrapper.SetWorkspaceData("X", dataX.ToArray());
-                            _myMatlabWrapper.SetWorkspaceData("Z", dataZ.ToArray());
-                            _myMatlabWrapper.Plot("X", "Z", "black", 2);
                         }
                     }
                 }
-
                 _myMatlabWrapper.ClearWorkspace();
 
                 _myManipAnalysisGui.SetProgressBarValue(0);
@@ -3025,35 +2890,26 @@ namespace ManipAnalysis
                     {
                         _myMatlabWrapper.CreateFigure("Velocity plot", "[Samples]", "Velocity [m/s]");
 
-
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
 
-                        for (int targetCounter = 0;
-                            targetCounter < targetArray.Length & !TaskManager.Cancel;
-                            targetCounter++)
+                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
-                            int targetCounterVar = targetCounter;
-                            int meanCounter = 0;
+                            var positionData = new List<List<VelocityContainer>>();
 
-                            var dataXZ = new List<double>();
-
-                            foreach (
-                                TrajectoryVelocityPlotContainer tempContainer in
-                                    selectedTrialsList.Where(t => t.Target == targetArray[targetCounterVar]))
+                            foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
                             {
                                 if (TaskManager.Cancel)
                                 {
                                     break;
                                 }
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
-                                                                        counter);
+                                _myManipAnalysisGui.SetProgressBarValue((100.0 / selectedTrialsList.Count()) * counter);
                                 counter++;
-                                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
-                                    tempContainer.Group,
-                                    tempContainer.Szenario,
-                                    tempContainer.Subject,
-                                    tempContainer.Turn);
+
+                                DateTime turnDateTime =
+                                    _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
+                                        tempContainer.Szenario,
+                                        tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
                                 foreach (int trial in tempContainer.Trials)
                                 {
@@ -3061,42 +2917,44 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-                                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
+
+                                    FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
+                                    fields.Include(t1 => t1.VelocityNormalized);
+
+
+                                    var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
-                                        tempContainer.Szenario,
-                                        tempContainer.Subject,
-                                        turnDateTime, tempContainer.Target,
-                                        trial);
-                                    DataSet dataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                                        tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
+                                        showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
 
-                                    for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                                    if (trialContainer != null)
                                     {
-                                        DataRow row = dataSet.Tables[0].Rows[i];
+                                        positionData.Add(trialContainer.VelocityNormalized);
+                                    }
+                                }
 
-                                        if (dataXZ.Count <= i)
+                                if (positionData.Count > 0)
+                                {
+                                    var xyzVel = new double[positionData[0].Count];
+
+                                    for (int meanCounter = 0; meanCounter < positionData.Count; meanCounter++)
+                                    {
+                                        for (int frameCounter = 0; frameCounter < positionData[meanCounter].Count; frameCounter++)
                                         {
-                                            dataXZ.Add(
-                                                Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                          Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
-                                        }
-                                        else
-                                        {
-                                            dataXZ[i] +=
-                                                Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                          Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                            xyzVel[frameCounter] += Math.Sqrt(Math.Pow(positionData[meanCounter][frameCounter].X, 2) + Math.Pow(positionData[meanCounter][frameCounter].Y, 2) + Math.Pow(positionData[meanCounter][frameCounter].Z, 2));
                                         }
                                     }
-                                    meanCounter++;
+
+                                    for (int frameCounter = 0; frameCounter < positionData[0].Count; frameCounter++)
+                                    {
+                                        xyzVel[frameCounter] /= positionData.Count;
+                                    }
+
+                                    _myMatlabWrapper.SetWorkspaceData("velocityData", xyzVel);
+
+                                    _myMatlabWrapper.Plot("velocityData", "black", 2);
                                 }
                             }
-
-                            for (int i = 0; i < dataXZ.Count; i++)
-                            {
-                                dataXZ[i] /= meanCounter;
-                            }
-
-                            _myMatlabWrapper.SetWorkspaceData("X", dataXZ.ToArray());
-                            _myMatlabWrapper.Plot("X", "black", 2);
                         }
                     }
                 }

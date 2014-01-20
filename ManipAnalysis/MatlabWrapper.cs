@@ -200,7 +200,7 @@ namespace ManipAnalysis
                 Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
                 Execute("axis1 = gca;");
                 Execute("set(axis1,'XColor','k','YColor','k')");
-                Execute("set(axis1,'YDir','rev'); ");
+                //Execute("set(axis1,'YDir','rev'); ");
                 Execute("set(axis1, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis1, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis1, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
