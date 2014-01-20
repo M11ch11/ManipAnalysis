@@ -17,11 +17,11 @@ namespace ManipAnalysis.MongoDb
         public List<PositionContainer> PositionFiltered;
         public List<PositionContainer> PositionNormalized;
         public List<PositionContainer> PositionRaw;
-        public List<StatisticContainer> Statistics;
         public List<VelocityContainer> VelocityFiltered;
         public List<VelocityContainer> VelocityNormalized;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
+        public StatisticContainer Statistics;
 
         public string  Study{ get; set; }
         public string Group { get; set; }

@@ -22,21 +22,21 @@
 %   - Input:
 %       posX = Vector of dimension N (=101) representating x-coordinates
 %       of trajectory points
-%       posZ = Vector of dimension N (=101) representating z-coordinates
+%       posY = Vector of dimension N (=101) representating y-coordinates
 %       of trajectory points
 %   - Output:
 %       length = length of the 2dim trajectory
 
-function [length] = trajectLength(posX, posZ)
+function [length] = trajectLength(posX, posY)
 
 [mX, nX] = size(posX);     % posx & posY are supposed to be column vectors
-[mZ, nZ] = size(posZ);     % in case of time normalization: [mX,nX]=[mZ,nZ]=[101,1]
+[mY, nY] = size(posY);     % in case of time normalization: [mX,nX]=[mZ,nZ]=[101,1]
 counter = 0;
 
 % check for valid dimensions
-if (mX ~= mZ)
+if (mX ~= mY)
     error('dimension error (invalid number of rows)')
-elseif (nX ~= nZ)
+elseif (nX ~= nY)
     error('dimension error (invalid number of columns)')
 elseif (nX > 1)
     error('dimension error (invalid numeber of columns)')
@@ -45,7 +45,7 @@ end
 % calculation of trajectory length 
 % by summing up the distance of each point to the next point
 for i = 1 : (mX-1)
-    counter = counter + norm( [posX(i+1),posZ(i+1)] - [posX(i),posZ(i)] , 2 );
+    counter = counter + norm( [posX(i+1),posY(i+1)] - [posX(i),posY(i)] , 2 );
 end
 
 length = counter;

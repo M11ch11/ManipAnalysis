@@ -138,7 +138,7 @@ namespace ManipAnalysis
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
                     float frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
                     int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
-                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM");
+                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1; // -1 == Compensation of first Trial
                     int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
 
                     if (targetNumber != 17 && _szenarioName != "Szenario01") // Target 17 == StartTrial

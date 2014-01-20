@@ -212,6 +212,7 @@
     <Compile Include="SqlWrapper.cs" />
     <Compile Include="StdDev.cs" />
     <Compile Include="TaskManager.cs" />
+    <Compile Include="TicToc.cs" />
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />

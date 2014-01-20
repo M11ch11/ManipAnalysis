@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis.Container;
 using ManipAnalysis.MongoDb;
+using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 
@@ -188,7 +189,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
+            return _myMongoDbWrapperWrapper.GetTargetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>
@@ -372,12 +373,9 @@ namespace ManipAnalysis
             }));
         }
 
-        public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, bool showCatchTrials,
-            bool showCatchTrialsExclusivly, bool showErrorclampTrials,
-            bool showErrorclampTrialsExclusivly)
+        public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
-            return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, showCatchTrials, showCatchTrialsExclusivly,
-                showErrorclampTrials, showErrorclampTrialsExclusivly);
+            return _myMongoDbWrapperWrapper.GetSzenarioTrials(study, szenario, showNormalTrials, showCatchTrials, showErrorclampTrials).Select(t => "Trial " + t.ToString("000"));
         }
 
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
@@ -2330,16 +2328,13 @@ namespace ManipAnalysis
 
             _myManipAnalysisGui.EnableTabPages(false);
             _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
+            int counter = 0;
 
-            List<int[]> trialInfos = _myDatabaseWrapper.GetStatisticCalculationInformation();
-            /*
-            List<int[]> trialInfos = _mySqlWrapper.GetStatisticUpdateInformation();
-            */
-            if (trialInfos != null)
+            var trialList = _myMongoDbWrapperWrapper.GetTrialsWithoutStatistics().ToList();
+
+            if (trialList.Count() > 0)
             {
-                int counter = 1;
-
-                foreach (var trialInfo in trialInfos)
+                foreach (var trial in trialList)
                 {
                     if (TaskManager.Cancel)
                     {
@@ -2349,151 +2344,66 @@ namespace ManipAnalysis
                     {
                         Thread.Sleep(100);
                     }
-
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/trialInfos.Count())*counter);
+                    _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
                     counter++;
 
-                    DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialInfo[0]);
-                    DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialInfo[0]);
-                    DataSet baselineDataSet = _myDatabaseWrapper.GetBaselineDataSet(trialInfo[1], trialInfo[2], trialInfo[3],
-                        trialInfo[4]);
-                    /*
-                    DataSet statisticDataSet = _mySqlWrapper.GetStatisticDataSet(trialInfo[0]);
-                    */
+                    var baseline = _myMongoDbWrapperWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target);
 
-                    int targetNumber = trialInfo[5];
-
-                    if (baselineDataSet.Tables[0].Rows.Count > 0)
+                    if (baseline != null)
                     {
-                        if ((measureDataSet.Tables[0].Rows.Count == velocityDataSet.Tables[0].Rows.Count) &&
-                            (velocityDataSet.Tables[0].Rows.Count == baselineDataSet.Tables[0].Rows.Count))
-                        {
-                            try
-                            {
-                                int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                        int time300MsIndex =
+                            trial.PositionNormalized.Select(t => t.TimeStamp).ToList().IndexOf(
+                                trial.PositionNormalized.Select(t => t.TimeStamp).ToList().OrderBy(
+                                    d => Math.Abs(d.Ticks -
+                                                  (trial.PositionNormalized.Select(t => t.TimeStamp).ElementAt(0).Ticks +
+                                                   TimeSpan.FromMilliseconds(300).Ticks)))
+                                    .ElementAt(0));
 
-                                var measureData = new double[sampleCount, 3];
-                                var velocityData = new double[sampleCount, 3];
-                                var baselineData = new double[sampleCount, 6];
-                                var timeStamp = new double[sampleCount];
+                        _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
+                        _myMatlabWrapper.SetWorkspaceData("time300msIndex", time300MsIndex);
+                        _myMatlabWrapper.SetWorkspaceData("positionX", trial.PositionNormalized.Select(t => t.X).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("positionY", trial.PositionNormalized.Select(t => t.Y).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("velocityX", trial.VelocityNormalized.Select(t => t.X).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("velocityY", trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
+                        _myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
 
-                                for (int i = 0; i < sampleCount; i++)
-                                {
-                                    timeStamp[i] =
-                                        Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+                        _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                        _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
+                        _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
+                        _myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                        _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
+                        _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
+                        _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
+                        _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
+                        _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+                        _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                        _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                        _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                        _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
-                                    measureData[i, 0] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
-                                    measureData[i, 1] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
-                                    measureData[i, 2] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+                        var statisticContainer = new StatisticContainer();
+                        statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                        statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
+                        statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
+                        statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                        statisticContainer.AbsolutePerpendicularDisplacement300Ms = _myMatlabWrapper.GetWorkspaceData("distance300msAbs");
+                        statisticContainer.SignedPerpendicularDisplacement300Ms = _myMatlabWrapper.GetWorkspaceData("distance300msSign");
+                        statisticContainer.AbsoluteMeanPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+                        statisticContainer.AbsoluteMaximalPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                        statisticContainer.SignedMaximalPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+                        statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
 
-                                    velocityData[i, 0] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]);
-                                    velocityData[i, 1] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_y"]);
-                                    velocityData[i, 2] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]);
+                        trial.Statistics = statisticContainer;
+                        trial.BaselineObjectId = baseline.Id;
 
-                                    baselineData[i, 0] =
-                                        Convert.ToDouble(
-                                            baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_x"]);
-                                    baselineData[i, 1] =
-                                        Convert.ToDouble(
-                                            baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_y"]);
-                                    baselineData[i, 2] =
-                                        Convert.ToDouble(
-                                            baselineDataSet.Tables[0].Rows[i]["baseline_position_cartesian_z"]);
-                                    baselineData[i, 3] =
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_x"]);
-                                    baselineData[i, 4] =
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_y"]);
-                                    baselineData[i, 5] =
-                                        Convert.ToDouble(baselineDataSet.Tables[0].Rows[i]["baseline_velocity_z"]);
-                                }
-
-                                List<double> tempTimeList = timeStamp.ToList();
-                                int time300MsIndex =
-                                    tempTimeList.IndexOf(
-                                        tempTimeList.OrderBy(
-                                            d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(300).Ticks)))
-                                            .ElementAt(0));
-
-                                _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
-                                _myMatlabWrapper.SetWorkspaceData("time300msIndex", time300MsIndex);
-                                _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
-                                _myMatlabWrapper.SetWorkspaceData("velocityData", velocityData);
-                                _myMatlabWrapper.SetWorkspaceData("baselineData", baselineData);
-
-                                _myMatlabWrapper.Execute(
-                                    "vector_correlation = vectorCorrelation([velocityData(:,1) velocityData(:,3)],[baselineData(:,4) baselineData(:,6)]);");
-                                _myMatlabWrapper.Execute(
-                                    "enclosed_area = enclosedArea(measureData(:,1),measureData(:,3));");
-                                _myMatlabWrapper.Execute(
-                                    "length_abs = trajectLength(measureData(:,1),measureData(:,3));");
-                                _myMatlabWrapper.Execute(
-                                    "length_ratio = trajectLength(measureData(:,1),measureData(:,3)) / trajectLength(baselineData(:,1),baselineData(:,3));");
-                                _myMatlabWrapper.Execute(
-                                    "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
-                                _myMatlabWrapper.Execute(
-                                    "distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
-                                _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
-                                _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
-                                _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
-                                _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
-                                _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                _myMatlabWrapper.Execute(
-                                    "rmse = rootMeanSquareError([measureData(:,1) measureData(:,3)], [baselineData(:,1) baselineData(:,3)]);");
-
-                                double vectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
-                                double enclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
-                                double lengthAbs = _myMatlabWrapper.GetWorkspaceData("length_abs");
-                                double lengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
-                                double distance300MsAbs = _myMatlabWrapper.GetWorkspaceData("distance300msAbs");
-                                double distance300MsSign = _myMatlabWrapper.GetWorkspaceData("distance300msSign");
-                                double meanDistanceAbs = _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
-                                double maxDistanceAbs = _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
-                                double maxDistanceSign = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                                double rmse = _myMatlabWrapper.GetWorkspaceData("rmse");
-
-
-                                _myDatabaseWrapper.InsertStatisticData(trialInfo[0], vectorCorrelation, lengthAbs,
-                                    lengthRatio, distance300MsAbs, maxDistanceAbs,
-                                    meanDistanceAbs, distance300MsSign, maxDistanceSign,
-                                    enclosedArea, rmse);
-
-
-                                /*
-                                _mySqlWrapper.UpdateStatisticData(trialInfo[0], 
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["velocity_vector_correlation"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["trajectory_length_abs"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["trajectory_length_ratio_baseline"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_abs"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_abs"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["mean_perpendicular_displacement_abs"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["perpendicular_displacement_300ms_sign"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["maximal_perpendicular_displacement_sign"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["enclosed_area"]),
-                                    Convert.ToDouble(statisticDataSet.Tables[0].Rows[0]["rmse"]));
-                                */
-                            }
-                            catch (Exception statisticException)
-                            {
-                                _myManipAnalysisGui.WriteToLogBox("Error in Statistic calculation: " +
-                                                                  statisticException);
-                            }
-                        }
-                        else
-                        {
-                            _myManipAnalysisGui.WriteToLogBox("TrialID: " + trialInfo[0] + " - Data not normalised!");
-                        }
-                        _myMatlabWrapper.ClearWorkspace();
+                        _myMongoDbWrapperWrapper.UpdateTrialStatisticsAndBaselineId(trial);
                     }
                     else
                     {
-                        _myManipAnalysisGui.WriteToLogBox("TrialID: " + trialInfo[0] + " - No matching baseline found!");
+                        _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial:" + trial.Study + "/" + trial.Group + "/" + trial.Subject.PId + "/" + trial.Szenario);
                     }
                 }
             }
@@ -2753,6 +2663,8 @@ namespace ManipAnalysis
 
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
+                        FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
+                        fields.Include(t1 => t1.PositionNormalized);
 
                         for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
@@ -2778,10 +2690,6 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-
-                                    FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
-                                    fields.Include(t1 => t1.PositionNormalized);
-
 
                                     var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
@@ -2842,7 +2750,9 @@ namespace ManipAnalysis
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
 
+                fields.Include(t1 => t1.VelocityNormalized);
                 if (meanIndividual == "Individual")
                 {
                     _myMatlabWrapper.CreateVelocityFigure("Individual velocity plot", 101);
@@ -2871,7 +2781,7 @@ namespace ManipAnalysis
                             var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                 tempContainer.Group,
                                 tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
-                                showNormalTrials, showCatchTrials, showErrorclampTrials);
+                                showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
 
                             _myMatlabWrapper.SetWorkspaceData("velocity", trialContainer.VelocityNormalized.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2))).ToArray());
                             _myMatlabWrapper.Plot("velocity", "black", 2);
@@ -2917,10 +2827,6 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
-
-                                    FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
-                                    fields.Include(t1 => t1.VelocityNormalized);
-
 
                                     var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
@@ -3944,7 +3850,7 @@ namespace ManipAnalysis
 
                     DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
 
-                    IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true, true);
+                    IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true);
                     if (trialStringList != null)
                     {
                         var trialList = new List<int>();

@@ -392,16 +392,14 @@ namespace ManipAnalysis
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
+            bool showNormalTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
             bool showCatchTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
-            bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
             bool showErrorclampTrials = checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
-            bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
+                showNormalTrials,
                 showCatchTrials,
-                showCatchTrialsExclusivly,
-                showErrorclampTrials,
-                showErrorclampTrialsExclusivly);
+                showErrorclampTrials);
 
             if (szenarioTrialNames != null)
             {
@@ -616,18 +614,11 @@ namespace ManipAnalysis
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
             IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames != null)
+            if (studyNames.Any())
             {
                 comboBox_DescriptiveStatistic1_Study.Items.AddRange(studyNames.ToArray());
                 comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
             }
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled =
-                checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
         }
 
         private void comboBox_DescriptiveStatistic2_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -641,7 +632,7 @@ namespace ManipAnalysis
             IEnumerable<string> groupNames =
                 _manipAnalysisFunctions.GetGroups(comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString());
 
-            if (groupNames != null)
+            if (groupNames.Any())
             {
                 listBox_DescriptiveStatistic2_Groups.Items.AddRange(groupNames.ToArray());
                 listBox_DescriptiveStatistic2_Groups.SelectedIndex = 0;
@@ -661,7 +652,7 @@ namespace ManipAnalysis
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
 
-                if (szenarioIntersect != null)
+                if (szenarioIntersect.Any())
                 {
                     for (int i = 1; i < groups.Length; i++)
                     {
@@ -690,7 +681,7 @@ namespace ManipAnalysis
                 IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
                     groups[i],
                     szenario);
-                if (tempSubjects != null)
+                if (tempSubjects.Any())
                 {
                     listBox_DescriptiveStatistic2_Subjects.Items.AddRange(tempSubjects.ToArray());
                 }
@@ -717,7 +708,7 @@ namespace ManipAnalysis
                     IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
                         subjects[j]);
 
-                    if (tempTurnString != null)
+                    if (tempTurnString.Any())
                     {
                         if (turnIntersect == null)
                         {
@@ -745,29 +736,20 @@ namespace ManipAnalysis
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
+            bool showNormalTrials = checkBox_DescriptiveStatistic2_ShowNormalTrials.Checked;
             bool showCatchTrials = checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
-            bool showCatchTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
             bool showErrorclampTrials = checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked;
-            bool showErrorclampTrialsExclusivly = checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
+                showNormalTrials,
                 showCatchTrials,
-                showCatchTrialsExclusivly,
-                showErrorclampTrials,
-                showErrorclampTrialsExclusivly);
+                showErrorclampTrials);
 
-            if (szenarioTrialNames != null)
+            if (szenarioTrialNames.Any())
             {
                 listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNames.ToArray());
                 listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
             }
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled =
-                checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
         }
 
         private void button_DescriptiveStatistic2_AddSelected_Click(object sender, EventArgs e)
@@ -857,7 +839,7 @@ namespace ManipAnalysis
 
             IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
 
-            if (studyNames != null)
+            if (studyNames.Any())
             {
                 comboBox_DescriptiveStatistic2_Study.Items.AddRange(studyNames.ToArray());
                 comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
@@ -1442,7 +1424,7 @@ namespace ManipAnalysis
             comboBox_Others_Turn.Items.Clear();
 
             IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames != null)
+            if (studyNames.Any())
             {
                 comboBox_Others_Study.Items.AddRange(studyNames.ToArray());
                 comboBox_Others_Study.SelectedIndex = 0;
@@ -1458,7 +1440,7 @@ namespace ManipAnalysis
 
             IEnumerable<string> groupNames =
                 _manipAnalysisFunctions.GetGroups(comboBox_Others_Study.SelectedItem.ToString());
-            if (groupNames != null)
+            if (groupNames.Any())
             {
                 comboBox_Others_Group.Items.AddRange(groupNames.ToArray());
                 comboBox_Others_Group.SelectedIndex = 0;
@@ -1475,7 +1457,7 @@ namespace ManipAnalysis
             string group = comboBox_Others_Group.SelectedItem.ToString();
 
             IEnumerable<string> szenarioNames = _manipAnalysisFunctions.GetSzenarios(study, group);
-            if (szenarioNames != null)
+            if (szenarioNames.Any())
             {
                 comboBox_Others_Szenario.Items.AddRange(szenarioNames.ToArray());
                 comboBox_Others_Szenario.SelectedIndex = 0;
@@ -1493,7 +1475,7 @@ namespace ManipAnalysis
 
             IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
                 szenario);
-            if (subjectNames != null)
+            if (subjectNames.Any())
             {
                 comboBox_Others_Subject.Items.AddRange(subjectNames.ToArray());
                 comboBox_Others_Subject.SelectedIndex = 0;
@@ -1510,7 +1492,7 @@ namespace ManipAnalysis
             var subject = (SubjectContainer)comboBox_Others_Subject.SelectedItem;
 
             IEnumerable<string> turnNames = _manipAnalysisFunctions.GetTurns(study, group, szenario, subject);
-            if (turnNames != null)
+            if (turnNames.Any())
             {
                 comboBox_Others_Turn.Items.AddRange(turnNames.ToArray());
                 comboBox_Others_Turn.SelectedIndex = 0;
@@ -1653,36 +1635,6 @@ namespace ManipAnalysis
         private void button_Import_ClearMeasureFileList_Click(object sender, EventArgs e)
         {
             listBox_Import_SelectedMeasureFiles.Items.Clear();
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked = false;
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked = false;
-
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled =
-                !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled = false;
-
-            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled =
-                !checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked;
-
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = false;
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked = false;
-
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled =
-                !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Enabled = false;
-
-            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled =
-                !checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked;
-
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
         }
 
         private void button_DataManipulation_DeleteMeasureFile_Click(object sender, EventArgs e)
@@ -2149,52 +2101,6 @@ namespace ManipAnalysis
             }
         }
 
-        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Enabled =
-                checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked;
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Enabled =
-                checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
-            EventArgs e)
-        {
-            checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked = false;
-            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Checked = false;
-
-            checkBox_DescriptiveStatistic1_ShowCatchTrials.Enabled =
-                !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
-            checkBox_DescriptiveStatistic1_ShowCatchTrialsExclusivly.Enabled = false;
-
-            checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Enabled =
-                !checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly.Checked;
-
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(this, new EventArgs());
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly_CheckedChanged(object sender,
-            EventArgs e)
-        {
-            checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = false;
-            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Checked = false;
-
-            checkBox_DescriptiveStatistic2_ShowCatchTrials.Enabled =
-                !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
-            checkBox_DescriptiveStatistic2_ShowCatchTrialsExclusivly.Enabled = false;
-
-            checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Enabled =
-                !checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly.Checked;
-
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(this, new EventArgs());
-        }
-
         private void button_Others_ForcefieldCompensationFactor_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.ForcefieldCompensationFactor(comboBox_Others_Study.SelectedItem.ToString(),
@@ -2219,5 +2125,25 @@ namespace ManipAnalysis
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void tabControl_VisualizationExport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
