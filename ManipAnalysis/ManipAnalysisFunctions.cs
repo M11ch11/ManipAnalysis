@@ -2537,26 +2537,69 @@ namespace ManipAnalysis
             TaskManager.Remove(Task.CurrentId);
         }
 
-        public void PlotTrajectory(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
+        public void PlotTrajectoryVelocityForce(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual, string trajectoryVelocityForce,
             bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, bool showForceVectors, bool showPdForceVectors)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
 
-                if (meanIndividual == "Individual")
+                if (trajectoryVelocityForce == "Velocity - Normalized")
+                {
+                    fields.Include(t1 => t1.VelocityNormalized);
+                    _myMatlabWrapper.CreateVelocityFigure("Velocity plot normalized", 101);
+                }
+                else if (trajectoryVelocityForce == "Velocity - Filtered")
+                {
+                    fields.Include(t1 => t1.VelocityFiltered);
+                    _myMatlabWrapper.CreateFigure("Velocity plot filtered", "[Samples]", "Velocity [m/s]");
+                }
+                else if (trajectoryVelocityForce == "Trajectory - Normalized")
                 {
                     if (showForceVectors || showPdForceVectors)
                     {
-                        _myMatlabWrapper.CreateTrajectoryForceFigure("XZ-Plot");
+                        fields.Include(t1 => t1.PositionNormalized, t2 => t2.MeasuredForcesNormalized);
+                        _myMatlabWrapper.CreateTrajectoryForceFigure("Trajectory plot normalized");
                     }
                     else
                     {
-                        _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
+                        fields.Include(t1 => t1.PositionNormalized);
+                        _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                     }
                     _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                }
+                else if (trajectoryVelocityForce == "Trajectory - Filtered")
+                {
+                    fields.Include(t1 => t1.PositionFiltered);
+                    _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
+                    _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                }
+                else if (trajectoryVelocityForce == "Trajectory - Raw")
+                {
+                    fields.Include(t1 => t1.PositionRaw);
+                    _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
+                    _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                }
+                else if (trajectoryVelocityForce == "Force - Normalized")
+                {
+                    fields.Include(t1 => t1.MeasuredForcesNormalized);
+                    _myMatlabWrapper.CreateFigure("Force plot normalized", "[Samples]", "Force [N]");
+                }
+                else if (trajectoryVelocityForce == "Force - Filtered")
+                {
+                    fields.Include(t1 => t1.MeasuredForcesFiltered);
+                    _myMatlabWrapper.CreateFigure("Force plot filtered", "[Samples]", "Force [N]");
+                }
+                else if (trajectoryVelocityForce == "Force - Raw")
+                {
+                    fields.Include(t1 => t1.MeasuredForcesRaw);
+                    _myMatlabWrapper.CreateFigure("Force plot raw", "[Samples]", "Force [N]");
+                }
 
+                if (meanIndividual == "Individual")
+                {
                     int counter = 0;
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
                     {
@@ -2576,17 +2619,6 @@ namespace ManipAnalysis
                             if (TaskManager.Cancel)
                             {
                                 break;
-                            }
-
-                            FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
-                            if (showForceVectors || showPdForceVectors)
-                            {
-                                fields.Include(t1 => t1.PositionNormalized, t2 => t2.MeasuredForcesNormalized);
-
-                            }
-                            else
-                            {
-                                fields.Include(t1 => t1.PositionNormalized);
                             }
 
                             var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
@@ -2596,53 +2628,112 @@ namespace ManipAnalysis
 
                             if (trialContainer != null)
                             {
-
-                                _myMatlabWrapper.SetWorkspaceData("positionDataX",
-                                    trialContainer.PositionNormalized.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("positionDataY",
-                                    trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("positionDataZ",
-                                    trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
-
-                                _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
-
-                                if (showForceVectors || showPdForceVectors)
+                                if (trajectoryVelocityForce == "Velocity - Normalized")
                                 {
-                                    for (int i = 2; i < trialContainer.PositionNormalized.Count & !TaskManager.Pause; i++)
+                                    _myMatlabWrapper.SetWorkspaceData("velocity",
+                                        trialContainer.VelocityNormalized.Select(
+                                            t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
+                                    _myMatlabWrapper.Plot("velocity", "black", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Velocity - Filtered")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("velocity",
+                                        trialContainer.VelocityFiltered.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))
+                                            .ToArray());
+                                    _myMatlabWrapper.Plot("velocity", "black", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Trajectory - Normalized")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataX",
+                                        trialContainer.PositionNormalized.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataY",
+                                        trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ",
+                                        trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
+
+                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+
+                                    if (showForceVectors || showPdForceVectors)
                                     {
-                                        _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
+                                        for (int i = 2; i < trialContainer.PositionNormalized.Count & !TaskManager.Pause; i++)
                                         {
-                                            trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
-                                            trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
-                                            trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
-                                        });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
+                                            {
+                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
+                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
+                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
+                                            });
 
-                                        _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
-                                        {
-                                            trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
-                                            trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
-                                            trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
-                                        });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
+                                            {
+                                                trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
+                                                trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
+                                                trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
+                                            });
 
-                                        _myMatlabWrapper.SetWorkspaceData("vforce", new[]
-                                        {
-                                            trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/100.0,
-                                            trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/100.0,
-                                            trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/100.0
-                                        });
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[]
+                                            {
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/100.0,
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/100.0,
+                                                trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/100.0
+                                            });
 
-                                        if (showForceVectors)
-                                        {
-                                            _myMatlabWrapper.Execute(
-                                                "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
-                                        }
-                                        if (showPdForceVectors)
-                                        {
-                                            _myMatlabWrapper.Execute(
-                                                "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                            if (showForceVectors)
+                                            {
+                                                _myMatlabWrapper.Execute(
+                                                    "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                            }
+                                            if (showPdForceVectors)
+                                            {
+                                                _myMatlabWrapper.Execute(
+                                                    "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                            }
                                         }
                                     }
+                                }
+                                else if (trajectoryVelocityForce == "Trajectory - Filtered")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataX",
+                                        trialContainer.PositionFiltered.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataY",
+                                        trialContainer.PositionFiltered.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ",
+                                        trialContainer.PositionFiltered.Select(t => t.Z).ToArray());
+
+                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Trajectory - Raw")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataX",
+                                        trialContainer.PositionRaw.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataY",
+                                        trialContainer.PositionRaw.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ",
+                                        trialContainer.PositionRaw.Select(t => t.Z).ToArray());
+
+                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Force - Normalized")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("forceX", trialContainer.MeasuredForcesNormalized.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("forceY", trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.Plot("forceX", "red", 2);
+                                    _myMatlabWrapper.Plot("forceY", "green", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Force - Filtered")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("forceX", trialContainer.MeasuredForcesFiltered.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("forceY", trialContainer.MeasuredForcesFiltered.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.Plot("forceX", "red", 2);
+                                    _myMatlabWrapper.Plot("forceY", "green", 2);
+                                }
+                                else if (trajectoryVelocityForce == "Force - Raw")
+                                {
+                                    _myMatlabWrapper.SetWorkspaceData("forceX", trialContainer.MeasuredForcesRaw.Select(t => t.X).ToArray());
+                                    _myMatlabWrapper.SetWorkspaceData("forceY", trialContainer.MeasuredForcesRaw.Select(t => t.Y).ToArray());
+                                    _myMatlabWrapper.Plot("forceX", "red", 2);
+                                    _myMatlabWrapper.Plot("forceY", "green", 2);
                                 }
                             }
                         }
@@ -2650,162 +2741,20 @@ namespace ManipAnalysis
                 }
                 else if (meanIndividual == "Mean")
                 {
-                    if (
-                        selectedTrialsList.Select(t => t.Trials.ToArray())
-                            .Distinct(new ArrayComparer()).Count() > 1)
+                    if (selectedTrialsList.Select(t => t.Trials.ToArray()).Distinct(new ArrayComparer()).Count() > 1)
                     {
                         _myManipAnalysisGui.WriteToLogBox("Trial selections are not equal!");
                     }
                     else
                     {
-                        _myMatlabWrapper.CreateTrajectoryFigure("XZ-Plot");
-                        _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
-
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
                         int counter = 0;
-                        FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
-                        fields.Include(t1 => t1.PositionNormalized);
 
                         for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
                             var positionData = new List<List<PositionContainer>>();
-
-                            foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
-                            {
-                                if (TaskManager.Cancel)
-                                {
-                                    break;
-                                }
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                                counter++;
-
-                                DateTime turnDateTime =
-                                    _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
-                                        tempContainer.Szenario,
-                                        tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
-
-                                foreach (int trial in tempContainer.Trials)
-                                {
-                                    if (TaskManager.Cancel)
-                                    {
-                                        break;
-                                    }
-
-                                    var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
-                                        tempContainer.Group,
-                                        tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
-                                        showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
-
-                                    if (trialContainer != null)
-                                    {
-                                        positionData.Add(trialContainer.PositionNormalized);
-                                    }
-                                }
-
-                                if (positionData.Count > 0)
-                                {
-                                    var xPos = new double[positionData[0].Count];
-                                    var yPos = new double[positionData[0].Count];
-                                    var zPos = new double[positionData[0].Count];
-
-                                    for (int meanCounter = 0; meanCounter < positionData.Count; meanCounter++)
-                                    {
-                                        for (int frameCounter = 0; frameCounter < positionData[meanCounter].Count; frameCounter++)
-                                        {
-                                            xPos[frameCounter] += positionData[meanCounter][frameCounter].X;
-                                            yPos[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                            zPos[frameCounter] += positionData[meanCounter][frameCounter].Z;
-                                        }
-                                    }
-
-                                    for (int frameCounter = 0; frameCounter < positionData[0].Count; frameCounter++)
-                                    {
-                                        xPos[frameCounter] /= positionData.Count;
-                                        yPos[frameCounter] /= positionData.Count;
-                                        zPos[frameCounter] /= positionData.Count;
-                                    }
-
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataX", xPos);
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataY", yPos);
-                                    _myMatlabWrapper.SetWorkspaceData("positionDataZ", zPos);
-
-                                    _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
-                                }
-                            }
-                        }
-                    }
-                }
-                _myMatlabWrapper.ClearWorkspace();
-
-                _myManipAnalysisGui.SetProgressBarValue(0);
-                _myManipAnalysisGui.WriteProgressInfo("Ready");
-                TaskManager.Remove(Task.CurrentId);
-            }));
-        }
-
-        public void PlotVelocity(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-            bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
-        {
-            TaskManager.PushBack(Task.Factory.StartNew(() =>
-            {
-                _myManipAnalysisGui.WriteProgressInfo("Getting data...");
-                List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
-                FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
-
-                fields.Include(t1 => t1.VelocityNormalized);
-                if (meanIndividual == "Individual")
-                {
-                    _myMatlabWrapper.CreateVelocityFigure("Individual velocity plot", 101);
-
-                    int counter = 0;
-                    foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
-                    {
-                        if (TaskManager.Cancel)
-                        {
-                            break;
-                        }
-                        _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                        counter++;
-
-                        DateTime turnDateTime =
-                            _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
-                                tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
-
-                        foreach (int trial in tempContainer.Trials)
-                        {
-                            if (TaskManager.Cancel)
-                            {
-                                break;
-                            }
-
-                            var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
-                                tempContainer.Group,
-                                tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
-                                showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
-
-                            _myMatlabWrapper.SetWorkspaceData("velocity", trialContainer.VelocityNormalized.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2))).ToArray());
-                            _myMatlabWrapper.Plot("velocity", "black", 2);
-                        }
-                    }
-                }
-                else if (meanIndividual == "Mean")
-                {
-                    if (
-                        selectedTrialsList.Select(t => t.Trials.ToArray())
-                            .Distinct(new ArrayComparer()).Count() > 1)
-                    {
-                        _myManipAnalysisGui.WriteToLogBox("Trial selections are not equal!");
-                    }
-                    else
-                    {
-                        _myMatlabWrapper.CreateFigure("Velocity plot", "[Samples]", "Velocity [m/s]");
-
-                        int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
-                        int counter = 0;
-
-                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
-                        {
-                            var positionData = new List<List<VelocityContainer>>();
+                            var velocityData = new List<List<VelocityContainer>>();
+                            var forceData = new List<List<ForceContainer>>();
 
                             foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
                             {
@@ -2835,30 +2784,105 @@ namespace ManipAnalysis
 
                                     if (trialContainer != null)
                                     {
-                                        positionData.Add(trialContainer.VelocityNormalized);
+                                        if (trajectoryVelocityForce == "Trajectory - Normalized")
+                                        {
+                                            positionData.Add(trialContainer.PositionNormalized);
+                                        }
+                                        else if (trajectoryVelocityForce == "Velocity - Normalized")
+                                        {
+                                            velocityData.Add(trialContainer.VelocityNormalized);
+                                        }
+                                        else if (trajectoryVelocityForce == "Force - Normalized")
+                                        {
+                                            forceData.Add(trialContainer.MeasuredForcesNormalized);
+                                        }
                                     }
                                 }
 
-                                if (positionData.Count > 0)
+                                int frameCount = 0;
+                                int meanCount = 0;
+                                if (trajectoryVelocityForce == "Trajectory - Normalized")
                                 {
-                                    var xyzVel = new double[positionData[0].Count];
+                                    frameCount = positionData[0].Count;
+                                    meanCount = positionData.Count;
+                                }
+                                else if (trajectoryVelocityForce == "Velocity - Normalized")
+                                {
+                                    frameCount = velocityData[0].Count;
+                                    meanCount = velocityData.Count;
+                                }
+                                else if (trajectoryVelocityForce == "Force - Normalized")
+                                {
+                                    frameCount = forceData[0].Count;
+                                    meanCount = forceData.Count;
+                                }
 
-                                    for (int meanCounter = 0; meanCounter < positionData.Count; meanCounter++)
+                                if (frameCount > 0)
+                                {
+                                    var xData = new double[frameCount];
+                                    var yData = new double[frameCount];
+                                    var zData = new double[frameCount];
+
+                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
-                                        for (int frameCounter = 0; frameCounter < positionData[meanCounter].Count; frameCounter++)
+                                        for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                         {
-                                            xyzVel[frameCounter] += Math.Sqrt(Math.Pow(positionData[meanCounter][frameCounter].X, 2) + Math.Pow(positionData[meanCounter][frameCounter].Y, 2) + Math.Pow(positionData[meanCounter][frameCounter].Z, 2));
+                                            if (trajectoryVelocityForce == "Trajectory")
+                                            {
+                                                xData[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                                yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
+                                                zData[frameCounter] += positionData[meanCounter][frameCounter].Z;
+                                            }
+                                            else if (trajectoryVelocityForce == "Velocity")
+                                            {
+                                                xData[frameCounter] += Math.Sqrt(Math.Pow(velocityData[meanCounter][frameCounter].X, 2) + Math.Pow(velocityData[meanCounter][frameCounter].Y, 2));
+                                            }
+                                            else if (trajectoryVelocityForce == "Force")
+                                            {
+                                                xData[frameCounter] += forceData[meanCounter][frameCounter].X;
+                                                yData[frameCounter] += forceData[meanCounter][frameCounter].Y;
+                                            }
                                         }
                                     }
 
-                                    for (int frameCounter = 0; frameCounter < positionData[0].Count; frameCounter++)
+                                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                     {
-                                        xyzVel[frameCounter] /= positionData.Count;
+                                        if (trajectoryVelocityForce == "Trajectory")
+                                        {
+                                            xData[frameCounter] /= positionData.Count;
+                                            yData[frameCounter] /= positionData.Count;
+                                            zData[frameCounter] /= positionData.Count;
+                                        }
+                                        else if (trajectoryVelocityForce == "Velocity")
+                                        {
+                                            xData[frameCounter] /= meanCount;
+                                        }
+                                        else if (trajectoryVelocityForce == "Force")
+                                        {
+                                            xData[frameCounter] /= meanCount;
+                                            yData[frameCounter] /= meanCount;
+                                        }
                                     }
 
-                                    _myMatlabWrapper.SetWorkspaceData("velocityData", xyzVel);
-
-                                    _myMatlabWrapper.Plot("velocityData", "black", 2);
+                                    if (trajectoryVelocityForce == "Trajectory")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
+                                        _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
+                                        _myMatlabWrapper.SetWorkspaceData("positionDataZ", zData);
+                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                    }
+                                    else if (trajectoryVelocityForce == "Velocity")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("velocityData", xData);
+                                        _myMatlabWrapper.Plot("velocityData", "black", 2);
+                                    }
+                                    else if (trajectoryVelocityForce == "Force")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("forceX", xData);
+                                        _myMatlabWrapper.SetWorkspaceData("forceY", yData);
+                                        _myMatlabWrapper.Plot("forceX", "red", 2);
+                                        _myMatlabWrapper.Plot("forceY", "green", 2);
+                                    }
                                 }
                             }
                         }

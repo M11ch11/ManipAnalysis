@@ -253,27 +253,33 @@ namespace ManipAnalysis
             else
             {
                 progressBar.Value = Convert.ToInt32(value);
-                progressBar.Invalidate();
-                progressBar.Update();
-                progressBar.Refresh();
-                Application.DoEvents();
+                using (Graphics gr = progressBar.CreateGraphics())
+                {
+                    progressBar.Refresh();
+                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
+                        new PointF(progressBar.Width / 2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width / 2.0F),
+                            progressBar.Height / 2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height / 2.0F)));
+                }
             }
         }
 
         public void WriteProgressInfo(string text)
         {
-            if (label_ProgressInfo.InvokeRequired)
+            if (progressBar.InvokeRequired)
             {
                 ProgressLabelCallback writeProgressInfo = WriteProgressInfo;
-                label_ProgressInfo.Invoke(writeProgressInfo, new object[] {text});
+                progressBar.Invoke(writeProgressInfo, new object[] { text });
             }
             else
             {
-                label_ProgressInfo.Text = text;
-                label_ProgressInfo.Invalidate();
-                label_ProgressInfo.Update();
-                label_ProgressInfo.Refresh();
-                Application.DoEvents();
+                using (Graphics gr = progressBar.CreateGraphics())
+                {
+                    progressBar.Text = text;
+                    progressBar.Refresh();
+                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
+                        new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
+                            progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
+                }
             }
         }
 
@@ -1386,28 +1392,15 @@ namespace ManipAnalysis
         {
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
-                switch (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString())
-                {
-                    case "Velocity":
-                        _manipAnalysisFunctions.PlotVelocity(
+                _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
                             listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                             comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked);
-                        break;
-
-                    case "Trajectory":
-                        _manipAnalysisFunctions.PlotTrajectory(
-                            listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                            comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
                             checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
                             checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                             checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
-                        break;
-                }
             }
             else
             {
@@ -1663,7 +1656,7 @@ namespace ManipAnalysis
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToDatabaseServer(textBox_Start_SqlServer.Text))
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.SelectedItem.ToString()))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;

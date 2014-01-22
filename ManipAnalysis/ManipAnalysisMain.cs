@@ -26,6 +26,7 @@ namespace ManipAnalysis
 
             splash.Close();
 
+            Application.EnableVisualStyles();
             Application.Run(manipAnalysisGui);
 
             matlabWrapper.Dispose();

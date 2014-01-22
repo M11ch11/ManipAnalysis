@@ -35,7 +35,8 @@ namespace ManipAnalysis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManipAnalysisGui));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage_Start = new System.Windows.Forms.TabPage();
-            this.textBox_Start_SqlServer = new System.Windows.Forms.TextBox();
+            this.comboBox_Start_DatabaseServer = new System.Windows.Forms.ComboBox();
+            this.label_Start_ServerIP = new System.Windows.Forms.Label();
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
             this.comboBox_Start_Database = new System.Windows.Forms.ComboBox();
             this.label_Start_Database = new System.Windows.Forms.Label();
@@ -242,7 +243,6 @@ namespace ManipAnalysis
             this.checkBox_Start_ManualMode = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.label_ProgressInfo = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.checkBox_PauseThread = new System.Windows.Forms.CheckBox();
@@ -287,7 +287,8 @@ namespace ManipAnalysis
             // 
             // tabPage_Start
             // 
-            this.tabPage_Start.Controls.Add(this.textBox_Start_SqlServer);
+            this.tabPage_Start.Controls.Add(this.comboBox_Start_DatabaseServer);
+            this.tabPage_Start.Controls.Add(this.label_Start_ServerIP);
             this.tabPage_Start.Controls.Add(this.button_Start_SelectDatabase);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_Database);
             this.tabPage_Start.Controls.Add(this.label_Start_Database);
@@ -300,18 +301,32 @@ namespace ManipAnalysis
             this.tabPage_Start.Text = "Start";
             this.tabPage_Start.UseVisualStyleBackColor = true;
             // 
-            // textBox_Start_SqlServer
+            // comboBox_Start_DatabaseServer
             // 
-            this.textBox_Start_SqlServer.Location = new System.Drawing.Point(213, 80);
-            this.textBox_Start_SqlServer.Name = "textBox_Start_SqlServer";
-            this.textBox_Start_SqlServer.Size = new System.Drawing.Size(178, 20);
-            this.textBox_Start_SqlServer.TabIndex = 22;
-            this.textBox_Start_SqlServer.Text = "IFS96";
+            this.comboBox_Start_DatabaseServer.FormattingEnabled = true;
+            this.comboBox_Start_DatabaseServer.Items.AddRange(new object[] {
+            "IFS96",
+            "localhost",
+            "7.16.150.60"});
+            this.comboBox_Start_DatabaseServer.Location = new System.Drawing.Point(14, 130);
+            this.comboBox_Start_DatabaseServer.Name = "comboBox_Start_DatabaseServer";
+            this.comboBox_Start_DatabaseServer.Size = new System.Drawing.Size(281, 21);
+            this.comboBox_Start_DatabaseServer.TabIndex = 24;
+            this.comboBox_Start_DatabaseServer.Text = "IFS96";
+            // 
+            // label_Start_ServerIP
+            // 
+            this.label_Start_ServerIP.AutoSize = true;
+            this.label_Start_ServerIP.Location = new System.Drawing.Point(11, 113);
+            this.label_Start_ServerIP.Name = "label_Start_ServerIP";
+            this.label_Start_ServerIP.Size = new System.Drawing.Size(95, 13);
+            this.label_Start_ServerIP.TabIndex = 23;
+            this.label_Start_ServerIP.Text = "Server name or IP:";
             // 
             // button_Start_SelectDatabase
             // 
             this.button_Start_SelectDatabase.Enabled = false;
-            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(301, 127);
+            this.button_Start_SelectDatabase.Location = new System.Drawing.Point(301, 178);
             this.button_Start_SelectDatabase.Name = "button_Start_SelectDatabase";
             this.button_Start_SelectDatabase.Size = new System.Drawing.Size(90, 23);
             this.button_Start_SelectDatabase.TabIndex = 21;
@@ -328,7 +343,7 @@ namespace ManipAnalysis
             "172.22.190.96",
             "7.188.190.190",
             "localhost"});
-            this.comboBox_Start_Database.Location = new System.Drawing.Point(14, 129);
+            this.comboBox_Start_Database.Location = new System.Drawing.Point(14, 178);
             this.comboBox_Start_Database.Name = "comboBox_Start_Database";
             this.comboBox_Start_Database.Size = new System.Drawing.Size(281, 21);
             this.comboBox_Start_Database.TabIndex = 20;
@@ -336,7 +351,7 @@ namespace ManipAnalysis
             // label_Start_Database
             // 
             this.label_Start_Database.AutoSize = true;
-            this.label_Start_Database.Location = new System.Drawing.Point(11, 113);
+            this.label_Start_Database.Location = new System.Drawing.Point(11, 162);
             this.label_Start_Database.Name = "label_Start_Database";
             this.label_Start_Database.Size = new System.Drawing.Size(56, 13);
             this.label_Start_Database.TabIndex = 19;
@@ -344,11 +359,11 @@ namespace ManipAnalysis
             // 
             // button_Start_ConnectToSQlServer
             // 
-            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(14, 78);
+            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(301, 128);
             this.button_Start_ConnectToSQlServer.Name = "button_Start_ConnectToSQlServer";
-            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(193, 23);
+            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(90, 23);
             this.button_Start_ConnectToSQlServer.TabIndex = 16;
-            this.button_Start_ConnectToSQlServer.Text = "Connect to Server";
+            this.button_Start_ConnectToSQlServer.Text = "Connect";
             this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
             this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
             // 
@@ -356,11 +371,11 @@ namespace ManipAnalysis
             // 
             this.label_Start_ManipAnalysis.AutoSize = true;
             this.label_Start_ManipAnalysis.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Start_ManipAnalysis.Location = new System.Drawing.Point(7, 10);
+            this.label_Start_ManipAnalysis.Location = new System.Drawing.Point(7, 30);
             this.label_Start_ManipAnalysis.Name = "label_Start_ManipAnalysis";
-            this.label_Start_ManipAnalysis.Size = new System.Drawing.Size(255, 39);
+            this.label_Start_ManipAnalysis.Size = new System.Drawing.Size(304, 39);
             this.label_Start_ManipAnalysis.TabIndex = 0;
-            this.label_Start_ManipAnalysis.Text = "ManipAnalysis";
+            this.label_Start_ManipAnalysis.Text = "ManipAnalysis v2";
             // 
             // tabPage_VisualizationExport
             // 
@@ -481,9 +496,9 @@ namespace ManipAnalysis
             // 
             // button_TrajectoryVelocity_Export
             // 
-            this.button_TrajectoryVelocity_Export.Location = new System.Drawing.Point(593, 571);
+            this.button_TrajectoryVelocity_Export.Location = new System.Drawing.Point(631, 571);
             this.button_TrajectoryVelocity_Export.Name = "button_TrajectoryVelocity_Export";
-            this.button_TrajectoryVelocity_Export.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_Export.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_Export.TabIndex = 51;
             this.button_TrajectoryVelocity_Export.Text = "Export";
             this.button_TrajectoryVelocity_Export.UseVisualStyleBackColor = true;
@@ -491,24 +506,32 @@ namespace ManipAnalysis
             // 
             // comboBox_TrajectoryVelocity_IndividualMean
             // 
+            this.comboBox_TrajectoryVelocity_IndividualMean.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_TrajectoryVelocity_IndividualMean.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_IndividualMean.Items.AddRange(new object[] {
             "Individual",
             "Mean"});
-            this.comboBox_TrajectoryVelocity_IndividualMean.Location = new System.Drawing.Point(471, 544);
+            this.comboBox_TrajectoryVelocity_IndividualMean.Location = new System.Drawing.Point(409, 542);
             this.comboBox_TrajectoryVelocity_IndividualMean.Name = "comboBox_TrajectoryVelocity_IndividualMean";
-            this.comboBox_TrajectoryVelocity_IndividualMean.Size = new System.Drawing.Size(116, 21);
+            this.comboBox_TrajectoryVelocity_IndividualMean.Size = new System.Drawing.Size(216, 21);
             this.comboBox_TrajectoryVelocity_IndividualMean.TabIndex = 50;
             // 
             // comboBox_TrajectoryVelocity_TrajectoryVelocity
             // 
+            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Items.AddRange(new object[] {
-            "Trajectory",
-            "Velocity"});
-            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Location = new System.Drawing.Point(471, 573);
+            "Trajectory - Normalized",
+            "Velocity - Normalized",
+            "Force - Normalized",
+            "Trajectory - Filtered",
+            "Velocity - Filtered",
+            "Force - Filtered",
+            "Trajectory - Raw",
+            "Force - Raw"});
+            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Location = new System.Drawing.Point(409, 571);
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Name = "comboBox_TrajectoryVelocity_TrajectoryVelocity";
-            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Size = new System.Drawing.Size(116, 21);
+            this.comboBox_TrajectoryVelocity_TrajectoryVelocity.Size = new System.Drawing.Size(216, 21);
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity.TabIndex = 49;
             // 
             // label_TrajectoryVelocity_Targets
@@ -556,7 +579,7 @@ namespace ManipAnalysis
             // 
             this.button_TrajectoryVelocity_AddAll.Location = new System.Drawing.Point(227, 571);
             this.button_TrajectoryVelocity_AddAll.Name = "button_TrajectoryVelocity_AddAll";
-            this.button_TrajectoryVelocity_AddAll.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_AddAll.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_AddAll.TabIndex = 39;
             this.button_TrajectoryVelocity_AddAll.Text = "Add all";
             this.button_TrajectoryVelocity_AddAll.UseVisualStyleBackColor = true;
@@ -564,9 +587,9 @@ namespace ManipAnalysis
             // 
             // button_TrajectoryVelocity_Plot
             // 
-            this.button_TrajectoryVelocity_Plot.Location = new System.Drawing.Point(593, 542);
+            this.button_TrajectoryVelocity_Plot.Location = new System.Drawing.Point(631, 542);
             this.button_TrajectoryVelocity_Plot.Name = "button_TrajectoryVelocity_Plot";
-            this.button_TrajectoryVelocity_Plot.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_Plot.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_Plot.TabIndex = 37;
             this.button_TrajectoryVelocity_Plot.Text = "Plot";
             this.button_TrajectoryVelocity_Plot.UseVisualStyleBackColor = true;
@@ -574,9 +597,9 @@ namespace ManipAnalysis
             // 
             // button_TrajectoryVelocity_ClearAll
             // 
-            this.button_TrajectoryVelocity_ClearAll.Location = new System.Drawing.Point(349, 571);
+            this.button_TrajectoryVelocity_ClearAll.Location = new System.Drawing.Point(318, 571);
             this.button_TrajectoryVelocity_ClearAll.Name = "button_TrajectoryVelocity_ClearAll";
-            this.button_TrajectoryVelocity_ClearAll.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_ClearAll.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_ClearAll.TabIndex = 36;
             this.button_TrajectoryVelocity_ClearAll.Text = "Clear all";
             this.button_TrajectoryVelocity_ClearAll.UseVisualStyleBackColor = true;
@@ -584,9 +607,9 @@ namespace ManipAnalysis
             // 
             // button_TrajectoryVelocity_ClearSelected
             // 
-            this.button_TrajectoryVelocity_ClearSelected.Location = new System.Drawing.Point(349, 542);
+            this.button_TrajectoryVelocity_ClearSelected.Location = new System.Drawing.Point(318, 542);
             this.button_TrajectoryVelocity_ClearSelected.Name = "button_TrajectoryVelocity_ClearSelected";
-            this.button_TrajectoryVelocity_ClearSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_ClearSelected.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_ClearSelected.TabIndex = 35;
             this.button_TrajectoryVelocity_ClearSelected.Text = "Clear selected";
             this.button_TrajectoryVelocity_ClearSelected.UseVisualStyleBackColor = true;
@@ -606,7 +629,7 @@ namespace ManipAnalysis
             // 
             this.button_TrajectoryVelocity_AddSelected.Location = new System.Drawing.Point(227, 542);
             this.button_TrajectoryVelocity_AddSelected.Name = "button_TrajectoryVelocity_AddSelected";
-            this.button_TrajectoryVelocity_AddSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_TrajectoryVelocity_AddSelected.Size = new System.Drawing.Size(85, 23);
             this.button_TrajectoryVelocity_AddSelected.TabIndex = 33;
             this.button_TrajectoryVelocity_AddSelected.Text = "Add selected";
             this.button_TrajectoryVelocity_AddSelected.UseVisualStyleBackColor = true;
@@ -792,7 +815,7 @@ namespace ManipAnalysis
             // checkBox_DescriptiveStatistic1_PlotFit
             // 
             this.checkBox_DescriptiveStatistic1_PlotFit.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(648, 567);
+            this.checkBox_DescriptiveStatistic1_PlotFit.Location = new System.Drawing.Point(611, 568);
             this.checkBox_DescriptiveStatistic1_PlotFit.Name = "checkBox_DescriptiveStatistic1_PlotFit";
             this.checkBox_DescriptiveStatistic1_PlotFit.Size = new System.Drawing.Size(37, 17);
             this.checkBox_DescriptiveStatistic1_PlotFit.TabIndex = 24;
@@ -801,17 +824,17 @@ namespace ManipAnalysis
             // 
             // textBox_DescriptiveStatistic1_FitEquation
             // 
-            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(668, 545);
+            this.textBox_DescriptiveStatistic1_FitEquation.Location = new System.Drawing.Point(611, 542);
             this.textBox_DescriptiveStatistic1_FitEquation.Name = "textBox_DescriptiveStatistic1_FitEquation";
-            this.textBox_DescriptiveStatistic1_FitEquation.Size = new System.Drawing.Size(48, 20);
+            this.textBox_DescriptiveStatistic1_FitEquation.Size = new System.Drawing.Size(105, 20);
             this.textBox_DescriptiveStatistic1_FitEquation.TabIndex = 23;
             this.textBox_DescriptiveStatistic1_FitEquation.Text = "exp2";
             // 
             // button_DescriptiveStatistic1_ExportData
             // 
-            this.button_DescriptiveStatistic1_ExportData.Location = new System.Drawing.Point(553, 571);
+            this.button_DescriptiveStatistic1_ExportData.Location = new System.Drawing.Point(500, 571);
             this.button_DescriptiveStatistic1_ExportData.Name = "button_DescriptiveStatistic1_ExportData";
-            this.button_DescriptiveStatistic1_ExportData.Size = new System.Drawing.Size(75, 23);
+            this.button_DescriptiveStatistic1_ExportData.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_ExportData.TabIndex = 22;
             this.button_DescriptiveStatistic1_ExportData.Text = "Export data";
             this.button_DescriptiveStatistic1_ExportData.UseVisualStyleBackColor = true;
@@ -841,7 +864,7 @@ namespace ManipAnalysis
             // checkBox_DescriptiveStatistic1_PlotErrorbars
             // 
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(648, 583);
+            this.checkBox_DescriptiveStatistic1_PlotErrorbars.Location = new System.Drawing.Point(611, 584);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Name = "checkBox_DescriptiveStatistic1_PlotErrorbars";
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.Size = new System.Drawing.Size(68, 17);
             this.checkBox_DescriptiveStatistic1_PlotErrorbars.TabIndex = 17;
@@ -852,7 +875,7 @@ namespace ManipAnalysis
             // 
             this.button_DescriptiveStatistic1_AddAll.Location = new System.Drawing.Point(227, 571);
             this.button_DescriptiveStatistic1_AddAll.Name = "button_DescriptiveStatistic1_AddAll";
-            this.button_DescriptiveStatistic1_AddAll.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic1_AddAll.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_AddAll.TabIndex = 16;
             this.button_DescriptiveStatistic1_AddAll.Text = "Add all";
             this.button_DescriptiveStatistic1_AddAll.UseVisualStyleBackColor = true;
@@ -877,7 +900,7 @@ namespace ManipAnalysis
             "Vector correlation",
             "Vector correlation fisher-z",
             "Vector correlation fisher-z to r-values"});
-            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
+            this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Sorted = true;
@@ -885,9 +908,9 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic1_PlotMeanStd
             // 
-            this.button_DescriptiveStatistic1_PlotMeanStd.Location = new System.Drawing.Point(471, 571);
+            this.button_DescriptiveStatistic1_PlotMeanStd.Location = new System.Drawing.Point(409, 571);
             this.button_DescriptiveStatistic1_PlotMeanStd.Name = "button_DescriptiveStatistic1_PlotMeanStd";
-            this.button_DescriptiveStatistic1_PlotMeanStd.Size = new System.Drawing.Size(76, 23);
+            this.button_DescriptiveStatistic1_PlotMeanStd.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_PlotMeanStd.TabIndex = 14;
             this.button_DescriptiveStatistic1_PlotMeanStd.Text = "Plot data";
             this.button_DescriptiveStatistic1_PlotMeanStd.UseVisualStyleBackColor = true;
@@ -895,9 +918,9 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic1_ClearAll
             // 
-            this.button_DescriptiveStatistic1_ClearAll.Location = new System.Drawing.Point(349, 571);
+            this.button_DescriptiveStatistic1_ClearAll.Location = new System.Drawing.Point(318, 571);
             this.button_DescriptiveStatistic1_ClearAll.Name = "button_DescriptiveStatistic1_ClearAll";
-            this.button_DescriptiveStatistic1_ClearAll.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic1_ClearAll.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_ClearAll.TabIndex = 13;
             this.button_DescriptiveStatistic1_ClearAll.Text = "Clear all";
             this.button_DescriptiveStatistic1_ClearAll.UseVisualStyleBackColor = true;
@@ -905,9 +928,9 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic1_ClearSelected
             // 
-            this.button_DescriptiveStatistic1_ClearSelected.Location = new System.Drawing.Point(349, 542);
+            this.button_DescriptiveStatistic1_ClearSelected.Location = new System.Drawing.Point(318, 542);
             this.button_DescriptiveStatistic1_ClearSelected.Name = "button_DescriptiveStatistic1_ClearSelected";
-            this.button_DescriptiveStatistic1_ClearSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic1_ClearSelected.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_ClearSelected.TabIndex = 12;
             this.button_DescriptiveStatistic1_ClearSelected.Text = "Clear selected";
             this.button_DescriptiveStatistic1_ClearSelected.UseVisualStyleBackColor = true;
@@ -927,7 +950,7 @@ namespace ManipAnalysis
             // 
             this.button_DescriptiveStatistic1_AddSelected.Location = new System.Drawing.Point(227, 542);
             this.button_DescriptiveStatistic1_AddSelected.Name = "button_DescriptiveStatistic1_AddSelected";
-            this.button_DescriptiveStatistic1_AddSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic1_AddSelected.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic1_AddSelected.TabIndex = 10;
             this.button_DescriptiveStatistic1_AddSelected.Text = "Add selected";
             this.button_DescriptiveStatistic1_AddSelected.UseVisualStyleBackColor = true;
@@ -1108,7 +1131,7 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic2_CalculateMeanValues
             // 
-            this.button_DescriptiveStatistic2_CalculateMeanValues.Location = new System.Drawing.Point(471, 571);
+            this.button_DescriptiveStatistic2_CalculateMeanValues.Location = new System.Drawing.Point(409, 571);
             this.button_DescriptiveStatistic2_CalculateMeanValues.Name = "button_DescriptiveStatistic2_CalculateMeanValues";
             this.button_DescriptiveStatistic2_CalculateMeanValues.Size = new System.Drawing.Size(196, 23);
             this.button_DescriptiveStatistic2_CalculateMeanValues.TabIndex = 43;
@@ -1141,7 +1164,7 @@ namespace ManipAnalysis
             // 
             this.button_DescriptiveStatistic2_AddAll.Location = new System.Drawing.Point(227, 571);
             this.button_DescriptiveStatistic2_AddAll.Name = "button_DescriptiveStatistic2_AddAll";
-            this.button_DescriptiveStatistic2_AddAll.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic2_AddAll.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic2_AddAll.TabIndex = 38;
             this.button_DescriptiveStatistic2_AddAll.Text = "Add all";
             this.button_DescriptiveStatistic2_AddAll.UseVisualStyleBackColor = true;
@@ -1164,7 +1187,7 @@ namespace ManipAnalysis
             "Vector correlation",
             "Vector correlation fisher-z",
             "Vector correlation fisher-z to r-values"});
-            this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
+            this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Name = "comboBox_DescriptiveStatistic2_DataTypeSelect";
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Sorted = true;
@@ -1172,9 +1195,9 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic2_ClearAll
             // 
-            this.button_DescriptiveStatistic2_ClearAll.Location = new System.Drawing.Point(349, 571);
+            this.button_DescriptiveStatistic2_ClearAll.Location = new System.Drawing.Point(318, 571);
             this.button_DescriptiveStatistic2_ClearAll.Name = "button_DescriptiveStatistic2_ClearAll";
-            this.button_DescriptiveStatistic2_ClearAll.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic2_ClearAll.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic2_ClearAll.TabIndex = 35;
             this.button_DescriptiveStatistic2_ClearAll.Text = "Clear all";
             this.button_DescriptiveStatistic2_ClearAll.UseVisualStyleBackColor = true;
@@ -1182,9 +1205,9 @@ namespace ManipAnalysis
             // 
             // button_DescriptiveStatistic2_ClearSelected
             // 
-            this.button_DescriptiveStatistic2_ClearSelected.Location = new System.Drawing.Point(349, 542);
+            this.button_DescriptiveStatistic2_ClearSelected.Location = new System.Drawing.Point(318, 542);
             this.button_DescriptiveStatistic2_ClearSelected.Name = "button_DescriptiveStatistic2_ClearSelected";
-            this.button_DescriptiveStatistic2_ClearSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic2_ClearSelected.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic2_ClearSelected.TabIndex = 34;
             this.button_DescriptiveStatistic2_ClearSelected.Text = "Clear selected";
             this.button_DescriptiveStatistic2_ClearSelected.UseVisualStyleBackColor = true;
@@ -1204,7 +1227,7 @@ namespace ManipAnalysis
             // 
             this.button_DescriptiveStatistic2_AddSelected.Location = new System.Drawing.Point(227, 542);
             this.button_DescriptiveStatistic2_AddSelected.Name = "button_DescriptiveStatistic2_AddSelected";
-            this.button_DescriptiveStatistic2_AddSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_DescriptiveStatistic2_AddSelected.Size = new System.Drawing.Size(85, 23);
             this.button_DescriptiveStatistic2_AddSelected.TabIndex = 32;
             this.button_DescriptiveStatistic2_AddSelected.Text = "Add selected";
             this.button_DescriptiveStatistic2_AddSelected.UseVisualStyleBackColor = true;
@@ -2515,7 +2538,6 @@ namespace ManipAnalysis
             // checkBox_Start_ManualMode
             // 
             this.checkBox_Start_ManualMode.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox_Start_ManualMode.AutoSize = true;
             this.checkBox_Start_ManualMode.Enabled = false;
             this.checkBox_Start_ManualMode.FlatAppearance.BorderSize = 2;
             this.checkBox_Start_ManualMode.Location = new System.Drawing.Point(1079, 672);
@@ -2523,42 +2545,33 @@ namespace ManipAnalysis
             this.checkBox_Start_ManualMode.Size = new System.Drawing.Size(91, 23);
             this.checkBox_Start_ManualMode.TabIndex = 15;
             this.checkBox_Start_ManualMode.Text = "Extended mode";
+            this.checkBox_Start_ManualMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox_Start_ManualMode.UseVisualStyleBackColor = true;
             this.checkBox_Start_ManualMode.CheckedChanged += new System.EventHandler(this.checkBox_ManualMode_CheckedChanged);
             // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(1, 672);
+            this.progressBar.MarqueeAnimationSpeed = 0;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(892, 23);
+            this.progressBar.Size = new System.Drawing.Size(741, 52);
             this.progressBar.Step = 1;
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 3;
             // 
             // openFileDialog
             // 
             this.openFileDialog.FileName = "openFileDialog";
             // 
-            // label_ProgressInfo
-            // 
-            this.label_ProgressInfo.AutoSize = true;
-            this.label_ProgressInfo.BackColor = System.Drawing.SystemColors.Control;
-            this.label_ProgressInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label_ProgressInfo.Location = new System.Drawing.Point(450, 674);
-            this.label_ProgressInfo.Name = "label_ProgressInfo";
-            this.label_ProgressInfo.Size = new System.Drawing.Size(83, 15);
-            this.label_ProgressInfo.TabIndex = 4;
-            this.label_ProgressInfo.Text = "Not connected.";
-            this.label_ProgressInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // checkBox_PauseThread
             // 
             this.checkBox_PauseThread.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox_PauseThread.AutoSize = true;
-            this.checkBox_PauseThread.Location = new System.Drawing.Point(899, 672);
+            this.checkBox_PauseThread.Location = new System.Drawing.Point(748, 672);
             this.checkBox_PauseThread.Name = "checkBox_PauseThread";
-            this.checkBox_PauseThread.Size = new System.Drawing.Size(47, 23);
+            this.checkBox_PauseThread.Size = new System.Drawing.Size(91, 23);
             this.checkBox_PauseThread.TabIndex = 5;
             this.checkBox_PauseThread.Text = "Pause";
+            this.checkBox_PauseThread.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox_PauseThread.UseVisualStyleBackColor = true;
             this.checkBox_PauseThread.CheckedChanged += new System.EventHandler(this.checkBox_PauseThread_CheckedChanged);
             // 
@@ -2573,9 +2586,9 @@ namespace ManipAnalysis
             // 
             // button_ClearLog
             // 
-            this.button_ClearLog.Location = new System.Drawing.Point(1008, 672);
+            this.button_ClearLog.Location = new System.Drawing.Point(1079, 701);
             this.button_ClearLog.Name = "button_ClearLog";
-            this.button_ClearLog.Size = new System.Drawing.Size(65, 23);
+            this.button_ClearLog.Size = new System.Drawing.Size(91, 23);
             this.button_ClearLog.TabIndex = 8;
             this.button_ClearLog.Text = "Clear log";
             this.button_ClearLog.UseVisualStyleBackColor = true;
@@ -2594,12 +2607,12 @@ namespace ManipAnalysis
             // checkBox_Cancel
             // 
             this.checkBox_Cancel.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox_Cancel.AutoSize = true;
-            this.checkBox_Cancel.Location = new System.Drawing.Point(952, 672);
+            this.checkBox_Cancel.Location = new System.Drawing.Point(748, 701);
             this.checkBox_Cancel.Name = "checkBox_Cancel";
-            this.checkBox_Cancel.Size = new System.Drawing.Size(50, 23);
+            this.checkBox_Cancel.Size = new System.Drawing.Size(91, 23);
             this.checkBox_Cancel.TabIndex = 16;
             this.checkBox_Cancel.Text = "Cancel";
+            this.checkBox_Cancel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
@@ -2607,14 +2620,13 @@ namespace ManipAnalysis
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1172, 699);
+            this.ClientSize = new System.Drawing.Size(1172, 729);
             this.Controls.Add(this.checkBox_Cancel);
             this.Controls.Add(this.listBox_LogBox);
             this.Controls.Add(this.button_ClearLog);
             this.Controls.Add(this.label_Log);
             this.Controls.Add(this.checkBox_PauseThread);
             this.Controls.Add(this.checkBox_Start_ManualMode);
-            this.Controls.Add(this.label_ProgressInfo);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -2670,7 +2682,6 @@ namespace ManipAnalysis
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button button_Debug_ShowMatlabWindow;
         private System.Windows.Forms.Button button_Debug_ShowMatlabWorkspace;
-        private System.Windows.Forms.Label label_ProgressInfo;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Trials;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Subject;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Szenario;
@@ -2880,7 +2891,6 @@ namespace ManipAnalysis
         private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
         private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqForce;
-        private System.Windows.Forms.TextBox textBox_Start_SqlServer;
         private System.Windows.Forms.Label label_Others_PlotErrorclampForces_At;
         private System.Windows.Forms.Label label_Others_PlotErrorclampForces_Ms;
         private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
@@ -2893,6 +2903,8 @@ namespace ManipAnalysis
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowNormalTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowErrorclampTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowCatchTrials;
+        private System.Windows.Forms.Label label_Start_ServerIP;
+        private System.Windows.Forms.ComboBox comboBox_Start_DatabaseServer;
     }
 }
 
