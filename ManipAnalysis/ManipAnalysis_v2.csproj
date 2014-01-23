@@ -39,7 +39,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -222,7 +222,6 @@
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Logo.ico" />
     <Content Include="ManipIcon.ico" />
     <Content Include="MatlabFiles\distance2curveAbs.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -266,7 +265,6 @@
     <Content Include="MatlabFiles\vectorCorrelationFisherZTransform.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\SplashLogo.png" />
     <None Include="Resources\KITLogo.png" />
   </ItemGroup>
   <ItemGroup>
