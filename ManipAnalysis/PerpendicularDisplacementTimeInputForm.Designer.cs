@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PerpendicularDisplacementTimeInputForm));
             this.label_PleaseEnterTime = new System.Windows.Forms.Label();
             this.textBox_EnteredTime = new System.Windows.Forms.TextBox();
             this.button_OK = new System.Windows.Forms.Button();
@@ -69,6 +70,7 @@
             this.Controls.Add(this.textBox_EnteredTime);
             this.Controls.Add(this.label_PleaseEnterTime);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PerpendicularDisplacementTimeInputForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PerpendicularDisplacementTimeInputForm";

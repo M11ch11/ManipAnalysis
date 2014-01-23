@@ -1527,31 +1527,22 @@ namespace ManipAnalysis_v2
             {
                 if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
                 {
-                    switch (comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString())
-                    {
-                        case "Velocity":
-                            _manipAnalysisFunctions.ExportVelocityData(
-                                listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                                comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                                saveFileDialog.FileName
-                                );
-                            break;
-
-                        case "Trajectory":
-                            _manipAnalysisFunctions.ExportTrajectoryData(
-                                listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                                comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                                saveFileDialog.FileName);
-                            break;
-                    }
+                    _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
+                            listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
+                            comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
+                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
+                            checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
+                            saveFileDialog.FileName);
                 }
                 else
                 {
                     WriteToLogBox("Please add data to export!");
                 }
             }
-            WriteProgressInfo("Ready");
-            SetProgressBarValue(0);
         }
 
         private void button_Others_ExportBaseline_Click(object sender, EventArgs e)
