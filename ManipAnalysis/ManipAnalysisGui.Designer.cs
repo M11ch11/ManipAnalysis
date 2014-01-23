@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     partial class ManipAnalysisGui
     {

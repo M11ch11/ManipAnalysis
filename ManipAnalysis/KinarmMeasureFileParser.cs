@@ -5,9 +5,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using ManipAnalysis.MongoDb;
+using ManipAnalysis_v2.MongoDb;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     internal class KinarmMeasureFileParser
     {

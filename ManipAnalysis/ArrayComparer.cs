@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     /// <summary>
     ///     This class checks if the two int-arrays contain the same values,

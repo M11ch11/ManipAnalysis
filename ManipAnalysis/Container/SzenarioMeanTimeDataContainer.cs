@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ManipAnalysis.Container
+namespace ManipAnalysis_v2.Container
 {
     internal class SzenarioMeanTimeDataContainer
     {

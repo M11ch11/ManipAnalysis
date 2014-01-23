@@ -7,14 +7,14 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using ManipAnalysis.Container;
-using ManipAnalysis.MongoDb;
+using ManipAnalysis_v2.Container;
+using ManipAnalysis_v2.MongoDb;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     /// <summary>
     ///     This class provides all interactive functionality between the Gui and the programm.
@@ -23,16 +23,14 @@ namespace ManipAnalysis
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private readonly MatlabWrapper _myMatlabWrapper;
-        private readonly SqlWrapper _myDatabaseWrapper;
-        private readonly MongoDbWrapper _myMongoDbWrapperWrapper;
+        private readonly MongoDbWrapper _myDatabaseWrapper;
 
         public ManipAnalysisFunctions(ManipAnalysisGui myManipAnalysisGui, MatlabWrapper myMatlabWrapper,
-            SqlWrapper mySqlWrapper)
+            MongoDbWrapper myDatabaseWrapper)
         {
             _myMatlabWrapper = myMatlabWrapper;
-            _myDatabaseWrapper = mySqlWrapper;
+            _myDatabaseWrapper = myDatabaseWrapper;
             _myManipAnalysisGui = myManipAnalysisGui;
-            _myMongoDbWrapperWrapper = new MongoDbWrapper(myManipAnalysisGui);
         }
 
         /// <summary>
@@ -86,8 +84,8 @@ namespace ManipAnalysis
             if (CheckDatabaseServerAvailability(server, 6000))
             {
                 _myManipAnalysisGui.WriteToLogBox("Connected to Database-Server.");
-                _myMongoDbWrapperWrapper.SetDatabaseServer(server);
-                _myManipAnalysisGui.SetSqlDatabases(_myMongoDbWrapperWrapper.GetDatabases());
+                _myDatabaseWrapper.SetDatabaseServer(server);
+                _myManipAnalysisGui.SetSqlDatabases(_myDatabaseWrapper.GetDatabases());
                 retVal = true;
             }
             else
@@ -104,7 +102,7 @@ namespace ManipAnalysis
         /// <param name="database">The new Database</param>
         public void SetDatabase(string database)
         {
-            _myMongoDbWrapperWrapper.SetDatabase(database);
+            _myDatabaseWrapper.SetDatabase(database);
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetStudys()
         {
-            return _myMongoDbWrapperWrapper.GetStudys();
+            return _myDatabaseWrapper.GetStudys();
         }
 
         /// <summary>
@@ -123,7 +121,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetGroups(string study)
         {
-            return _myMongoDbWrapperWrapper.GetGroups(study);
+            return _myDatabaseWrapper.GetGroups(study);
         }
 
         /// <summary>
@@ -134,7 +132,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetSzenarios(string study, string group)
         {
-            return _myMongoDbWrapperWrapper.GetSzenarios(study, group);
+            return _myDatabaseWrapper.GetSzenarios(study, group);
         }
 
         /// <summary>
@@ -146,7 +144,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<SubjectContainer> GetSubjects(string study, string group, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetSubjects(study, group, szenario);
+            return _myDatabaseWrapper.GetSubjects(study, group, szenario);
             
         }
 
@@ -162,7 +160,7 @@ namespace ManipAnalysis
             SubjectContainer subject)
         {
             var turnList = new List<string>();
-            int turns = _myMongoDbWrapperWrapper.GetTurns(study, group, szenario, subject).Count();
+            int turns = _myDatabaseWrapper.GetTurns(study, group, szenario, subject).Count();
             for (int turn = 1; turn <= turns; turn++)
             {
                 turnList.Add("Turn " + turn);
@@ -178,7 +176,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTargets(string study, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetTargets(study, szenario).Select(t => "Target " + t.ToString("00"));
+            return _myDatabaseWrapper.GetTargets(study, szenario).Select(t => "Target " + t.ToString("00"));
         }
 
         /// <summary>
@@ -189,7 +187,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public IEnumerable<string> GetTrials(string study, string szenario)
         {
-            return _myMongoDbWrapperWrapper.GetTargetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetTargetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>
@@ -199,7 +197,7 @@ namespace ManipAnalysis
         /// <returns></returns>
         public bool CheckIfMeasureFileHashAlreadyExists(string hash)
         {
-            return _myMongoDbWrapperWrapper.CheckIfMeasureFileHashExists(hash);
+            return _myDatabaseWrapper.CheckIfMeasureFileHashExists(hash);
         }
 
         /// <summary>
@@ -230,7 +228,7 @@ namespace ManipAnalysis
             SubjectContainer subject,
             int turn)
         {
-            return _myDatabaseWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+            return _myDatabaseWrapper.GetTurns(study, group, szenario, subject).ElementAt(turn - 1);
         }
 
         /// <summary>
@@ -245,6 +243,7 @@ namespace ManipAnalysis
         public void PlotSzenarioMeanTimes(string study, string group, string szenario,
             SubjectContainer subject, int turn)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
@@ -279,11 +278,13 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void ExportSzenarioMeanTimes(string study, string group, string szenario,
             SubjectContainer subject, int turn, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
@@ -316,6 +317,7 @@ namespace ManipAnalysis
                 dataFileWriter.Close();
                 TaskManager.Remove(Task.CurrentId);
             }));
+             * */
         }
 
         public void ToggleMatlabCommandWindow()
@@ -330,11 +332,12 @@ namespace ManipAnalysis
 
         public void InitializeSqlDatabase()
         {
-            _myDatabaseWrapper.InitializeDatabase();
+            //_myDatabaseWrapper.InitializeDatabase();
         }
 
         public void PlotBaseline(string study, string group, string szenario, SubjectContainer subject)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
@@ -371,16 +374,18 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+             * */
         }
 
         public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
         {
-            return _myMongoDbWrapperWrapper.GetSzenarioTrials(study, szenario, showNormalTrials, showCatchTrials, showErrorclampTrials).Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, showNormalTrials, showCatchTrials, showErrorclampTrials).Select(t => "Trial " + t.ToString("000"));
         }
 
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
             string fitEquation, int pdTime, bool plotFit, bool plotErrorbars)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
@@ -867,16 +872,19 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public IEnumerable<object[]> GetFaultyTrialInformation()
         {
-            return _myDatabaseWrapper.GetFaultyTrialInformation();
+            //return _myDatabaseWrapper.GetFaultyTrialInformation();
+            return null;
         }
 
         public void ExportDescriptiveStatistic1Data(IEnumerable<StatisticPlotContainer> selectedTrials,
             string statisticType, int pdTime, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 bool isValid = true;
@@ -1223,11 +1231,13 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void ExportDescriptiveStatistic2Data(IEnumerable<StatisticPlotContainer> selectedTrials,
             string statisticType, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
@@ -1387,31 +1397,32 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */ 
         }
 
         public void ChangeGroupId(int groupId, int newGroupId)
         {
-            _myDatabaseWrapper.ChangeGroupID(groupId, newGroupId);
+            //_myDatabaseWrapper.ChangeGroupID(groupId, newGroupId);
         }
 
         public void ChangeGroupGroupName(int groupId, string newGroupName)
         {
-            _myDatabaseWrapper.ChangeGroupName(groupId, newGroupName);
+            //_myDatabaseWrapper.ChangeGroupName(groupId, newGroupName);
         }
 
         public void ChangeSubjectId(int subjectId, int newSubjectId)
         {
-            _myDatabaseWrapper.ChangeSubjectID(subjectId, newSubjectId);
+            //_myDatabaseWrapper.ChangeSubjectID(subjectId, newSubjectId);
         }
 
         public void ChangeSubjectSubjectName(int subjectId, string newSubjectName)
         {
-            _myDatabaseWrapper.ChangeSubjectName(subjectId, newSubjectName);
+            //_myDatabaseWrapper.ChangeSubjectName(subjectId, newSubjectName);
         }
 
         public void ChangeSubjectSubjectId(int subjectId, string newSubjectSubjectId)
         {
-            _myDatabaseWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
+            //_myDatabaseWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
         }
 
         public void ImportMeasureFiles(IEnumerable<string> measureFiles, int samplesPerSecond, int butterFilterOrder,
@@ -1457,7 +1468,7 @@ namespace ManipAnalysis
 
                     string tempFileHash = Md5.ComputeHash(filename);
 
-                    if (!_myMongoDbWrapperWrapper.CheckIfMeasureFileHashExists(tempFileHash))
+                    if (!_myDatabaseWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                     {
                         //var myParser = new BioMotionBotMeasureFileParser(trialsContainer, _myManipAnalysisGui);
                         var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
@@ -1540,12 +1551,12 @@ namespace ManipAnalysis
 
                             #region Uploading data to MongoDB
 
-                            _myMongoDbWrapperWrapper.Insert(trialsContainer);
+                            _myDatabaseWrapper.Insert(trialsContainer);
                             if (baselinesContainer != null)
                             {
-                                _myMongoDbWrapperWrapper.Insert(baselinesContainer);
+                                _myDatabaseWrapper.Insert(baselinesContainer);
                             }
-                            _myMongoDbWrapperWrapper.Insert(szenarioMeanTimesContainer);
+                            _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
                             
                             #endregion
                         }
@@ -2330,7 +2341,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
             int counter = 0;
 
-            var trialList = _myMongoDbWrapperWrapper.GetTrialsWithoutStatistics().ToList();
+            var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics().ToList();
 
             if (trialList.Count() > 0)
             {
@@ -2347,7 +2358,7 @@ namespace ManipAnalysis
                     _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
                     counter++;
 
-                    var baseline = _myMongoDbWrapperWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target);
+                    var baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target);
 
                     if (baseline != null)
                     {
@@ -2399,7 +2410,7 @@ namespace ManipAnalysis
                         trial.Statistics = statisticContainer;
                         trial.BaselineObjectId = baseline.Id;
 
-                        _myMongoDbWrapperWrapper.UpdateTrialStatisticsAndBaselineId(trial);
+                        _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
                     }
                     else
                     {
@@ -2427,6 +2438,7 @@ namespace ManipAnalysis
 
         private void FixBrokenTrialsThread()
         {
+            /*
             while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
             {
                 Thread.Sleep(100);
@@ -2535,6 +2547,7 @@ namespace ManipAnalysis
             _myManipAnalysisGui.EnableTabPages(true);
 
             TaskManager.Remove(Task.CurrentId);
+             * */
         }
 
         public void PlotTrajectoryVelocityForce(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual, string trajectoryVelocityForce,
@@ -2611,7 +2624,7 @@ namespace ManipAnalysis
                         counter++;
 
                         DateTime turnDateTime =
-                            _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
+                            _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
                                 tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
                         foreach (int trial in tempContainer.Trials)
@@ -2621,7 +2634,7 @@ namespace ManipAnalysis
                                 break;
                             }
 
-                            var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
+                            var trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                 tempContainer.Group,
                                 tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                 showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
@@ -2766,7 +2779,7 @@ namespace ManipAnalysis
                                 counter++;
 
                                 DateTime turnDateTime =
-                                    _myMongoDbWrapperWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
+                                    _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
@@ -2777,7 +2790,7 @@ namespace ManipAnalysis
                                         break;
                                     }
 
-                                    var trialContainer = _myMongoDbWrapperWrapper.GetTrial(tempContainer.Study,
+                                    var trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                         showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
@@ -2897,6 +2910,7 @@ namespace ManipAnalysis
         public void ExportTrajectoryData(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
             string meanIndividual, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<TrajectoryVelocityPlotContainer> selectedTrailsList = selectedTrials.ToList();
@@ -3096,11 +3110,13 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void ExportVelocityData(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
             string meanIndividual, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<TrajectoryVelocityPlotContainer> selectedTrailsList = selectedTrials.ToList();
@@ -3298,11 +3314,13 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */ 
         }
 
         public void ExportTrajectoryBaseline(string study, string group, string szenario,
             SubjectContainer subject, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
@@ -3354,11 +3372,13 @@ namespace ManipAnalysis
                 dataFileWriter.Close();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void ExportVelocityBaseline(string study, string group, string szenario,
             SubjectContainer subject, string fileName)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DataSet baseline = _myDatabaseWrapper.GetBaselineDataSet(study, group, szenario, subject);
@@ -3410,11 +3430,13 @@ namespace ManipAnalysis
                 dataFileWriter.Close();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void PlotVelocityBaselines(string study, string group, string szenario,
             SubjectContainer subject)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myMatlabWrapper.CreateVelocityFigure("Velocity baseline plot", 101);
@@ -3447,10 +3469,12 @@ namespace ManipAnalysis
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials)
         {
+            /*
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
             SubjectContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
@@ -3613,11 +3637,13 @@ namespace ManipAnalysis
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
+            */
         }
 
         public void PlotLearningIndex(string study, string group, string szenario,
             IEnumerable<SubjectContainer> subjects, int turn)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
@@ -3726,11 +3752,13 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 TaskManager.Remove(Task.CurrentId);
             }));
+            */
         }
 
         public void ExportLearningIndex(string fileName, string study, string group, string szenario,
             IEnumerable<SubjectContainer> subjects, int turn)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
@@ -3858,11 +3886,13 @@ namespace ManipAnalysis
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 TaskManager.Remove(Task.CurrentId);
             }));
+             */
         }
 
         public void ForcefieldCompensationFactor(string study, string group, string szenario,
             SubjectContainer subject, int turn, int msIndex)
         {
+            /*
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 if (szenario == "Szenario44_N" || szenario == "Szenario44_R" || szenario == "Szenario45_N" ||
@@ -3923,12 +3953,10 @@ namespace ManipAnalysis
                                         Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
                                     forceIstData[sample, 1] =
                                         Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
-                                    /*
-                                    forceSollData[sample, 0] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_x"]);
-                                    forceSollData[sample, 1] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_z"]);
-                                     */
+                                    
+                                    //forceSollData[sample, 0] = Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_x"]);
+                                    //forceSollData[sample, 1] = Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_z"]);
+                                    
                                 }
 
                                 List<double> tempTimeList = timeStamp.ToList();
@@ -3955,15 +3983,13 @@ namespace ManipAnalysis
                                                          (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
                                                          ",1) = forcefieldCompensationFactor(positionData,velocityData,forceIstData,forceSollData,timeMsIndex);");
 
-                                /*
-                                _myMatlabWrapper.Execute("figure;");
-                                _myMatlabWrapper.Execute("hold all;");
-                                _myMatlabWrapper.Execute("plot(forceSollDataData(:,1),forceSollDataData(:,2),'r');");
-                                _myMatlabWrapper.Execute("plot(forceSollData(:,1),forceSollDataData(:,2),'g');");
-                                _myMatlabWrapper.Execute("plot(forceIstData(:,1),forceSollDataData(:,2),'b');");
-                                _myMatlabWrapper.Execute("legend('ForcefieldRobot', 'ForcefieldCalculated', 'ForceMeasured');");
-                                int a = 0;
-                                 */
+                                //_myMatlabWrapper.Execute("figure;");
+                                //_myMatlabWrapper.Execute("hold all;");
+                                //_myMatlabWrapper.Execute("plot(forceSollDataData(:,1),forceSollDataData(:,2),'r');");
+                                //_myMatlabWrapper.Execute("plot(forceSollData(:,1),forceSollDataData(:,2),'g');");
+                                //_myMatlabWrapper.Execute("plot(forceIstData(:,1),forceSollDataData(:,2),'b');");
+                                //_myMatlabWrapper.Execute("legend('ForcefieldRobot', 'ForcefieldCalculated', 'ForceMeasured');");
+                                //int a = 0;                                
                             }
                         }
                         _myMatlabWrapper.Execute("bar(trials - 0.125,bars(:,1),0.25,'b');");
@@ -3979,6 +4005,7 @@ namespace ManipAnalysis
                 }
                 TaskManager.Remove(Task.CurrentId);
             }));
+             */
         }
     }
 }

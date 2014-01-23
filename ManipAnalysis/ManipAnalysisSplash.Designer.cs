@@ -1,4 +1,4 @@
-﻿namespace ManipAnalysis
+﻿namespace ManipAnalysis_v2
 {
     partial class ManipAnalysisSplash
     {
@@ -38,24 +38,27 @@
             this.label_loading.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_loading.Location = new System.Drawing.Point(0, 0);
+            this.label_loading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_loading.Name = "label_loading";
-            this.label_loading.Size = new System.Drawing.Size(379, 225);
+            this.label_loading.Size = new System.Drawing.Size(372, 210);
             this.label_loading.TabIndex = 0;
             this.label_loading.Text = "ManipAnalysis v2 loading ...";
             this.label_loading.UseWaitCursor = true;
             // 
             // ManipAnalysisSplash
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(379, 225);
+            this.ClientSize = new System.Drawing.Size(372, 210);
             this.Controls.Add(this.label_loading);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ManipAnalysisSplash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SplashScreen";

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
 
     #region 3D point representation

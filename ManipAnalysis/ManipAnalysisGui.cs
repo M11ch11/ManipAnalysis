@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using ManipAnalysis.Container;
-using ManipAnalysis.MongoDb;
+using ManipAnalysis_v2.Container;
+using ManipAnalysis_v2.MongoDb;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     partial class ManipAnalysisGui : Form
     {

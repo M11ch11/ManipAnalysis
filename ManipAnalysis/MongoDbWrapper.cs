@@ -5,15 +5,15 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
-using ManipAnalysis.Container;
-using ManipAnalysis.MongoDb;
+using ManipAnalysis_v2.Container;
+using ManipAnalysis_v2.MongoDb;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     class MongoDbWrapper
     {
@@ -363,6 +363,11 @@ namespace ManipAnalysis
         public void Insert(IEnumerable<Baseline> baselines)
         {
             _baselineCollection.InsertBatch(baselines);
+        }
+
+        internal void DeleteMeasureFile(int measureFileId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

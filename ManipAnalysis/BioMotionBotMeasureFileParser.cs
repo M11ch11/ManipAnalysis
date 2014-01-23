@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ManipAnalysis.Container;
+using ManipAnalysis_v2.Container;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     internal class BioMotionBotMeasureFileParser
     {

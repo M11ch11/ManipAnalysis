@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     internal static class ManipAnalysisMain
     {
@@ -19,9 +19,9 @@ namespace ManipAnalysis
             splash.Show();
 
             var manipAnalysisGui = new ManipAnalysisGui();
-            var sqlWrapper = new SqlWrapper(manipAnalysisGui);
             var matlabWrapper = new MatlabWrapper(manipAnalysisGui);
-            var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, sqlWrapper);
+            var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
+            var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, mongoDbWrapper);
             manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
 
             splash.Close();

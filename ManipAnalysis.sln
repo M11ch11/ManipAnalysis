@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis", "ManipAnalysis\ManipAnalysis.csproj", "{1D658474-766B-4FDA-8F31-11E800B47377}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis_v2", "ManipAnalysis\ManipAnalysis_v2.csproj", "{1D658474-766B-4FDA-8F31-11E800B47377}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

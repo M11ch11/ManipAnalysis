@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 
-namespace ManipAnalysis
+namespace ManipAnalysis_v2
 {
     static class TicToc
     {

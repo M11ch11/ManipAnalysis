@@ -8,8 +8,8 @@
     <ProjectGuid>{1D658474-766B-4FDA-8F31-11E800B47377}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ManipAnalysis</RootNamespace>
-    <AssemblyName>ManipAnalysis</AssemblyName>
+    <RootNamespace>ManipAnalysis_v2</RootNamespace>
+    <AssemblyName>ManipAnalysis_v2</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -214,7 +214,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SqlWrapper.cs" />
     <Compile Include="StdDev.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
