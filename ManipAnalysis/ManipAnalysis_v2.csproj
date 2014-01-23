@@ -34,7 +34,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://eoptam.github.io/ManipAnalysis/v2/Deploy/</InstallUrl>
-    <ProductName>ManipAnalysis</ProductName>
+    <ProductName>ManipAnalysis v2</ProductName>
     <PublisherName>Karlsruhe Institute of Technology</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
@@ -119,7 +119,7 @@
     </StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>ManipIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -129,7 +129,7 @@
     <ManifestKeyFile>ManipAnalysis_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -217,12 +217,12 @@
     <Compile Include="StdDev.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Logo.ico" />
+    <Content Include="ManipIcon.ico" />
     <Content Include="MatlabFiles\distance2curveAbs.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
