@@ -1646,8 +1646,8 @@ namespace ManipAnalysis_v2
             WriteProgressInfo("Connecting to server...");
 
             comboBox_Start_Database.Items.Clear();
-
-            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.SelectedItem.ToString()))
+            
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;

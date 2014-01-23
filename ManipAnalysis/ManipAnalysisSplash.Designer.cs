@@ -35,6 +35,7 @@
             // label_loading
             // 
             this.label_loading.BackColor = System.Drawing.Color.Transparent;
+            this.label_loading.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label_loading.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_loading.Location = new System.Drawing.Point(0, 0);
