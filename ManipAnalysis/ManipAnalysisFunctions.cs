@@ -519,6 +519,10 @@ namespace ManipAnalysis_v2
                             {
                                 _myMatlabWrapper.Execute("statisticDataPlot = fisherZVectorCorrelationTransform(statisticData);");
                             }
+                            else
+                            {
+                                _myMatlabWrapper.Execute("statisticDataPlot = statisticData;");
+                            }
                         }
 
                         switch (statisticType)
@@ -530,7 +534,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]",
-                                    "Velocity Vector Correlation", 1, (statisticData.Length / statisticData.Rank),
+                                    "Velocity Vector Correlation", 1, (statisticData.Length / meanCount),
                                     0.5, 1,
                                     plotFit,
                                     plotErrorbars);
@@ -542,7 +546,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]",
-                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / statisticData.Rank),
+                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / meanCount),
                                     0.0, 2.0,
                                     plotFit,
                                     plotErrorbars);
@@ -554,7 +558,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]",
-                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / statisticData.Rank),
+                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / meanCount),
                                     0.5, 1,
                                     plotFit,
                                     plotErrorbars);
@@ -565,7 +569,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "PD300 [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    (statisticData.Length / meanCount), 0, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -575,7 +579,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    (statisticData.Length / meanCount), 0, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -585,7 +589,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "MeanPD [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    (statisticData.Length / meanCount), 0, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -595,7 +599,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    (statisticData.Length / meanCount), 0, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -605,7 +609,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "PD300 [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    (statisticData.Length / meanCount), -0.05, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -615,7 +619,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    (statisticData.Length / meanCount), -0.05, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -625,7 +629,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    (statisticData.Length / meanCount), -0.05, 0.05,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -635,7 +639,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "Trajectory Length [m]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0.07, 0.2,
+                                    (statisticData.Length / meanCount), 0.07, 0.2,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -645,7 +649,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "Trajectory Length Ratio",
-                                    1, (statisticData.Length / statisticData.Rank), 0.2, 1.8,
+                                    1, (statisticData.Length / meanCount), 0.2, 1.8,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -655,7 +659,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "Enclosed Area [m²]", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.002,
+                                    (statisticData.Length / meanCount), 0, 0.002,
                                     plotFit,
                                     plotErrorbars);
                                 break;
@@ -665,7 +669,7 @@ namespace ManipAnalysis_v2
                                     "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                     fitEquation + "')",
                                     "statisticDataStd", "[Trial]", "Root Mean Square Error", 1,
-                                    (statisticData.Length / statisticData.Rank), 0, 0.1,
+                                    (statisticData.Length / meanCount), 0, 0.1,
                                     plotFit,
                                     plotErrorbars);
 
