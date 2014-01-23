@@ -307,10 +307,28 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
+        public Trial GetTrial(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int szenarioTrial, FieldsBuilder<Trial> fields)
+        {
+            Trial retVal;
+            try
+            {
+                retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.TrialNumberInSzenario == szenarioTrial))
+                    .SetFields(fields).SetLimit(1).First();
+            }
+            catch (Exception)
+            {
+                retVal = null;
+            }
+
+            return retVal;
+        }
+
         public WriteConcernResult UpdateTrialStatisticsAndBaselineId(Trial trial)
         {
             var query = Query<Trial>.EQ(t => t.Id, trial.Id);
-            var update = Update<Trial>.Set(t => t.Statistics, trial.Statistics).Set(t => t.BaselineObjectId, trial.BaselineObjectId); // update modifiers
+            var update = Update<Trial>.Set(t => t.Statistics, trial.Statistics).Set(t => t.BaselineObjectId, trial.BaselineObjectId);
             return _trialCollection.Update(query, update);
         }
 

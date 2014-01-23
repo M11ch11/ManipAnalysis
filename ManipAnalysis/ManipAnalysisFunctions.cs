@@ -385,11 +385,13 @@ namespace ManipAnalysis_v2
         public void PlotDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
             string fitEquation, int pdTime, bool plotFit, bool plotErrorbars)
         {
-            /*
+            
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                FieldsBuilder<Trial> fields = new FieldsBuilder<Trial>();
+                fields.Include(t => t.Statistics);
 
                 if (selectedTrialsList.Any())
                 {
@@ -399,19 +401,296 @@ namespace ManipAnalysis_v2
                     if (selectedTrialsList.Any(temp => !trialList.SequenceEqual(temp.Trials)))
                     {
                         _myManipAnalysisGui.WriteToLogBox("Trial selections are not equal!");
-                        isValid = false;
                     }
+                    else
+                    {
+                        int meanCount = 0;
+                        double[,] statisticData = new double[trialList.Count, selectedTrialsList.Count()];
+                        for (meanCount = 0; meanCount < selectedTrialsList.Count() & !TaskManager.Cancel; meanCount++)
+                        {
+                            _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCount);
 
+                            StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCount);
+
+                            DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
+                                tempStatisticPlotContainer.Group,
+                                tempStatisticPlotContainer.Szenario,
+                                tempStatisticPlotContainer.Subject,
+                                Convert.ToInt32(
+                                    tempStatisticPlotContainer.Turn.Substring(
+                                        "Turn".Length)));
+
+                            if (pdTime == -1)
+                            {
+                                for (int trialListCounter = 0; trialListCounter < trialList.Count; trialListCounter++)
+                                {
+                                    Trial trial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group,
+                                        tempStatisticPlotContainer.Szenario,
+                                        tempStatisticPlotContainer.Subject,
+                                        turnDateTime,
+                                        trialList[trialListCounter],
+                                        fields);
+
+                                    switch (statisticType)
+                                    {
+                                        case "Vector correlation":
+                                            statisticData[trialListCounter, meanCount] = trial.Statistics.VelocityVectorCorrelation;
+                                            break;
+
+                                        case "Vector correlation fisher-z":
+                                            _myMatlabWrapper.SetWorkspaceData("vcorr", trial.Statistics.VelocityVectorCorrelation);
+                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                            statisticData[trialListCounter, meanCount] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                            _myMatlabWrapper.ClearWorkspace();
+                                            break;
+
+                                        case "Vector correlation fisher-z to r-values":
+                                            _myMatlabWrapper.SetWorkspaceData("vcorr", trial.Statistics.VelocityVectorCorrelation);
+                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                            statisticData[trialListCounter, meanCount] = _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                            _myMatlabWrapper.ClearWorkspace();
+                                            break;
+
+                                        case "Perpendicular distance 300ms - Abs":
+                                            statisticData[trialListCounter, meanCount] =
+                                                trial.Statistics.AbsolutePerpendicularDisplacement300Ms;
+                                            break;
+
+                                        case "Mean perpendicular distance - Abs":
+                                            statisticData[trialListCounter, meanCount] =
+                                                trial.Statistics.AbsoluteMeanPerpendicularDisplacement;
+                                            break;
+
+                                        case "Max perpendicular distance - Abs":
+                                            statisticData[trialListCounter, meanCount] =
+                                                trial.Statistics.AbsoluteMaximalPerpendicularDisplacement;
+                                            break;
+
+                                        case "Perpendicular distance 300ms - Sign":
+                                            statisticData[trialListCounter, meanCount] =
+                                                trial.Statistics.SignedPerpendicularDisplacement300Ms;
+                                            break;
+
+                                        case "Max perpendicular distance - Sign":
+                                            statisticData[trialListCounter, meanCount] =
+                                                trial.Statistics.SignedMaximalPerpendicularDisplacement;
+                                            break;
+
+                                        case "Trajectory length abs":
+                                            statisticData[trialListCounter, meanCount] = trial.Statistics.AbsoluteTrajectoryLength;
+                                            break;
+
+                                        case "Trajectory length ratio":
+                                            statisticData[trialListCounter, meanCount] = trial.Statistics.AbsoluteBaselineTrajectoryLengthRatio;
+                                            break;
+
+                                        case "Enclosed area":
+                                            statisticData[trialListCounter, meanCount] = trial.Statistics.EnclosedArea;
+                                            break;
+
+                                        case "RMSE":
+                                            statisticData[trialListCounter, meanCount] = trial.Statistics.RMSE;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+
+                        _myMatlabWrapper.SetWorkspaceData("statisticData", statisticData);
+                        if (meanCount > 1)
+                        {
+                            if (statisticType == "Vector correlation fisher-z to r-values")
+                            {
+                                _myMatlabWrapper.Execute(
+                                    "statisticDataPlot = fisherZVectorCorrelationTransform(mean(transpose(statisticData)));");
+                                _myMatlabWrapper.Execute(
+                                    "statisticDataStd = fisherZVectorCorrelationTransform(std(transpose(statisticData)));");
+                            }
+                            else
+                            {
+                                _myMatlabWrapper.Execute("statisticDataPlot = mean(transpose(statisticData));");
+                                _myMatlabWrapper.Execute("statisticDataStd = std(transpose(statisticData));");
+                            }
+                        }
+                        else
+                        {
+                            if (statisticType == "Vector correlation fisher-z to r-values")
+                            {
+                                _myMatlabWrapper.Execute("statisticDataPlot = fisherZVectorCorrelationTransform(statisticData);");
+                            }
+                        }
+
+                        switch (statisticType)
+                        {
+                            case "Vector correlation":
+
+                                _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation plot",
+                                    "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]",
+                                    "Velocity Vector Correlation", 1, (statisticData.Length / statisticData.Rank),
+                                    0.5, 1,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Vector correlation fisher-z":
+                                _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation Fisher Z plot",
+                                    "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]",
+                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / statisticData.Rank),
+                                    0.0, 2.0,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Vector correlation fisher-z to r-values":
+                                _myMatlabWrapper.CreateStatisticFigure(
+                                    "Velocity Vector Correlation Fisher Z to r-Values  plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]",
+                                    "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length / statisticData.Rank),
+                                    0.5, 1,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Perpendicular distance 300ms - Abs":
+                                _myMatlabWrapper.CreateStatisticFigure("PD300 abs plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "PD300 [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Perpendicular distance ?ms - Abs":
+                                _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " abs plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Mean perpendicular distance - Abs":
+                                _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "MeanPD [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Max perpendicular distance - Abs":
+                                _myMatlabWrapper.CreateStatisticFigure("MaxPD abs plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Perpendicular distance 300ms - Sign":
+                                _myMatlabWrapper.CreateStatisticFigure("PD300 sign plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "PD300 [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Perpendicular distance ?ms - Sign":
+                                _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " sign plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Max perpendicular distance - Sign":
+                                _myMatlabWrapper.CreateStatisticFigure("MaxPD sign plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), -0.05, 0.05,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Trajectory length abs":
+                                _myMatlabWrapper.CreateStatisticFigure("Trajectory Length plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "Trajectory Length [m]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0.07, 0.2,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Trajectory length ratio":
+                                _myMatlabWrapper.CreateStatisticFigure("Trajectory Length Ratio plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "Trajectory Length Ratio",
+                                    1, (statisticData.Length / statisticData.Rank), 0.2, 1.8,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "Enclosed area":
+                                _myMatlabWrapper.CreateStatisticFigure("Enclosed area plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "Enclosed Area [m²]", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.002,
+                                    plotFit,
+                                    plotErrorbars);
+                                break;
+
+                            case "RMSE":
+                                _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot", "statisticDataPlot",
+                                    "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                    fitEquation + "')",
+                                    "statisticDataStd", "[Trial]", "Root Mean Square Error", 1,
+                                    (statisticData.Length / statisticData.Rank), 0, 0.1,
+                                    plotFit,
+                                    plotErrorbars);
+
+                                break;
+                        }
+                        _myMatlabWrapper.ClearWorkspace();
+                    }
+                }
+
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
+                
+
+                        /*
                     if (isValid)
                     {
                         int meanCounter;
                         var data = new double[trialList.Count, selectedTrialsList.Count()];
 
-                        for (meanCounter = 0;
-                            meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel;
-                            meanCounter++)
+                        for (meanCounter = 0; meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel; meanCounter++)
                         {
                             _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCounter);
+
                             StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCounter);
 
                             DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
@@ -424,15 +703,14 @@ namespace ManipAnalysis_v2
 
                             if (pdTime == -1)
                             {
-                                DataSet statisticDataSet =
-                                    _myDatabaseWrapper.GetStatisticDataSet(tempStatisticPlotContainer.Study,
+                                int trialListCounter = 0;
+
+                                Trial trial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                         tempStatisticPlotContainer.Group,
                                         tempStatisticPlotContainer.Szenario,
                                         tempStatisticPlotContainer.Subject,
-                                        turnDateTime);
+                                        turnDateTime,);
 
-
-                                int trialListCounter = 0;
                                 foreach (DataRow row in statisticDataSet.Tables[0].Rows)
                                 {
                                     if (TaskManager.Cancel)
@@ -865,14 +1143,7 @@ namespace ManipAnalysis_v2
                             }
                         }
                         _myMatlabWrapper.ClearWorkspace();
-                    }
-                }
-
-                _myManipAnalysisGui.WriteProgressInfo("Ready");
-                _myManipAnalysisGui.SetProgressBarValue(0);
-                TaskManager.Remove(Task.CurrentId);
-            }));
-            */
+                    }*/
         }
 
         public IEnumerable<object[]> GetFaultyTrialInformation()
