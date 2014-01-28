@@ -339,11 +339,23 @@ namespace ManipAnalysis_v2
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Statistics == null)).SetFields(statisticFields);
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, TargetContainer target)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber)
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target == target)).SetLimit(1).First();
+                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber)).SetLimit(1).First();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject)
+        {
+            try
+            {
+                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject)).ToArray();
             }
             catch (Exception)
             {
@@ -356,6 +368,18 @@ namespace ManipAnalysis_v2
             try
             {
                 return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Id == objectId)).SetLimit(1).First();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public SzenarioMeanTime[] GetSzenarioMeanTime(string study, string group, string szenario, SubjectContainer subject, DateTime turn)
+        {
+            try
+            {
+                return _szenarioMeanTimeCollection.FindAs<SzenarioMeanTime>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject && t.MeasureFile.CreationTime == turn)).ToArray();
             }
             catch (Exception)
             {

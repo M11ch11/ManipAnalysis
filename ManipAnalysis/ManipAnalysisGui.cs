@@ -210,12 +210,7 @@ namespace ManipAnalysis_v2
 
         private void button_Debug_InitialiseDatabase_Click(object sender, EventArgs e)
         {
-            const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-
-            DialogResult result = MessageBox.Show(@"Are you really sure you want to initialise the Database?",
-                @"Really?", buttons);
-
-            if (result == DialogResult.Yes)
+            if (MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _manipAnalysisFunctions.InitializeSqlDatabase();
             }
@@ -223,7 +218,7 @@ namespace ManipAnalysis_v2
 
         private void button_PlotBaseline_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.PlotBaseline(comboBox_Others_Study.SelectedItem.ToString(),
+            _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 comboBox_Others_Szenario.SelectedItem.ToString(),
                 (SubjectContainer)
