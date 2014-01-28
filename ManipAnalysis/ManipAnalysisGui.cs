@@ -502,13 +502,14 @@ namespace ManipAnalysis_v2
                 }
             }
 
-            _manipAnalysisFunctions.PlotDescriptiveStatistic1(
+            _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
                 listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
                 comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
                 textBox_DescriptiveStatistic1_FitEquation.Text,
                 pdTime,
                 checkBox_DescriptiveStatistic1_PlotFit.Checked,
-                checkBox_DescriptiveStatistic1_PlotErrorbars.Checked);
+                checkBox_DescriptiveStatistic1_PlotErrorbars.Checked,
+                null);
         }
 
         private void button_StatisticPlots_AddAll_Click(object sender, EventArgs e)
@@ -921,6 +922,8 @@ namespace ManipAnalysis_v2
                                       + DateTime.Now.Hour.ToString("00")
                                       + "."
                                       + DateTime.Now.Minute.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Second.ToString("00")
                                       + "-mean-"
                                       + statisticType
                                       + "-data";
@@ -929,10 +932,13 @@ namespace ManipAnalysis_v2
             {
                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                 {
-                    _manipAnalysisFunctions.ExportDescriptiveStatistic1Data(
+                    _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
                         listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
                         comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
+                        null,
                         pdTime,
+                        false,
+                        false,
                         saveFileDialog.FileName);
                 }
             }
