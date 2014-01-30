@@ -9,9 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis_v2.Container;
 using ManipAnalysis_v2.MongoDb;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
+using System.IO.Compression;
+using System.Runtime.Serialization.Formatters.Binary;
 
 
 namespace ManipAnalysis_v2
@@ -397,7 +400,7 @@ namespace ManipAnalysis_v2
 
                                 if (pdTime == -1)
                                 {
-                                    for (int trialListCounter = 0; trialListCounter < trialList.Count; trialListCounter++)
+                                    for (int trialListCounter = 0; trialListCounter < trialList.Count & !TaskManager.Cancel; trialListCounter++)
                                     {
                                         Trial trial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                             tempStatisticPlotContainer.Group,
@@ -479,7 +482,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else
                                 {
-                                    for (int trialListCounter = 0; trialListCounter < trialList.Count; trialListCounter++)
+                                    for (int trialListCounter = 0; trialListCounter < trialList.Count & !TaskManager.Cancel; trialListCounter++)
                                     {
                                         Trial tempTrial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                             tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
@@ -4035,6 +4038,13 @@ namespace ManipAnalysis_v2
                 TaskManager.Remove(Task.CurrentId);
             }));
              */
+        }
+
+        public void FixIndexes()
+        {
+            _myDatabaseWrapper.DropAllIndexes();
+            _myDatabaseWrapper.EnsureIndexes();
+            _myDatabaseWrapper.RebuildIndexes();
         }
     }
 }

@@ -250,6 +250,7 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
+            this.button_DataManipulation_FixIndexes = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1954,6 +1955,7 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Debug_DatabaseManipulation
             // 
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_FixIndexes);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_InitialiseDatabase);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeGroupID);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectSubjectID);
@@ -2616,6 +2618,16 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
+            // button_DataManipulation_FixIndexes
+            // 
+            this.button_DataManipulation_FixIndexes.Location = new System.Drawing.Point(484, 65);
+            this.button_DataManipulation_FixIndexes.Name = "button_DataManipulation_FixIndexes";
+            this.button_DataManipulation_FixIndexes.Size = new System.Drawing.Size(75, 23);
+            this.button_DataManipulation_FixIndexes.TabIndex = 62;
+            this.button_DataManipulation_FixIndexes.Text = "Fix indexes";
+            this.button_DataManipulation_FixIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_FixIndexes.Click += new System.EventHandler(this.button_DataManipulation_FixIndexes_Click);
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2905,6 +2917,7 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowCatchTrials;
         private System.Windows.Forms.Label label_Start_ServerIP;
         private System.Windows.Forms.ComboBox comboBox_Start_DatabaseServer;
+        private System.Windows.Forms.Button button_DataManipulation_FixIndexes;
     }
 }
 

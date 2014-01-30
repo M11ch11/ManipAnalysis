@@ -2140,5 +2140,10 @@ namespace ManipAnalysis_v2
         {
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
         }
+
+        private void button_DataManipulation_FixIndexes_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.FixIndexes();
+        }
     }
 }

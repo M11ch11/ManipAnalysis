@@ -12,6 +12,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
+using MongoDB.Driver.Wrappers;
 
 namespace ManipAnalysis_v2
 {
@@ -71,25 +72,71 @@ namespace ManipAnalysis_v2
             _trialCollection = _mongoDatabase.GetCollection<Trial>("Trial");
             _baselineCollection = _mongoDatabase.GetCollection<Baseline>("Baseline");
             _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
-            CheckIndexes();
         }
 
-        public void CheckIndexes()
+        public void EnsureIndexes()
         {
-            IndexKeysBuilder<Trial> trialIndex = new IndexKeysBuilder<Trial>();
-            trialIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
-            _trialCollection.EnsureIndex(trialIndex);
+            //IndexKeysBuilder<Trial> trialIndex = new IndexKeysBuilder<Trial>();
+            //trialIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            //_trialCollection.EnsureIndex(trialIndex);
 
-            IndexKeysBuilder<Baseline> baselineIndex = new IndexKeysBuilder<Baseline>();
-            baselineIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
-            _baselineCollection.EnsureIndex(baselineIndex);
+            //IndexKeysBuilder<Baseline> baselineIndex = new IndexKeysBuilder<Baseline>();
+            //baselineIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            //_baselineCollection.EnsureIndex(baselineIndex);
 
-            IndexKeysBuilder<SzenarioMeanTime> szenarioMeanTimeIndex = new IndexKeysBuilder<SzenarioMeanTime>();
-            szenarioMeanTimeIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            //IndexKeysBuilder<SzenarioMeanTime> szenarioMeanTimeIndex = new IndexKeysBuilder<SzenarioMeanTime>();
+            //szenarioMeanTimeIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
+            //_szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeIndex);
 
-            _szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeIndex);
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Study));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Group));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject.PId));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Szenario));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target.Number));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TrialNumberInSzenario));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TargetTrialNumberInSzenario));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.CreationTime));
+            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.FileHash));
+
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Study));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Group));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject.PId));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Szenario));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target.Number));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
+            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
+
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Study));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Group));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject.PId));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Szenario));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target.Number));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
+            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
         }
 
+        public void RebuildIndexes()
+        {
+            _trialCollection.ReIndex();
+            _baselineCollection.ReIndex();
+            _szenarioMeanTimeCollection.ReIndex();
+        }
+
+        public void DropAllIndexes()
+        {
+            _trialCollection.DropAllIndexes();
+            _baselineCollection.DropAllIndexes();
+            _szenarioMeanTimeCollection.DropAllIndexes();
+        }
         public IEnumerable<string> GetStudys()
         {
             try
