@@ -172,6 +172,7 @@
     <Compile Include="Container\TrajectoryVelocityPlotContainer.cs" />
     <Compile Include="Container\VelocityDataContainer.cs" />
     <Compile Include="DoubleConverter.cs" />
+    <Compile Include="Gzip.cs" />
     <Compile Include="KinarmMeasureFileParser.cs" />
     <Compile Include="ManipAnalysisMain.cs" />
     <Compile Include="ManipAnalysisGui.cs">

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 
 namespace ManipAnalysis_v2
@@ -2199,6 +2201,10 @@ namespace ManipAnalysis_v2
                                     tempContainer.Group,
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                     showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
+
+                                //-------------------------------------
+                                // trialContainer.PositionRaw = Gzip.DeCompress(Gzip.Compress(trialContainer.PositionRaw));
+                                //-------------------------------------
 
                                 if (trialContainer != null)
                                 {

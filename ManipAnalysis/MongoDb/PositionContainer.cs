@@ -2,7 +2,7 @@
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class PositionContainer
+    public class PositionContainer
     {
         private DateTime _timeStamp;
         public double X { get; set; }
