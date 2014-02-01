@@ -2203,7 +2203,7 @@ namespace ManipAnalysis_v2
                                     showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
 
                                 //-------------------------------------
-                                // trialContainer.PositionRaw = Gzip.DeCompress(Gzip.Compress(trialContainer.PositionRaw));
+                                //trialContainer.PositionRaw = Gzip<List<PositionContainer>>.DeCompress(Gzip<List<PositionContainer>>.Compress(trialContainer.PositionRaw));
                                 //-------------------------------------
 
                                 if (trialContainer != null)

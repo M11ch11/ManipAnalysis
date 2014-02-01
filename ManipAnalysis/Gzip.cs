@@ -10,16 +10,16 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2
 {
-    class Gzip
+    static class Gzip<T>
     {
-        public static byte[] Compress(List<PositionContainer> list)
+        public static byte[] Compress(T tObject)
         {
             byte[] compressedData;
 
             using (var uncompressedStream = new MemoryStream())
             {
                 XmlSerializer xml = new XmlSerializer(typeof (List<PositionContainer>));
-                xml.Serialize(uncompressedStream, list);
+                xml.Serialize(uncompressedStream, tObject);
                 uncompressedStream.Position = 0;
                 using (var compressedStream = new MemoryStream())
                 {
@@ -33,7 +33,7 @@ namespace ManipAnalysis_v2
             return compressedData;
         }
 
-        public static List<PositionContainer> DeCompress(byte[] data)
+        public static T DeCompress(byte[] data)
         {
             using (var compressedStream = new MemoryStream(data))
             using (var uncompressedStream = new MemoryStream())
@@ -44,7 +44,7 @@ namespace ManipAnalysis_v2
                 }
                 uncompressedStream.Position = 0;
                 XmlSerializer xml = new XmlSerializer(typeof(List<PositionContainer>));
-                return (List<PositionContainer>)xml.Deserialize(uncompressedStream);
+                return (T)xml.Deserialize(uncompressedStream);
             }
         }
     }
