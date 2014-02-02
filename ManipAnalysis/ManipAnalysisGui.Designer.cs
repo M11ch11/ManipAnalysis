@@ -183,41 +183,11 @@ namespace ManipAnalysis_v2
             this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
             this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
             this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
-            this.button_Debug_InitialiseDatabase = new System.Windows.Forms.Button();
-            this.label_DataManipulation_ChangeGroupID = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateSubjectSubjectID = new System.Windows.Forms.Button();
-            this.label_DataManipulation_OldGroupID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_NewSubjectSubjectID = new System.Windows.Forms.TextBox();
-            this.textBox_DataManipulation_OldGroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_NewSubjectSubjectName = new System.Windows.Forms.Label();
-            this.label_DataManipulation_NewGroupID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_SubjectIdId = new System.Windows.Forms.TextBox();
-            this.textBox_DataManipulation_NewGroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_SubjectIdId = new System.Windows.Forms.Label();
-            this.button_DataManipulation_UpdateGroupID = new System.Windows.Forms.Button();
-            this.label_DataManipulation_ChangeSubjectSubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectID = new System.Windows.Forms.Label();
-            this.button_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Button();
-            this.label_DataManipulation_OldSubjectID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_MeasureFileID = new System.Windows.Forms.TextBox();
-            this.textBox_DataManipulation_OldSubjectID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_MeasureFileID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_NewSubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_DeleteMeasureFile = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_NewSubjectID = new System.Windows.Forms.TextBox();
-            this.button_DataManipulation_UpdateSubjectName = new System.Windows.Forms.Button();
-            this.button_DataManipulation_UpdateSubjectID = new System.Windows.Forms.Button();
-            this.textBox_DataManipulation_NewSubjectName = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_ChangeGroupGroupName = new System.Windows.Forms.Label();
-            this.label_DataManipulation_NewSubjectName = new System.Windows.Forms.Label();
-            this.label_DataManipulation_GroupID = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_SubjectID = new System.Windows.Forms.TextBox();
-            this.textBox_DataManipulation_GroupID = new System.Windows.Forms.TextBox();
-            this.label_DataManipulation_SubjectID = new System.Windows.Forms.Label();
-            this.label_DataManipulation_NewGroupName = new System.Windows.Forms.Label();
-            this.label_DataManipulation_ChangeSubjectSubjectName = new System.Windows.Forms.Label();
-            this.textBox_DataManipulation_NewGroupName = new System.Windows.Forms.TextBox();
-            this.button_DataManipulation_UpdateGroupName = new System.Windows.Forms.Button();
+            this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
+            this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
+            this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
             this.tabPage_Debug_BaselineRecalculation = new System.Windows.Forms.TabPage();
             this.button_BaselineRecalculation_RecalculateBaseline = new System.Windows.Forms.Button();
             this.label_BaselineRecalculation_Targets = new System.Windows.Forms.Label();
@@ -250,7 +220,6 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.button_DataManipulation_FixIndexes = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1955,42 +1924,11 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Debug_DatabaseManipulation
             // 
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_FixIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_InitialiseDatabase);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_OldGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_OldGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectSubjectName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_SubjectIdId);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_SubjectIdId);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateGroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DeleteMeasureFile);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_OldSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_MeasureFileID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_OldSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_MeasureFileID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_DeleteMeasureFile);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateSubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewSubjectName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeGroupGroupName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewSubjectName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_GroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_SubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_GroupID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_SubjectID);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_NewGroupName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.label_DataManipulation_ChangeSubjectSubjectName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.textBox_DataManipulation_NewGroupName);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_UpdateGroupName);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_EnsureIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_DropDatabase);
             this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
             this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
@@ -1999,305 +1937,55 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
             this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
             // 
-            // button_Debug_InitialiseDatabase
-            // 
-            this.button_Debug_InitialiseDatabase.Location = new System.Drawing.Point(17, 427);
-            this.button_Debug_InitialiseDatabase.Name = "button_Debug_InitialiseDatabase";
-            this.button_Debug_InitialiseDatabase.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_InitialiseDatabase.TabIndex = 61;
-            this.button_Debug_InitialiseDatabase.Text = "Initialise Database";
-            this.button_Debug_InitialiseDatabase.UseVisualStyleBackColor = true;
-            this.button_Debug_InitialiseDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
-            // 
-            // label_DataManipulation_ChangeGroupID
-            // 
-            this.label_DataManipulation_ChangeGroupID.AutoSize = true;
-            this.label_DataManipulation_ChangeGroupID.Location = new System.Drawing.Point(50, 9);
-            this.label_DataManipulation_ChangeGroupID.Name = "label_DataManipulation_ChangeGroupID";
-            this.label_DataManipulation_ChangeGroupID.Size = new System.Drawing.Size(104, 13);
-            this.label_DataManipulation_ChangeGroupID.TabIndex = 24;
-            this.label_DataManipulation_ChangeGroupID.Text = "Change \"_group.id\":";
-            // 
-            // button_DataManipulation_UpdateSubjectSubjectID
-            // 
-            this.button_DataManipulation_UpdateSubjectSubjectID.Location = new System.Drawing.Point(281, 341);
-            this.button_DataManipulation_UpdateSubjectSubjectID.Name = "button_DataManipulation_UpdateSubjectSubjectID";
-            this.button_DataManipulation_UpdateSubjectSubjectID.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateSubjectSubjectID.TabIndex = 60;
-            this.button_DataManipulation_UpdateSubjectSubjectID.Text = "Update subject_name";
-            this.button_DataManipulation_UpdateSubjectSubjectID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectSubjectID_Click);
-            // 
-            // label_DataManipulation_OldGroupID
-            // 
-            this.label_DataManipulation_OldGroupID.AutoSize = true;
-            this.label_DataManipulation_OldGroupID.Location = new System.Drawing.Point(20, 28);
-            this.label_DataManipulation_OldGroupID.Name = "label_DataManipulation_OldGroupID";
-            this.label_DataManipulation_OldGroupID.Size = new System.Drawing.Size(73, 13);
-            this.label_DataManipulation_OldGroupID.TabIndex = 25;
-            this.label_DataManipulation_OldGroupID.Text = "Old _group.id:";
-            // 
-            // textBox_DataManipulation_NewSubjectSubjectID
-            // 
-            this.textBox_DataManipulation_NewSubjectSubjectID.Location = new System.Drawing.Point(345, 315);
-            this.textBox_DataManipulation_NewSubjectSubjectID.Name = "textBox_DataManipulation_NewSubjectSubjectID";
-            this.textBox_DataManipulation_NewSubjectSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectSubjectID.TabIndex = 59;
-            // 
-            // textBox_DataManipulation_OldGroupID
-            // 
-            this.textBox_DataManipulation_OldGroupID.Location = new System.Drawing.Point(99, 25);
-            this.textBox_DataManipulation_OldGroupID.Name = "textBox_DataManipulation_OldGroupID";
-            this.textBox_DataManipulation_OldGroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_OldGroupID.TabIndex = 26;
-            // 
-            // label_DataManipulation_NewSubjectSubjectName
-            // 
-            this.label_DataManipulation_NewSubjectSubjectName.AutoSize = true;
-            this.label_DataManipulation_NewSubjectSubjectName.Location = new System.Drawing.Point(238, 318);
-            this.label_DataManipulation_NewSubjectSubjectName.Name = "label_DataManipulation_NewSubjectSubjectName";
-            this.label_DataManipulation_NewSubjectSubjectName.Size = new System.Drawing.Size(101, 13);
-            this.label_DataManipulation_NewSubjectSubjectName.TabIndex = 58;
-            this.label_DataManipulation_NewSubjectSubjectName.Text = "_subject.subject_id:";
-            // 
-            // label_DataManipulation_NewGroupID
-            // 
-            this.label_DataManipulation_NewGroupID.AutoSize = true;
-            this.label_DataManipulation_NewGroupID.Location = new System.Drawing.Point(14, 54);
-            this.label_DataManipulation_NewGroupID.Name = "label_DataManipulation_NewGroupID";
-            this.label_DataManipulation_NewGroupID.Size = new System.Drawing.Size(79, 13);
-            this.label_DataManipulation_NewGroupID.TabIndex = 27;
-            this.label_DataManipulation_NewGroupID.Text = "New _group.id:";
-            // 
-            // textBox_DataManipulation_SubjectIdId
-            // 
-            this.textBox_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(345, 289);
-            this.textBox_DataManipulation_SubjectIdId.Name = "textBox_DataManipulation_SubjectIdId";
-            this.textBox_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_SubjectIdId.TabIndex = 57;
-            // 
-            // textBox_DataManipulation_NewGroupID
-            // 
-            this.textBox_DataManipulation_NewGroupID.Location = new System.Drawing.Point(99, 51);
-            this.textBox_DataManipulation_NewGroupID.Name = "textBox_DataManipulation_NewGroupID";
-            this.textBox_DataManipulation_NewGroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewGroupID.TabIndex = 28;
-            // 
-            // label_DataManipulation_SubjectIdId
-            // 
-            this.label_DataManipulation_SubjectIdId.AutoSize = true;
-            this.label_DataManipulation_SubjectIdId.Location = new System.Drawing.Point(282, 292);
-            this.label_DataManipulation_SubjectIdId.Name = "label_DataManipulation_SubjectIdId";
-            this.label_DataManipulation_SubjectIdId.Size = new System.Drawing.Size(61, 13);
-            this.label_DataManipulation_SubjectIdId.TabIndex = 56;
-            this.label_DataManipulation_SubjectIdId.Text = "_subject.id:";
-            // 
-            // button_DataManipulation_UpdateGroupID
-            // 
-            this.button_DataManipulation_UpdateGroupID.Location = new System.Drawing.Point(53, 77);
-            this.button_DataManipulation_UpdateGroupID.Name = "button_DataManipulation_UpdateGroupID";
-            this.button_DataManipulation_UpdateGroupID.Size = new System.Drawing.Size(104, 23);
-            this.button_DataManipulation_UpdateGroupID.TabIndex = 29;
-            this.button_DataManipulation_UpdateGroupID.Text = "Update group_id";
-            this.button_DataManipulation_UpdateGroupID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateGroupID.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupID_Click);
-            // 
-            // label_DataManipulation_ChangeSubjectSubjectID
-            // 
-            this.label_DataManipulation_ChangeSubjectSubjectID.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectSubjectID.Location = new System.Drawing.Point(257, 273);
-            this.label_DataManipulation_ChangeSubjectSubjectID.Name = "label_DataManipulation_ChangeSubjectSubjectID";
-            this.label_DataManipulation_ChangeSubjectSubjectID.Size = new System.Drawing.Size(146, 13);
-            this.label_DataManipulation_ChangeSubjectSubjectID.TabIndex = 55;
-            this.label_DataManipulation_ChangeSubjectSubjectID.Text = "Change \"_subject.subject_id:";
-            // 
-            // label_DataManipulation_ChangeSubjectID
-            // 
-            this.label_DataManipulation_ChangeSubjectID.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectID.Location = new System.Drawing.Point(278, 9);
-            this.label_DataManipulation_ChangeSubjectID.Name = "label_DataManipulation_ChangeSubjectID";
-            this.label_DataManipulation_ChangeSubjectID.Size = new System.Drawing.Size(111, 13);
-            this.label_DataManipulation_ChangeSubjectID.TabIndex = 30;
-            this.label_DataManipulation_ChangeSubjectID.Text = "Change \"_subject.id\":";
-            // 
-            // button_DataManipulation_DeleteMeasureFile
-            // 
-            this.button_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(53, 341);
-            this.button_DataManipulation_DeleteMeasureFile.Name = "button_DataManipulation_DeleteMeasureFile";
-            this.button_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(142, 23);
-            this.button_DataManipulation_DeleteMeasureFile.TabIndex = 54;
-            this.button_DataManipulation_DeleteMeasureFile.Text = "Delete measure file";
-            this.button_DataManipulation_DeleteMeasureFile.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DeleteMeasureFile.Click += new System.EventHandler(this.button_DataManipulation_DeleteMeasureFile_Click);
-            // 
-            // label_DataManipulation_OldSubjectID
-            // 
-            this.label_DataManipulation_OldSubjectID.AutoSize = true;
-            this.label_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(241, 28);
-            this.label_DataManipulation_OldSubjectID.Name = "label_DataManipulation_OldSubjectID";
-            this.label_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(80, 13);
-            this.label_DataManipulation_OldSubjectID.TabIndex = 31;
-            this.label_DataManipulation_OldSubjectID.Text = "Old _subject.id:";
-            // 
-            // textBox_DataManipulation_MeasureFileID
-            // 
-            this.textBox_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(137, 315);
-            this.textBox_DataManipulation_MeasureFileID.Name = "textBox_DataManipulation_MeasureFileID";
-            this.textBox_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_MeasureFileID.TabIndex = 51;
-            // 
-            // textBox_DataManipulation_OldSubjectID
-            // 
-            this.textBox_DataManipulation_OldSubjectID.Location = new System.Drawing.Point(327, 25);
-            this.textBox_DataManipulation_OldSubjectID.Name = "textBox_DataManipulation_OldSubjectID";
-            this.textBox_DataManipulation_OldSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_OldSubjectID.TabIndex = 32;
-            // 
-            // label_DataManipulation_MeasureFileID
-            // 
-            this.label_DataManipulation_MeasureFileID.AutoSize = true;
-            this.label_DataManipulation_MeasureFileID.Location = new System.Drawing.Point(45, 318);
-            this.label_DataManipulation_MeasureFileID.Name = "label_DataManipulation_MeasureFileID";
-            this.label_DataManipulation_MeasureFileID.Size = new System.Drawing.Size(86, 13);
-            this.label_DataManipulation_MeasureFileID.TabIndex = 50;
-            this.label_DataManipulation_MeasureFileID.Text = "_measure_file.id:";
-            // 
-            // label_DataManipulation_NewSubjectID
-            // 
-            this.label_DataManipulation_NewSubjectID.AutoSize = true;
-            this.label_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(235, 54);
-            this.label_DataManipulation_NewSubjectID.Name = "label_DataManipulation_NewSubjectID";
-            this.label_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(86, 13);
-            this.label_DataManipulation_NewSubjectID.TabIndex = 33;
-            this.label_DataManipulation_NewSubjectID.Text = "New _subject.id:";
-            // 
-            // label_DataManipulation_DeleteMeasureFile
-            // 
-            this.label_DataManipulation_DeleteMeasureFile.AutoSize = true;
-            this.label_DataManipulation_DeleteMeasureFile.Location = new System.Drawing.Point(50, 299);
-            this.label_DataManipulation_DeleteMeasureFile.Name = "label_DataManipulation_DeleteMeasureFile";
-            this.label_DataManipulation_DeleteMeasureFile.Size = new System.Drawing.Size(100, 13);
-            this.label_DataManipulation_DeleteMeasureFile.TabIndex = 49;
-            this.label_DataManipulation_DeleteMeasureFile.Text = "Delete measure file:";
-            // 
-            // textBox_DataManipulation_NewSubjectID
-            // 
-            this.textBox_DataManipulation_NewSubjectID.Location = new System.Drawing.Point(327, 51);
-            this.textBox_DataManipulation_NewSubjectID.Name = "textBox_DataManipulation_NewSubjectID";
-            this.textBox_DataManipulation_NewSubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectID.TabIndex = 34;
-            // 
-            // button_DataManipulation_UpdateSubjectName
-            // 
-            this.button_DataManipulation_UpdateSubjectName.Location = new System.Drawing.Point(281, 220);
-            this.button_DataManipulation_UpdateSubjectName.Name = "button_DataManipulation_UpdateSubjectName";
-            this.button_DataManipulation_UpdateSubjectName.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateSubjectName.TabIndex = 47;
-            this.button_DataManipulation_UpdateSubjectName.Text = "Update subject_name";
-            this.button_DataManipulation_UpdateSubjectName.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectName.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectName_Click);
-            // 
-            // button_DataManipulation_UpdateSubjectID
-            // 
-            this.button_DataManipulation_UpdateSubjectID.Location = new System.Drawing.Point(281, 77);
-            this.button_DataManipulation_UpdateSubjectID.Name = "button_DataManipulation_UpdateSubjectID";
-            this.button_DataManipulation_UpdateSubjectID.Size = new System.Drawing.Size(104, 23);
-            this.button_DataManipulation_UpdateSubjectID.TabIndex = 35;
-            this.button_DataManipulation_UpdateSubjectID.Text = "Update subject_id";
-            this.button_DataManipulation_UpdateSubjectID.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateSubjectID.Click += new System.EventHandler(this.button_DataManipulation_UpdateSubjectID_Click);
-            // 
-            // textBox_DataManipulation_NewSubjectName
-            // 
-            this.textBox_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(345, 194);
-            this.textBox_DataManipulation_NewSubjectName.Name = "textBox_DataManipulation_NewSubjectName";
-            this.textBox_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewSubjectName.TabIndex = 46;
-            // 
-            // label_DataManipulation_ChangeGroupGroupName
-            // 
-            this.label_DataManipulation_ChangeGroupGroupName.AutoSize = true;
-            this.label_DataManipulation_ChangeGroupGroupName.Location = new System.Drawing.Point(50, 152);
-            this.label_DataManipulation_ChangeGroupGroupName.Name = "label_DataManipulation_ChangeGroupGroupName";
-            this.label_DataManipulation_ChangeGroupGroupName.Size = new System.Drawing.Size(155, 13);
-            this.label_DataManipulation_ChangeGroupGroupName.TabIndex = 36;
-            this.label_DataManipulation_ChangeGroupGroupName.Text = "Change \"_group.group_name\":";
-            // 
-            // label_DataManipulation_NewSubjectName
-            // 
-            this.label_DataManipulation_NewSubjectName.AutoSize = true;
-            this.label_DataManipulation_NewSubjectName.Location = new System.Drawing.Point(220, 197);
-            this.label_DataManipulation_NewSubjectName.Name = "label_DataManipulation_NewSubjectName";
-            this.label_DataManipulation_NewSubjectName.Size = new System.Drawing.Size(119, 13);
-            this.label_DataManipulation_NewSubjectName.TabIndex = 45;
-            this.label_DataManipulation_NewSubjectName.Text = "_subject.subject_name:";
-            // 
-            // label_DataManipulation_GroupID
-            // 
-            this.label_DataManipulation_GroupID.AutoSize = true;
-            this.label_DataManipulation_GroupID.Location = new System.Drawing.Point(57, 171);
-            this.label_DataManipulation_GroupID.Name = "label_DataManipulation_GroupID";
-            this.label_DataManipulation_GroupID.Size = new System.Drawing.Size(54, 13);
-            this.label_DataManipulation_GroupID.TabIndex = 37;
-            this.label_DataManipulation_GroupID.Text = "_group.id:";
-            // 
-            // textBox_DataManipulation_SubjectID
-            // 
-            this.textBox_DataManipulation_SubjectID.Location = new System.Drawing.Point(345, 168);
-            this.textBox_DataManipulation_SubjectID.Name = "textBox_DataManipulation_SubjectID";
-            this.textBox_DataManipulation_SubjectID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_SubjectID.TabIndex = 44;
-            // 
-            // textBox_DataManipulation_GroupID
-            // 
-            this.textBox_DataManipulation_GroupID.Location = new System.Drawing.Point(117, 168);
-            this.textBox_DataManipulation_GroupID.Name = "textBox_DataManipulation_GroupID";
-            this.textBox_DataManipulation_GroupID.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_GroupID.TabIndex = 38;
-            // 
-            // label_DataManipulation_SubjectID
-            // 
-            this.label_DataManipulation_SubjectID.AutoSize = true;
-            this.label_DataManipulation_SubjectID.Location = new System.Drawing.Point(278, 171);
-            this.label_DataManipulation_SubjectID.Name = "label_DataManipulation_SubjectID";
-            this.label_DataManipulation_SubjectID.Size = new System.Drawing.Size(61, 13);
-            this.label_DataManipulation_SubjectID.TabIndex = 43;
-            this.label_DataManipulation_SubjectID.Text = "_subject.id:";
-            // 
-            // label_DataManipulation_NewGroupName
-            // 
-            this.label_DataManipulation_NewGroupName.AutoSize = true;
-            this.label_DataManipulation_NewGroupName.Location = new System.Drawing.Point(6, 197);
-            this.label_DataManipulation_NewGroupName.Name = "label_DataManipulation_NewGroupName";
-            this.label_DataManipulation_NewGroupName.Size = new System.Drawing.Size(105, 13);
-            this.label_DataManipulation_NewGroupName.TabIndex = 39;
-            this.label_DataManipulation_NewGroupName.Text = "_group.group_name:";
-            // 
-            // label_DataManipulation_ChangeSubjectSubjectName
-            // 
-            this.label_DataManipulation_ChangeSubjectSubjectName.AutoSize = true;
-            this.label_DataManipulation_ChangeSubjectSubjectName.Location = new System.Drawing.Point(257, 152);
-            this.label_DataManipulation_ChangeSubjectSubjectName.Name = "label_DataManipulation_ChangeSubjectSubjectName";
-            this.label_DataManipulation_ChangeSubjectSubjectName.Size = new System.Drawing.Size(164, 13);
-            this.label_DataManipulation_ChangeSubjectSubjectName.TabIndex = 42;
-            this.label_DataManipulation_ChangeSubjectSubjectName.Text = "Change \"_subject.subject_name:";
-            // 
-            // textBox_DataManipulation_NewGroupName
-            // 
-            this.textBox_DataManipulation_NewGroupName.Location = new System.Drawing.Point(117, 194);
-            this.textBox_DataManipulation_NewGroupName.Name = "textBox_DataManipulation_NewGroupName";
-            this.textBox_DataManipulation_NewGroupName.Size = new System.Drawing.Size(58, 20);
-            this.textBox_DataManipulation_NewGroupName.TabIndex = 40;
-            // 
-            // button_DataManipulation_UpdateGroupName
-            // 
-            this.button_DataManipulation_UpdateGroupName.Location = new System.Drawing.Point(53, 220);
-            this.button_DataManipulation_UpdateGroupName.Name = "button_DataManipulation_UpdateGroupName";
-            this.button_DataManipulation_UpdateGroupName.Size = new System.Drawing.Size(122, 23);
-            this.button_DataManipulation_UpdateGroupName.TabIndex = 41;
-            this.button_DataManipulation_UpdateGroupName.Text = "Update group_name";
-            this.button_DataManipulation_UpdateGroupName.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_UpdateGroupName.Click += new System.EventHandler(this.button_DataManipulation_UpdateGroupName_Click);
+            // button_DataManipulation_CompactDatabase
+            // 
+            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 152);
+            this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
+            this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_CompactDatabase.TabIndex = 65;
+            this.button_DataManipulation_CompactDatabase.Text = "Compact database";
+            this.button_DataManipulation_CompactDatabase.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_CompactDatabase.Click += new System.EventHandler(this.button_DataManipulation_CompactDatabase_Click);
+            // 
+            // button_DataManipulation_DropIndexes
+            // 
+            this.button_DataManipulation_DropIndexes.Location = new System.Drawing.Point(17, 75);
+            this.button_DataManipulation_DropIndexes.Name = "button_DataManipulation_DropIndexes";
+            this.button_DataManipulation_DropIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropIndexes.TabIndex = 64;
+            this.button_DataManipulation_DropIndexes.Text = "Drop indexes";
+            this.button_DataManipulation_DropIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropIndexes.Click += new System.EventHandler(this.button_DataManipulation_DropIndexes_Click);
+            // 
+            // button_DataManipulation_RebuildIndexes
+            // 
+            this.button_DataManipulation_RebuildIndexes.Location = new System.Drawing.Point(17, 46);
+            this.button_DataManipulation_RebuildIndexes.Name = "button_DataManipulation_RebuildIndexes";
+            this.button_DataManipulation_RebuildIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_RebuildIndexes.TabIndex = 63;
+            this.button_DataManipulation_RebuildIndexes.Text = "Rebuild indexes";
+            this.button_DataManipulation_RebuildIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_RebuildIndexes.Click += new System.EventHandler(this.button_DataManipulation_RebuildIndexes_Click);
+            // 
+            // button_DataManipulation_EnsureIndexes
+            // 
+            this.button_DataManipulation_EnsureIndexes.Location = new System.Drawing.Point(17, 17);
+            this.button_DataManipulation_EnsureIndexes.Name = "button_DataManipulation_EnsureIndexes";
+            this.button_DataManipulation_EnsureIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_EnsureIndexes.TabIndex = 62;
+            this.button_DataManipulation_EnsureIndexes.Text = "Ensure indexes";
+            this.button_DataManipulation_EnsureIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_EnsureIndexes.Click += new System.EventHandler(this.button_DataManipulation_EnsureIndexes_Click);
+            // 
+            // button_Debug_DropDatabase
+            // 
+            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 181);
+            this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
+            this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_Debug_DropDatabase.TabIndex = 61;
+            this.button_Debug_DropDatabase.Text = "Drop database";
+            this.button_Debug_DropDatabase.UseVisualStyleBackColor = true;
+            this.button_Debug_DropDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
             // 
             // tabPage_Debug_BaselineRecalculation
             // 
@@ -2618,16 +2306,6 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
-            // button_DataManipulation_FixIndexes
-            // 
-            this.button_DataManipulation_FixIndexes.Location = new System.Drawing.Point(484, 65);
-            this.button_DataManipulation_FixIndexes.Name = "button_DataManipulation_FixIndexes";
-            this.button_DataManipulation_FixIndexes.Size = new System.Drawing.Size(75, 23);
-            this.button_DataManipulation_FixIndexes.TabIndex = 62;
-            this.button_DataManipulation_FixIndexes.Text = "Fix indexes";
-            this.button_DataManipulation_FixIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_FixIndexes.Click += new System.EventHandler(this.button_DataManipulation_FixIndexes_Click);
-            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2672,7 +2350,6 @@ namespace ManipAnalysis_v2
             this.tabControl_Debug.ResumeLayout(false);
             this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
             this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
-            this.tabPage_Debug_DatabaseManipulation.PerformLayout();
             this.tabPage_Debug_BaselineRecalculation.ResumeLayout(false);
             this.tabPage_Debug_BaselineRecalculation.PerformLayout();
             this.tabPage_Impressum.ResumeLayout(false);
@@ -2776,30 +2453,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Label label_Log;
         private System.Windows.Forms.Button button_Import_AutoImport;
         private System.Windows.Forms.Button button_ClearLog;
-        private System.Windows.Forms.Button button_DataManipulation_UpdateSubjectName;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_NewSubjectName;
-        private System.Windows.Forms.Label label_DataManipulation_NewSubjectName;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_SubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectName;
-        private System.Windows.Forms.Button button_DataManipulation_UpdateGroupName;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_NewGroupName;
-        private System.Windows.Forms.Label label_DataManipulation_NewGroupName;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_GroupID;
-        private System.Windows.Forms.Label label_DataManipulation_GroupID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeGroupGroupName;
-        private System.Windows.Forms.Button button_DataManipulation_UpdateSubjectID;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_NewSubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_NewSubjectID;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_OldSubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_OldSubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectID;
-        private System.Windows.Forms.Button button_DataManipulation_UpdateGroupID;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_NewGroupID;
-        private System.Windows.Forms.Label label_DataManipulation_NewGroupID;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_OldGroupID;
-        private System.Windows.Forms.Label label_DataManipulation_OldGroupID;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeGroupID;
         private System.Windows.Forms.TabPage tabPage_TrajectoryVelocity;
         private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_Turns;
         private System.Windows.Forms.Label label_TrajectoryVelocity_Turns;
@@ -2834,10 +2487,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.PictureBox pictureBox_Impressum_KITLogo;
         private System.Windows.Forms.Label label_Impressum_Text;
         private System.Windows.Forms.Button button_Import_ClearMeasureFileList;
-        private System.Windows.Forms.Button button_DataManipulation_DeleteMeasureFile;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_MeasureFileID;
-        private System.Windows.Forms.Label label_DataManipulation_MeasureFileID;
-        private System.Windows.Forms.Label label_DataManipulation_DeleteMeasureFile;
         private System.Windows.Forms.GroupBox groupBox_Import_VelocityCropping;
         private System.Windows.Forms.Label label_Import_PercentPeakVelocity;
         private System.Windows.Forms.TextBox textBox_Import_PercentPeakVelocity;
@@ -2861,18 +2510,11 @@ namespace ManipAnalysis_v2
                 GetSubDirectories(ref directoriesList, di);
             }
         }
-
-        private System.Windows.Forms.Button button_DataManipulation_UpdateSubjectSubjectID;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_NewSubjectSubjectID;
-        private System.Windows.Forms.Label label_DataManipulation_NewSubjectSubjectName;
-        private System.Windows.Forms.TextBox textBox_DataManipulation_SubjectIdId;
-        private System.Windows.Forms.Label label_DataManipulation_SubjectIdId;
-        private System.Windows.Forms.Label label_DataManipulation_ChangeSubjectSubjectID;
         private System.Windows.Forms.TabControl tabControl_Debug;
         private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
         private System.Windows.Forms.TabPage tabPage_Debug_DatabaseManipulation;
         private System.Windows.Forms.TabPage tabPage_Debug_BaselineRecalculation;
-        private System.Windows.Forms.Button button_Debug_InitialiseDatabase;
+        private System.Windows.Forms.Button button_Debug_DropDatabase;
         private System.Windows.Forms.Label label_BaselineRecalculation_Targets;
         private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Targets;
         private System.Windows.Forms.Button button_BaselineRecalculation_AddAll;
@@ -2917,7 +2559,10 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowCatchTrials;
         private System.Windows.Forms.Label label_Start_ServerIP;
         private System.Windows.Forms.ComboBox comboBox_Start_DatabaseServer;
-        private System.Windows.Forms.Button button_DataManipulation_FixIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_EnsureIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_RebuildIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_DropIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_CompactDatabase;
     }
 }
 

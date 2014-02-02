@@ -137,6 +137,21 @@ namespace ManipAnalysis_v2
             _baselineCollection.DropAllIndexes();
             _szenarioMeanTimeCollection.DropAllIndexes();
         }
+        
+        public void CompactDatabase()
+        {
+            _mongoDatabase.RunCommand("db.runCommand({ compact : 'Trial' });");
+            _mongoDatabase.RunCommand("db.runCommand({ compact : 'Baseline' });");
+            _mongoDatabase.RunCommand("db.runCommand({ compact : 'SzenarioMeanTime' });");
+        }
+
+        public void DropDatabase()
+        {
+            _mongoDatabase.DropCollection("SzenarioMeanTime");
+            _mongoDatabase.DropCollection("Baseline");
+            _mongoDatabase.DropCollection("Trial");
+        }
+
         public IEnumerable<string> GetStudys()
         {
             try

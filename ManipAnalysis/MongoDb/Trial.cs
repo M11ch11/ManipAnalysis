@@ -19,6 +19,20 @@ namespace ManipAnalysis_v2.MongoDb
         public List<PositionContainer> PositionRaw;
         public List<VelocityContainer> VelocityFiltered;
         public List<VelocityContainer> VelocityNormalized;
+        public byte[] ZippedMeasuredForcesFiltered;
+        public byte[] ZippedMeasuredForcesNormalized;
+        public byte[] ZippedMeasuredForcesRaw;
+        public byte[] ZippedMomentForcesFiltered;
+        public byte[] ZippedMomentForcesNormalized;
+        public byte[] ZippedMomentForcesRaw;
+        public byte[] ZippedNominalForcesFiltered;
+        public byte[] ZippedNominalForcesNormalized;
+        public byte[] ZippedNominalForcesRaw;
+        public byte[] ZippedPositionFiltered;
+        public byte[] ZippedPositionNormalized;
+        public byte[] ZippedPositionRaw;
+        public byte[] ZippedVelocityFiltered;
+        public byte[] ZippedVelocityNormalized;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
         public StatisticContainer Statistics;

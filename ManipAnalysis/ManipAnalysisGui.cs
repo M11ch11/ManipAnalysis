@@ -212,7 +212,7 @@ namespace ManipAnalysis_v2
         {
             if (MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                _manipAnalysisFunctions.InitializeSqlDatabase();
+                _manipAnalysisFunctions.DropDatabase();
             }
         }
 
@@ -981,46 +981,6 @@ namespace ManipAnalysis_v2
             }
         }
 
-        private void button_DataManipulation_UpdateGroupID_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ChangeGroupId(
-                Convert.ToInt32(textBox_DataManipulation_OldGroupID.Text),
-                Convert.ToInt32(textBox_DataManipulation_NewGroupID.Text)
-                );
-        }
-
-        private void button_DataManipulation_UpdateSubjectID_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ChangeSubjectId(
-                Convert.ToInt32(textBox_DataManipulation_OldSubjectID.Text),
-                Convert.ToInt32(textBox_DataManipulation_NewSubjectID.Text)
-                );
-        }
-
-        private void button_DataManipulation_UpdateGroupName_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ChangeGroupGroupName(
-                Convert.ToInt32(textBox_DataManipulation_GroupID.Text),
-                textBox_DataManipulation_NewGroupName.Text
-                );
-        }
-
-        private void button_DataManipulation_UpdateSubjectName_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ChangeSubjectSubjectName(
-                Convert.ToInt32(textBox_DataManipulation_SubjectID.Text),
-                textBox_DataManipulation_NewSubjectName.Text
-                );
-        }
-
-        private void button_DataManipulation_UpdateSubjectSubjectID_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ChangeSubjectSubjectId(
-                Convert.ToInt32(textBox_DataManipulation_SubjectIdId.Text),
-                textBox_DataManipulation_NewSubjectSubjectID.Text
-                );
-        }
-
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>(),
@@ -1622,13 +1582,6 @@ namespace ManipAnalysis_v2
             listBox_Import_SelectedMeasureFiles.Items.Clear();
         }
 
-        private void button_DataManipulation_DeleteMeasureFile_Click(object sender, EventArgs e)
-        {
-            WriteProgressInfo("Deleting measure file...");
-            _manipAnalysisFunctions.DeleteMeasureFile(Convert.ToInt32(textBox_DataManipulation_MeasureFileID.Text));
-            WriteProgressInfo("Ready");
-        }
-
         private void button_Start_SelectDatabase_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.SetDatabase(comboBox_Start_Database.SelectedItem.ToString());
@@ -2141,9 +2094,24 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
         }
 
-        private void button_DataManipulation_FixIndexes_Click(object sender, EventArgs e)
+        private void button_DataManipulation_EnsureIndexes_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.FixIndexes();
+            _manipAnalysisFunctions.EnsureIndexes();
+        }
+
+        private void button_DataManipulation_RebuildIndexes_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.RebuildIndexes();
+        }
+
+        private void button_DataManipulation_DropIndexes_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.DropIndexes();
+        }
+
+        private void button_DataManipulation_CompactDatabase_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.CompactDatabase();
         }
     }
 }

@@ -323,9 +323,29 @@ namespace ManipAnalysis_v2
             _myMatlabWrapper.ShowWorkspaceWindow();
         }
 
-        public void InitializeSqlDatabase()
+        public void CompactDatabase()
         {
-            //_myDatabaseWrapper.InitializeDatabase();
+            _myDatabaseWrapper.CompactDatabase();
+        }
+
+        public void DropDatabase()
+        {
+            _myDatabaseWrapper.DropDatabase();
+        }
+
+        public void EnsureIndexes()
+        {
+            _myDatabaseWrapper.EnsureIndexes();
+        }
+
+        public void RebuildIndexes()
+        {
+            _myDatabaseWrapper.RebuildIndexes();
+        }
+
+        public void DropIndexes()
+        {
+            _myDatabaseWrapper.DropAllIndexes();
         }
 
         public void PlotTrajectoryBaseline(string study, string group, string szenario, SubjectContainer subject)
@@ -370,7 +390,7 @@ namespace ManipAnalysis_v2
                     }
                     else
                     {
-                        fields.Include(t => t.PositionNormalized, t => t.Target);
+                        fields.Include(t => t.ZippedPositionNormalized, t => t.Target);
                     }
 
                     if (selectedTrialsList.Any())
@@ -490,6 +510,9 @@ namespace ManipAnalysis_v2
                                             tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
                                             tempStatisticPlotContainer.Subject,
                                             turnDateTime, trialList.ElementAt(trialListCounter), fields);
+
+                                        tempTrial.PositionNormalized =
+                                            Gzip<List<PositionContainer>>.DeCompress(tempTrial.ZippedPositionNormalized);
 
                                         int time300MsIndex =
                                             tempTrial.PositionNormalized.Select(t => t.TimeStamp).ToList().IndexOf(
@@ -1105,6 +1128,14 @@ namespace ManipAnalysis_v2
                             szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
 
                             _myMatlabWrapper.ClearWorkspace();
+
+                            #endregion
+
+                            _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
+
+                            #region CompressData
+
+                            CompressTrialData(trialsContainer);
 
                             #endregion
 
@@ -1884,6 +1915,97 @@ namespace ManipAnalysis_v2
             return szenarioMeanTimes;
         }
 
+        public void CompressTrialData(List<Trial> trialsContainer)
+        {
+            for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
+            {
+                if (trialsContainer[trialCounter].MeasuredForcesFiltered != null)
+                {
+                    trialsContainer[trialCounter].ZippedMeasuredForcesFiltered =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesFiltered);
+                    trialsContainer[trialCounter].MeasuredForcesFiltered = null;
+                }
+                if (trialsContainer[trialCounter].MeasuredForcesNormalized != null)
+                {
+                    trialsContainer[trialCounter].ZippedMeasuredForcesNormalized =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesNormalized);
+                    trialsContainer[trialCounter].MeasuredForcesNormalized = null;
+                }
+                if (trialsContainer[trialCounter].MeasuredForcesRaw != null)
+                {
+                    trialsContainer[trialCounter].ZippedMeasuredForcesRaw =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesRaw);
+                    trialsContainer[trialCounter].MeasuredForcesRaw = null;
+                }
+                if (trialsContainer[trialCounter].NominalForcesFiltered != null)
+                {
+                    trialsContainer[trialCounter].ZippedNominalForcesFiltered =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesFiltered);
+                    trialsContainer[trialCounter].NominalForcesFiltered = null;
+                }
+                if (trialsContainer[trialCounter].NominalForcesNormalized != null)
+                {
+                    trialsContainer[trialCounter].ZippedNominalForcesNormalized =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesNormalized);
+                    trialsContainer[trialCounter].NominalForcesNormalized = null;
+                }
+                if (trialsContainer[trialCounter].NominalForcesRaw != null)
+                {
+                    trialsContainer[trialCounter].ZippedNominalForcesRaw =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesRaw);
+                    trialsContainer[trialCounter].NominalForcesRaw = null;
+                }
+                if (trialsContainer[trialCounter].MomentForcesFiltered != null)
+                {
+                    trialsContainer[trialCounter].ZippedMomentForcesFiltered =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesFiltered);
+                    trialsContainer[trialCounter].MomentForcesFiltered = null;
+                }
+                if (trialsContainer[trialCounter].MomentForcesNormalized != null)
+                {
+                    trialsContainer[trialCounter].ZippedMomentForcesNormalized =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesNormalized);
+                    trialsContainer[trialCounter].MomentForcesNormalized = null;
+                }
+                if (trialsContainer[trialCounter].MomentForcesRaw != null)
+                {
+                    trialsContainer[trialCounter].ZippedMomentForcesRaw =
+                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesRaw);
+                    trialsContainer[trialCounter].MomentForcesRaw = null;
+                }
+                if (trialsContainer[trialCounter].PositionFiltered != null)
+                {
+                    trialsContainer[trialCounter].ZippedPositionFiltered =
+                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionFiltered);
+                    trialsContainer[trialCounter].PositionFiltered = null;
+                }
+                if (trialsContainer[trialCounter].PositionNormalized != null)
+                {
+                    trialsContainer[trialCounter].ZippedPositionNormalized =
+                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionNormalized);
+                    trialsContainer[trialCounter].PositionNormalized = null;
+                }
+                if (trialsContainer[trialCounter].PositionRaw != null)
+                {
+                    trialsContainer[trialCounter].ZippedPositionRaw =
+                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionRaw);
+                    trialsContainer[trialCounter].PositionRaw = null;
+                }
+                if (trialsContainer[trialCounter].VelocityFiltered != null)
+                {
+                    trialsContainer[trialCounter].ZippedVelocityFiltered =
+                        Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityFiltered);
+                    trialsContainer[trialCounter].VelocityFiltered = null;
+                }
+                if (trialsContainer[trialCounter].VelocityNormalized != null)
+                {
+                    trialsContainer[trialCounter].ZippedVelocityNormalized =
+                        Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityNormalized);
+                    trialsContainer[trialCounter].VelocityNormalized = null;
+                }
+            }
+        }
+
         public void CalculateStatistics()
         {
             var newTask = new Task(CalculateStatisticsThread);
@@ -2124,53 +2246,53 @@ namespace ManipAnalysis_v2
 
                     if (trajectoryVelocityForce == "Velocity - Normalized")
                     {
-                        fields.Include(t1 => t1.VelocityNormalized);
+                        fields.Include(t1 => t1.ZippedVelocityNormalized);
                         _myMatlabWrapper.CreateVelocityFigure("Velocity plot normalized", 101);
                     }
                     else if (trajectoryVelocityForce == "Velocity - Filtered")
                     {
-                        fields.Include(t1 => t1.VelocityFiltered);
+                        fields.Include(t1 => t1.ZippedVelocityFiltered);
                         _myMatlabWrapper.CreateFigure("Velocity plot filtered", "[Samples]", "Velocity [m/s]");
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Normalized")
                     {
                         if (showForceVectors || showPdForceVectors)
                         {
-                            fields.Include(t1 => t1.PositionNormalized, t2 => t2.MeasuredForcesNormalized);
+                            fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedMeasuredForcesNormalized);
                             _myMatlabWrapper.CreateTrajectoryForceFigure("Trajectory plot normalized");
                         }
                         else
                         {
-                            fields.Include(t1 => t1.PositionNormalized);
+                            fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
                         _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
-                        fields.Include(t1 => t1.PositionFiltered);
+                        fields.Include(t1 => t1.ZippedPositionFiltered);
                         _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
-                        fields.Include(t1 => t1.PositionRaw);
+                        fields.Include(t1 => t1.ZippedPositionRaw);
                         _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {
-                        fields.Include(t1 => t1.MeasuredForcesNormalized);
+                        fields.Include(t1 => t1.ZippedMeasuredForcesNormalized);
                         _myMatlabWrapper.CreateFigure("Force plot normalized", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Filtered")
                     {
-                        fields.Include(t1 => t1.MeasuredForcesFiltered);
+                        fields.Include(t1 => t1.ZippedMeasuredForcesFiltered);
                         _myMatlabWrapper.CreateFigure("Force plot filtered", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Raw")
                     {
-                        fields.Include(t1 => t1.MeasuredForcesRaw);
+                        fields.Include(t1 => t1.ZippedMeasuredForcesRaw);
                         _myMatlabWrapper.CreateFigure("Force plot raw", "[Samples]", "Force [N]");
                     }
 
@@ -2202,14 +2324,12 @@ namespace ManipAnalysis_v2
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
                                     showNormalTrials, showCatchTrials, showErrorclampTrials, fields);
 
-                                //-------------------------------------
-                                //trialContainer.PositionRaw = Gzip<List<PositionContainer>>.DeCompress(Gzip<List<PositionContainer>>.Compress(trialContainer.PositionRaw));
-                                //-------------------------------------
-
                                 if (trialContainer != null)
                                 {
                                     if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
+                                        trialContainer.VelocityNormalized =
+                                            Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityNormalized);
                                         _myMatlabWrapper.SetWorkspaceData("velocity",
                                             trialContainer.VelocityNormalized.Select(
                                                 t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
@@ -2217,6 +2337,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Velocity - Filtered")
                                     {
+                                        trialContainer.VelocityFiltered =
+                                            Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityFiltered);
                                         _myMatlabWrapper.SetWorkspaceData("velocity",
                                             trialContainer.VelocityFiltered.Select(
                                                 t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))
@@ -2225,6 +2347,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Trajectory - Normalized")
                                     {
+                                        trialContainer.PositionNormalized =
+                                            Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionNormalized);
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialContainer.PositionNormalized.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
@@ -2279,6 +2403,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                                     {
+                                        trialContainer.PositionFiltered =
+                                            Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionFiltered);
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialContainer.PositionFiltered.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
@@ -2290,6 +2416,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                                     {
+                                        trialContainer.PositionRaw =
+                                            Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionRaw);
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialContainer.PositionRaw.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
@@ -2301,6 +2429,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
+                                        trialContainer.MeasuredForcesNormalized =
+                                            Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesNormalized);
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialContainer.MeasuredForcesNormalized.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -2310,6 +2440,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Force - Filtered")
                                     {
+                                        trialContainer.MeasuredForcesFiltered =
+                                            Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesFiltered);
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialContainer.MeasuredForcesFiltered.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -2319,6 +2451,8 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Force - Raw")
                                     {
+                                        trialContainer.MeasuredForcesRaw =
+                                            Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesRaw);
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialContainer.MeasuredForcesRaw.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -2380,14 +2514,17 @@ namespace ManipAnalysis_v2
                                         {
                                             if (trajectoryVelocityForce == "Trajectory - Normalized")
                                             {
+                                                trialContainer.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionNormalized);
                                                 positionData.Add(trialContainer.PositionNormalized);
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
+                                                trialContainer.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityNormalized);
                                                 velocityData.Add(trialContainer.VelocityNormalized);
                                             }
                                             else if (trajectoryVelocityForce == "Force - Normalized")
                                             {
+                                                trialContainer.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesNormalized);
                                                 forceData.Add(trialContainer.MeasuredForcesNormalized);
                                             }
                                             else
@@ -2514,7 +2651,7 @@ namespace ManipAnalysis_v2
 
                 if (trajectoryVelocityForce == "Velocity - Normalized")
                 {
-                    fields.Include(t1 => t1.VelocityNormalized);
+                    fields.Include(t1 => t1.ZippedVelocityNormalized);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityX;VelocityY");
@@ -2526,7 +2663,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Velocity - Filtered")
                 {
-                    fields.Include(t1 => t1.VelocityFiltered);
+                    fields.Include(t1 => t1.ZippedVelocityFiltered);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityX;VelocityY");
@@ -2538,7 +2675,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Trajectory - Normalized")
                 {
-                    fields.Include(t1 => t1.PositionNormalized);
+                    fields.Include(t1 => t1.ZippedPositionNormalized);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -2550,7 +2687,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Trajectory - Filtered")
                 {
-                    fields.Include(t1 => t1.PositionFiltered);
+                    fields.Include(t1 => t1.ZippedPositionFiltered);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -2562,7 +2699,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Trajectory - Raw")
                 {
-                    fields.Include(t1 => t1.PositionRaw);
+                    fields.Include(t1 => t1.ZippedPositionRaw);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -2574,7 +2711,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Force - Normalized")
                 {
-                    fields.Include(t1 => t1.MeasuredForcesNormalized);
+                    fields.Include(t1 => t1.ZippedMeasuredForcesNormalized);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY");
@@ -2586,7 +2723,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Force - Filtered")
                 {
-                    fields.Include(t1 => t1.MeasuredForcesFiltered);
+                    fields.Include(t1 => t1.ZippedMeasuredForcesFiltered);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY");
@@ -2598,7 +2735,7 @@ namespace ManipAnalysis_v2
                 }
                 else if (trajectoryVelocityForce == "Force - Raw")
                 {
-                    fields.Include(t1 => t1.MeasuredForcesRaw);
+                    fields.Include(t1 => t1.ZippedMeasuredForcesRaw);
                     if (meanIndividual == "Individual")
                     {
                         dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY");
@@ -2641,6 +2778,7 @@ namespace ManipAnalysis_v2
                             {
                                 if (trajectoryVelocityForce == "Velocity - Normalized")
                                 {
+                                    trialContainer.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityNormalized);
                                     for (int i = 0; i < trialContainer.VelocityNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2657,6 +2795,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Velocity - Filtered")
                                 {
+                                    trialContainer.VelocityFiltered = Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityFiltered);
                                     for (int i = 0; i < trialContainer.VelocityFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2673,6 +2812,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Trajectory - Normalized")
                                 {
+                                    trialContainer.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionNormalized);
                                     for (int i = 0; i < trialContainer.PositionNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2689,6 +2829,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Trajectory - Filtered")
                                 {
+                                    trialContainer.PositionFiltered = Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionFiltered);
                                     for (int i = 0; i < trialContainer.PositionFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2705,6 +2846,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Trajectory - Raw")
                                 {
+                                    trialContainer.PositionRaw = Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionRaw);
                                     for (int i = 0; i < trialContainer.PositionRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2721,6 +2863,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Force - Normalized")
                                 {
+                                    trialContainer.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesNormalized);
                                     for (int i = 0; i < trialContainer.MeasuredForcesNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2737,6 +2880,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Force - Filtered")
                                 {
+                                    trialContainer.MeasuredForcesFiltered = Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesFiltered);
                                     for (int i = 0; i < trialContainer.MeasuredForcesFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2753,6 +2897,7 @@ namespace ManipAnalysis_v2
                                 }
                                 else if (trajectoryVelocityForce == "Force - Raw")
                                 {
+                                    trialContainer.MeasuredForcesRaw = Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesRaw);
                                     for (int i = 0; i < trialContainer.MeasuredForcesRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -2818,19 +2963,23 @@ namespace ManipAnalysis_v2
                                     {
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
+                                            trialContainer.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialContainer.ZippedPositionNormalized);
                                             positionData.Add(trialContainer.PositionNormalized);
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
+                                            trialContainer.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trialContainer.ZippedVelocityNormalized);
                                             velocityData.Add(trialContainer.VelocityNormalized);
                                         }
                                         else if (trajectoryVelocityForce == "Force - Normalized")
                                         {
+                                            trialContainer.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialContainer.ZippedMeasuredForcesNormalized);
                                             forceData.Add(trialContainer.MeasuredForcesNormalized);
                                         }
                                         else
                                         {
-                                            _myManipAnalysisGui.WriteToLogBox("Mean can only be calculated for normalized values.");
+                                            _myManipAnalysisGui.WriteToLogBox(
+                                                "Mean can only be calculated for normalized values.");
                                         }
                                     }
                                 }
