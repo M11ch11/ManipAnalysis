@@ -1140,13 +1140,21 @@ namespace ManipAnalysis_v2
 
                             #region Uploading data to MongoDB
 
-                            _myDatabaseWrapper.Insert(trialsContainer);
-                            if (baselinesContainer != null)
+                            try
                             {
-                                _myDatabaseWrapper.Insert(baselinesContainer);
+                                _myDatabaseWrapper.Insert(trialsContainer);
+                                if (baselinesContainer != null)
+                                {
+                                    _myDatabaseWrapper.Insert(baselinesContainer);
+                                }
+                                _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
                             }
-                            _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
-                            
+                            catch (Exception ex)
+                            {
+                                _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
+                                throw ex;
+                            }
+
                             #endregion
                         }
                         else
@@ -1888,9 +1896,7 @@ namespace ManipAnalysis_v2
             Parallel.For(minTargetNumber, maxTargetNumber + 1, (targetCounter, loopState) =>
             {
                 var tempSzenarioMeanTime = new SzenarioMeanTime();
-                var targetContainer = new TargetContainer();
-
-                targetContainer.Number = targetCounter;
+                var targetContainer = new TargetContainer {Number = targetCounter};
 
                 tempSzenarioMeanTime.Group = trialsContainer[0].Group;
                 tempSzenarioMeanTime.MeasureFile = trialsContainer[0].MeasureFile;
@@ -2006,37 +2012,37 @@ namespace ManipAnalysis_v2
 
         public void CompressBaselineData(List<Baseline> baselinesContainer)
         {
-            Parallel.For(0, baselinesContainer.Count, (trialCounter, loopState) =>
+            Parallel.For(0, baselinesContainer.Count, (baselineCounter, loopState) =>
             {
-                if (baselinesContainer[trialCounter].MeasuredForces != null)
+                if (baselinesContainer[baselineCounter].MeasuredForces != null)
                 {
-                    baselinesContainer[trialCounter].ZippedMeasuredForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].MeasuredForces);
-                    baselinesContainer[trialCounter].MeasuredForces = null;
+                    baselinesContainer[baselineCounter].ZippedMeasuredForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MeasuredForces);
+                    baselinesContainer[baselineCounter].MeasuredForces = null;
                 }
-                if (baselinesContainer[trialCounter].MomentForces != null)
+                if (baselinesContainer[baselineCounter].MomentForces != null)
                 {
-                    baselinesContainer[trialCounter].ZippedMomentForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].MomentForces);
-                    baselinesContainer[trialCounter].MomentForces = null;
+                    baselinesContainer[baselineCounter].ZippedMomentForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MomentForces);
+                    baselinesContainer[baselineCounter].MomentForces = null;
                 }
-                if (baselinesContainer[trialCounter].NominalForces != null)
+                if (baselinesContainer[baselineCounter].NominalForces != null)
                 {
-                    baselinesContainer[trialCounter].ZippedNominalForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].NominalForces);
-                    baselinesContainer[trialCounter].NominalForces = null;
+                    baselinesContainer[baselineCounter].ZippedNominalForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].NominalForces);
+                    baselinesContainer[baselineCounter].NominalForces = null;
                 }
-                if (baselinesContainer[trialCounter].Position != null)
+                if (baselinesContainer[baselineCounter].Position != null)
                 {
-                    baselinesContainer[trialCounter].ZippedPosition =
-                        Gzip<List<PositionContainer>>.Compress(baselinesContainer[trialCounter].Position);
-                    baselinesContainer[trialCounter].Position = null;
+                    baselinesContainer[baselineCounter].ZippedPosition =
+                        Gzip<List<PositionContainer>>.Compress(baselinesContainer[baselineCounter].Position);
+                    baselinesContainer[baselineCounter].Position = null;
                 }
-                if (baselinesContainer[trialCounter].Velocity != null)
+                if (baselinesContainer[baselineCounter].Velocity != null)
                 {
-                    baselinesContainer[trialCounter].ZippedVelocity =
-                        Gzip<List<VelocityContainer>>.Compress(baselinesContainer[trialCounter].Velocity);
-                    baselinesContainer[trialCounter].Velocity = null;
+                    baselinesContainer[baselineCounter].ZippedVelocity =
+                        Gzip<List<VelocityContainer>>.Compress(baselinesContainer[baselineCounter].Velocity);
+                    baselinesContainer[baselineCounter].Velocity = null;
                 }
             });
         }

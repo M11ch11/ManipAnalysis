@@ -466,5 +466,12 @@ namespace ManipAnalysis_v2
         {
             _baselineCollection.InsertBatch(baselines);
         }
+
+        public void RemoveMeasureFile(MeasureFileContainer measureFile)
+        {
+            _trialCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+            _szenarioMeanTimeCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+            _baselineCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+        }
     }
 }
