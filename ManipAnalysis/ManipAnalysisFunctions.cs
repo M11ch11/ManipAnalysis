@@ -48,7 +48,7 @@ namespace ManipAnalysis_v2
                 {
                     if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeOutMilliSec), false))
                     {
-                        throw new Exception("Server didn't respond within 2 seconds.");
+                        throw new Exception();
                     }
 
                     tcp.EndConnect(ar);
@@ -56,7 +56,6 @@ namespace ManipAnalysis_v2
                 }
                 catch (Exception ex)
                 {
-                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 }
                 finally
                 {
@@ -76,17 +75,17 @@ namespace ManipAnalysis_v2
         public bool ConnectToDatabaseServer(string server)
         {
             bool retVal = false;
-
-            if (CheckDatabaseServerAvailability(server, 6000))
+            int timeOut = 5000;
+            if (CheckDatabaseServerAvailability(server, timeOut))
             {
-                _myManipAnalysisGui.WriteToLogBox("Connected to Database-Server.");
+                _myManipAnalysisGui.WriteToLogBox("Connected to Database-Server at \"" + server + "\"");
                 _myDatabaseWrapper.SetDatabaseServer(server);
                 _myManipAnalysisGui.SetSqlDatabases(_myDatabaseWrapper.GetDatabases());
                 retVal = true;
             }
             else
             {
-                _myManipAnalysisGui.WriteToLogBox("Database-Server not reachable!");
+                _myManipAnalysisGui.WriteToLogBox("Database-Server at \"" + server + "\" not reachable! (Timeout: " + timeOut + "ms)");
             }
 
             return retVal;
@@ -1667,7 +1666,8 @@ namespace ManipAnalysis_v2
             int maxTargetNumber = trialsContainer.Max(t => t.Target.Number);
 
             var baselines = new List<Baseline>();
-            for (int targetCounter = minTargetNumber; targetCounter <= maxTargetNumber; targetCounter++)
+
+            Parallel.For(minTargetNumber, maxTargetNumber + 1, (targetCounter, loopState) =>
             {
                 // Get Target-trial 2-MAX (6)
                 List<Trial> baselineTrials =
@@ -1867,7 +1867,7 @@ namespace ManipAnalysis_v2
                     tempBaseline.Velocity.Add(velocityContainer);
                 }
                 baselines.Add(tempBaseline);
-            }
+            });
             return baselines;
         }
 
@@ -1878,7 +1878,7 @@ namespace ManipAnalysis_v2
 
             var szenarioMeanTimes = new List<SzenarioMeanTime>();
 
-            for (int targetCounter = minTargetNumber; targetCounter <= maxTargetNumber; targetCounter++)
+            Parallel.For(minTargetNumber, maxTargetNumber + 1, (targetCounter, loopState) =>
             {
                 var tempSzenarioMeanTime = new SzenarioMeanTime();
                 var targetContainer = new TargetContainer();
@@ -1901,7 +1901,7 @@ namespace ManipAnalysis_v2
                 tempSzenarioMeanTime.MeanTimeStd = new TimeSpan(Convert.ToInt64(targetDurationTimes.StdDev()));
 
                 szenarioMeanTimes.Add(tempSzenarioMeanTime);
-            }
+            });
 
             return szenarioMeanTimes;
         }
