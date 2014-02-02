@@ -140,9 +140,9 @@ namespace ManipAnalysis_v2
         
         public void CompactDatabase()
         {
-            _mongoDatabase.RunCommand("db.runCommand({ compact : 'Trial' });");
-            _mongoDatabase.RunCommand("db.runCommand({ compact : 'Baseline' });");
-            _mongoDatabase.RunCommand("db.runCommand({ compact : 'SzenarioMeanTime' });");
+            _mongoDatabase.RunCommand(new CommandDocument("compact", "Trial"));
+            _mongoDatabase.RunCommand(new CommandDocument("compact", "Baseline"));
+            _mongoDatabase.RunCommand(new CommandDocument("compact", "SzenarioMeanTime"));
         }
 
         public void DropDatabase()

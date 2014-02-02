@@ -18,7 +18,7 @@ namespace ManipAnalysis_v2
 
             using (var uncompressedStream = new MemoryStream())
             {
-                XmlSerializer xml = new XmlSerializer(typeof (List<PositionContainer>));
+                XmlSerializer xml = new XmlSerializer(typeof(T));
                 xml.Serialize(uncompressedStream, tObject);
                 uncompressedStream.Position = 0;
                 using (var compressedStream = new MemoryStream())
@@ -43,7 +43,7 @@ namespace ManipAnalysis_v2
                     gZipDecompressor.CopyTo(uncompressedStream);
                 }
                 uncompressedStream.Position = 0;
-                XmlSerializer xml = new XmlSerializer(typeof(List<PositionContainer>));
+                XmlSerializer xml = new XmlSerializer(typeof(T));
                 return (T)xml.Deserialize(uncompressedStream);
             }
         }
