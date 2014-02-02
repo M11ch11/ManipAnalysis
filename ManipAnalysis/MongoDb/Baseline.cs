@@ -10,6 +10,11 @@ namespace ManipAnalysis_v2.MongoDb
         public List<ForceContainer> NominalForces;
         public List<PositionContainer> Position;
         public List<VelocityContainer> Velocity;
+        public byte[] ZippedMeasuredForces;
+        public byte[] ZippedMomentForces;
+        public byte[] ZippedNominalForces;
+        public byte[] ZippedPosition;
+        public byte[] ZippedVelocity;
         public ObjectId Id { get; set; }
         public string Study { get; set; }
         public string Group { get; set; }

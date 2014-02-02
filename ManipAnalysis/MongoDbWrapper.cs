@@ -394,18 +394,16 @@ namespace ManipAnalysis_v2
             return _trialCollection.Update(query, update);
         }
 
-        public IEnumerable<Trial> GetTrialsWithoutStatistics()
+        public IEnumerable<Trial> GetTrialsWithoutStatistics(FieldsBuilder<Trial> statisticFields)
         {
-            FieldsBuilder<Trial> statisticFields = new FieldsBuilder<Trial>();
-            statisticFields.Include(t1 => t1.VelocityNormalized, t2 => t2.PositionNormalized, t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target);
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Statistics == null)).SetFields(statisticFields);
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber)).SetLimit(1).First();
+                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber)).SetFields(baselineFields).SetLimit(1).First();
             }
             catch (Exception)
             {
@@ -413,11 +411,11 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject)
+        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject)).ToArray();
+                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject)).SetFields(baselineFields).ToArray();
             }
             catch (Exception)
             {
@@ -425,11 +423,11 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public Baseline GetBaseline(ObjectId objectId)
+        public Baseline GetBaseline(ObjectId objectId, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Id == objectId)).SetLimit(1).First();
+                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Id == objectId)).SetFields(baselineFields).SetLimit(1).First();
             }
             catch (Exception)
             {
@@ -467,11 +465,6 @@ namespace ManipAnalysis_v2
         public void Insert(IEnumerable<Baseline> baselines)
         {
             _baselineCollection.InsertBatch(baselines);
-        }
-
-        internal void DeleteMeasureFile(int measureFileId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

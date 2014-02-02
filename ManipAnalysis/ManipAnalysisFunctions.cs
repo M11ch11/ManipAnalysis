@@ -232,7 +232,7 @@ namespace ManipAnalysis_v2
         /// <param name="measureFileId"></param>
         public void DeleteMeasureFile(int measureFileId)
         {
-            _myDatabaseWrapper.DeleteMeasureFile(measureFileId);
+            
         }
 
         public void PlotSzenarioMeanTimes(string study, string group, string szenario,
@@ -345,10 +345,13 @@ namespace ManipAnalysis_v2
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
                 _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
 
-                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject);
-
+                FieldsBuilder<Baseline> baselineFields = new FieldsBuilder<Baseline>();
+                baselineFields.Include(t => t.ZippedPosition);
+                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, baselineFields);
+                
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
+                    baselines[baselineCounter].Position = Gzip<List<PositionContainer>>.DeCompress(baselines[baselineCounter].ZippedPosition);
                     _myMatlabWrapper.SetWorkspaceData("X", baselines[baselineCounter].Position.Select(u => u.X).ToArray());
                     _myMatlabWrapper.SetWorkspaceData("Y", baselines[baselineCounter].Position.Select(u => u.Y).ToArray());
                     _myMatlabWrapper.Plot("X", "Y", "black", 2);
@@ -1126,6 +1129,10 @@ namespace ManipAnalysis_v2
                             #region CompressData
 
                             CompressTrialData(trialsContainer);
+                            if (baselinesContainer != null)
+                            {
+                                CompressBaselineData(baselinesContainer);
+                            }
 
                             #endregion
 
@@ -1908,8 +1915,6 @@ namespace ManipAnalysis_v2
 
         public void CompressTrialData(List<Trial> trialsContainer)
         {
-            //ParallelOptions options = new ParallelOptions();
-            //options.MaxDegreeOfParallelism = Environment.ProcessorCount;
             Parallel.For(0, trialsContainer.Count, (trialCounter, loopState) =>
             {
                 if (trialsContainer[trialCounter].MeasuredForcesFiltered != null)
@@ -1999,6 +2004,43 @@ namespace ManipAnalysis_v2
             });
         }
 
+        public void CompressBaselineData(List<Baseline> baselinesContainer)
+        {
+            Parallel.For(0, baselinesContainer.Count, (trialCounter, loopState) =>
+            {
+                if (baselinesContainer[trialCounter].MeasuredForces != null)
+                {
+                    baselinesContainer[trialCounter].ZippedMeasuredForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].MeasuredForces);
+                    baselinesContainer[trialCounter].MeasuredForces = null;
+                }
+                if (baselinesContainer[trialCounter].MomentForces != null)
+                {
+                    baselinesContainer[trialCounter].ZippedMomentForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].MomentForces);
+                    baselinesContainer[trialCounter].MomentForces = null;
+                }
+                if (baselinesContainer[trialCounter].NominalForces != null)
+                {
+                    baselinesContainer[trialCounter].ZippedNominalForces =
+                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[trialCounter].NominalForces);
+                    baselinesContainer[trialCounter].NominalForces = null;
+                }
+                if (baselinesContainer[trialCounter].Position != null)
+                {
+                    baselinesContainer[trialCounter].ZippedPosition =
+                        Gzip<List<PositionContainer>>.Compress(baselinesContainer[trialCounter].Position);
+                    baselinesContainer[trialCounter].Position = null;
+                }
+                if (baselinesContainer[trialCounter].Velocity != null)
+                {
+                    baselinesContainer[trialCounter].ZippedVelocity =
+                        Gzip<List<VelocityContainer>>.Compress(baselinesContainer[trialCounter].Velocity);
+                    baselinesContainer[trialCounter].Velocity = null;
+                }
+            });
+        }
+
         public void CalculateStatistics()
         {
             var newTask = new Task(CalculateStatisticsThread);
@@ -2017,7 +2059,9 @@ namespace ManipAnalysis_v2
             _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
             int counter = 0;
 
-            var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics().ToList();
+            FieldsBuilder<Trial> statisticFields = new FieldsBuilder<Trial>();
+            statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target);
+            var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
             if (trialList.Count() > 0)
             {
@@ -2034,7 +2078,13 @@ namespace ManipAnalysis_v2
                     _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
                     counter++;
 
-                    var baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number);
+                    FieldsBuilder<Baseline> baselineFields = new FieldsBuilder<Baseline>();
+                    baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
+                    var baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, baselineFields);
+                    baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
+                    baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
+                    trial.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
+                    trial.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
 
                     if (baseline != null)
                     {
@@ -3639,10 +3689,14 @@ namespace ManipAnalysis_v2
             {
                 _myMatlabWrapper.CreateVelocityFigure("Velocity baseline plot", 101);
 
-                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject);
+                FieldsBuilder<Baseline> baselineFields = new FieldsBuilder<Baseline>();
+                baselineFields.Include(t => t.ZippedVelocity);
+                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, baselineFields);
 
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
+                    baselines[baselineCounter].Velocity =
+                        Gzip<List<VelocityContainer>>.DeCompress(baselines[baselineCounter].ZippedVelocity);
                     _myMatlabWrapper.SetWorkspaceData("XY",baselines[baselineCounter].Velocity.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
                     _myMatlabWrapper.Plot("XY", "black", 2);
                 }
