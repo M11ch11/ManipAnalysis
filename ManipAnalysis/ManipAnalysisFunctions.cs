@@ -488,6 +488,9 @@ namespace ManipAnalysis_v2
                 {
                     _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                     List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                    double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
+                    double processedTrialsCount = 0;
+
                     var fields = new FieldsBuilder<Trial>();
                     if (pdTime == -1)
                     {
@@ -513,8 +516,6 @@ namespace ManipAnalysis_v2
                             var statisticData = new double[trialList.Count, selectedTrialsList.Count()];
                             for (meanCount = 0; meanCount < selectedTrialsList.Count() & !TaskManager.Cancel; meanCount++)
                             {
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*meanCount);
-
                                 StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCount);
 
                                 DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
@@ -531,6 +532,8 @@ namespace ManipAnalysis_v2
                                         trialListCounter < trialList.Count & !TaskManager.Cancel;
                                         trialListCounter++)
                                     {
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+
                                         Trial trial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                             tempStatisticPlotContainer.Group,
                                             tempStatisticPlotContainer.Szenario,
@@ -692,7 +695,7 @@ namespace ManipAnalysis_v2
                                 }
                             }
 
-                            if (fileName == null)
+                            if (fileName == null) // Plot or export?
                             {
                                 switch (statisticType)
                                 {
@@ -2503,6 +2506,9 @@ namespace ManipAnalysis_v2
                 {
                     _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                     List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                    double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
+                    double processedTrialsCount = 0;
+
                     var fields = new FieldsBuilder<Trial>();
 
                     if (trajectoryVelocityForce == "Velocity - Normalized")
@@ -2575,15 +2581,12 @@ namespace ManipAnalysis_v2
 
                     if (meanIndividual == "Individual")
                     {
-                        int counter = 0;
                         foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
                         {
                             if (TaskManager.Cancel)
                             {
                                 break;
                             }
-                            _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                            counter++;
 
                             DateTime turnDateTime =
                                 _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
@@ -2595,6 +2598,8 @@ namespace ManipAnalysis_v2
                                 {
                                     break;
                                 }
+
+                                _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
 
                                 Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                     tempContainer.Group,
@@ -2846,7 +2851,6 @@ namespace ManipAnalysis_v2
                         else
                         {
                             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
-                            int counter = 0;
 
                             for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                             {
@@ -2862,8 +2866,6 @@ namespace ManipAnalysis_v2
                                     {
                                         break;
                                     }
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                                    counter++;
 
                                     DateTime turnDateTime =
                                         _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
@@ -2876,6 +2878,8 @@ namespace ManipAnalysis_v2
                                         {
                                             break;
                                         }
+
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
 
                                         Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                             tempContainer.Group,
@@ -3026,6 +3030,9 @@ namespace ManipAnalysis_v2
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
+                double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
+                double processedTrialsCount = 0;
+
                 var fields = new FieldsBuilder<Trial>();
                 var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
                 var dataFileWriter = new StreamWriter(dataFileStream);
@@ -3141,15 +3148,12 @@ namespace ManipAnalysis_v2
 
                 if (meanIndividual == "Individual")
                 {
-                    int counter = 0;
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList)
                     {
                         if (TaskManager.Cancel)
                         {
                             break;
                         }
-                        _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                        counter++;
 
                         DateTime turnDateTime =
                             _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario,
@@ -3161,6 +3165,8 @@ namespace ManipAnalysis_v2
                             {
                                 break;
                             }
+
+                            _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
 
                             Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                 tempContainer.Group,
@@ -3355,7 +3361,6 @@ namespace ManipAnalysis_v2
                     else
                     {
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
-                        int counter = 0;
 
                         for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
@@ -3371,8 +3376,6 @@ namespace ManipAnalysis_v2
                                 {
                                     break;
                                 }
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*counter);
-                                counter++;
 
                                 DateTime turnDateTime =
                                     _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group,
@@ -3386,6 +3389,8 @@ namespace ManipAnalysis_v2
                                         break;
                                     }
 
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                                    
                                     Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
