@@ -16,7 +16,9 @@ namespace ManipAnalysis_v2.MongoDb
         public List<ForceContainer> NominalForcesRaw;
         public List<PositionContainer> PositionFiltered;
         public List<PositionContainer> PositionNormalized;
+        public PositionContainer PositionOffset = new PositionContainer();
         public List<PositionContainer> PositionRaw;
+        public StatisticContainer Statistics;
         public List<VelocityContainer> VelocityFiltered;
         public List<VelocityContainer> VelocityNormalized;
         public byte[] ZippedMeasuredForcesFiltered;
@@ -35,9 +37,8 @@ namespace ManipAnalysis_v2.MongoDb
         public byte[] ZippedVelocityNormalized;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
-        public StatisticContainer Statistics;
 
-        public string  Study{ get; set; }
+        public string Study { get; set; }
         public string Group { get; set; }
         public SubjectContainer Subject { get; set; }
         public string Szenario { get; set; }
@@ -62,7 +63,5 @@ namespace ManipAnalysis_v2.MongoDb
         public int NormalizedDataSampleRate { get; set; }
 
         public string TrialVersion { get; set; }
-
-        public PositionContainer PositionOffset = new PositionContainer();
     }
 }

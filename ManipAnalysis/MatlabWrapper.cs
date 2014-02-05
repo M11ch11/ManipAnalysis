@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ManipAnalysis_v2
 {
-    class MatlabWrapper : IDisposable
+    internal class MatlabWrapper : IDisposable
     {
         private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
         private readonly ManipAnalysisGui _manipAnalysisGui;

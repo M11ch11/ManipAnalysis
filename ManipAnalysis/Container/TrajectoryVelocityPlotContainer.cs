@@ -6,7 +6,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.Container
 {
-    class TrajectoryVelocityPlotContainer
+    internal class TrajectoryVelocityPlotContainer
     {
         private readonly string _group;
         private readonly string _study;
@@ -76,7 +76,8 @@ namespace ManipAnalysis_v2.Container
         {
             bool retval = false;
 
-            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.PId == subject.PId) && (_subject.PId == subject.PId) &&
+            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.PId == subject.PId) &&
+                (_subject.PId == subject.PId) &&
                 (_turn == Convert.ToInt32(turn.Substring(5, 1))) && (_target == Convert.ToInt32(target.Substring(7, 2))))
             {
                 foreach (string trial in trials)

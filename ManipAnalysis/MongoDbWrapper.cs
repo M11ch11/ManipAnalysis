@@ -1,36 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
-using ManipAnalysis_v2.Container;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
-using MongoDB.Driver.Wrappers;
 
 namespace ManipAnalysis_v2
 {
-    class MongoDbWrapper
+    internal class MongoDbWrapper
     {
+        private readonly ManipAnalysisGui _myManipAnalysisGui;
+        private MongoCollection<Baseline> _baselineCollection;
         private string _connectionString;
         private MongoClient _mongoClient;
-        private MongoServer _mongoServer;
         private MongoDatabase _mongoDatabase;
-        private MongoCollection<Trial> _trialCollection;
-        private MongoCollection<Baseline> _baselineCollection;
-        private MongoCollection<SzenarioMeanTime> _szenarioMeanTimeCollection;
-        private ManipAnalysisGui _myManipAnalysisGui;
 
         private string _mongoDbDatabaseString;
         private string _mongoDbPasswordString;
         private string _mongoDbServerString;
         private string _mongoDbUsernameString;
+        private MongoServer _mongoServer;
+        private MongoCollection<SzenarioMeanTime> _szenarioMeanTimeCollection;
+        private MongoCollection<Trial> _trialCollection;
 
         public MongoDbWrapper(ManipAnalysisGui myManipAnalysisGui)
         {
@@ -163,7 +156,7 @@ namespace ManipAnalysis_v2
                 _myManipAnalysisGui.WriteToLogBox(ex.ToString());
             }
         }
-        
+
         public void CompactDatabase()
         {
             try
@@ -227,7 +220,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName).Select(t => t.Szenario).Distinct();
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(t => t.Study == studyName && t.Group == groupName)
+                        .Select(t => t.Szenario)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -240,7 +237,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName).Select(t => t.Subject).Distinct();
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName)
+                        .Select(t => t.Subject)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -253,7 +254,13 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject).Select(t => t.MeasureFile.CreationTime).Distinct();
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(
+                            t =>
+                                t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject)
+                        .Select(t => t.MeasureFile.CreationTime)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -266,7 +273,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.Target.Number).Distinct();
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(t => t.Study == studyName && t.Szenario == szenarioName)
+                        .Select(t => t.Target.Number)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -279,7 +290,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.TargetTrialNumberInSzenario).Distinct();
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(t => t.Study == studyName && t.Szenario == szenarioName)
+                        .Select(t => t.TargetTrialNumberInSzenario)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -288,38 +303,67 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials)
+        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName, bool showNormalTrials,
+            bool showCatchTrials, bool showErrorclampTrials)
         {
             IEnumerable<int> retVal;
             try
             {
                 if (showNormalTrials && showCatchTrials && showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.ErrorClampTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.ErrorClampTrial)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial && !t.ErrorClampTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial && !t.ErrorClampTrial)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && (t.CatchTrial || t.ErrorClampTrial)).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && (t.CatchTrial || t.ErrorClampTrial))
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial && t.ErrorClampTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && !t.CatchTrial && t.ErrorClampTrial)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
                 {
-                    retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && t.CatchTrial && !t.ErrorClampTrial).Select(t => t.TrialNumberInSzenario).Distinct();
+                    retVal =
+                        _trialCollection.AsQueryable()
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.CatchTrial && !t.ErrorClampTrial)
+                            .Select(t => t.TrialNumberInSzenario)
+                            .Distinct();
                 }
                 else
                 {
@@ -336,7 +380,8 @@ namespace ManipAnalysis_v2
         }
 
         public Trial GetTrial(string studyName, string groupName, string szenarioName,
-            SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, FieldsBuilder<Trial> fields)
+            SubjectContainer subject, DateTime turn, int target, int trial, bool showNormalTrials, bool showCatchTrials,
+            bool showErrorclampTrials, FieldsBuilder<Trial> fields)
         {
             Trial retVal;
             try
@@ -410,7 +455,8 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public Trial GetTrial(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int szenarioTrial, FieldsBuilder<Trial> fields)
+        public Trial GetTrial(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn,
+            int szenarioTrial, FieldsBuilder<Trial> fields)
         {
             Trial retVal;
             try
@@ -430,8 +476,9 @@ namespace ManipAnalysis_v2
 
         public WriteConcernResult UpdateTrialStatisticsAndBaselineId(Trial trial)
         {
-            var query = Query<Trial>.EQ(t => t.Id, trial.Id);
-            var update = Update<Trial>.Set(t => t.Statistics, trial.Statistics).Set(t => t.BaselineObjectId, trial.BaselineObjectId);
+            IMongoQuery query = Query<Trial>.EQ(t => t.Id, trial.Id);
+            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.Statistics, trial.Statistics)
+                .Set(t => t.BaselineObjectId, trial.BaselineObjectId);
             return _trialCollection.Update(query, update);
         }
 
@@ -440,11 +487,18 @@ namespace ManipAnalysis_v2
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Statistics == null)).SetFields(statisticFields);
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber, FieldsBuilder<Baseline> baselineFields)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
+            FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber)).SetFields(baselineFields).SetLimit(1).First();
+                return
+                    _baselineCollection.FindAs<Baseline>(
+                        Query<Trial>.Where(
+                            t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber))
+                        .SetFields(baselineFields)
+                        .SetLimit(1)
+                        .First();
             }
             catch (Exception)
             {
@@ -456,7 +510,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject)).SetFields(baselineFields).ToArray();
+                return
+                    _baselineCollection.FindAs<Baseline>(
+                        Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject))
+                        .SetFields(baselineFields)
+                        .ToArray();
             }
             catch (Exception)
             {
@@ -468,7 +526,11 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Id == objectId)).SetFields(baselineFields).SetLimit(1).First();
+                return
+                    _baselineCollection.FindAs<Baseline>(Query<Trial>.Where(t => t.Id == objectId))
+                        .SetFields(baselineFields)
+                        .SetLimit(1)
+                        .First();
             }
             catch (Exception)
             {
@@ -476,11 +538,17 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public SzenarioMeanTime[] GetSzenarioMeanTime(string study, string group, string szenario, SubjectContainer subject, DateTime turn)
+        public SzenarioMeanTime[] GetSzenarioMeanTime(string study, string group, string szenario, SubjectContainer subject,
+            DateTime turn)
         {
             try
             {
-                return _szenarioMeanTimeCollection.FindAs<SzenarioMeanTime>(Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject && t.MeasureFile.CreationTime == turn)).ToArray();
+                return
+                    _szenarioMeanTimeCollection.FindAs<SzenarioMeanTime>(
+                        Query<Trial>.Where(
+                            t =>
+                                t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject &&
+                                t.MeasureFile.CreationTime == turn)).ToArray();
             }
             catch (Exception)
             {
@@ -492,7 +560,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _trialCollection.AsQueryable<Trial>().Any(t => t.MeasureFile.FileHash == measureFileHash);
+                return _trialCollection.AsQueryable().Any(t => t.MeasureFile.FileHash == measureFileHash);
             }
             catch (Exception ex)
             {

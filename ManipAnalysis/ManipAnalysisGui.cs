@@ -210,7 +210,9 @@ namespace ManipAnalysis_v2
 
         private void button_Debug_InitialiseDatabase_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (
+                MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) ==
+                DialogResult.Yes)
             {
                 _manipAnalysisFunctions.DropDatabase();
             }
@@ -252,8 +254,8 @@ namespace ManipAnalysis_v2
                 {
                     progressBar.Refresh();
                     gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
-                        new PointF(progressBar.Width / 2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width / 2.0F),
-                            progressBar.Height / 2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height / 2.0F)));
+                        new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
+                            progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
                 }
             }
         }
@@ -263,7 +265,7 @@ namespace ManipAnalysis_v2
             if (progressBar.InvokeRequired)
             {
                 ProgressLabelCallback writeProgressInfo = WriteProgressInfo;
-                progressBar.Invoke(writeProgressInfo, new object[] { text });
+                progressBar.Invoke(writeProgressInfo, new object[] {text});
             }
             else
             {
@@ -895,7 +897,8 @@ namespace ManipAnalysis_v2
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
                 {
                     pdTime = inputForm.getMilliseconds();
-                    statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString().Replace("?", pdTime.ToString());
+                    statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
+                        .Replace("?", pdTime.ToString());
                     inputForm.Dispose();
                 }
             }
@@ -1356,14 +1359,14 @@ namespace ManipAnalysis_v2
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
                 _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
-                            listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                            comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                            checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
+                    listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
+                    comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                    comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
+                    checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
+                    checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                    checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                    checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
+                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
             }
             else
             {
@@ -1445,7 +1448,7 @@ namespace ManipAnalysis_v2
             string study = comboBox_Others_Study.SelectedItem.ToString();
             string group = comboBox_Others_Group.SelectedItem.ToString();
             string szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-            var subject = (SubjectContainer)comboBox_Others_Subject.SelectedItem;
+            var subject = (SubjectContainer) comboBox_Others_Subject.SelectedItem;
 
             IEnumerable<string> turnNames = _manipAnalysisFunctions.GetTurns(study, group, szenario, subject);
             if (turnNames.Any())
@@ -1491,15 +1494,15 @@ namespace ManipAnalysis_v2
                 if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
                 {
                     _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
-                            listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                            comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                            checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
-                            checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                            checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
-                            saveFileDialog.FileName);
+                        listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
+                        comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
+                        comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
+                        checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
+                        checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                        checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                        checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
+                        checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
+                        saveFileDialog.FileName);
                 }
                 else
                 {
@@ -1602,7 +1605,7 @@ namespace ManipAnalysis_v2
             WriteProgressInfo("Connecting to server...");
 
             comboBox_Start_Database.Items.Clear();
-            
+
             if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text))
             {
                 comboBox_Start_Database.SelectedIndex = 0;
@@ -1789,7 +1792,7 @@ namespace ManipAnalysis_v2
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -1845,7 +1848,7 @@ namespace ManipAnalysis_v2
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
@@ -2054,18 +2057,6 @@ namespace ManipAnalysis_v2
                 Convert.ToInt32(textBox_Others_PlotErrorclampForces_MsIndex.Text));
         }
 
-        private delegate void LogBoxCallbackAddString(string text);
-
-        private delegate void LogBoxCallbackClearItems();
-
-        private delegate string[] LogBoxCallbackGetText();
-
-        private delegate void ProgressBarCallback(double value);
-
-        private delegate void ProgressLabelCallback(string text);
-
-        private delegate void TabControlCallback(bool enable);
-
         private void checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
         {
             listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
@@ -2115,5 +2106,17 @@ namespace ManipAnalysis_v2
         {
             _manipAnalysisFunctions.CompactDatabase();
         }
+
+        private delegate void LogBoxCallbackAddString(string text);
+
+        private delegate void LogBoxCallbackClearItems();
+
+        private delegate string[] LogBoxCallbackGetText();
+
+        private delegate void ProgressBarCallback(double value);
+
+        private delegate void ProgressLabelCallback(string text);
+
+        private delegate void TabControlCallback(bool enable);
     }
 }

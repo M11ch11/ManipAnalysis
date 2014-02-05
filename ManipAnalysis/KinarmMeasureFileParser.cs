@@ -34,7 +34,8 @@ namespace ManipAnalysis_v2
             get { return _trialsContainer; }
         }
 
-        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions, string filePath)
+        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions,
+            string filePath)
         {
             bool retVal = false;
             try
@@ -107,13 +108,13 @@ namespace ManipAnalysis_v2
                 c3DReader.Close();
 
                 _probandId = fileName.Split('_')[0].Trim();
-                string datetime = fileName.Split('_')[1].Replace('-', '.') + " " + fileName.Split('_')[2].Replace(".zip","").Replace('-', ':');
+                string datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
+                                  fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
                 _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
 
                 _trialsContainer = new List<Trial>();
 
                 retVal = true;
-
             }
             catch (Exception ex)
             {
@@ -138,7 +139,8 @@ namespace ManipAnalysis_v2
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
                     float frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
                     int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
-                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1; // -1 == Compensation of first Trial
+                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
+                        // -1 == Compensation of first Trial
                     int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
 
                     if (targetNumber != 17 && _szenarioName != "Szenario01") // Target 17 == StartTrial

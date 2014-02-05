@@ -6,7 +6,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.Container
 {
-    class StatisticPlotContainer
+    internal class StatisticPlotContainer
     {
         private readonly string _group;
         private readonly string _study;
