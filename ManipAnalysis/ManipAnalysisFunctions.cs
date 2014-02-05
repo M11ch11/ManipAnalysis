@@ -1789,9 +1789,12 @@ namespace ManipAnalysis_v2
 
             Parallel.For(minTargetNumber, maxTargetNumber + 1, targetCounter =>
             {
-                // Get Target-trial 2-MAX (6)
-                List<Trial> baselineTrials =
-                    trialsContainer.Where(t => t.Target.Number == targetCounter && t.TargetTrialNumberInSzenario > 1).ToList();
+                List<Trial> baselineTrials = null;
+                lock (trialsContainer)
+                {
+                    // Get Target-trial 2-MAX (6)
+                    baselineTrials = trialsContainer.Where(t => t.Target.Number == targetCounter && t.TargetTrialNumberInSzenario > 1).ToList();
+                }
 
                 List<double[]> measuredForcesX =
                     baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.X).ToArray()).ToList();
@@ -1986,7 +1989,10 @@ namespace ManipAnalysis_v2
                     tempBaseline.Position.Add(positionContainer);
                     tempBaseline.Velocity.Add(velocityContainer);
                 }
-                baselines.Add(tempBaseline);
+                lock (baselines)
+                {
+                    baselines.Add(tempBaseline);
+                }
             });
             return baselines;
         }
@@ -2009,16 +2015,24 @@ namespace ManipAnalysis_v2
                 tempSzenarioMeanTime.Subject = trialsContainer[0].Subject;
                 tempSzenarioMeanTime.Szenario = trialsContainer[0].Szenario;
                 tempSzenarioMeanTime.Target = targetContainer;
-
-                long[] targetDurationTimes = trialsContainer.Where(t => t.Target.Number == targetCounter)
-                    .Select(
-                        t => t.PositionNormalized.Max(u => u.TimeStamp.Ticks) - t.PositionNormalized.Min(u => u.TimeStamp.Ticks))
-                    .ToArray();
-
+                
+                long[] targetDurationTimes = null;
+                lock (trialsContainer)
+                {
+                    targetDurationTimes = trialsContainer.Where(t => t.Target.Number == targetCounter)
+                        .Select(
+                            t =>
+                                t.PositionNormalized.Max(u => u.TimeStamp.Ticks) -
+                                t.PositionNormalized.Min(u => u.TimeStamp.Ticks))
+                        .ToArray();
+                }
                 tempSzenarioMeanTime.MeanTime = new TimeSpan(Convert.ToInt64(targetDurationTimes.Average()));
                 tempSzenarioMeanTime.MeanTimeStd = new TimeSpan(Convert.ToInt64(targetDurationTimes.StdDev()));
 
-                szenarioMeanTimes.Add(tempSzenarioMeanTime);
+                lock (szenarioMeanTimes)
+                {
+                    szenarioMeanTimes.Add(tempSzenarioMeanTime);
+                }
             });
 
             return szenarioMeanTimes;
@@ -2030,87 +2044,129 @@ namespace ManipAnalysis_v2
             {
                 if (trialsContainer[trialCounter].MeasuredForcesFiltered != null)
                 {
-                    trialsContainer[trialCounter].ZippedMeasuredForcesFiltered =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesFiltered);
-                    trialsContainer[trialCounter].MeasuredForcesFiltered = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesFiltered);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMeasuredForcesFiltered = data;
+                        trialsContainer[trialCounter].MeasuredForcesFiltered = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].MeasuredForcesNormalized != null)
                 {
-                    trialsContainer[trialCounter].ZippedMeasuredForcesNormalized =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesNormalized);
-                    trialsContainer[trialCounter].MeasuredForcesNormalized = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesNormalized);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMeasuredForcesNormalized = data;
+                        trialsContainer[trialCounter].MeasuredForcesNormalized = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].MeasuredForcesRaw != null)
                 {
-                    trialsContainer[trialCounter].ZippedMeasuredForcesRaw =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesRaw);
-                    trialsContainer[trialCounter].MeasuredForcesRaw = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MeasuredForcesRaw);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMeasuredForcesRaw = data;
+                        trialsContainer[trialCounter].MeasuredForcesRaw = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].NominalForcesFiltered != null)
                 {
-                    trialsContainer[trialCounter].ZippedNominalForcesFiltered =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesFiltered);
-                    trialsContainer[trialCounter].NominalForcesFiltered = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesFiltered);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedNominalForcesFiltered = data;
+                        trialsContainer[trialCounter].NominalForcesFiltered = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].NominalForcesNormalized != null)
                 {
-                    trialsContainer[trialCounter].ZippedNominalForcesNormalized =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesNormalized);
-                    trialsContainer[trialCounter].NominalForcesNormalized = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesNormalized);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedNominalForcesNormalized = data;
+                        trialsContainer[trialCounter].NominalForcesNormalized = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].NominalForcesRaw != null)
                 {
-                    trialsContainer[trialCounter].ZippedNominalForcesRaw =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesRaw);
-                    trialsContainer[trialCounter].NominalForcesRaw = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].NominalForcesRaw);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedNominalForcesRaw = data;
+                        trialsContainer[trialCounter].NominalForcesRaw = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].MomentForcesFiltered != null)
                 {
-                    trialsContainer[trialCounter].ZippedMomentForcesFiltered =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesFiltered);
-                    trialsContainer[trialCounter].MomentForcesFiltered = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesFiltered);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMomentForcesFiltered = data;
+                        trialsContainer[trialCounter].MomentForcesFiltered = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].MomentForcesNormalized != null)
                 {
-                    trialsContainer[trialCounter].ZippedMomentForcesNormalized =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesNormalized);
-                    trialsContainer[trialCounter].MomentForcesNormalized = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesNormalized);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMomentForcesNormalized = data;
+                        trialsContainer[trialCounter].MomentForcesNormalized = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].MomentForcesRaw != null)
                 {
-                    trialsContainer[trialCounter].ZippedMomentForcesRaw =
-                        Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesRaw);
-                    trialsContainer[trialCounter].MomentForcesRaw = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(trialsContainer[trialCounter].MomentForcesRaw);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedMomentForcesRaw = data;
+                        trialsContainer[trialCounter].MomentForcesRaw = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].PositionFiltered != null)
                 {
-                    trialsContainer[trialCounter].ZippedPositionFiltered =
-                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionFiltered);
-                    trialsContainer[trialCounter].PositionFiltered = null;
+                    byte[] data = Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionFiltered);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedPositionFiltered = data;
+                        trialsContainer[trialCounter].PositionFiltered = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].PositionNormalized != null)
                 {
-                    trialsContainer[trialCounter].ZippedPositionNormalized =
-                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionNormalized);
-                    trialsContainer[trialCounter].PositionNormalized = null;
+                    byte[] data = Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionNormalized);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedPositionNormalized = data;
+                        trialsContainer[trialCounter].PositionNormalized = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].PositionRaw != null)
                 {
-                    trialsContainer[trialCounter].ZippedPositionRaw =
-                        Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionRaw);
-                    trialsContainer[trialCounter].PositionRaw = null;
+                    byte[] data = Gzip<List<PositionContainer>>.Compress(trialsContainer[trialCounter].PositionRaw);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedPositionRaw = data;
+                        trialsContainer[trialCounter].PositionRaw = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].VelocityFiltered != null)
                 {
-                    trialsContainer[trialCounter].ZippedVelocityFiltered =
-                        Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityFiltered);
-                    trialsContainer[trialCounter].VelocityFiltered = null;
+                    byte[] data = Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityFiltered);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedVelocityFiltered = data;
+                        trialsContainer[trialCounter].VelocityFiltered = null;
+                    }
                 }
                 if (trialsContainer[trialCounter].VelocityNormalized != null)
                 {
-                    trialsContainer[trialCounter].ZippedVelocityNormalized =
-                        Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityNormalized);
-                    trialsContainer[trialCounter].VelocityNormalized = null;
+                    byte[] data = Gzip<List<VelocityContainer>>.Compress(trialsContainer[trialCounter].VelocityNormalized);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer[trialCounter].ZippedVelocityNormalized = data;
+                        trialsContainer[trialCounter].VelocityNormalized = null;
+                    }
                 }
             });
         }
@@ -2121,33 +2177,48 @@ namespace ManipAnalysis_v2
             {
                 if (baselinesContainer[baselineCounter].MeasuredForces != null)
                 {
-                    baselinesContainer[baselineCounter].ZippedMeasuredForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MeasuredForces);
-                    baselinesContainer[baselineCounter].MeasuredForces = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MeasuredForces);
+                    lock (baselinesContainer)
+                    {
+                        baselinesContainer[baselineCounter].ZippedMeasuredForces = data;
+                        baselinesContainer[baselineCounter].MeasuredForces = null;
+                    }
                 }
                 if (baselinesContainer[baselineCounter].MomentForces != null)
                 {
-                    baselinesContainer[baselineCounter].ZippedMomentForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MomentForces);
-                    baselinesContainer[baselineCounter].MomentForces = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MomentForces);
+                    lock (baselinesContainer)
+                    {
+                        baselinesContainer[baselineCounter].ZippedMomentForces = data;
+                        baselinesContainer[baselineCounter].MomentForces = null;
+                    }
                 }
                 if (baselinesContainer[baselineCounter].NominalForces != null)
                 {
-                    baselinesContainer[baselineCounter].ZippedNominalForces =
-                        Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].NominalForces);
-                    baselinesContainer[baselineCounter].NominalForces = null;
+                    byte[] data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].NominalForces);
+                    lock (baselinesContainer)
+                    {
+                        baselinesContainer[baselineCounter].ZippedNominalForces = data;
+                        baselinesContainer[baselineCounter].NominalForces = null;
+                    }
                 }
                 if (baselinesContainer[baselineCounter].Position != null)
                 {
-                    baselinesContainer[baselineCounter].ZippedPosition =
-                        Gzip<List<PositionContainer>>.Compress(baselinesContainer[baselineCounter].Position);
-                    baselinesContainer[baselineCounter].Position = null;
+                    byte[] data = Gzip<List<PositionContainer>>.Compress(baselinesContainer[baselineCounter].Position);
+                    lock (baselinesContainer)
+                    {
+                        baselinesContainer[baselineCounter].ZippedPosition = data;
+                        baselinesContainer[baselineCounter].Position = null;
+                    }
                 }
                 if (baselinesContainer[baselineCounter].Velocity != null)
                 {
-                    baselinesContainer[baselineCounter].ZippedVelocity =
-                        Gzip<List<VelocityContainer>>.Compress(baselinesContainer[baselineCounter].Velocity);
-                    baselinesContainer[baselineCounter].Velocity = null;
+                    byte[] data = Gzip<List<VelocityContainer>>.Compress(baselinesContainer[baselineCounter].Velocity);
+                    lock (baselinesContainer)
+                    {
+                        baselinesContainer[baselineCounter].ZippedVelocity = data;
+                        baselinesContainer[baselineCounter].Velocity = null;
+                    }
                 }
             });
         }
