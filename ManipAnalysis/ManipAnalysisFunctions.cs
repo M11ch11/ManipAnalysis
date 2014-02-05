@@ -532,7 +532,7 @@ namespace ManipAnalysis_v2
                                         trialListCounter < trialList.Count & !TaskManager.Cancel;
                                         trialListCounter++)
                                     {
-                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                         Trial trial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                             tempStatisticPlotContainer.Group,
@@ -618,6 +618,8 @@ namespace ManipAnalysis_v2
                                         trialListCounter < trialList.Count & !TaskManager.Cancel;
                                         trialListCounter++)
                                     {
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
+
                                         Trial tempTrial = _myDatabaseWrapper.GetTrial(tempStatisticPlotContainer.Study,
                                             tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
                                             tempStatisticPlotContainer.Subject,
@@ -2599,7 +2601,7 @@ namespace ManipAnalysis_v2
                                     break;
                                 }
 
-                                _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                                _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                 Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                     tempContainer.Group,
@@ -2879,7 +2881,7 @@ namespace ManipAnalysis_v2
                                             break;
                                         }
 
-                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                         Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                             tempContainer.Group,
@@ -3166,7 +3168,7 @@ namespace ManipAnalysis_v2
                                 break;
                             }
 
-                            _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                            _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                             Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                 tempContainer.Group,
@@ -3389,8 +3391,8 @@ namespace ManipAnalysis_v2
                                         break;
                                     }
 
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
-                                    
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
+
                                     Trial trialContainer = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, trial,
