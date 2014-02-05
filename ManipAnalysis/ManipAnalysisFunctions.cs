@@ -315,27 +315,132 @@ namespace ManipAnalysis_v2
 
         public void CompactDatabase()
         {
-            _myDatabaseWrapper.CompactDatabase();
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Compacting database...");
+
+                try
+                {
+                    _myDatabaseWrapper.CompactDatabase();
+                }
+                catch(Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ready.");
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void DropDatabase()
         {
-            _myDatabaseWrapper.DropDatabase();
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Dropping database...");
+
+                try
+                {
+                    _myDatabaseWrapper.DropDatabase();
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ready.");
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void EnsureIndexes()
         {
-            _myDatabaseWrapper.EnsureIndexes();
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ensuring indexes...");
+
+                try
+                {
+                    _myDatabaseWrapper.EnsureIndexes();
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ready.");
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void RebuildIndexes()
         {
-            _myDatabaseWrapper.RebuildIndexes();
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Rebuilding indexes...");
+
+                try
+                {
+                    _myDatabaseWrapper.RebuildIndexes();
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ready.");
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void DropIndexes()
         {
-            _myDatabaseWrapper.DropAllIndexes();
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Dropping indexes...");
+
+                try
+                {
+                    _myDatabaseWrapper.DropAllIndexes();
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+
+                _myManipAnalysisGui.WriteToLogBox("Ready.");
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void PlotTrajectoryBaseline(string study, string group, string szenario, SubjectContainer subject)
@@ -1682,7 +1787,7 @@ namespace ManipAnalysis_v2
 
             var baselines = new List<Baseline>();
 
-            Parallel.For(minTargetNumber, maxTargetNumber + 1, (targetCounter, loopState) =>
+            Parallel.For(minTargetNumber, maxTargetNumber + 1, targetCounter =>
             {
                 // Get Target-trial 2-MAX (6)
                 List<Trial> baselineTrials =
@@ -1893,7 +1998,7 @@ namespace ManipAnalysis_v2
 
             var szenarioMeanTimes = new List<SzenarioMeanTime>();
 
-            Parallel.For(minTargetNumber, maxTargetNumber + 1, (targetCounter, loopState) =>
+            Parallel.For(minTargetNumber, maxTargetNumber + 1, targetCounter =>
             {
                 var tempSzenarioMeanTime = new SzenarioMeanTime();
                 var targetContainer = new TargetContainer {Number = targetCounter};
@@ -1921,7 +2026,7 @@ namespace ManipAnalysis_v2
 
         public void CompressTrialData(List<Trial> trialsContainer)
         {
-            Parallel.For(0, trialsContainer.Count, (trialCounter, loopState) =>
+            Parallel.For(0, trialsContainer.Count, trialCounter =>
             {
                 if (trialsContainer[trialCounter].MeasuredForcesFiltered != null)
                 {
@@ -2012,7 +2117,7 @@ namespace ManipAnalysis_v2
 
         public void CompressBaselineData(List<Baseline> baselinesContainer)
         {
-            Parallel.For(0, baselinesContainer.Count, (baselineCounter, loopState) =>
+            Parallel.For(0, baselinesContainer.Count, baselineCounter =>
             {
                 if (baselinesContainer[baselineCounter].MeasuredForces != null)
                 {

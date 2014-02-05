@@ -1007,6 +1007,8 @@ namespace ManipAnalysis_v2
             button_ImportMeasureFiles_Click(sender, e);
             button_CalculateStatistics_Click(sender, e);
             button_FixBrokenTrials_Click(sender, e);
+            button_DataManipulation_EnsureIndexes_Click(sender, e);
+            button_DataManipulation_RebuildIndexes_Click(sender, e);
         }
 
         private void button_Debug_SaveLogToFile_Click(object sender, EventArgs e)

@@ -56,100 +56,141 @@ namespace ManipAnalysis_v2
 
         private void SetConnectionString(string serverUri, string database, string username, string password)
         {
-            _mongoDbServerString = serverUri;
-            _mongoDbDatabaseString = database;
-            _mongoDbUsernameString = username;
-            _mongoDbPasswordString = password;
-            _connectionString = "mongodb://" + _mongoDbUsernameString + ":" + _mongoDbPasswordString + "@" + _mongoDbServerString + "/" +
-                                _mongoDbDatabaseString;
-            _mongoClient = new MongoClient(_connectionString);
-            _mongoServer = _mongoClient.GetServer();
+            try
+            {
+                _mongoDbServerString = serverUri;
+                _mongoDbDatabaseString = database;
+                _mongoDbUsernameString = username;
+                _mongoDbPasswordString = password;
+                _connectionString = "mongodb://" + _mongoDbUsernameString + ":" + _mongoDbPasswordString + "@" +
+                                    _mongoDbServerString + "/" +
+                                    _mongoDbDatabaseString;
+                _mongoClient = new MongoClient(_connectionString);
+                _mongoServer = _mongoClient.GetServer();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public void SetDatabase(string database)
         {
-            _mongoDatabase = _mongoServer.GetDatabase(database);
-            _trialCollection = _mongoDatabase.GetCollection<Trial>("Trial");
-            _baselineCollection = _mongoDatabase.GetCollection<Baseline>("Baseline");
-            _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
+            try
+            {
+                _mongoDatabase = _mongoServer.GetDatabase(database);
+                _trialCollection = _mongoDatabase.GetCollection<Trial>("Trial");
+                _baselineCollection = _mongoDatabase.GetCollection<Baseline>("Baseline");
+                _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public void EnsureIndexes()
         {
-            //IndexKeysBuilder<Trial> trialIndex = new IndexKeysBuilder<Trial>();
-            //trialIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
-            //_trialCollection.EnsureIndex(trialIndex);
+            try
+            {
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Study));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Group));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject.PId));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Szenario));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target.Number));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TrialNumberInSzenario));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TargetTrialNumberInSzenario));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.CreationTime));
+                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.FileHash));
 
-            //IndexKeysBuilder<Baseline> baselineIndex = new IndexKeysBuilder<Baseline>();
-            //baselineIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
-            //_baselineCollection.EnsureIndex(baselineIndex);
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Study));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Group));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject.PId));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Szenario));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target.Number));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
+                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
 
-            //IndexKeysBuilder<SzenarioMeanTime> szenarioMeanTimeIndex = new IndexKeysBuilder<SzenarioMeanTime>();
-            //szenarioMeanTimeIndex.Ascending(t1 => t1.Group, t2 => t2.Subject, t3 => t3.Study, t4 => t4.Subject.PId, t5 => t5.Szenario, t6 => t6.Target.Number);
-            //_szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeIndex);
-
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Study));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Group));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject.PId));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Szenario));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target.Number));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TrialNumberInSzenario));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TargetTrialNumberInSzenario));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.CreationTime));
-            _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.FileHash));
-
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Study));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Group));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject.PId));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Szenario));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target.Number));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
-            _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
-
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Study));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Group));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject.PId));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Szenario));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target.Number));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
-            _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Study));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Group));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject.PId));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Szenario));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target.Number));
+                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
+                _szenarioMeanTimeCollection.EnsureIndex(
+                    new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
+                _szenarioMeanTimeCollection.EnsureIndex(
+                    new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public void RebuildIndexes()
         {
-            _trialCollection.ReIndex();
-            _baselineCollection.ReIndex();
-            _szenarioMeanTimeCollection.ReIndex();
+            try
+            {
+                _trialCollection.ReIndex();
+                _baselineCollection.ReIndex();
+                _szenarioMeanTimeCollection.ReIndex();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public void DropAllIndexes()
         {
-            _trialCollection.DropAllIndexes();
-            _baselineCollection.DropAllIndexes();
-            _szenarioMeanTimeCollection.DropAllIndexes();
+            try
+            {
+                _trialCollection.DropAllIndexes();
+                _baselineCollection.DropAllIndexes();
+                _szenarioMeanTimeCollection.DropAllIndexes();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
         
         public void CompactDatabase()
         {
-            _mongoDatabase.RunCommand(new CommandDocument("compact", "Trial"));
-            _mongoDatabase.RunCommand(new CommandDocument("compact", "Baseline"));
-            _mongoDatabase.RunCommand(new CommandDocument("compact", "SzenarioMeanTime"));
+            try
+            {
+                _mongoDatabase.RunCommand(new CommandDocument("compact", "Trial"));
+                _mongoDatabase.RunCommand(new CommandDocument("compact", "Baseline"));
+                _mongoDatabase.RunCommand(new CommandDocument("compact", "SzenarioMeanTime"));
+            }
+
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public void DropDatabase()
         {
-            _mongoDatabase.DropCollection("SzenarioMeanTime");
-            _mongoDatabase.DropCollection("Baseline");
-            _mongoDatabase.DropCollection("Trial");
+            try
+            {
+                _mongoDatabase.DropCollection("SzenarioMeanTime");
+                _mongoDatabase.DropCollection("Baseline");
+                _mongoDatabase.DropCollection("Trial");
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
 
         public IEnumerable<string> GetStudys()
@@ -449,29 +490,47 @@ namespace ManipAnalysis_v2
 
         public bool CheckIfMeasureFileHashExists(string measureFileHash)
         {
-            return _trialCollection.AsQueryable<Trial>().Any(t => t.MeasureFile.FileHash == measureFileHash);
+            try
+            {
+                return _trialCollection.AsQueryable<Trial>().Any(t => t.MeasureFile.FileHash == measureFileHash);
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                return false;
+            }
         }
 
         public void Insert(IEnumerable<Trial> trials)
         {
+            // No try-catch-Block since ManipAnalysisFunctions is handling this
             _trialCollection.InsertBatch(trials);
         }
 
         public void Insert(IEnumerable<SzenarioMeanTime> szenarioMeanTimes)
         {
+            // No try-catch-Block since ManipAnalysisFunctions is handling this
             _szenarioMeanTimeCollection.InsertBatch(szenarioMeanTimes);
         }
 
         public void Insert(IEnumerable<Baseline> baselines)
         {
+            // No try-catch-Block since ManipAnalysisFunctions is handling this
             _baselineCollection.InsertBatch(baselines);
         }
 
         public void RemoveMeasureFile(MeasureFileContainer measureFile)
         {
-            _trialCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
-            _szenarioMeanTimeCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
-            _baselineCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+            try
+            {
+                _trialCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+                _szenarioMeanTimeCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+                _baselineCollection.Remove(Query<Trial>.EQ(t => t.MeasureFile, measureFile));
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
         }
     }
 }
