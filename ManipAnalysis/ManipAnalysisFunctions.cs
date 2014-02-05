@@ -1110,179 +1110,168 @@ namespace ManipAnalysis_v2
             //_myDatabaseWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
         }
 
-        public void ImportMeasureFiles(IEnumerable<string> measureFiles, int samplesPerSecond, int butterFilterOrder,
+        public void ImportMeasureFiles(List<string> measureFilesList, int samplesPerSecond, int butterFilterOrder,
             int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
             int timeNormalizationSamples)
         {
-            List<string> measureFilesList = measureFiles.ToList();
-
-            var newTask =
-                new Task(
-                    () => ImportMeasureFilesThread(measureFilesList, samplesPerSecond, butterFilterOrder,
-                        butterFilterCutOffPosition, butterFilterCutOffForce, percentPeakVelocity,
-                        timeNormalizationSamples));
-
-            TaskManager.PushBack(newTask);
-            newTask.Start();
-        }
-
-        private void ImportMeasureFilesThread(List<string> measureFilesList, int samplesPerSecond, int butterFilterOrder,
-            int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
-            int timeNormalizationSamples)
-        {
-            while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
             {
-                Thread.Sleep(100);
-            }
-
-            _myManipAnalysisGui.EnableTabPages(false);
-            _myManipAnalysisGui.SetProgressBarValue(0);
-
-            for (int files = 0; files < measureFilesList.Count & !TaskManager.Cancel; files++)
-            {
-                try
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
                 {
-                    while (TaskManager.Pause & !TaskManager.Cancel)
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.EnableTabPages(false);
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                for (int files = 0; files < measureFilesList.Count & !TaskManager.Cancel; files++)
+                {
+                    try
                     {
-                        Thread.Sleep(100);
-                    }
-
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/measureFilesList.Count)*files);
-
-                    string filename = measureFilesList.ElementAt(files);
-
-                    string tempFileHash = Md5.ComputeHash(filename);
-
-                    if (!_myDatabaseWrapper.CheckIfMeasureFileHashExists(tempFileHash))
-                    {
-                        //var myParser = new BioMotionBotMeasureFileParser(trialsContainer, _myManipAnalysisGui);
-                        var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
-                        
-                        _myManipAnalysisGui.WriteProgressInfo("Parsing file...");
-                        if (myParser.ParseFile(filename))
+                        while (TaskManager.Pause & !TaskManager.Cancel)
                         {
-                            List<Trial> trialsContainer = myParser.TrialsContainer;
-                            List<Baseline> baselinesContainer = null;
-                            List<SzenarioMeanTime> szenarioMeanTimesContainer;
-                            
-                            _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
+                            Thread.Sleep(100);
+                        }
 
-                            #region Butterworth filter
+                        _myManipAnalysisGui.SetProgressBarValue((100.0/measureFilesList.Count)*files);
 
-                            _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
-                            _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
-                                Convert.ToDouble(butterFilterCutOffPosition));
-                            _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
-                                Convert.ToDouble(butterFilterCutOffForce));
-                            _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
-                            _myMatlabWrapper.Execute(
-                                "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
-                            _myMatlabWrapper.Execute(
-                                "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
+                        string filename = measureFilesList.ElementAt(files);
 
-                            ButterWorthFilter(trialsContainer);
+                        string tempFileHash = Md5.ComputeHash(filename);
 
-                            _myMatlabWrapper.ClearWorkspace();
+                        if (!_myDatabaseWrapper.CheckIfMeasureFileHashExists(tempFileHash))
+                        {
+                            //var myParser = new BioMotionBotMeasureFileParser(trialsContainer, _myManipAnalysisGui);
+                            var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
 
-                            #endregion
-
-                            _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
-
-                            #region Velocity calcultion
-
-                            VelocityCalculation(trialsContainer, samplesPerSecond);
-
-                            _myMatlabWrapper.ClearWorkspace();
-
-                            #endregion
-
-                            _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
-
-                            #region Time normalization
-
-                            TimeNormalization(trialsContainer, timeNormalizationSamples, percentPeakVelocity);
-
-                            _myMatlabWrapper.ClearWorkspace();
-
-                            #endregion
-
-                            _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
-
-                            #region Calculate baselines
-
-                            if (trialsContainer[0].Szenario == "Szenario02" ||  // Some previous Studys
-                                trialsContainer[0].Szenario == "Szenario42"     // Study 6 KINARM
-                                )
+                            _myManipAnalysisGui.WriteProgressInfo("Parsing file...");
+                            if (myParser.ParseFile(filename))
                             {
-                                baselinesContainer = CalculateBaselines(trialsContainer);
-                            }
+                                List<Trial> trialsContainer = myParser.TrialsContainer;
+                                List<Baseline> baselinesContainer = null;
+                                List<SzenarioMeanTime> szenarioMeanTimesContainer;
 
-                            #endregion
+                                _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
 
-                            _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
+                                #region Butterworth filter
 
-                            #region Calculate szenario mean times
+                                _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
+                                _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
+                                    Convert.ToDouble(butterFilterCutOffPosition));
+                                _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
+                                    Convert.ToDouble(butterFilterCutOffForce));
+                                _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+                                _myMatlabWrapper.Execute(
+                                    "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
+                                _myMatlabWrapper.Execute(
+                                    "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
 
-                            szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
+                                ButterWorthFilter(trialsContainer);
 
-                            _myMatlabWrapper.ClearWorkspace();
+                                _myMatlabWrapper.ClearWorkspace();
 
-                            #endregion
+                                #endregion
 
-                            _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
+                                _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
 
-                            #region CompressData
+                                #region Velocity calcultion
 
-                            CompressTrialData(trialsContainer);
-                            if (baselinesContainer != null)
-                            {
-                                CompressBaselineData(baselinesContainer);
-                            }
+                                VelocityCalculation(trialsContainer, samplesPerSecond);
 
-                            #endregion
+                                _myMatlabWrapper.ClearWorkspace();
 
-                            _myManipAnalysisGui.WriteProgressInfo("Uploading into database...");
+                                #endregion
 
-                            #region Uploading data to MongoDB
+                                _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
 
-                            try
-                            {
-                                _myDatabaseWrapper.Insert(trialsContainer);
+                                #region Time normalization
+
+                                TimeNormalization(trialsContainer, timeNormalizationSamples, percentPeakVelocity);
+
+                                _myMatlabWrapper.ClearWorkspace();
+
+                                #endregion
+
+                                _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
+
+                                #region Calculate baselines
+
+                                if (trialsContainer[0].Szenario == "Szenario02" || // Some previous Studys
+                                    trialsContainer[0].Szenario == "Szenario42" // Study 6 KINARM
+                                    )
+                                {
+                                    baselinesContainer = CalculateBaselines(trialsContainer);
+                                }
+
+                                #endregion
+
+                                _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
+
+                                #region Calculate szenario mean times
+
+                                szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
+
+                                _myMatlabWrapper.ClearWorkspace();
+
+                                #endregion
+
+                                _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
+
+                                #region CompressData
+
+                                CompressTrialData(trialsContainer);
                                 if (baselinesContainer != null)
                                 {
-                                    _myDatabaseWrapper.Insert(baselinesContainer);
+                                    CompressBaselineData(baselinesContainer);
                                 }
-                                _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
-                            }
-                            catch (Exception ex)
-                            {
-                                _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
-                                throw ex;
-                            }
 
-                            #endregion
+                                #endregion
+
+                                _myManipAnalysisGui.WriteProgressInfo("Uploading into database...");
+
+                                #region Uploading data to MongoDB
+
+                                try
+                                {
+                                    _myDatabaseWrapper.Insert(trialsContainer);
+                                    if (baselinesContainer != null)
+                                    {
+                                        _myDatabaseWrapper.Insert(baselinesContainer);
+                                    }
+                                    _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
+                                    throw ex;
+                                }
+
+                                #endregion
+                            }
+                            else
+                            {
+                                _myManipAnalysisGui.WriteToLogBox("Error parsing \"" + filename + "\"");
+                            }
                         }
                         else
                         {
-                            _myManipAnalysisGui.WriteToLogBox("Error parsing \"" + filename + "\"");
+                            _myManipAnalysisGui.WriteToLogBox("File already imported: " +
+                                                              measureFilesList.ElementAt(files));
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        _myManipAnalysisGui.WriteToLogBox("File already imported: " + measureFilesList.ElementAt(files));
+                        _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" +
+                                                          ex +
+                                                          "\nSkipped file.");
                     }
                 }
-                catch (Exception ex)
-                {
-                    _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex +
-                                                      "\nSkipped file.");
-                }
-            }
-            _myManipAnalysisGui.SetProgressBarValue(0);
-            _myManipAnalysisGui.WriteProgressInfo("Ready");
-            _myManipAnalysisGui.EnableTabPages(true);
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
+                _myManipAnalysisGui.EnableTabPages(true);
 
-            TaskManager.Remove(Task.CurrentId);
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         private void ButterWorthFilter(List<Trial> trialsContainer)
@@ -2222,119 +2211,152 @@ namespace ManipAnalysis_v2
                 }
             });
         }
-
+        
         public void CalculateStatistics()
         {
-            var newTask = new Task(CalculateStatisticsThread);
-            TaskManager.PushBack(newTask);
-            newTask.Start();
-        }
-
-        private void CalculateStatisticsThread()
-        {
-            while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+            TaskManager.PushBack(Task.Factory.StartNew(delegate()
             {
-                Thread.Sleep(100);
-            }
-
-            _myManipAnalysisGui.EnableTabPages(false);
-            _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
-            int counter = 0;
-
-            FieldsBuilder<Trial> statisticFields = new FieldsBuilder<Trial>();
-            statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target);
-            var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
-
-            if (trialList.Count() > 0)
-            {
-                foreach (var trial in trialList)
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
                 {
-                    if (TaskManager.Cancel)
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.EnableTabPages(false);
+                _myManipAnalysisGui.WriteProgressInfo("Calculating statistics...");
+                int counter = 0;
+                try
+                {
+                    FieldsBuilder<Trial> statisticFields = new FieldsBuilder<Trial>();
+                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized,
+                        t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target);
+                    var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
+
+                    if (trialList.Count() > 0)
                     {
-                        break;
-                    }
-                    while (TaskManager.Pause & !TaskManager.Cancel)
-                    {
-                        Thread.Sleep(100);
-                    }
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
-                    counter++;
+                        foreach (var trial in trialList)
+                        {
+                            if (TaskManager.Cancel)
+                            {
+                                break;
+                            }
+                            while (TaskManager.Pause & !TaskManager.Cancel)
+                            {
+                                Thread.Sleep(100);
+                            }
+                            _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
+                            counter++;
 
-                    FieldsBuilder<Baseline> baselineFields = new FieldsBuilder<Baseline>();
-                    baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
-                    var baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, baselineFields);
-                    baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
-                    baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
-                    trial.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
-                    trial.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
+                            FieldsBuilder<Baseline> baselineFields = new FieldsBuilder<Baseline>();
+                            baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
+                            var baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject,
+                                trial.Target.Number, baselineFields);
 
-                    if (baseline != null)
-                    {
-                        int time300MsIndex =
-                            trial.PositionNormalized.Select(t => t.TimeStamp).ToList().IndexOf(
-                                trial.PositionNormalized.Select(t => t.TimeStamp).ToList().OrderBy(
-                                    d => Math.Abs(d.Ticks -
-                                                  (trial.PositionNormalized.Select(t => t.TimeStamp).ElementAt(0).Ticks +
-                                                   TimeSpan.FromMilliseconds(300).Ticks)))
-                                    .ElementAt(0));
+                            if (baseline != null)
+                            {
+                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
+                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
+                                trial.PositionNormalized =
+                                    Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
+                                trial.VelocityNormalized =
+                                    Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
 
-                        _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
-                        _myMatlabWrapper.SetWorkspaceData("time300msIndex", time300MsIndex);
-                        _myMatlabWrapper.SetWorkspaceData("positionX", trial.PositionNormalized.Select(t => t.X).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("positionY", trial.PositionNormalized.Select(t => t.Y).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("velocityX", trial.VelocityNormalized.Select(t => t.X).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("velocityY", trial.VelocityNormalized.Select(t => t.Y).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
-                        _myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
 
-                        _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
-                        _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
-                        _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
-                        _myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                        _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
-                        _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
-                        _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
-                        _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
-                        _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
-                        _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
-                        _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                        _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                        _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                int time300MsIndex =
+                                    trial.PositionNormalized.Select(t => t.TimeStamp).ToList().IndexOf(
+                                        trial.PositionNormalized.Select(t => t.TimeStamp).ToList().OrderBy(
+                                            d => Math.Abs(d.Ticks -
+                                                          (trial.PositionNormalized.Select(t => t.TimeStamp)
+                                                              .ElementAt(0)
+                                                              .Ticks +
+                                                           TimeSpan.FromMilliseconds(300).Ticks)))
+                                            .ElementAt(0));
 
-                        var statisticContainer = new StatisticContainer();
-                        statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
-                        statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
-                        statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
-                        statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
-                        statisticContainer.AbsolutePerpendicularDisplacement300Ms = _myMatlabWrapper.GetWorkspaceData("distance300msAbs");
-                        statisticContainer.SignedPerpendicularDisplacement300Ms = _myMatlabWrapper.GetWorkspaceData("distance300msSign");
-                        statisticContainer.AbsoluteMeanPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
-                        statisticContainer.AbsoluteMaximalPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
-                        statisticContainer.SignedMaximalPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                        statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
+                                _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
+                                _myMatlabWrapper.SetWorkspaceData("time300msIndex", time300MsIndex);
+                                _myMatlabWrapper.SetWorkspaceData("positionX",
+                                    trial.PositionNormalized.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("positionY",
+                                    trial.PositionNormalized.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("velocityX",
+                                    trial.VelocityNormalized.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("velocityY",
+                                    trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselinePositionX",
+                                    baseline.Position.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselinePositionY",
+                                    baseline.Position.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityX",
+                                    baseline.Velocity.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityY",
+                                    baseline.Velocity.Select(t => t.Y).ToArray());
 
-                        trial.Statistics = statisticContainer;
-                        trial.BaselineObjectId = baseline.Id;
+                                _myMatlabWrapper.Execute(
+                                    "vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                                _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
+                                _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
+                                _myMatlabWrapper.Execute(
+                                    "length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                                _myMatlabWrapper.Execute(
+                                    "distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
+                                _myMatlabWrapper.Execute(
+                                    "distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
+                                _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
+                                _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
+                                _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+                                _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                                _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                _myMatlabWrapper.Execute(
+                                    "rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
-                        _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
+                                var statisticContainer = new StatisticContainer();
+                                statisticContainer.VelocityVectorCorrelation =
+                                    _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
+                                statisticContainer.AbsoluteTrajectoryLength =
+                                    _myMatlabWrapper.GetWorkspaceData("length_abs");
+                                statisticContainer.AbsoluteBaselineTrajectoryLengthRatio =
+                                    _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                                statisticContainer.AbsolutePerpendicularDisplacement300Ms =
+                                    _myMatlabWrapper.GetWorkspaceData("distance300msAbs");
+                                statisticContainer.SignedPerpendicularDisplacement300Ms =
+                                    _myMatlabWrapper.GetWorkspaceData("distance300msSign");
+                                statisticContainer.AbsoluteMeanPerpendicularDisplacement =
+                                    _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+                                statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
+                                    _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                                statisticContainer.SignedMaximalPerpendicularDisplacement =
+                                    _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+                                statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
+
+                                trial.Statistics = statisticContainer;
+                                trial.BaselineObjectId = baseline.Id;
+
+                                _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
+                            }
+                            else
+                            {
+                                _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial:" + trial.Study + "/" +
+                                                                  trial.Group + "/" + trial.Subject.PId + "/" +
+                                                                  trial.Szenario);
+                            }
+                        }
                     }
                     else
                     {
-                        _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial:" + trial.Study + "/" + trial.Group + "/" + trial.Subject.PId + "/" + trial.Szenario);
+                        _myManipAnalysisGui.WriteToLogBox("Statistics already calculated!");
                     }
                 }
-            }
-            else
-            {
-                _myManipAnalysisGui.WriteToLogBox("Statistics already calculated!");
-            }
-            _myManipAnalysisGui.SetProgressBarValue(0);
-            _myManipAnalysisGui.WriteProgressInfo("Ready");
-            _myManipAnalysisGui.EnableTabPages(true);
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
+                _myManipAnalysisGui.EnableTabPages(true);
 
-            TaskManager.Remove(Task.CurrentId);
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void FixBrokenTrials()

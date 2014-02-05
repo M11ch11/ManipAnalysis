@@ -983,7 +983,7 @@ namespace ManipAnalysis_v2
 
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>(),
+            _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(),
                 Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
                 Convert.ToInt32(textBox_Import_FilterOrder.Text),
                 Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text),
