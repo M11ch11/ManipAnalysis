@@ -709,7 +709,11 @@ BEGIN
 		SELECT @id = Scope_Identity();
 END
 
-
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 
 CREATE PROCEDURE [dbo].[updateStatisticData]
@@ -1568,7 +1572,11 @@ RETURN
 			faulty_trial = 0
 )
 
-
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 CREATE FUNCTION [dbo].[getStatisticUpdateInformation]
 (
