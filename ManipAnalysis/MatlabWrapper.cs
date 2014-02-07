@@ -65,6 +65,35 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public void CreateForceFigure(string figureName, string xAxisLabel, string yAxisLabel)
+        {
+            try
+            {
+                Execute("figure");
+                Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
+                Execute("grid on");
+                Execute("hold all");
+                Execute("xlabel('" + xAxisLabel + "');");
+                Execute("ylabel('" + yAxisLabel + "');");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+        public void AddLegend(string legend1, string legend2)
+        {
+            try
+            {
+                Execute("legend('" + legend1 + "','" + legend2 + "');");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateMeanTimeFigure()
         {
             try

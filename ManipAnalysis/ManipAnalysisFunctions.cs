@@ -2306,24 +2306,19 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.SetWorkspaceData("baselineVelocityY",
                                     baseline.Velocity.Select(t => t.Y).ToArray());
 
-                                _myMatlabWrapper.Execute(
-                                    "vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                                _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
                                 _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
-                                _myMatlabWrapper.Execute(
-                                    "length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                                _myMatlabWrapper.Execute(
-                                    "distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
-                                _myMatlabWrapper.Execute(
-                                    "distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
+                                _myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                                _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
+                                _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
                                 _myMatlabWrapper.Execute("distance300msAbs = distanceAbs(time300msIndex);");
                                 _myMatlabWrapper.Execute("distance300msSign = distanceSign(time300msIndex);");
                                 _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
                                 _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                 _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
                                 _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                _myMatlabWrapper.Execute(
-                                    "rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
                                 var statisticContainer = new StatisticContainer();
                                 statisticContainer.VelocityVectorCorrelation =
@@ -2566,17 +2561,17 @@ namespace ManipAnalysis_v2
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {
                         fields.Include(t1 => t1.ZippedMeasuredForcesNormalized);
-                        _myMatlabWrapper.CreateFigure("Force plot normalized", "[Samples]", "Force [N]");
+                        _myMatlabWrapper.CreateForceFigure("Force plot normalized", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Filtered")
                     {
                         fields.Include(t1 => t1.ZippedMeasuredForcesFiltered);
-                        _myMatlabWrapper.CreateFigure("Force plot filtered", "[Samples]", "Force [N]");
+                        _myMatlabWrapper.CreateForceFigure("Force plot filtered", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Raw")
                     {
                         fields.Include(t1 => t1.ZippedMeasuredForcesRaw);
-                        _myMatlabWrapper.CreateFigure("Force plot raw", "[Samples]", "Force [N]");
+                        _myMatlabWrapper.CreateForceFigure("Force plot raw", "[Samples]", "Force [N]");
                     }
 
                     if (meanIndividual == "Individual")
@@ -2636,10 +2631,8 @@ namespace ManipAnalysis_v2
                                             trialContainer.PositionNormalized.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
                                             trialContainer.PositionNormalized.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("positionDataZ",
-                                            trialContainer.PositionNormalized.Select(t => t.Z).ToArray());
-
-                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                        
+                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
 
                                         if (showForceVectors || showPdForceVectors)
                                         {
@@ -2651,15 +2644,13 @@ namespace ManipAnalysis_v2
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
                                                 {
                                                     trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 2),
-                                                    trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2),
-                                                    trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 2)
+                                                    trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 2)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
                                                 {
                                                     trialContainer.PositionNormalized.Select(t => t.X).ElementAt(i - 1),
-                                                    trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1),
-                                                    trialContainer.PositionNormalized.Select(t => t.Z).ElementAt(i - 1)
+                                                    trialContainer.PositionNormalized.Select(t => t.Y).ElementAt(i - 1)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vforce", new[]
@@ -2667,22 +2658,19 @@ namespace ManipAnalysis_v2
                                                     trialContainer.MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2)/
                                                     100.0,
                                                     trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2)/
-                                                    100.0,
-                                                    trialContainer.MeasuredForcesNormalized.Select(t => t.Z).ElementAt(i - 2)/
                                                     100.0
                                                 });
 
                                                 if (showForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                                        "quiver(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
                                                 }
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
                                                         "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                                    _myMatlabWrapper.Execute(
-                                                        "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                                    _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
                                         }
@@ -2696,10 +2684,8 @@ namespace ManipAnalysis_v2
                                             trialContainer.PositionFiltered.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
                                             trialContainer.PositionFiltered.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("positionDataZ",
-                                            trialContainer.PositionFiltered.Select(t => t.Z).ToArray());
-
-                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                        
+                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
 
                                         if (showForceVectors || showPdForceVectors)
                                         {
@@ -2710,15 +2696,13 @@ namespace ManipAnalysis_v2
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
                                                 {
                                                     trialContainer.PositionFiltered.Select(t => t.X).ElementAt(i - 2),
-                                                    trialContainer.PositionFiltered.Select(t => t.Y).ElementAt(i - 2),
-                                                    trialContainer.PositionFiltered.Select(t => t.Z).ElementAt(i - 2)
+                                                    trialContainer.PositionFiltered.Select(t => t.Y).ElementAt(i - 2)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
                                                 {
                                                     trialContainer.PositionFiltered.Select(t => t.X).ElementAt(i - 1),
-                                                    trialContainer.PositionFiltered.Select(t => t.Y).ElementAt(i - 1),
-                                                    trialContainer.PositionFiltered.Select(t => t.Z).ElementAt(i - 1)
+                                                    trialContainer.PositionFiltered.Select(t => t.Y).ElementAt(i - 1)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vforce", new[]
@@ -2726,22 +2710,19 @@ namespace ManipAnalysis_v2
                                                     trialContainer.MeasuredForcesFiltered.Select(t => t.X).ElementAt(i - 2)/
                                                     100.0,
                                                     trialContainer.MeasuredForcesFiltered.Select(t => t.Y).ElementAt(i - 2)/
-                                                    100.0,
-                                                    trialContainer.MeasuredForcesFiltered.Select(t => t.Z).ElementAt(i - 2)/
                                                     100.0
                                                 });
 
                                                 if (showForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                                        "quiver3(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
                                                 }
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
                                                         "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                                    _myMatlabWrapper.Execute(
-                                                        "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                                    _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
                                         }
@@ -2755,10 +2736,8 @@ namespace ManipAnalysis_v2
                                             trialContainer.PositionRaw.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY",
                                             trialContainer.PositionRaw.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("positionDataZ",
-                                            trialContainer.PositionRaw.Select(t => t.Z).ToArray());
 
-                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
 
                                         if (showForceVectors || showPdForceVectors)
                                         {
@@ -2769,15 +2748,13 @@ namespace ManipAnalysis_v2
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
                                                 {
                                                     trialContainer.PositionRaw.Select(t => t.X).ElementAt(i - 2),
-                                                    trialContainer.PositionRaw.Select(t => t.Y).ElementAt(i - 2),
-                                                    trialContainer.PositionRaw.Select(t => t.Z).ElementAt(i - 2)
+                                                    trialContainer.PositionRaw.Select(t => t.Y).ElementAt(i - 2)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vpos2", new[]
                                                 {
                                                     trialContainer.PositionRaw.Select(t => t.X).ElementAt(i - 1),
-                                                    trialContainer.PositionRaw.Select(t => t.Y).ElementAt(i - 1),
-                                                    trialContainer.PositionRaw.Select(t => t.Z).ElementAt(i - 1)
+                                                    trialContainer.PositionRaw.Select(t => t.Y).ElementAt(i - 1)
                                                 });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vforce", new[]
@@ -2785,22 +2762,19 @@ namespace ManipAnalysis_v2
                                                     trialContainer.MeasuredForcesRaw.Select(t => t.X).ElementAt(i - 2)/
                                                     100.0,
                                                     trialContainer.MeasuredForcesRaw.Select(t => t.Y).ElementAt(i - 2)/
-                                                    100.0,
-                                                    trialContainer.MeasuredForcesRaw.Select(t => t.Z).ElementAt(i - 2)/
                                                     100.0
                                                 });
 
                                                 if (showForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "quiver3(vpos2(1),vpos2(2),vpos2(3),vforce(1),vforce(2),vforce(3),'Color','red');");
+                                                        "quiver3(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
                                                 }
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
                                                         "fPD = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                                    _myMatlabWrapper.Execute(
-                                                        "quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                                    _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
                                         }
@@ -2815,6 +2789,7 @@ namespace ManipAnalysis_v2
                                             trialContainer.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
                                         _myMatlabWrapper.Plot("forceX", "red", 2);
                                         _myMatlabWrapper.Plot("forceY", "green", 2);
+                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
                                     }
                                     else if (trajectoryVelocityForce == "Force - Filtered")
                                     {
@@ -2826,6 +2801,7 @@ namespace ManipAnalysis_v2
                                             trialContainer.MeasuredForcesFiltered.Select(t => t.Y).ToArray());
                                         _myMatlabWrapper.Plot("forceX", "red", 2);
                                         _myMatlabWrapper.Plot("forceY", "green", 2);
+                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
                                     }
                                     else if (trajectoryVelocityForce == "Force - Raw")
                                     {
@@ -2837,6 +2813,7 @@ namespace ManipAnalysis_v2
                                             trialContainer.MeasuredForcesRaw.Select(t => t.Y).ToArray());
                                         _myMatlabWrapper.Plot("forceX", "red", 2);
                                         _myMatlabWrapper.Plot("forceY", "green", 2);
+                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
                                     }
                                 }
                             }
