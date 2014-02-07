@@ -28,7 +28,7 @@ function [ position_data_diff ] = numDiff(position_data, sampleRate)
 %- position_data (Positionsdaten) ist Zeilenvektor also 1xN (falls nicht, dann entsprechend , durch ; ersetzen, etc.)
 %- die samplingRate ist konstant (äquidistante Schrittweiten)
 
-sampleTime = 1.0 / double(sampleRate);
+sampleTime = double(1.0) / double(sampleRate);
 N = length(position_data);
 
 position_data_help1 = [position_data(1), position_data];	% = [position_data(1), position_data(1), position_data(2), position_data(3), ..., position_data(N-1), position_data(N)],  1x(N+1)-Vektor, vorne ersten Einrag doppeln
