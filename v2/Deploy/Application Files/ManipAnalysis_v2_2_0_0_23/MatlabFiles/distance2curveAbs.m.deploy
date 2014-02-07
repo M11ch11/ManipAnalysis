@@ -67,7 +67,7 @@ R = [0,0;0,0];      % allocation for rotation matrix
 
 %-------------------------------------------------------------------------%
 % 3-dimensional rotation of trajectory point and straight line joinig 
-% start & target point to the x-axis (ankle = alpha)
+% start & target point to the x-axis (angle = alpha)
   
 if(targetNumber == 1 || targetNumber == 9)
     % alpha = 2*pi/4;
