@@ -86,42 +86,174 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Study));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Group));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Subject.PId));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Szenario));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.Target.Number));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TrialNumberInSzenario));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.TargetTrialNumberInSzenario));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.CreationTime));
-                _trialCollection.EnsureIndex(new IndexKeysBuilder<Trial>().Ascending(t => t.MeasureFile.FileHash));
+                #region TrialCollection indexes
+                /*
+                 * GetTrial(string studyName, string groupName, string szenarioName,
+                 *           SubjectContainer subject, DateTime turn, int target, 
+                 *          int trial, bool showNormalTrials, bool showCatchTrials,
+                 *          bool showErrorclampTrials)
+                 *          
+                 * GetTrial(string studyName, string groupName, string szenarioName, 
+                 *          SubjectContainer subject, DateTime turn, int szenarioTrial)
+                 */
+                var trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Group);
+                trialCollectionKeys.Ascending(t => t.Szenario);
+                trialCollectionKeys.Ascending(t => t.Subject);
+                trialCollectionKeys.Ascending(t => t.MeasureFile.CreationTime);
+                trialCollectionKeys.Ascending(t => t.TrialNumberInSzenario);
+                trialCollectionKeys.Ascending(t => t.Target.Number);
+                trialCollectionKeys.Ascending(t => t.TargetTrialNumberInSzenario);
+                trialCollectionKeys.Ascending(t => t.CatchTrial);
+                trialCollectionKeys.Ascending(t => t.ErrorClampTrial);
+                var options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(true);
+                options.SetName("GetTrial");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
 
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Study));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Group));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Subject.PId));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Szenario));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<Baseline>().Ascending(t => t.Target.Number));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
-                _baselineCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
+                /*
+                 * GetStudys
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetStudys");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
 
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Study));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Group));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Subject.PId));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Szenario));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.Target.Number));
-                _szenarioMeanTimeCollection.EnsureIndex(new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile));
-                _szenarioMeanTimeCollection.EnsureIndex(
-                    new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.CreationTime));
-                _szenarioMeanTimeCollection.EnsureIndex(
-                    new IndexKeysBuilder<SzenarioMeanTime>().Ascending(t => t.MeasureFile.FileHash));
+                /*
+                 * GetGroups
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Group);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetGroups");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
+                /*
+                 * GetSzenarios
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Group);
+                trialCollectionKeys.Ascending(t => t.Szenario);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetSzenarios");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
+                /*
+                 * GetSubjects
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Group);
+                trialCollectionKeys.Ascending(t => t.Szenario);
+                trialCollectionKeys.Ascending(t => t.Subject);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetSubjects");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
+                /*
+                 * GetTurns
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Group);
+                trialCollectionKeys.Ascending(t => t.Szenario);
+                trialCollectionKeys.Ascending(t => t.Subject);
+                trialCollectionKeys.Ascending(t => t.MeasureFile.CreationTime);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetTurns");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
+                /*
+                 * GetSzenario-/Target/TargetTrials/CatchTrial/ErrorClampTrial
+                 */
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.Study);
+                trialCollectionKeys.Ascending(t => t.Szenario);
+                trialCollectionKeys.Ascending(t => t.Target.Number);
+                trialCollectionKeys.Ascending(t => t.TargetTrialNumberInSzenario);
+                trialCollectionKeys.Ascending(t => t.ErrorClampTrial);
+                trialCollectionKeys.Ascending(t => t.CatchTrial);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetSzenario-/Target/TargetTrials/CatchTrial/ErrorClampTrial");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
+                // MeasureFileHash
+                trialCollectionKeys = new IndexKeysBuilder<Trial>();
+                trialCollectionKeys.Ascending(t => t.MeasureFile.FileHash);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(false);
+                options.SetUnique(false);
+                options.SetName("MeasureFileHash");
+                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                #endregion
+
+                #region BaselineCollection indexes
+                /*
+                 * GetBaseline
+                 */
+                var baselineCollectionKeys = new IndexKeysBuilder<Baseline>();
+                baselineCollectionKeys.Ascending(t => t.Study);
+                baselineCollectionKeys.Ascending(t => t.Group);
+                baselineCollectionKeys.Ascending(t => t.Subject);
+                baselineCollectionKeys.Ascending(t => t.Target.Number);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetBaseline");
+                _baselineCollection.EnsureIndex(baselineCollectionKeys, options);
+
+                // MeasureFileHash
+                baselineCollectionKeys = new IndexKeysBuilder<Baseline>();
+                baselineCollectionKeys.Ascending(t => t.MeasureFile.FileHash);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(false);
+                options.SetUnique(false);
+                options.SetName("MeasureFileHash");
+                _baselineCollection.EnsureIndex(trialCollectionKeys, options);
+                #endregion
+
+                #region SzenarioMeanTimeCollection indexes
+                /*
+                 * GetSzenarioMeanTime
+                 */
+                var szenarioMeanTimeCollectionKeys = new IndexKeysBuilder<SzenarioMeanTime>();
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.Study);
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.Group);
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.Szenario);
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.Subject);
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.MeasureFile.CreationTime);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(true);
+                options.SetUnique(false);
+                options.SetName("GetSzenarioMeanTime");
+                _szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeCollectionKeys, options);
+
+                // MeasureFileHash
+                szenarioMeanTimeCollectionKeys = new IndexKeysBuilder<SzenarioMeanTime>();
+                szenarioMeanTimeCollectionKeys.Ascending(t => t.MeasureFile.FileHash);
+                options = new IndexOptionsBuilder();
+                options.SetSparse(false);
+                options.SetUnique(false);
+                options.SetName("MeasureFileHash");
+                _szenarioMeanTimeCollection.EnsureIndex(trialCollectionKeys, options);
+                #endregion
             }
             catch (Exception ex)
             {
