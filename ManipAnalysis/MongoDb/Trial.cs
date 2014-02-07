@@ -56,7 +56,7 @@ namespace ManipAnalysis_v2.MongoDb
         public int ForceDataFilterCutoffFrequency { get; set; }
         public int PositionDataFilterOrder { get; set; }
         public int ForceDataFilterOrder { get; set; }
-        public int VelocityTrimThresholdPercent { get; set; }
+        public double VelocityTrimThresholdPercent { get; set; }
         public double VelocityTrimThresholdForTrial { get; set; } // in m/s
         public int RawDataSampleRate { get; set; }
         public int FilteredDataSampleRate { get; set; }

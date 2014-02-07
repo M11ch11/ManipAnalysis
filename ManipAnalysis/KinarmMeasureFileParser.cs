@@ -139,8 +139,8 @@ namespace ManipAnalysis_v2
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
                     float frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
                     int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
-                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
                     // -1 == Compensation of first Trial
+                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
                     int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
 
                     if (targetNumber != 17 && _szenarioName != "Szenario01") // Target 17 == StartTrial
@@ -195,7 +195,7 @@ namespace ManipAnalysis_v2
                             var momentForcesRaw = new ForceContainer();
                             var positionRaw = new PositionContainer();
                             int positionStatus = -1;
-                            float timeOffset = frameTimeInc*frame;
+                            double timeOffset = frameTimeInc*frame;
                             DateTime timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                             // Returns an array of all points, it is necessary to call this method in each cycle

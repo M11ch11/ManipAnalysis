@@ -1457,7 +1457,7 @@ namespace ManipAnalysis_v2
         }
 
 
-        private void VelocityCalculation(List<Trial> trialsContainer, int samplesPerSecond)
+        private void VelocityCalculation(List<Trial> trialsContainer, double samplesPerSecond)
         {
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
@@ -1496,7 +1496,7 @@ namespace ManipAnalysis_v2
             }
         }
 
-        private void TimeNormalization(List<Trial> trialsContainer, int timeNormalizationSamples, int percentPeakVelocity)
+        private void TimeNormalization(List<Trial> trialsContainer, int timeNormalizationSamples, double percentPeakVelocity)
         {
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
@@ -1504,11 +1504,9 @@ namespace ManipAnalysis_v2
 
                 trialsContainer[trialCounter].NormalizedDataSampleRate = timeNormalizationSamples;
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
-                trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial =
-                    trialsContainer[trialCounter].VelocityFiltered.Max(
-                        t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2)))/100.0*
-                    percentPeakVelocity;
+                    trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1)
+                    .Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))/100.0 * percentPeakVelocity;
 
                 var startTime = new DateTime(0);
                 var stopTime = new DateTime(0);
@@ -1519,7 +1517,7 @@ namespace ManipAnalysis_v2
                         trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 0)
                             .First(
                                 t =>
-                                    Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2)) >
+                                    Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) >=
                                     trialsContainer[trialCounter].VelocityTrimThresholdForTrial)
                             .TimeStamp;
                 }
@@ -1536,7 +1534,7 @@ namespace ManipAnalysis_v2
                     stopTime = trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 2)
                         .First(
                             t =>
-                                Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2) + Math.Pow(t.Z, 2)) <
+                                Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) <=
                                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial)
                         .TimeStamp;
                 }
@@ -1548,31 +1546,31 @@ namespace ManipAnalysis_v2
 
                 IEnumerable<ForceContainer> measuredForcesFilteredCut =
                     trialsContainer[trialCounter].MeasuredForcesFiltered.Where(
-                        t => t.TimeStamp > startTime && t.TimeStamp < stopTime).OrderBy(t => t.TimeStamp);
+                        t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
 
                 IEnumerable<ForceContainer> momentForcesFilteredCut =
                     trialsContainer[trialCounter].MomentForcesFiltered.Where(
-                        t => t.TimeStamp > startTime && t.TimeStamp < stopTime).OrderBy(t => t.TimeStamp);
+                        t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
 
                 IEnumerable<ForceContainer> nominalForcesFilteredCut = null;
                 if (trialsContainer[trialCounter].NominalForcesFiltered != null)
                 {
                     nominalForcesFilteredCut =
                         trialsContainer[trialCounter].NominalForcesFiltered.Where(
-                            t => t.TimeStamp > startTime && t.TimeStamp < stopTime).OrderBy(t => t.TimeStamp);
+                            t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
                 }
 
                 IEnumerable<PositionContainer> positionFilteredCut =
                     trialsContainer[trialCounter].PositionFiltered.Where(
-                        t => t.TimeStamp > startTime && t.TimeStamp < stopTime).OrderBy(t => t.TimeStamp);
+                        t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
 
                 IEnumerable<VelocityContainer> velocityFilteredCut =
                     trialsContainer[trialCounter].VelocityFiltered.Where(
-                        t => t.TimeStamp > startTime && t.TimeStamp < stopTime).OrderBy(t => t.TimeStamp);
+                        t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
 
 
                 _myMatlabWrapper.SetWorkspaceData("measure_data_time",
-                    velocityFilteredCut.Select(t => Convert.ToDouble(t.TimeStamp.Ticks)).ToArray());
+                    positionFilteredCut.Select(t => Convert.ToDouble(t.TimeStamp.Ticks)).ToArray());
 
                 _myMatlabWrapper.SetWorkspaceData("forceActualX", measuredForcesFilteredCut.Select(t => t.X).ToArray());
                 _myMatlabWrapper.SetWorkspaceData("forceActualY", measuredForcesFilteredCut.Select(t => t.Y).ToArray());
