@@ -890,17 +890,17 @@ namespace ManipAnalysis_v2
 
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
         {
-            int pdTime = -1;
-            string statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString();
-            var inputForm = new PerpendicularDisplacementTimeInputForm();
-            if (inputForm.ShowDialog(this) == DialogResult.OK)
+            int pdTime = 300;
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Sign")
             {
-                pdTime = inputForm.getMilliseconds();
-                statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
-                    .Replace("?", pdTime.ToString());
-                inputForm.Dispose();
+                var inputForm = new PerpendicularDisplacementTimeInputForm();
+                if (inputForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    pdTime = inputForm.getMilliseconds();
+                    inputForm.Dispose();
+                }
             }
-
             WriteProgressInfo("Getting data...");
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
@@ -921,7 +921,9 @@ namespace ManipAnalysis_v2
                                       + "."
                                       + DateTime.Now.Second.ToString("00")
                                       + "-mean-"
-                                      + statisticType
+                                      +
+                                      comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
+                                          .Replace("-", pdTime.ToString())
                                       + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
