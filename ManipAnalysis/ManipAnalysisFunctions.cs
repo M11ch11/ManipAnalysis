@@ -492,14 +492,7 @@ namespace ManipAnalysis_v2
                     double processedTrialsCount = 0;
 
                     var fields = new FieldsBuilder<Trial>();
-                    if (pdTime == -1)
-                    {
-                        fields.Include(t => t.Statistics);
-                    }
-                    else
-                    {
-                        fields.Include(t => t.ZippedPositionNormalized, t => t.Target);
-                    }
+                    fields.Include(t => t.Statistics);
 
                     if (selectedTrialsList.Any())
                     {
@@ -539,6 +532,10 @@ namespace ManipAnalysis_v2
                                         trialsArrayCounter++)
                                     {
                                         _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
+
+                                        trialsArray[trialsArrayCounter].Statistics =
+                                            Gzip<StatisticContainer>.DeCompress(
+                                                trialsArray[trialsArrayCounter].ZippedStatistics);
 
                                         DateTime msIndex = trialsArray[trialsArrayCounter].Statistics
                                             .AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
@@ -670,7 +667,8 @@ namespace ManipAnalysis_v2
                                         break;
 
                                     case "Vector correlation fisher-z":
-                                        _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation Fisher Z plot",
+                                        _myMatlabWrapper.CreateStatisticFigure(
+                                            "Velocity Vector Correlation Fisher Z plot",
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
@@ -683,7 +681,8 @@ namespace ManipAnalysis_v2
 
                                     case "Vector correlation fisher-z to r-values":
                                         _myMatlabWrapper.CreateStatisticFigure(
-                                            "Velocity Vector Correlation Fisher Z to r-Values  plot", "statisticDataPlot",
+                                            "Velocity Vector Correlation Fisher Z to r-Values  plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]",
@@ -693,18 +692,9 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Perpendicular distance 300ms - Abs":
-                                        _myMatlabWrapper.CreateStatisticFigure("PD300 abs plot", "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')",
-                                            "statisticDataStd", "[Trial]", "PD300 [m]", 1,
-                                            (statisticData.Length/meanCount), 0, 0.05,
-                                            plotFit,
-                                            plotErrorbars);
-                                        break;
-
-                                    case "Perpendicular distance ?ms - Abs":
-                                        _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " abs plot", "statisticDataPlot",
+                                    case "Perpendicular distance - Abs":
+                                        _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " abs plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
@@ -733,18 +723,9 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Perpendicular distance 300ms - Sign":
-                                        _myMatlabWrapper.CreateStatisticFigure("PD300 sign plot", "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')",
-                                            "statisticDataStd", "[Trial]", "PD300 [m]", 1,
-                                            (statisticData.Length/meanCount), -0.05, 0.05,
-                                            plotFit,
-                                            plotErrorbars);
-                                        break;
-
-                                    case "Perpendicular distance ?ms - Sign":
-                                        _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " sign plot", "statisticDataPlot",
+                                    case "Perpendicular distance - Sign":
+                                        _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " sign plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
@@ -764,7 +745,8 @@ namespace ManipAnalysis_v2
                                         break;
 
                                     case "Trajectory length abs":
-                                        _myMatlabWrapper.CreateStatisticFigure("Trajectory Length plot", "statisticDataPlot",
+                                        _myMatlabWrapper.CreateStatisticFigure("Trajectory Length plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "Trajectory Length [m]", 1,
@@ -774,7 +756,8 @@ namespace ManipAnalysis_v2
                                         break;
 
                                     case "Trajectory length ratio":
-                                        _myMatlabWrapper.CreateStatisticFigure("Trajectory Length Ratio plot", "statisticDataPlot",
+                                        _myMatlabWrapper.CreateStatisticFigure("Trajectory Length Ratio plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "Trajectory Length Ratio",
@@ -794,7 +777,8 @@ namespace ManipAnalysis_v2
                                         break;
 
                                     case "RMSE":
-                                        _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot", "statisticDataPlot",
+                                        _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot",
+                                            "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "Root Mean Square Error", 1,

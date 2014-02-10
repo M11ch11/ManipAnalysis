@@ -887,17 +887,13 @@ namespace ManipAnalysis_v2
         {
             int pdTime = -1;
             string statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString();
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Sign")
+            var inputForm = new PerpendicularDisplacementTimeInputForm();
+            if (inputForm.ShowDialog(this) == DialogResult.OK)
             {
-                var inputForm = new PerpendicularDisplacementTimeInputForm();
-                if (inputForm.ShowDialog(this) == DialogResult.OK)
-                {
-                    pdTime = inputForm.getMilliseconds();
-                    statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
-                        .Replace("?", pdTime.ToString());
-                    inputForm.Dispose();
-                }
+                pdTime = inputForm.getMilliseconds();
+                statisticType = comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
+                    .Replace("?", pdTime.ToString());
+                inputForm.Dispose();
             }
 
             WriteProgressInfo("Getting data...");
