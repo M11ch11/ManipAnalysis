@@ -5,8 +5,10 @@ namespace ManipAnalysis_v2.MongoDb
 {
     public class StatisticContainer
     {
-        public List<PerpendicularDisplacementContainer> AbsolutePerpendicularDisplacement { get; set; }
-        public List<PerpendicularDisplacementContainer> SignedPerpendicularDisplacement { get; set; }
+        public List<PerpendicularDisplacementContainer> AbsolutePerpendicularDisplacement =
+            new List<PerpendicularDisplacementContainer>();
+        public List<PerpendicularDisplacementContainer> SignedPerpendicularDisplacement =
+            new List<PerpendicularDisplacementContainer>();
         public double VelocityVectorCorrelation { get; set; }
         public double AbsoluteTrajectoryLength { get; set; }
         public double AbsoluteBaselineTrajectoryLengthRatio { get; set; }

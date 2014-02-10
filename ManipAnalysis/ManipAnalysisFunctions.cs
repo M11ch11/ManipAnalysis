@@ -2280,10 +2280,10 @@ namespace ManipAnalysis_v2
                                     PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
                                     PerpendicularDisplacementContainer signed = new PerpendicularDisplacementContainer();
 
-                                    absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[0, perpendicularDisplacementCounter];
+                                    absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter,0];
                                     absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
-                                    signed.PerpendicularDisplacement = signedPerpendicularDisplacement[0, perpendicularDisplacementCounter];
+                                    signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter,0];
                                     signed.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
                                     statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
