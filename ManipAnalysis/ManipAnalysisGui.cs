@@ -249,7 +249,10 @@ namespace ManipAnalysis_v2
             }
             else
             {
-                progressBar.Value = Convert.ToInt32(value);
+                if (value <= progressBar.Maximum && value >= progressBar.Minimum)
+                {
+                    progressBar.Value = Convert.ToInt32(value);
+                }
                 using (Graphics gr = progressBar.CreateGraphics())
                 {
                     progressBar.Refresh();
@@ -485,18 +488,12 @@ namespace ManipAnalysis_v2
 
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
-            int pdTime = -1;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() ==
-                "Perpendicular distance ?ms - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() ==
-                "Perpendicular distance ?ms - Sign")
-            {
+            int pdTime = 300;
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
-                if (inputForm.ShowDialog(this) == DialogResult.OK)
-                {
-                    pdTime = inputForm.getMilliseconds();
-                    inputForm.Dispose();
-                }
+            if (inputForm.ShowDialog(this) == DialogResult.OK)
+            {
+                pdTime = inputForm.getMilliseconds();
+                inputForm.Dispose();
             }
 
             _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(

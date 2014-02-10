@@ -195,6 +195,7 @@
     <Compile Include="MongoDb\Baseline.cs" />
     <Compile Include="MongoDb\ForceContainer.cs" />
     <Compile Include="MongoDb\MeasureFileContainer.cs" />
+    <Compile Include="MongoDb\PerpendicularDisplacementContainer.cs" />
     <Compile Include="MongoDb\PositionContainer.cs" />
     <Compile Include="MongoDb\StatisticContainer.cs" />
     <Compile Include="MongoDb\SubjectContainer.cs" />
@@ -216,7 +217,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StdDev.cs" />
+    <Compile Include="LinqExtensions.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
     <None Include="packages.config" />

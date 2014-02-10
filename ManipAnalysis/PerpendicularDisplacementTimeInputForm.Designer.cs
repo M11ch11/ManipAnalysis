@@ -49,7 +49,7 @@
             this.textBox_EnteredTime.Name = "textBox_EnteredTime";
             this.textBox_EnteredTime.Size = new System.Drawing.Size(32, 20);
             this.textBox_EnteredTime.TabIndex = 1;
-            this.textBox_EnteredTime.Text = "250";
+            this.textBox_EnteredTime.Text = "300";
             // 
             // button_OK
             // 

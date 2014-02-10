@@ -35,6 +35,7 @@ namespace ManipAnalysis_v2.MongoDb
         public byte[] ZippedPositionRaw;
         public byte[] ZippedVelocityFiltered;
         public byte[] ZippedVelocityNormalized;
+        public byte[] ZippedStatistics;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
 
