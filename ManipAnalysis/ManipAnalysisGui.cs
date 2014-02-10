@@ -489,11 +489,16 @@ namespace ManipAnalysis_v2
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-                var inputForm = new PerpendicularDisplacementTimeInputForm();
-            if (inputForm.ShowDialog(this) == DialogResult.OK)
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Sign")
             {
-                pdTime = inputForm.getMilliseconds();
-                inputForm.Dispose();
+
+                var inputForm = new PerpendicularDisplacementTimeInputForm();
+                if (inputForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    pdTime = inputForm.getMilliseconds();
+                    inputForm.Dispose();
+                }
             }
 
             _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(

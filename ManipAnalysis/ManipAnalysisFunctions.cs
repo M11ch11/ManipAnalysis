@@ -492,7 +492,7 @@ namespace ManipAnalysis_v2
                     double processedTrialsCount = 0;
 
                     var fields = new FieldsBuilder<Trial>();
-                    fields.Include(t => t.Statistics);
+                    fields.Include(t => t.ZippedStatistics);
 
                     if (selectedTrialsList.Any())
                     {

@@ -609,7 +609,7 @@ namespace ManipAnalysis_v2
         public WriteConcernResult UpdateTrialStatisticsAndBaselineId(Trial trial)
         {
             IMongoQuery query = Query<Trial>.EQ(t => t.Id, trial.Id);
-            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.Statistics, trial.Statistics)
+            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.ZippedStatistics, trial.ZippedStatistics)
                 .Set(t => t.BaselineObjectId, trial.BaselineObjectId);
             return _trialCollection.Update(query, update);
         }
