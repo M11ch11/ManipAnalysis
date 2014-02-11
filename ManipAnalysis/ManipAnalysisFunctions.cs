@@ -1464,9 +1464,6 @@ namespace ManipAnalysis_v2
                     // First element with PositionStatus == 1
                     startTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).First(t => t.PositionStatus == 1).TimeStamp;
                 }
-
-
-                //stopTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).First(t => t.PositionStatus == 2).TimeStamp;
                 
                 try
                 {
@@ -1483,15 +1480,6 @@ namespace ManipAnalysis_v2
                     // Last element with PositionStatus == 2
                     stopTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).Last().TimeStamp;
                 }
-
-                /*
-                _myManipAnalysisGui.WriteToLogBox("Target " + trialsContainer[trialCounter].Target.Number + " - " + 
-                                            stopTime.Subtract(startTime).TotalMilliseconds + "ms length, Start: " +
-                                            startTime.Subtract(trialsContainer[trialCounter].VelocityFiltered.First().TimeStamp).TotalMilliseconds + "ms, Stop: " +
-                                            stopTime.Subtract(trialsContainer[trialCounter].VelocityFiltered.First().TimeStamp).TotalMilliseconds + "ms, Peak: " +                                             
-                                            trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1).Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))
-                                            );
-                */
 
                 IEnumerable<ForceContainer> measuredForcesFilteredCut =
                     trialsContainer[trialCounter].MeasuredForcesFiltered.Where(
