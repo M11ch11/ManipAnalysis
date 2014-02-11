@@ -451,7 +451,7 @@ namespace ManipAnalysis_v2
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
-                _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
 
                 var baselineFields = new FieldsBuilder<Baseline>();
                 baselineFields.Include(t => t.ZippedPosition);
@@ -1444,8 +1444,7 @@ namespace ManipAnalysis_v2
                 trialsContainer[trialCounter].NormalizedDataSampleRate = timeNormalizationSamples;
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial =
-                    trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1)
-                    .Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))/100.0 * percentPeakVelocity;
+                    (trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1).Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))) / 100.0) * percentPeakVelocity;
 
                 var startTime = new DateTime(0);
                 var stopTime = new DateTime(0);
@@ -1453,7 +1452,7 @@ namespace ManipAnalysis_v2
                 {
                     // First element with PositionStatus == 0 and a velocity higher than the threshold
                     startTime =
-                        trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 0)
+                        trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 0).OrderBy(t => t.TimeStamp)
                             .First(
                                 t =>
                                     Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) >=
@@ -1463,14 +1462,16 @@ namespace ManipAnalysis_v2
                 catch
                 {
                     // First element with PositionStatus == 1
-                    startTime = trialsContainer[trialCounter].VelocityFiltered.First(t => t.PositionStatus == 1).TimeStamp;
+                    startTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).First(t => t.PositionStatus == 1).TimeStamp;
                 }
 
 
+                //stopTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).First(t => t.PositionStatus == 2).TimeStamp;
+                
                 try
                 {
                     // First element with PositionStatus == 2 and a velocity lower than the threshold
-                    stopTime = trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 2)
+                    stopTime = trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 2).OrderBy(t => t.TimeStamp)
                         .First(
                             t =>
                                 Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) <=
@@ -1480,8 +1481,17 @@ namespace ManipAnalysis_v2
                 catch
                 {
                     // Last element with PositionStatus == 2
-                    stopTime = trialsContainer[trialCounter].VelocityFiltered.Last().TimeStamp;
+                    stopTime = trialsContainer[trialCounter].VelocityFiltered.OrderBy(t => t.TimeStamp).Last().TimeStamp;
                 }
+
+                /*
+                _myManipAnalysisGui.WriteToLogBox("Target " + trialsContainer[trialCounter].Target.Number + " - " + 
+                                            stopTime.Subtract(startTime).TotalMilliseconds + "ms length, Start: " +
+                                            startTime.Subtract(trialsContainer[trialCounter].VelocityFiltered.First().TimeStamp).TotalMilliseconds + "ms, Stop: " +
+                                            stopTime.Subtract(trialsContainer[trialCounter].VelocityFiltered.First().TimeStamp).TotalMilliseconds + "ms, Peak: " +                                             
+                                            trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1).Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))
+                                            );
+                */
 
                 IEnumerable<ForceContainer> measuredForcesFilteredCut =
                     trialsContainer[trialCounter].MeasuredForcesFiltered.Where(
@@ -1967,8 +1977,7 @@ namespace ManipAnalysis_v2
                         .Select(
                             t =>
                                 t.PositionNormalized.Max(u => u.TimeStamp.Ticks) -
-                                t.PositionNormalized.Min(u => u.TimeStamp.Ticks))
-                        .ToArray();
+                                t.PositionNormalized.Min(u => u.TimeStamp.Ticks)).ToArray();
                 }
                 tempSzenarioMeanTime.MeanTime = new TimeSpan(Convert.ToInt64(targetDurationTimes.Average()));
                 tempSzenarioMeanTime.MeanTimeStd = new TimeSpan(Convert.ToInt64(targetDurationTimes.StdDev()));
@@ -2479,7 +2488,7 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
-                        _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
@@ -2493,7 +2502,7 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionFiltered);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
-                        _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
@@ -2507,7 +2516,7 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionRaw);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
-                        _myMatlabWrapper.DrawTargets(0.01, 0.1, 0, 0);
+                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {

@@ -194,37 +194,21 @@ namespace ManipAnalysis_v2
                             var measuredForcesRaw = new ForceContainer();
                             var momentForcesRaw = new ForceContainer();
                             var positionRaw = new PositionContainer();
-                            int positionStatus = -1;
                             double timeOffset = frameTimeInc*frame;
                             DateTime timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                             // Returns an array of all points, it is necessary to call this method in each cycle
                             Vector3 positionDataVector = c3DReader.ReadFrame()[0]; // [0] == Right Hand
 
-                            for (int eventCounter = 0; eventCounter < eventTimes.Length; eventCounter++)
-                            {
-                                if (eventTimes[eventCounter] <= timeOffset)
-                                {
-                                    switch (eventLabels[eventCounter])
-                                    {
-                                        case "SUBJECT_IS_IN_FIRST_TARGET":
-                                            positionStatus = 0;
-                                            break;
-                                        case "SUBJECT_HAS_LEFT_FIRST_TARGET":
-                                            positionStatus = 1;
-                                            break;
-                                        case "SUBJECT_IS_IN_SECOND_TARGET":
-                                            positionStatus = 2;
-                                            break;
-                                        case "SUBJECT_HAS_LEFT_SECOND_TARGET":
-                                            positionStatus = 3;
-                                            break;
-                                        default:
-                                            _myManipAnalysisGui.WriteToLogBox("PositionStatus Error");
-                                            break;
-                                    }
-                                }
-                            }
+                             /*
+                             <Event code="1" name="TRIAL_STARTED"  desc="Trial has started" />
+                             <Event code="2" name="SUBJECT_IS_IN_FIRST_TARGET"  desc="Subject is in the first target" />
+                             <Event code="3" name="SUBJECT_HAS_LEFT_FIRST_TARGET"  desc="Subject has left the first target" />
+                             <Event code="4" name="SUBJECT_IS_IN_SECOND_TARGET"  desc="Subject is in the second target" />
+                             <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
+                             <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
+                            */
+                            int positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
 
                             positionRaw.PositionStatus = positionStatus;
                             positionRaw.TimeStamp = timeStamp;
