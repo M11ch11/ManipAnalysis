@@ -4576,5 +4576,10 @@ namespace ManipAnalysis_v2
             _myDatabaseWrapper.EnsureIndexes();
             _myDatabaseWrapper.RebuildIndexes();
         }
+
+        public void DropStatistics()
+        {
+            _myDatabaseWrapper.DropStatistics();
+        }
     }
 }

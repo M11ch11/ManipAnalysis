@@ -2118,5 +2118,10 @@ namespace ManipAnalysis_v2
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void button_DataManipulation_DropStatistics_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.DropStatistics();
+        }
     }
 }

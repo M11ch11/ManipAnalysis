@@ -220,6 +220,7 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
+            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1922,6 +1923,7 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Debug_DatabaseManipulation
             // 
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropStatistics);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
             this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
@@ -1937,7 +1939,7 @@ namespace ManipAnalysis_v2
             // 
             // button_DataManipulation_CompactDatabase
             // 
-            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 152);
+            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
             this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
             this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
             this.button_DataManipulation_CompactDatabase.TabIndex = 65;
@@ -1977,7 +1979,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Debug_DropDatabase
             // 
-            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 181);
+            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 225);
             this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
             this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
             this.button_Debug_DropDatabase.TabIndex = 61;
@@ -2304,6 +2306,16 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
+            // button_DataManipulation_DropStatistics
+            // 
+            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
+            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
+            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropStatistics.TabIndex = 66;
+            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
+            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2561,6 +2573,7 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Button button_DataManipulation_RebuildIndexes;
         private System.Windows.Forms.Button button_DataManipulation_DropIndexes;
         private System.Windows.Forms.Button button_DataManipulation_CompactDatabase;
+        private System.Windows.Forms.Button button_DataManipulation_DropStatistics;
     }
 }
 

@@ -616,7 +616,7 @@ namespace ManipAnalysis_v2
 
         public IEnumerable<Trial> GetTrialsWithoutStatistics(FieldsBuilder<Trial> statisticFields)
         {
-            return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Statistics == null)).SetFields(statisticFields);
+            return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null)).SetFields(statisticFields);
         }
 
         public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
@@ -731,6 +731,13 @@ namespace ManipAnalysis_v2
             {
                 _myManipAnalysisGui.WriteToLogBox(ex.ToString());
             }
+        }
+
+        public void DropStatistics()
+        {
+            IMongoQuery query = Query<Trial>.NE(t => t.ZippedStatistics, null);
+            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.ZippedStatistics, null);
+            _trialCollection.Update(query, update, UpdateFlags.Multi);
         }
     }
 }
