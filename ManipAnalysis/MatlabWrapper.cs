@@ -453,6 +453,7 @@ namespace ManipAnalysis_v2
             }
         }
 
+        /*
         public void Plot(string xVar, string yVar, string zVar, string color, int lineWidth)
         {
             try
@@ -466,7 +467,7 @@ namespace ManipAnalysis_v2
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
         }
-
+        */
         public void Plot(string xVar, int lineWidth)
         {
             try

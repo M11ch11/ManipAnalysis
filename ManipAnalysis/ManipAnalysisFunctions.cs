@@ -2913,8 +2913,7 @@ namespace ManipAnalysis_v2
                                         {
                                             _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
                                             _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
-                                            _myMatlabWrapper.SetWorkspaceData("positionDataZ", zData);
-                                            _myMatlabWrapper.Plot("positionDataX", "positionDataY", "positionDataZ", "black", 2);
+                                            _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
