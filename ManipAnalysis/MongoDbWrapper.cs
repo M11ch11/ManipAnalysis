@@ -598,8 +598,9 @@ namespace ManipAnalysis_v2
                     t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario)))
                     .SetFields(fields).OrderBy(t => t.TrialNumberInSzenario);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 retVal = null;
             }
 

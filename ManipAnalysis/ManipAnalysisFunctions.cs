@@ -493,6 +493,7 @@ namespace ManipAnalysis_v2
 
                     var fields = new FieldsBuilder<Trial>();
                     fields.Include(t => t.ZippedStatistics);
+                    fields.Include(t => t.TrialNumberInSzenario); // Neccessary for sorting!
 
                     if (selectedTrialsList.Any())
                     {
@@ -2204,7 +2205,7 @@ namespace ManipAnalysis_v2
                             {
                                 Thread.Sleep(100);
                             }
-                            _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*counter);
+                            _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count()) * counter);
                             counter++;
 
                             var baselineFields = new FieldsBuilder<Baseline>();
@@ -2222,7 +2223,7 @@ namespace ManipAnalysis_v2
                                     Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
 
                                 _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
-                                
+
                                 _myMatlabWrapper.SetWorkspaceData("positionX",
                                     trial.PositionNormalized.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("positionY",
@@ -2277,10 +2278,10 @@ namespace ManipAnalysis_v2
                                     PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
                                     PerpendicularDisplacementContainer signed = new PerpendicularDisplacementContainer();
 
-                                    absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter,0];
+                                    absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter, 0];
                                     absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
-                                    signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter,0];
+                                    signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
                                     signed.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
                                     statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
@@ -2290,7 +2291,7 @@ namespace ManipAnalysis_v2
                                 trial.Statistics = statisticContainer;
                                 trial.BaselineObjectId = baseline.Id;
 
-                                CompressTrialData(new List<Trial>(){trial});
+                                CompressTrialData(new List<Trial>() { trial });
                                 _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
                             }
                             else
@@ -2453,7 +2454,7 @@ namespace ManipAnalysis_v2
                     double processedTrialsCount = 0;
 
                     var fields = new FieldsBuilder<Trial>();
-
+                    fields.Include(t => t.TargetTrialNumberInSzenario); // Neccessary for sorting!
                     if (trajectoryVelocityForce == "Velocity - Normalized")
                     {
                         fields.Include(t1 => t1.ZippedVelocityNormalized);
