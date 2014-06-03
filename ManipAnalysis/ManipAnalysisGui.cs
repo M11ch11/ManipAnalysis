@@ -1595,15 +1595,22 @@ namespace ManipAnalysis
                             _manipAnalysisFunctions.ExportVelocityData(
                                 listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                                 comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                                saveFileDialog.FileName
-                                );
+                                saveFileDialog.FileName,
+                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
                             break;
 
                         case "Trajectory":
                             _manipAnalysisFunctions.ExportTrajectoryData(
                                 listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                                 comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                                saveFileDialog.FileName);
+                                saveFileDialog.FileName,
+                            checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowCatchTrialsExclusivly.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                            checkBox_TrajectoryVelocity_ShowErrorclampTrialsExclusivly.Checked);
                             break;
                     }
                 }

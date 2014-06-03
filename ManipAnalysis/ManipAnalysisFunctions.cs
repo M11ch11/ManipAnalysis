@@ -3956,40 +3956,176 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
+                                    bool dataAdded = false;
+
                                     int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study, tempContainer.Group,
                                         tempContainer.Szenario,
                                         tempContainer.Subject, turnDateTime,
                                         tempContainer.Target, trial);
+
                                     DataSet dataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
+
                                     for (int i = 0; i < dataSet.Tables[0].Rows.Count & !TaskManager.Cancel; i++)
                                     {
                                         DataRow row = dataSet.Tables[0].Rows[i];
 
-                                        if (dataX.Count <= i)
+                                        if (showCatchTrialsExclusivly)
                                         {
-                                            dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                        }
-                                        else
-                                        {
-                                            dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
-                                        }
+                                            if (Convert.ToBoolean(row["is_catch_trial"]))
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
 
-                                        if (dataZ.Count <= i)
-                                        {
-                                            dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+                                                dataAdded = true;
+                                            }
                                         }
-                                        else
+                                        else if (showErrorclampTrialsExclusivly)
                                         {
-                                            dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
+
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+                                                dataAdded = true;
+                                            }
                                         }
+                                        else if (showCatchTrials & showErrorclampTrials)
+                                        {
+                                            if (dataX.Count <= i)
+                                            {
+                                                dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                            }
+                                            else
+                                            {
+                                                dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                            }
+
+                                            if (dataZ.Count <= i)
+                                            {
+                                                dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                            }
+                                            else
+                                            {
+                                                dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                            }
+                                            dataAdded = true;
+                                        }
+                                        else if (!showCatchTrials & showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
+
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }
+                                        else if (showCatchTrials & !showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
+
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }
+                                        else if (!showCatchTrials & !showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                                Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
+
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }                                        
                                     }
-                                    meanCounter++;
+
+                                    if (dataAdded)
+                                    {
+                                        meanCounter++;
+                                    }
                                 }
                             }
                             for (int i = 0; i < dataX.Count; i++)
                             {
-                                dataX[i] /= meanCounter;
-                                dataZ[i] /= meanCounter;
+                                if (meanCounter > 0)
+                                {
+                                    dataX[i] /= meanCounter;
+                                    dataZ[i] /= meanCounter;
+                                }
                             }
 
                             _myMatlabWrapper.SetWorkspaceData("X", dataX.ToArray());
@@ -4158,6 +4294,9 @@ namespace ManipAnalysis
                                     {
                                         break;
                                     }
+
+                                    bool dataAdded = false;
+
                                     int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
                                         tempContainer.Group,
                                         tempContainer.Szenario,
@@ -4170,26 +4309,133 @@ namespace ManipAnalysis
                                     {
                                         DataRow row = dataSet.Tables[0].Rows[i];
 
-                                        if (dataXZ.Count <= i)
+                                        if (showCatchTrialsExclusivly)
                                         {
-                                            dataXZ.Add(
-                                                Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                          Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                            if (Convert.ToBoolean(row["is_catch_trial"]))
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
                                         }
-                                        else
+                                        else if (showErrorclampTrialsExclusivly)
                                         {
-                                            dataXZ[i] +=
-                                                Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                          Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }
+                                        else if (showCatchTrials & showErrorclampTrials)
+                                        {
+                                            if (dataXZ.Count <= i)
+                                            {
+                                                dataXZ.Add(
+                                                    Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                              Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                            }
+                                            else
+                                            {
+                                                dataXZ[i] +=
+                                                    Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                              Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                            }
+                                            dataAdded = true;
+                                        }
+                                        else if (!showCatchTrials & showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }
+                                        else if (showCatchTrials & !showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
+                                        }
+                                        else if (!showCatchTrials & !showErrorclampTrials)
+                                        {
+                                            if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                                Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
                                         }
                                     }
-                                    meanCounter++;
+
+                                    if (dataAdded)
+                                    {
+                                        meanCounter++;
+                                    }
                                 }
                             }
 
                             for (int i = 0; i < dataXZ.Count; i++)
                             {
-                                dataXZ[i] /= meanCounter;
+                                if (meanCounter > 0)
+                                {
+                                    dataXZ[i] /= meanCounter;
+                                }
                             }
 
                             _myMatlabWrapper.SetWorkspaceData("X", dataXZ.ToArray());
@@ -4204,7 +4450,8 @@ namespace ManipAnalysis
         }
 
         public void ExportTrajectoryData(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
-            string meanIndividual, string fileName)
+            string meanIndividual, string fileName, bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
+            bool showErrorclampTrialsExclusivly)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -4244,17 +4491,100 @@ namespace ManipAnalysis
 
                             TrajectoryVelocityPlotContainer container = tempContainer;
                             int trialVar = trial;
-                            cache.AddRange(from DataRow row in measureDataSet.Tables[0].Rows
-                                select
-                                    container.Study + ";" + container.Group + ";" +
-                                    container.Szenario + ";" + container.Subject + ";" +
-                                    container.Turn + ";" + container.Target + ";" + trialVar + ";" +
-                                    Convert.ToDateTime(row["time_stamp"])
-                                        .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
-                                    DoubleConverter.ToExactString(
-                                        Convert.ToDouble(row["position_cartesian_x"])) + ";" +
-                                    DoubleConverter.ToExactString(
-                                        Convert.ToDouble(row["position_cartesian_z"])));
+
+                            for (int i = 0; i < measureDataSet.Tables[0].Rows.Count; i++)
+                            {
+                                DataRow row = measureDataSet.Tables[0].Rows[i];
+
+                                if (showCatchTrialsExclusivly)
+                                {
+                                    if (Convert.ToBoolean(row["is_catch_trial"]))
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                            container.Szenario + ";" + container.Subject + ";" +
+                                            container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                            Convert.ToDateTime(row["time_stamp"])
+                                          .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                            DoubleConverter.ToExactString(
+                                          Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                            DoubleConverter.ToExactString(
+                                          Convert.ToDouble(row["position_cartesian_z"])));
+                                    }
+                                }
+                                else if (showErrorclampTrialsExclusivly)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                            container.Szenario + ";" + container.Subject + ";" +
+                                            container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                            Convert.ToDateTime(row["time_stamp"])
+                                           .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_z"])));
+                                    }
+                                }
+                                else if (showCatchTrials & showErrorclampTrials)
+                                {
+                                    cache.Add(container.Study + ";" + container.Group + ";" +
+                                       container.Szenario + ";" + container.Subject + ";" +
+                                       container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                       Convert.ToDateTime(row["time_stamp"])
+                                           .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                       DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                       DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_z"])));
+                                }
+                                else if (!showCatchTrials & showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                            container.Szenario + ";" + container.Subject + ";" +
+                                            container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                            Convert.ToDateTime(row["time_stamp"])
+                                          .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                            DoubleConverter.ToExactString(
+                                          Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                            DoubleConverter.ToExactString(
+                                          Convert.ToDouble(row["position_cartesian_z"])));
+                                    }
+                                }
+                                else if (showCatchTrials & !showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                            container.Szenario + ";" + container.Subject + ";" +
+                                            container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                            Convert.ToDateTime(row["time_stamp"])
+                                           .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_z"])));
+                                    }
+                                }
+                                else if (!showCatchTrials & !showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                        Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                            container.Szenario + ";" + container.Subject + ";" +
+                                            container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                            Convert.ToDateTime(row["time_stamp"])
+                                           .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_x"])) + ";" +
+                                            DoubleConverter.ToExactString(
+                                           Convert.ToDouble(row["position_cartesian_z"])));
+                                    }
+                                }                                
+                            }
 
                             var dataFileStream = new FileStream(fileName, FileMode.Create,
                                 FileAccess.Write);
@@ -4336,6 +4666,9 @@ namespace ManipAnalysis
                                         {
                                             break;
                                         }
+
+                                        bool dataAdded = false;
+
                                         int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
                                             tempContainer.Group,
                                             tempContainer.Szenario,
@@ -4347,34 +4680,171 @@ namespace ManipAnalysis
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
 
-                                            if (dataX.Count <= i)
+                                            if (showCatchTrialsExclusivly)
                                             {
-                                                dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                                            }
-                                            else
-                                            {
-                                                dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
-                                            }
+                                                if (Convert.ToBoolean(row["is_catch_trial"]))
+                                                {
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
 
-                                            if (dataZ.Count <= i)
-                                            {
-                                                dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
+
+                                                    dataAdded = true;
+                                                }
                                             }
-                                            else
+                                            else if (showErrorclampTrialsExclusivly)
                                             {
-                                                dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                                {
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
+
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
+
+                                                    dataAdded = true;
+                                                }
                                             }
+                                            else if (showCatchTrials & showErrorclampTrials)
+                                            {
+                                                if (dataX.Count <= i)
+                                                {
+                                                    dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                }
+                                                else
+                                                {
+                                                    dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                }
+
+                                                if (dataZ.Count <= i)
+                                                {
+                                                    dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                }
+                                                else
+                                                {
+                                                    dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                }
+
+                                                dataAdded = true;
+                                            }
+                                            else if (!showCatchTrials & showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                                {
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
+
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
+
+                                                    dataAdded = true;
+                                                }
+                                            }
+                                            else if (showCatchTrials & !showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                                {
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
+
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
+
+                                                    dataAdded = true;
+                                                }
+                                            }
+                                            else if (!showCatchTrials & !showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                                    Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                                {
+                                                    if (dataX.Count <= i)
+                                                    {
+                                                        dataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
+                                                    }
+
+                                                    if (dataZ.Count <= i)
+                                                    {
+                                                        dataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
+                                                    }
+
+                                                    dataAdded = true;
+                                                }
+                                            }                                            
                                         }
-                                        meanCounter++;
+
+                                        if (dataAdded)
+                                        {
+                                            meanCounter++;
+                                        }
                                     }
                                 }
                             }
 
-
                             for (int i = 0; i < dataX.Count; i++)
                             {
-                                dataX[i] /= meanCounter;
-                                dataZ[i] /= meanCounter;
+                                if (meanCounter > 0)
+                                {
+                                    dataX[i] /= meanCounter;
+                                    dataZ[i] /= meanCounter;
+                                }
                             }
 
                             counterVar = targetCounter;
@@ -4408,7 +4878,8 @@ namespace ManipAnalysis
         }
 
         public void ExportVelocityData(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
-            string meanIndividual, string fileName)
+            string meanIndividual, string fileName, bool showCatchTrials, bool showCatchTrialsExclusivly, bool showErrorclampTrials,
+            bool showErrorclampTrialsExclusivly)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -4448,19 +4919,107 @@ namespace ManipAnalysis
 
                             TrajectoryVelocityPlotContainer container = tempContainer;
                             int trialVar = trial;
-                            cache.AddRange(from DataRow row in velocityDataSet.Tables[0].Rows
-                                select
-                                    container.Study + ";" + container.Group + ";" +
-                                    container.Szenario + ";" + container.Subject + ";" +
-                                    container.Turn + ";" + container.Target + ";" + trialVar + ";" +
-                                    Convert.ToDateTime(row["time_stamp"])
-                                        .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
-                                    DoubleConverter.ToExactString(
-                                        Convert.ToDouble(
-                                            Math.Sqrt(
-                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
 
+                            for (int i = 0; i < velocityDataSet.Tables[0].Rows.Count; i++)
+                            {
+                                DataRow row = velocityDataSet.Tables[0].Rows[i];
+
+                                if (showCatchTrialsExclusivly)
+                                {
+                                    if (Convert.ToBoolean(row["is_catch_trial"]))
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                                     container.Szenario + ";" + container.Subject + ";" +
+                                                     container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                     Convert.ToDateTime(row["time_stamp"])
+                                                         .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                     DoubleConverter.ToExactString(
+                                                         Convert.ToDouble(
+                                                             Math.Sqrt(
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                    }
+                                }
+                                else if (showErrorclampTrialsExclusivly)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                                     container.Szenario + ";" + container.Subject + ";" +
+                                                     container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                     Convert.ToDateTime(row["time_stamp"])
+                                                         .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                     DoubleConverter.ToExactString(
+                                                         Convert.ToDouble(
+                                                             Math.Sqrt(
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                    }
+                                }
+                                else if (showCatchTrials & showErrorclampTrials)
+                                {
+                                    cache.Add(container.Study + ";" + container.Group + ";" +
+                                                      container.Szenario + ";" + container.Subject + ";" +
+                                                      container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                      Convert.ToDateTime(row["time_stamp"])
+                                                          .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                      DoubleConverter.ToExactString(
+                                                          Convert.ToDouble(
+                                                              Math.Sqrt(
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                }
+                                else if (!showCatchTrials & showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                                     container.Szenario + ";" + container.Subject + ";" +
+                                                     container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                     Convert.ToDateTime(row["time_stamp"])
+                                                         .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                     DoubleConverter.ToExactString(
+                                                         Convert.ToDouble(
+                                                             Math.Sqrt(
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                    }
+                                }
+                                else if (showCatchTrials & !showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                                      container.Szenario + ";" + container.Subject + ";" +
+                                                      container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                      Convert.ToDateTime(row["time_stamp"])
+                                                          .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                      DoubleConverter.ToExactString(
+                                                          Convert.ToDouble(
+                                                              Math.Sqrt(
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                  Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                    }
+                                }
+                                else if (!showCatchTrials & !showErrorclampTrials)
+                                {
+                                    if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                        Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                    {
+                                        cache.Add(container.Study + ";" + container.Group + ";" +
+                                                     container.Szenario + ";" + container.Subject + ";" +
+                                                     container.Turn + ";" + container.Target + ";" + trialVar + ";" +
+                                                     Convert.ToDateTime(row["time_stamp"])
+                                                         .ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" +
+                                                     DoubleConverter.ToExactString(
+                                                         Convert.ToDouble(
+                                                             Math.Sqrt(
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                 Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)))));
+                                    }
+                                }
+                            }
+                            
                             var dataFileStream = new FileStream(fileName, FileMode.Create,
                                 FileAccess.Write);
                             var dataFileWriter = new StreamWriter(dataFileStream);
@@ -4540,6 +5099,9 @@ namespace ManipAnalysis
                                         {
                                             break;
                                         }
+
+                                        bool dataAdded = false;
+
                                         int trialID = _mySqlWrapper.GetTrailID(tempContainer.Study,
                                             tempContainer.Group,
                                             tempContainer.Szenario,
@@ -4553,29 +5115,146 @@ namespace ManipAnalysis
                                         {
                                             DataRow row = dataSet.Tables[0].Rows[i];
 
-                                            if (dataXZ.Count <= i)
+                                            if (showCatchTrialsExclusivly)
                                             {
-                                                dataXZ.Add(
-                                                    Math.Sqrt(
-                                                        Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                        Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                if (Convert.ToBoolean(row["is_catch_trial"]))
+                                                {
+                                                    if (dataXZ.Count <= i)
+                                                    {
+                                                        dataXZ.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataXZ[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
+                                                    dataAdded = true;
+                                                }
                                             }
-                                            else
+                                            else if (showErrorclampTrialsExclusivly)
                                             {
-                                                dataXZ[i] +=
-                                                    Math.Sqrt(
-                                                        Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
-                                                        Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]))
+                                                {
+                                                    if (dataXZ.Count <= i)
+                                                    {
+                                                        dataXZ.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataXZ[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
+                                                    dataAdded = true;
+                                                }
                                             }
+                                            else if (showCatchTrials & showErrorclampTrials)
+                                            {
+                                                if (dataXZ.Count <= i)
+                                                {
+                                                    dataXZ.Add(
+                                                        Math.Sqrt(
+                                                            Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                            Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                }
+                                                else
+                                                {
+                                                    dataXZ[i] +=
+                                                        Math.Sqrt(
+                                                            Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                            Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                }
+                                                dataAdded = true;
+                                            }
+                                            else if (!showCatchTrials & showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                                {
+                                                    if (dataXZ.Count <= i)
+                                                    {
+                                                        dataXZ.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataXZ[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
+                                                    dataAdded = true;
+                                                }
+                                            }
+                                            else if (showCatchTrials & !showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false)
+                                                {
+                                                    if (dataXZ.Count <= i)
+                                                    {
+                                                        dataXZ.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataXZ[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
+                                                    dataAdded = true;
+                                                }
+                                            }
+                                            else if (!showCatchTrials & !showErrorclampTrials)
+                                            {
+                                                if (Convert.ToBoolean(row["is_errorclamp_trial"]) == false &
+                                                    Convert.ToBoolean(row["is_catch_trial"]) == false)
+                                                {
+                                                    if (dataXZ.Count <= i)
+                                                    {
+                                                        dataXZ.Add(
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2)));
+                                                    }
+                                                    else
+                                                    {
+                                                        dataXZ[i] +=
+                                                            Math.Sqrt(
+                                                                Math.Pow(Convert.ToDouble(row["velocity_x"]), 2) +
+                                                                Math.Pow(Convert.ToDouble(row["velocity_z"]), 2));
+                                                    }
+                                                    dataAdded = true;
+                                                }
+                                            }                                            
                                         }
-                                        meanCounter++;
+
+                                        if (dataAdded)
+                                        {
+                                            meanCounter++;
+                                        }
                                     }
                                 }
                             }
 
                             for (int i = 0; i < dataXZ.Count; i++)
                             {
-                                dataXZ[i] /= meanCounter;
+                                if (meanCounter > 0)
+                                {
+                                    dataXZ[i] /= meanCounter;
+                                }
                             }
 
                             counterVar = targetCounter;
