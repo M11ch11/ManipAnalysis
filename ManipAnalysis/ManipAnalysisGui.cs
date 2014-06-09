@@ -1157,9 +1157,9 @@ namespace ManipAnalysis_v2
                     }
 
                     comboBox_TrajectoryVelocity_Szenario.Items.AddRange(szenarioIntersect.ToArray());
-                    if (listBox_TrajectoryVelocity_Groups.Items.Count > 0)
+                    if (comboBox_TrajectoryVelocity_Szenario.Items.Count > 0)
                     {
-                        listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
+                        comboBox_TrajectoryVelocity_Szenario.SelectedIndex = 0;
                     }
                 }
             }
