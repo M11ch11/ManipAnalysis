@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ManipAnalysis_v2.Container;
+using ManipAnalysis_v2.MeasureFileParser;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Driver.Builders;
 
@@ -1206,7 +1207,7 @@ namespace ManipAnalysis_v2
                             }
                             else
                             {
-                                _myManipAnalysisGui.WriteToLogBox("Error parsing \"" + filename + "\"");
+                                _myManipAnalysisGui.WriteToLogBox("Skipping \"" + filename + "\"");
                             }
                         }
                         else
@@ -1724,12 +1725,9 @@ namespace ManipAnalysis_v2
 
         private List<Baseline> CalculateBaselines(List<Trial> trialsContainer)
         {
-            int minTargetNumber = trialsContainer.Min(t => t.Target.Number);
-            int maxTargetNumber = trialsContainer.Max(t => t.Target.Number);
-
             var baselines = new List<Baseline>();
 
-            Parallel.For(minTargetNumber, maxTargetNumber + 1, targetCounter =>
+            foreach(int targetCounter in trialsContainer.Select(t => t.Target.Number).Distinct())
             {
                 List<Trial> baselineTrials = null;
                 lock (trialsContainer)
@@ -1936,18 +1934,15 @@ namespace ManipAnalysis_v2
                 {
                     baselines.Add(tempBaseline);
                 }
-            });
+            }
             return baselines;
         }
 
         private List<SzenarioMeanTime> CalculateSzenarioMeanTimes(List<Trial> trialsContainer)
         {
-            int minTargetNumber = trialsContainer.Min(t => t.Target.Number);
-            int maxTargetNumber = trialsContainer.Max(t => t.Target.Number);
-
             var szenarioMeanTimes = new List<SzenarioMeanTime>();
 
-            Parallel.For(minTargetNumber, maxTargetNumber + 1, targetCounter =>
+            foreach (int targetCounter in trialsContainer.Select(t => t.Target.Number).Distinct())
             {
                 var tempSzenarioMeanTime = new SzenarioMeanTime();
                 var targetContainer = new TargetContainer {Number = targetCounter};
@@ -1975,7 +1970,7 @@ namespace ManipAnalysis_v2
                 {
                     szenarioMeanTimes.Add(tempSzenarioMeanTime);
                 }
-            });
+            }
 
             return szenarioMeanTimes;
         }
@@ -2210,8 +2205,7 @@ namespace ManipAnalysis_v2
 
                             var baselineFields = new FieldsBuilder<Baseline>();
                             baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
-                            Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject,
-                                trial.Target.Number, baselineFields);
+                            Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, baselineFields);
 
                             if (baseline != null)
                             {
@@ -2232,6 +2226,7 @@ namespace ManipAnalysis_v2
                                     trial.VelocityNormalized.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("velocityY",
                                     trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                                
                                 _myMatlabWrapper.SetWorkspaceData("baselinePositionX",
                                     baseline.Position.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("baselinePositionY",
@@ -2240,7 +2235,7 @@ namespace ManipAnalysis_v2
                                     baseline.Velocity.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("baselineVelocityY",
                                     baseline.Velocity.Select(t => t.Y).ToArray());
-
+                                
                                 _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
                                 _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
@@ -2254,13 +2249,11 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
                                 var statisticContainer = new StatisticContainer();
-                                statisticContainer.VelocityVectorCorrelation =
-                                    _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
                                 statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
                                 statisticContainer.AbsoluteTrajectoryLength =
                                     _myMatlabWrapper.GetWorkspaceData("length_abs");
-                                statisticContainer.AbsoluteBaselineTrajectoryLengthRatio =
-                                    _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                                statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
                                 statisticContainer.AbsoluteMeanPerpendicularDisplacement =
                                     _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
                                 statisticContainer.AbsoluteMaximalPerpendicularDisplacement =

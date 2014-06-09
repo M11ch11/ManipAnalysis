@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using ManipAnalysis_v2.MongoDb;
 
-namespace ManipAnalysis_v2
+namespace ManipAnalysis_v2.MeasureFileParser
 {
     internal class KinarmMeasureFileParser
     {
@@ -105,6 +105,11 @@ namespace ManipAnalysis_v2
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                 _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
 
+                if (_studyName == "")
+                {
+                    _studyName = "No Study";
+                }
+
                 c3DReader.Close();
 
                 _probandId = fileName.Split('_')[0].Trim();
@@ -114,7 +119,10 @@ namespace ManipAnalysis_v2
 
                 _trialsContainer = new List<Trial>();
 
-                retVal = true;
+                if (_szenarioName != "00_Demo-Szenario")
+                {
+                    retVal = true;
+                }
             }
             catch (Exception ex)
             {
@@ -143,25 +151,55 @@ namespace ManipAnalysis_v2
                     int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
                     int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
 
-                    if (targetNumber != 17 && _szenarioName != "Szenario01") // Target 17 == StartTrial
+                    if (targetNumber != 10 && targetNumber != 20 && targetNumber != 30) // Target 10/20/30 == StartTrial
                     {
                         var currentTrial = new Trial();
                         var measureFileContainer = new MeasureFileContainer();
                         var subjectContainer = new SubjectContainer();
                         var targetContainer = new TargetContainer();
 
-                        if (targetNumber >= 21 && targetNumber <= 36) // PauseTrial
+                        if ((targetNumber >= 4 && targetNumber <= 6) || (targetNumber >= 14 && targetNumber <= 16)) // CW ForceField
+                        {
+                            targetNumber = targetNumber - 3;
+                        }
+                        else if ((targetNumber >= 21 && targetNumber <= 23) || (targetNumber >= 31 && targetNumber <= 33)) // ErrorClampTrial
                         {
                             targetNumber = targetNumber - 20;
+                            currentTrial.ErrorClampTrial = true;
                         }
-                        else if (targetNumber >= 41 && targetNumber <= 56) // CatchTrial NKR
+                        else if ((targetNumber >= 24 && targetNumber <= 26) || (targetNumber >= 34 && targetNumber <= 36)) // ErrorClampTrial + CW ForceField
+                        {
+                            targetNumber = targetNumber - 23;
+                            currentTrial.ErrorClampTrial = true;
+                        }
+                        else if (targetNumber >= 41 && targetNumber <= 43) // 30s Pause
+                        {
+                            targetNumber = targetNumber - 30;
+                        }
+                        else if (targetNumber >= 51 && targetNumber <= 53) // 30s Pause + Wechsel R=>L
                         {
                             targetNumber = targetNumber - 40;
-                            currentTrial.CatchTrial = true;
                         }
-                        else if (targetNumber >= 61 && targetNumber <= 76) // ErrorClampTrial
+                        else if (targetNumber >= 54 && targetNumber <= 56) // 30s Pause + Wechsel L=>R
+                        {
+                            targetNumber = targetNumber - 43;
+                        }
+                        else if (targetNumber >= 61 && targetNumber <= 63) // 30s Pause + Wechsel R=>L + CW ForceField
+                        {
+                            targetNumber = targetNumber - 50;
+                        }
+                        else if (targetNumber >= 64 && targetNumber <= 66) // 30s Pause + Wechsel L=>R + CW ForceField
+                        {
+                            targetNumber = targetNumber - 53;
+                        }
+                        else if (targetNumber >= 71 && targetNumber <= 73) // 30s Pause + Wechsel R=>L + ErrorClampTrial
                         {
                             targetNumber = targetNumber - 60;
+                            currentTrial.ErrorClampTrial = true;
+                        }
+                        else if (targetNumber >= 74 && targetNumber <= 76) // 30s Pause + Wechsel L=>R + ErrorClampTrial
+                        {
+                            targetNumber = targetNumber - 63;
                             currentTrial.ErrorClampTrial = true;
                         }
 
@@ -187,7 +225,7 @@ namespace ManipAnalysis_v2
                         currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
                         currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                         currentTrial.TrialVersion = "KINARM_1.0";
-                        currentTrial.PositionOffset.Y = -0.2;
+                        currentTrial.PositionOffset.Y = -0.14;
 
                         for (int frame = 0; frame < c3DReader.FramesCount; frame++)
                         {

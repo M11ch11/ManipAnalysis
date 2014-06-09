@@ -285,22 +285,26 @@ namespace ManipAnalysis_v2
 
             try
             {
+                /*
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString +
                         ", sin(degtorad(0)) * " + radiusString + ");");
+                */
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString +
                         ", sin(degtorad(45)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString +
                         ", sin(degtorad(90)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString +
                         ", sin(degtorad(135)) * " + radiusString + ");");
+                /*
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString +
-                        ", sin(degtorad(180)) * " + radiusString + ");");
+                        ", sin(degtorad(180)) * " + radiusString + ");");                
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString +
                         ", sin(degtorad(225)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString +
                         ", sin(degtorad(270)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
                         ", sin(degtorad(315)) * " + radiusString + ");");
+                 */ 
                 Execute("drawCircle(" + diameterString + ", " +
                         centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
                         centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");

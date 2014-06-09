@@ -39,7 +39,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>28</ApplicationRevision>
+    <ApplicationRevision>29</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -173,7 +173,7 @@
     <Compile Include="Container\VelocityDataContainer.cs" />
     <Compile Include="DoubleConverter.cs" />
     <Compile Include="Gzip.cs" />
-    <Compile Include="KinarmMeasureFileParser.cs" />
+    <Compile Include="MeasureFileParser\KinarmMeasureFileParser.cs" />
     <Compile Include="ManipAnalysisMain.cs" />
     <Compile Include="ManipAnalysisGui.cs">
       <SubType>Form</SubType>
@@ -190,7 +190,7 @@
     </Compile>
     <Compile Include="MatlabWrapper.cs" />
     <Compile Include="MD5.cs" />
-    <Compile Include="BioMotionBotMeasureFileParser.cs" />
+    <Compile Include="MeasureFileParser\BioMotionBotMeasureFileParser.cs" />
     <Compile Include="MongoDbWrapper.cs" />
     <Compile Include="MongoDb\Baseline.cs" />
     <Compile Include="MongoDb\ForceContainer.cs" />

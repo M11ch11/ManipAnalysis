@@ -1606,7 +1606,7 @@ namespace ManipAnalysis_v2
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text))
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text) && comboBox_Start_Database.Items.Count > 0)
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
@@ -1626,9 +1626,13 @@ namespace ManipAnalysis_v2
 
         public void SetSqlDatabases(IEnumerable<string> databases)
         {
-            if (databases != null)
+            if (databases != null && databases.Any())
             {
                 comboBox_Start_Database.Items.AddRange(databases.ToArray());
+            }
+            else
+            {
+                WriteToLogBox("No Databases available!");
             }
         }
 

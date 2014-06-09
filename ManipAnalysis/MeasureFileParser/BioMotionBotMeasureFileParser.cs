@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using ManipAnalysis_v2.Container;
 
-namespace ManipAnalysis_v2
+namespace ManipAnalysis_v2.MeasureFileParser
 {
     internal class BioMotionBotMeasureFileParser
     {
