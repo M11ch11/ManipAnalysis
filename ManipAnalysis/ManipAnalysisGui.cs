@@ -296,7 +296,10 @@ namespace ManipAnalysis_v2
             if (groupNames != null)
             {
                 listBox_DescriptiveStatistic1_Groups.Items.AddRange(groupNames.ToArray());
-                listBox_DescriptiveStatistic1_Groups.SelectedIndex = 0;
+                if (listBox_DescriptiveStatistic1_Groups.Items.Count > 0)
+                {
+                    listBox_DescriptiveStatistic1_Groups.SelectedIndex = 0;
+                }
             }
         }
 
@@ -323,7 +326,10 @@ namespace ManipAnalysis_v2
                     }
 
                     comboBox_DescriptiveStatistic1_Szenario.Items.AddRange(szenarioIntersect.ToArray());
-                    comboBox_DescriptiveStatistic1_Szenario.SelectedIndex = 0;
+                    if (comboBox_DescriptiveStatistic1_Szenario.Items.Count > 0)
+                    {
+                        comboBox_DescriptiveStatistic1_Szenario.SelectedIndex = 0;
+                    }
                 }
             }
         }
@@ -348,7 +354,10 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic1_Subjects.Items.AddRange(tempSubjects.ToArray());
                 }
             }
-            listBox_DescriptiveStatistic1_Subjects.SelectedIndex = 0;
+            if (listBox_DescriptiveStatistic1_Subjects.Items.Count > 0)
+            {
+                listBox_DescriptiveStatistic1_Subjects.SelectedIndex = 0;
+            }
         }
 
         private void listBox_StatisticPlots_Subject_SelectedIndexChanged(object sender, EventArgs e)
@@ -389,7 +398,10 @@ namespace ManipAnalysis_v2
                 listBox_DescriptiveStatistic1_Turns.Items.AddRange(turnIntersect);
             }
 
-            listBox_DescriptiveStatistic1_Turns.SelectedIndex = 0;
+            if (listBox_DescriptiveStatistic1_Turns.Items.Count > 0)
+            {
+                listBox_DescriptiveStatistic1_Turns.SelectedIndex = 0;
+            }
         }
 
         private void listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(object sender, EventArgs e)
@@ -410,7 +422,10 @@ namespace ManipAnalysis_v2
             if (szenarioTrialNames.Any())
             {
                 listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames.ToArray());
-                listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;
+                if (listBox_DescriptiveStatistic1_Trials.Items.Count > 0)
+                {
+                    listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;
+                }
             }
         }
 
@@ -623,7 +638,10 @@ namespace ManipAnalysis_v2
             if (studyNames.Any())
             {
                 comboBox_DescriptiveStatistic1_Study.Items.AddRange(studyNames.ToArray());
-                comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
+                if (comboBox_DescriptiveStatistic1_Study.Items.Count > 0)
+                {
+                    comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
+                }
             }
         }
 
@@ -641,7 +659,10 @@ namespace ManipAnalysis_v2
             if (groupNames.Any())
             {
                 listBox_DescriptiveStatistic2_Groups.Items.AddRange(groupNames.ToArray());
-                listBox_DescriptiveStatistic2_Groups.SelectedIndex = 0;
+                if (listBox_DescriptiveStatistic2_Groups.Items.Count > 0)
+                {
+                    listBox_DescriptiveStatistic2_Groups.SelectedIndex = 0;
+                }
             }
         }
 
@@ -668,7 +689,10 @@ namespace ManipAnalysis_v2
 
                     comboBox_DescriptiveStatistic2_Szenario.Items.AddRange(szenarioIntersect.ToArray());
                 }
-                comboBox_DescriptiveStatistic2_Szenario.SelectedIndex = 0;
+                if (comboBox_DescriptiveStatistic2_Szenario.Items.Count > 0)
+                {
+                    comboBox_DescriptiveStatistic2_Szenario.SelectedIndex = 0;
+                }
             }
         }
 
@@ -692,7 +716,10 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic2_Subjects.Items.AddRange(tempSubjects.ToArray());
                 }
             }
-            listBox_DescriptiveStatistic2_Subjects.SelectedIndex = 0;
+            if (listBox_DescriptiveStatistic2_Subjects.Items.Count > 0)
+            {
+                listBox_DescriptiveStatistic2_Subjects.SelectedIndex = 0;
+            }
         }
 
         private void listBox_DescriptiveStatistic2_Subject_SelectedIndexChanged(object sender, EventArgs e)
@@ -732,8 +759,10 @@ namespace ManipAnalysis_v2
             {
                 listBox_DescriptiveStatistic2_Turns.Items.AddRange(turnIntersect);
             }
-
-            listBox_DescriptiveStatistic2_Turns.SelectedIndex = 0;
+            if (listBox_DescriptiveStatistic2_Turns.Items.Count > 0)
+            {
+                listBox_DescriptiveStatistic2_Turns.SelectedIndex = 0;
+            }
         }
 
         private void listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(object sender, EventArgs e)
@@ -754,7 +783,10 @@ namespace ManipAnalysis_v2
             if (szenarioTrialNames.Any())
             {
                 listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNames.ToArray());
-                listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
+                if (listBox_DescriptiveStatistic2_Trials.Items.Count > 0)
+                {
+                    listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
+                }
             }
         }
 
@@ -848,7 +880,10 @@ namespace ManipAnalysis_v2
             if (studyNames.Any())
             {
                 comboBox_DescriptiveStatistic2_Study.Items.AddRange(studyNames.ToArray());
-                comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
+                if (comboBox_DescriptiveStatistic2_Study.Items.Count > 0)
+                {
+                    comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1071,7 +1106,10 @@ namespace ManipAnalysis_v2
             if (studyNames.Any())
             {
                 comboBox_TrajectoryVelocity_Study.Items.AddRange(studyNames.ToArray());
-                comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
+                if (comboBox_TrajectoryVelocity_Study.Items.Count > 0)
+                {
+                    comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1089,7 +1127,10 @@ namespace ManipAnalysis_v2
             if (groupNames.Any())
             {
                 listBox_TrajectoryVelocity_Groups.Items.AddRange(groupNames.ToArray());
-                listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
+                if (listBox_TrajectoryVelocity_Groups.Items.Count > 0)
+                {
+                    listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1116,7 +1157,10 @@ namespace ManipAnalysis_v2
                     }
 
                     comboBox_TrajectoryVelocity_Szenario.Items.AddRange(szenarioIntersect.ToArray());
-                    comboBox_TrajectoryVelocity_Szenario.SelectedIndex = 0;
+                    if (listBox_TrajectoryVelocity_Groups.Items.Count > 0)
+                    {
+                        listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
+                    }
                 }
             }
         }
@@ -1141,8 +1185,10 @@ namespace ManipAnalysis_v2
                     listBox_TrajectoryVelocity_Subjects.Items.AddRange(subjects.ToArray());
                 }
             }
-
-            listBox_TrajectoryVelocity_Subjects.SelectedIndex = 0;
+            if (listBox_TrajectoryVelocity_Subjects.Items.Count > 0)
+            {
+                listBox_TrajectoryVelocity_Subjects.SelectedIndex = 0;
+            }
         }
 
         private void listBox_TrajectoryVelocity_Subjects_SelectedIndexChanged(object sender, EventArgs e)
@@ -1183,7 +1229,10 @@ namespace ManipAnalysis_v2
             {
                 listBox_TrajectoryVelocity_Turns.Items.AddRange(turnIntersect);
             }
-            listBox_TrajectoryVelocity_Turns.SelectedIndex = 0;
+            if (listBox_TrajectoryVelocity_Turns.Items.Count > 0)
+            {
+                listBox_TrajectoryVelocity_Turns.SelectedIndex = 0;
+            }
         }
 
         private void listBox_TrajectoryVelocity_Turns_SelectedIndexChanged(object sender, EventArgs e)
@@ -1200,13 +1249,19 @@ namespace ManipAnalysis_v2
             if (targets.Any())
             {
                 listBox_TrajectoryVelocity_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
-                listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
+                if (listBox_TrajectoryVelocity_Targets.Items.Count > 0)
+                {
+                    listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
+                }
             }
 
             if (trials.Any())
             {
                 listBox_TrajectoryVelocity_Trials.Items.AddRange(trials.OrderBy(t => t).ToArray());
-                listBox_TrajectoryVelocity_Trials.SelectedIndex = 0;
+                if (listBox_TrajectoryVelocity_Trials.Items.Count > 0)
+                {
+                    listBox_TrajectoryVelocity_Trials.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1386,7 +1441,10 @@ namespace ManipAnalysis_v2
             if (studyNames.Any())
             {
                 comboBox_Others_Study.Items.AddRange(studyNames.ToArray());
-                comboBox_Others_Study.SelectedIndex = 0;
+                if (comboBox_Others_Study.Items.Count > 0)
+                {
+                    comboBox_Others_Study.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1402,7 +1460,10 @@ namespace ManipAnalysis_v2
             if (groupNames.Any())
             {
                 comboBox_Others_Group.Items.AddRange(groupNames.ToArray());
-                comboBox_Others_Group.SelectedIndex = 0;
+                if (comboBox_Others_Group.Items.Count > 0)
+                {
+                    comboBox_Others_Group.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1419,7 +1480,10 @@ namespace ManipAnalysis_v2
             if (szenarioNames.Any())
             {
                 comboBox_Others_Szenario.Items.AddRange(szenarioNames.ToArray());
-                comboBox_Others_Szenario.SelectedIndex = 0;
+                if (comboBox_Others_Szenario.Items.Count > 0)
+                {
+                    comboBox_Others_Szenario.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1437,7 +1501,10 @@ namespace ManipAnalysis_v2
             if (subjectNames.Any())
             {
                 comboBox_Others_Subject.Items.AddRange(subjectNames.ToArray());
-                comboBox_Others_Subject.SelectedIndex = 0;
+                if (comboBox_Others_Subject.Items.Count > 0)
+                {
+                    comboBox_Others_Subject.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1454,7 +1521,10 @@ namespace ManipAnalysis_v2
             if (turnNames.Any())
             {
                 comboBox_Others_Turn.Items.AddRange(turnNames.ToArray());
-                comboBox_Others_Turn.SelectedIndex = 0;
+                if (comboBox_Others_Turn.Items.Count > 0)
+                {
+                    comboBox_Others_Turn.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1704,7 +1774,10 @@ namespace ManipAnalysis_v2
             if (studyNames != null)
             {
                 comboBox_BaselineRecalculation_Study.Items.AddRange(studyNames.ToArray());
-                comboBox_BaselineRecalculation_Study.SelectedIndex = 0;
+                if (comboBox_BaselineRecalculation_Study.Items.Count > 0)
+                {
+                    comboBox_BaselineRecalculation_Study.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1722,7 +1795,10 @@ namespace ManipAnalysis_v2
             if (groupNames != null)
             {
                 comboBox_BaselineRecalculation_Group.Items.AddRange(groupNames.ToArray());
-                comboBox_BaselineRecalculation_Group.SelectedIndex = 0;
+                if (comboBox_BaselineRecalculation_Group.Items.Count > 0)
+                {
+                    comboBox_BaselineRecalculation_Group.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1740,7 +1816,10 @@ namespace ManipAnalysis_v2
             if (szenarioNames != null)
             {
                 comboBox_BaselineRecalculation_Szenario.Items.AddRange(szenarioNames.ToArray());
-                comboBox_BaselineRecalculation_Szenario.SelectedIndex = 0;
+                if (comboBox_BaselineRecalculation_Szenario.Items.Count > 0)
+                {
+                    comboBox_BaselineRecalculation_Szenario.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1759,7 +1838,10 @@ namespace ManipAnalysis_v2
             if (subjectNames != null)
             {
                 comboBox_BaselineRecalculation_Subject.Items.AddRange(subjectNames.ToArray());
-                comboBox_BaselineRecalculation_Subject.SelectedIndex = 0;
+                if (comboBox_BaselineRecalculation_Subject.Items.Count > 0)
+                {
+                    comboBox_BaselineRecalculation_Subject.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1777,13 +1859,19 @@ namespace ManipAnalysis_v2
             if (targets != null)
             {
                 listBox_BaselineRecalculation_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
-                listBox_BaselineRecalculation_Targets.SelectedIndex = 0;
+                if (listBox_BaselineRecalculation_Targets.Items.Count > 0)
+                {
+                    listBox_BaselineRecalculation_Targets.SelectedIndex = 0;
+                }
             }
 
             if (trials != null)
             {
                 listBox_BaselineRecalculation_Trials.Items.AddRange(trials.OrderBy(t => t).ToArray());
-                listBox_BaselineRecalculation_Trials.SelectedIndex = 0;
+                if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
+                {
+                    listBox_BaselineRecalculation_Trials.SelectedIndex = 0;
+                }
             }
         }
 
