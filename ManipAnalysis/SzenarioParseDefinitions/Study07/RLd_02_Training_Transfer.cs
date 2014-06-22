@@ -123,14 +123,18 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 186;
                 }
 
-                try
+
+                if (trial != null)
                 {
-                    int maxTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TrialNumberInSzenario);
-                    trial.TargetTrialNumberInSzenario = maxTrialNumberInSzenario + 1;
-                }
-                catch
-                {
-                    trial.TargetTrialNumberInSzenario = 1;
+                    try
+                    {
+                        int maxTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TrialNumberInSzenario);
+                        trial.TargetTrialNumberInSzenario = maxTrialNumberInSzenario + 1;
+                    }
+                    catch
+                    {
+                        trial.TargetTrialNumberInSzenario = 1;
+                    }
                 }
             }
             return trial;

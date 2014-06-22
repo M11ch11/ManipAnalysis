@@ -84,6 +84,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
         private Type ParseFileInfo()
         {
             Type szenarioDefinitionType = null;
+            var c3DReader = new C3dReader();
 
             try
             {
@@ -101,21 +102,27 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 _c3DFiles = Directory.EnumerateFiles(tempPath + @"\raw", "*_*_*.c3d*").ToArray();
                 string _commonFile = tempPath + @"\raw\common.c3d";
-
-                var c3DReader = new C3dReader();
+                
                 c3DReader.Open(_commonFile);
 
                 _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
-                _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];                
+                _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
 
-                foreach (Type szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                try
                 {
-                    if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)) //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                    foreach (Type szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        szenarioDefinitionType = szenarioDefinitionIterable;
-                        break;
+                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)) //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        {
+                            szenarioDefinitionType = szenarioDefinitionIterable;
+                            break;
+                        }
                     }
+                }
+                catch 
+                {
+                    szenarioDefinitionType = null;
                 }
 
                 if (_szenarioName == "")
@@ -143,6 +150,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
             catch (Exception ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("ParseFileInfo-Error: " + ex);
+                c3DReader.Close();
                 szenarioDefinitionType = null;
             }
 
