@@ -69,8 +69,7 @@ namespace ManipAnalysis_v2.Container
             bool retval = false;
 
             if ((_study == study) && (_group == group) && (_szenario == szenario) &&
-                (_subject.PId == subject.PId) && (_subject.Name == subject.Name) &&
-                (_turn == turn))
+                (_subject.PId == subject.PId) && (_turn == turn))
             {
                 foreach (string trial in trials)
                 {

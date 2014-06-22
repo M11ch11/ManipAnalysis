@@ -5,6 +5,21 @@ namespace ManipAnalysis_v2.MongoDb
 {
     internal class Trial
     {
+        public enum TrialTypeEnum
+        {
+            StandardTrial, ErrorClampTrial, CatchTrial
+        };
+
+        public enum ForceFieldTypeEnum
+        {
+            ForceFieldCW, ForceFieldCCW, NullField
+        };
+
+        public enum HandednessEnum
+        {
+            LeftHand, RightHand, Unknown
+        };
+
         public List<ForceContainer> MeasuredForcesFiltered;
         public List<ForceContainer> MeasuredForcesNormalized;
         public List<ForceContainer> MeasuredForcesRaw;
@@ -49,9 +64,9 @@ namespace ManipAnalysis_v2.MongoDb
         public int TrialNumberInSzenario { get; set; }
         public int TargetTrialNumberInSzenario { get; set; }
 
-        public bool FaultyTrial { get; set; }
-        public bool CatchTrial { get; set; }
-        public bool ErrorClampTrial { get; set; }
+        public TrialTypeEnum TrialType { get; set; }
+        public ForceFieldTypeEnum ForceFieldType { get; set; }
+        public HandednessEnum Handedness { get; set; }
 
         public int PositionDataFilterCutoffFrequency { get; set; }
         public int ForceDataFilterCutoffFrequency { get; set; }
