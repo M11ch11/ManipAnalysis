@@ -12,11 +12,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         public const string StudyName = "Study07";
         public const string SzenarioName = "RL_02_RLd_Training&Transfer";
 
-        public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
+        public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, List<Trial> trialsContainer, Trial trial)
         {
             if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30) // Target 10/20/30 == StartTrial
             {
-                myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial, " + trial.Szenario + " Trail, " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                 trial = null;
             }
             else
@@ -89,14 +89,14 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else 
                 {
-                    myManipAnalysisGui.WriteToLogBox("Invalid Target-Number: " + trial.Target.Number);
+                    myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
 
 
                 if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 354)
                 {
-                    myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number: " + trial.TrialNumberInSzenario);
+                    myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
                 else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 12)
@@ -121,6 +121,16 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "RL_FF-Transfer";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 186;
+                }
+
+                try
+                {
+                    int maxTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TrialNumberInSzenario);
+                    trial.TargetTrialNumberInSzenario = maxTrialNumberInSzenario + 1;
+                }
+                catch
+                {
+                    trial.TargetTrialNumberInSzenario = 1;
                 }
             }
             return trial;

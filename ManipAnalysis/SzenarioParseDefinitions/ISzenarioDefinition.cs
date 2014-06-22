@@ -108,7 +108,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 // Don't forget to close the reader
                 c3DReader.Close();
 
-                currentTrial = setTrialMetadata(myManipAnalysisGui, currentTrial);
+                currentTrial = setTrialMetadata(myManipAnalysisGui, trialsContainer, currentTrial);
                 if (currentTrial != null)
                 {
                     trialsContainer.Add(currentTrial);
@@ -118,6 +118,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return trialsContainer;
         }
 
-        public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
+        public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, List<Trial> trialsContainer, Trial trial);
     }
 }
