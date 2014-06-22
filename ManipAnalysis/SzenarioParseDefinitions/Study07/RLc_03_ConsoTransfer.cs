@@ -116,8 +116,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     try
                     {
-                        int maxTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TrialNumberInSzenario);
-                        trial.TargetTrialNumberInSzenario = maxTrialNumberInSzenario + 1;
+                        int maxTargetTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TargetTrialNumberInSzenario);
+                        trial.TargetTrialNumberInSzenario = maxTargetTrialNumberInSzenario + 1;
                     }
                     catch
                     {
