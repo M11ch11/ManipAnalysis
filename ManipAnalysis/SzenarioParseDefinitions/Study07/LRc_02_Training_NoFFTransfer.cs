@@ -94,7 +94,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
 
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 180)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 186)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -109,6 +109,12 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "LR_Training";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 12;
+                }
+                else if (trial.TrialNumberInSzenario >= 181 && trial.TrialNumberInSzenario <= 186)
+                {
+                    trial.Szenario = "LR_EC-Transger";
+                    trial.Handedness = Trial.HandednessEnum.RightHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 180;
                 }
 
 
