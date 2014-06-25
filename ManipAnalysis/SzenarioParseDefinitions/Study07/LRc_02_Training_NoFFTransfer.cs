@@ -112,7 +112,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.TrialNumberInSzenario >= 181 && trial.TrialNumberInSzenario <= 186)
                 {
-                    trial.Szenario = "LR_EC-Transger";
+                    trial.Szenario = "LR_EC-Transfer";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 180;
                 }
