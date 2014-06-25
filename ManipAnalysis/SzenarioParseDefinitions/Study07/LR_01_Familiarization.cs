@@ -94,48 +94,48 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
 
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 300)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 336)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
-                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 48)
+                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 54)
                 {
                     trial.Szenario = "LR_Familiarization";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 49 && trial.TrialNumberInSzenario <= 96)
+                else if (trial.TrialNumberInSzenario >= 55 && trial.TrialNumberInSzenario <= 108)
                 {
                     trial.Szenario = "LR_Familiarization";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= 144)
+                else if (trial.TrialNumberInSzenario >= 109 && trial.TrialNumberInSzenario <= 162)
                 {
                     trial.Szenario = "LR_Familiarization";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 145 && trial.TrialNumberInSzenario <= 192)
+                else if (trial.TrialNumberInSzenario >= 163 && trial.TrialNumberInSzenario <= 216)
                 {
                     trial.Szenario = "LR_Familiarization";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 193 && trial.TrialNumberInSzenario <= 240)
+                else if (trial.TrialNumberInSzenario >= 217 && trial.TrialNumberInSzenario <= 270)
                 {
                     trial.Szenario = "LR_Base1";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 192;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 216;
                 }
-                else if (trial.TrialNumberInSzenario >= 241 && trial.TrialNumberInSzenario <= 288)
+                else if (trial.TrialNumberInSzenario >= 271 && trial.TrialNumberInSzenario <= 324)
                 {
                     trial.Szenario = "LR_Base1";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 192;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 216;
                 }
-                else if (trial.TrialNumberInSzenario >= 289 && trial.TrialNumberInSzenario <= 300)
+                else if (trial.TrialNumberInSzenario >= 325 && trial.TrialNumberInSzenario <= 336)
                 {
                     trial.Szenario = "LR_Base2";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 288;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 324;
                 }
 
 
