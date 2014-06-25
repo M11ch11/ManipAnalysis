@@ -93,6 +93,34 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial = null;
                 }
 
+                if (trial.Target.Number == 1)
+                {
+                    trial.Target.XPos = Math.Cos(DegreeToRadian(135));
+                    trial.Target.YPos = Math.Sin(DegreeToRadian(135));
+                    trial.Target.ZPos = 0;
+                    trial.Target.Radius = 0.175;
+                }
+                else if (trial.Target.Number == 2)
+                {
+                    trial.Target.XPos = Math.Cos(DegreeToRadian(90));
+                    trial.Target.YPos = Math.Sin(DegreeToRadian(90));
+                    trial.Target.ZPos = 0;
+                    trial.Target.Radius = 0.175;
+                }
+                else if (trial.Target.Number == 3)
+                {
+                    trial.Target.XPos = Math.Cos(DegreeToRadian(45));
+                    trial.Target.YPos = Math.Sin(DegreeToRadian(45));
+                    trial.Target.ZPos = 0;
+                    trial.Target.Radius = 0.175;
+                }
+                else if (trial.Target.Number == 11 || trial.Target.Number == 12 || trial.Target.Number == 13)
+                {
+                    trial.Target.XPos = 0;
+                    trial.Target.YPos = 0;
+                    trial.Target.ZPos = 0;
+                    trial.Target.Radius = 0.175;
+                }
 
                 if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 336)
                 {

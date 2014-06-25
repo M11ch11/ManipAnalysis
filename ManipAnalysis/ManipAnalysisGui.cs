@@ -1111,6 +1111,29 @@ namespace ManipAnalysis_v2
                     comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
                 }
             }
+
+            listBox_TrajectoryVelocity_TrialType.Items.Clear();
+            listBox_TrajectoryVelocity_ForceField.Items.Clear();
+            listBox_TrajectoryVelocity_Handedness.Items.Clear();
+
+            listBox_TrajectoryVelocity_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
+            listBox_TrajectoryVelocity_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
+            listBox_TrajectoryVelocity_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count; listboxIndex++)
+            {
+                listBox_TrajectoryVelocity_TrialType.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_ForceField.Items.Count; listboxIndex++)
+            {
+                listBox_TrajectoryVelocity_ForceField.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_Handedness.Items.Count; listboxIndex++)
+            {
+                listBox_TrajectoryVelocity_Handedness.SetSelected(listboxIndex, true);
+            }
         }
 
         private void comboBox_TrajectoryVelocity_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -1413,6 +1436,7 @@ namespace ManipAnalysis_v2
         {
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
+                /*
                 _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
                     listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                     comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
@@ -1422,6 +1446,7 @@ namespace ManipAnalysis_v2
                     checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
                     checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                     checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
+                 */
             }
             else
             {
@@ -1563,6 +1588,7 @@ namespace ManipAnalysis_v2
             {
                 if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
                 {
+                    /*
                     _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
                         listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                         comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
@@ -1573,6 +1599,7 @@ namespace ManipAnalysis_v2
                         checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                         checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
                         saveFileDialog.FileName);
+                     */
                 }
                 else
                 {

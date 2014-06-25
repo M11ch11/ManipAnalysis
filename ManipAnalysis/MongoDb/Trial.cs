@@ -7,17 +7,17 @@ namespace ManipAnalysis_v2.MongoDb
     {
         public enum TrialTypeEnum
         {
-            StandardTrial, ErrorClampTrial, CatchTrial
+            StandardTrial = 0, ErrorClampTrial = 1, CatchTrial = 2
         };
 
         public enum ForceFieldTypeEnum
         {
-            ForceFieldCW, ForceFieldCCW, NullField
+            NullField = 0, ForceFieldCW = 1, ForceFieldCCW = 2
         };
 
         public enum HandednessEnum
         {
-            LeftHand, RightHand, Unknown
+            RightHand = 0, LeftHand = 1, Unknown = 2
         };
 
         public List<ForceContainer> MeasuredForcesFiltered;

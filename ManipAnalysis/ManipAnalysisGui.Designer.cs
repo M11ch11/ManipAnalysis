@@ -45,11 +45,14 @@ namespace ManipAnalysis_v2
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
             this.tabPage_TrajectoryVelocity = new System.Windows.Forms.TabPage();
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials = new System.Windows.Forms.CheckBox();
+            this.label_TrajectoryVelocity_Handedness = new System.Windows.Forms.Label();
+            this.label_TrajectoryVelocity_ForceField = new System.Windows.Forms.Label();
+            this.label_TrajectoryVelocity_TrialType = new System.Windows.Forms.Label();
+            this.listBox_TrajectoryVelocity_Handedness = new System.Windows.Forms.ListBox();
+            this.listBox_TrajectoryVelocity_ForceField = new System.Windows.Forms.ListBox();
+            this.listBox_TrajectoryVelocity_TrialType = new System.Windows.Forms.ListBox();
             this.checkBox_TrajectoryVelocity_ShowPDForceVectors = new System.Windows.Forms.CheckBox();
             this.checkBox_TrajectoryVelocity_ShowForceVectors = new System.Windows.Forms.CheckBox();
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials = new System.Windows.Forms.CheckBox();
             this.button_TrajectoryVelocity_Export = new System.Windows.Forms.Button();
             this.comboBox_TrajectoryVelocity_IndividualMean = new System.Windows.Forms.ComboBox();
             this.comboBox_TrajectoryVelocity_TrajectoryVelocity = new System.Windows.Forms.ComboBox();
@@ -183,6 +186,7 @@ namespace ManipAnalysis_v2
             this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
             this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
             this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
+            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
             this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
             this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
             this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
@@ -220,7 +224,6 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -373,11 +376,14 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_TrajectoryVelocity
             // 
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowNormalTrials);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Handedness);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_ForceField);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_TrialType);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Handedness);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_ForceField);
+            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_TrialType);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowPDForceVectors);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowForceVectors);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowErrorclampTrials);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowCatchTrials);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_Export);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_IndividualMean);
             this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_TrajectoryVelocity);
@@ -409,22 +415,64 @@ namespace ManipAnalysis_v2
             this.tabPage_TrajectoryVelocity.UseVisualStyleBackColor = true;
             this.tabPage_TrajectoryVelocity.Enter += new System.EventHandler(this.tabPage_TrajectoryVelocity_Enter);
             // 
-            // checkBox_TrajectoryVelocity_ShowNormalTrials
+            // label_TrajectoryVelocity_Handedness
             // 
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.Checked = true;
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.Location = new System.Drawing.Point(3, 548);
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.Name = "checkBox_TrajectoryVelocity_ShowNormalTrials";
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.Size = new System.Drawing.Size(111, 17);
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.TabIndex = 58;
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.Text = "Show normal trials";
-            this.checkBox_TrajectoryVelocity_ShowNormalTrials.UseVisualStyleBackColor = true;
+            this.label_TrajectoryVelocity_Handedness.AutoSize = true;
+            this.label_TrajectoryVelocity_Handedness.Location = new System.Drawing.Point(552, 452);
+            this.label_TrajectoryVelocity_Handedness.Name = "label_TrajectoryVelocity_Handedness";
+            this.label_TrajectoryVelocity_Handedness.Size = new System.Drawing.Size(70, 13);
+            this.label_TrajectoryVelocity_Handedness.TabIndex = 64;
+            this.label_TrajectoryVelocity_Handedness.Text = "Handedness:";
+            // 
+            // label_TrajectoryVelocity_ForceField
+            // 
+            this.label_TrajectoryVelocity_ForceField.AutoSize = true;
+            this.label_TrajectoryVelocity_ForceField.Location = new System.Drawing.Point(388, 452);
+            this.label_TrajectoryVelocity_ForceField.Name = "label_TrajectoryVelocity_ForceField";
+            this.label_TrajectoryVelocity_ForceField.Size = new System.Drawing.Size(59, 13);
+            this.label_TrajectoryVelocity_ForceField.TabIndex = 63;
+            this.label_TrajectoryVelocity_ForceField.Text = "Force field:";
+            // 
+            // label_TrajectoryVelocity_TrialType
+            // 
+            this.label_TrajectoryVelocity_TrialType.AutoSize = true;
+            this.label_TrajectoryVelocity_TrialType.Location = new System.Drawing.Point(227, 452);
+            this.label_TrajectoryVelocity_TrialType.Name = "label_TrajectoryVelocity_TrialType";
+            this.label_TrajectoryVelocity_TrialType.Size = new System.Drawing.Size(53, 13);
+            this.label_TrajectoryVelocity_TrialType.TabIndex = 62;
+            this.label_TrajectoryVelocity_TrialType.Text = "Trial type:";
+            // 
+            // listBox_TrajectoryVelocity_Handedness
+            // 
+            this.listBox_TrajectoryVelocity_Handedness.FormattingEnabled = true;
+            this.listBox_TrajectoryVelocity_Handedness.Location = new System.Drawing.Point(555, 470);
+            this.listBox_TrajectoryVelocity_Handedness.Name = "listBox_TrajectoryVelocity_Handedness";
+            this.listBox_TrajectoryVelocity_Handedness.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_TrajectoryVelocity_Handedness.Size = new System.Drawing.Size(158, 69);
+            this.listBox_TrajectoryVelocity_Handedness.TabIndex = 61;
+            // 
+            // listBox_TrajectoryVelocity_ForceField
+            // 
+            this.listBox_TrajectoryVelocity_ForceField.FormattingEnabled = true;
+            this.listBox_TrajectoryVelocity_ForceField.Location = new System.Drawing.Point(391, 470);
+            this.listBox_TrajectoryVelocity_ForceField.Name = "listBox_TrajectoryVelocity_ForceField";
+            this.listBox_TrajectoryVelocity_ForceField.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_TrajectoryVelocity_ForceField.Size = new System.Drawing.Size(158, 69);
+            this.listBox_TrajectoryVelocity_ForceField.TabIndex = 60;
+            // 
+            // listBox_TrajectoryVelocity_TrialType
+            // 
+            this.listBox_TrajectoryVelocity_TrialType.FormattingEnabled = true;
+            this.listBox_TrajectoryVelocity_TrialType.Location = new System.Drawing.Point(227, 470);
+            this.listBox_TrajectoryVelocity_TrialType.Name = "listBox_TrajectoryVelocity_TrialType";
+            this.listBox_TrajectoryVelocity_TrialType.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_TrajectoryVelocity_TrialType.Size = new System.Drawing.Size(158, 69);
+            this.listBox_TrajectoryVelocity_TrialType.TabIndex = 59;
             // 
             // checkBox_TrajectoryVelocity_ShowPDForceVectors
             // 
             this.checkBox_TrajectoryVelocity_ShowPDForceVectors.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Location = new System.Drawing.Point(130, 566);
+            this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Location = new System.Drawing.Point(71, 569);
             this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Name = "checkBox_TrajectoryVelocity_ShowPDForceVectors";
             this.checkBox_TrajectoryVelocity_ShowPDForceVectors.Size = new System.Drawing.Size(73, 17);
             this.checkBox_TrajectoryVelocity_ShowPDForceVectors.TabIndex = 57;
@@ -434,36 +482,12 @@ namespace ManipAnalysis_v2
             // checkBox_TrajectoryVelocity_ShowForceVectors
             // 
             this.checkBox_TrajectoryVelocity_ShowForceVectors.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowForceVectors.Location = new System.Drawing.Point(130, 548);
+            this.checkBox_TrajectoryVelocity_ShowForceVectors.Location = new System.Drawing.Point(71, 546);
             this.checkBox_TrajectoryVelocity_ShowForceVectors.Name = "checkBox_TrajectoryVelocity_ShowForceVectors";
             this.checkBox_TrajectoryVelocity_ShowForceVectors.Size = new System.Drawing.Size(91, 17);
             this.checkBox_TrajectoryVelocity_ShowForceVectors.TabIndex = 56;
             this.checkBox_TrajectoryVelocity_ShowForceVectors.Text = "Force vectors";
             this.checkBox_TrajectoryVelocity_ShowForceVectors.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_TrajectoryVelocity_ShowErrorclampTrials
-            // 
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked = true;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Location = new System.Drawing.Point(3, 583);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Name = "checkBox_TrajectoryVelocity_ShowErrorclampTrials";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.TabIndex = 54;
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.Text = "Show errorclamp trials";
-            this.checkBox_TrajectoryVelocity_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_TrajectoryVelocity_ShowCatchTrials
-            // 
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.AutoSize = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Checked = true;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Location = new System.Drawing.Point(3, 566);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Name = "checkBox_TrajectoryVelocity_ShowCatchTrials";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.TabIndex = 52;
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.Text = "Show catch trials";
-            this.checkBox_TrajectoryVelocity_ShowCatchTrials.UseVisualStyleBackColor = true;
             // 
             // button_TrajectoryVelocity_Export
             // 
@@ -592,7 +616,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_TrajectoryVelocity_SelectedTrials.Name = "listBox_TrajectoryVelocity_SelectedTrials";
             this.listBox_TrajectoryVelocity_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(489, 524);
+            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(489, 433);
             this.listBox_TrajectoryVelocity_SelectedTrials.Sorted = true;
             this.listBox_TrajectoryVelocity_SelectedTrials.TabIndex = 34;
             // 
@@ -1937,6 +1961,16 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
             this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
             // 
+            // button_DataManipulation_DropStatistics
+            // 
+            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
+            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
+            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropStatistics.TabIndex = 66;
+            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
+            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
+            // 
             // button_DataManipulation_CompactDatabase
             // 
             this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
@@ -2306,16 +2340,6 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
-            // button_DataManipulation_DropStatistics
-            // 
-            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
-            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
-            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_DropStatistics.TabIndex = 66;
-            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
-            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
-            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2546,8 +2570,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Button button_Others_ExportGroupLi;
         private System.Windows.Forms.Button button_Others_PlotGroupLi;
         private System.Windows.Forms.CheckBox checkBox_Others_GroupAverage;
-        private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowErrorclampTrials;
-        private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowCatchTrials;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
         private System.Windows.Forms.Button button_Others_PlotForcefieldCompensationFactor;
@@ -2560,7 +2582,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
         private System.Windows.Forms.CheckBox checkBox_Cancel;
-        private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowNormalTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowNormalTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowErrorclampTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowCatchTrials;
@@ -2574,6 +2595,12 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Button button_DataManipulation_DropIndexes;
         private System.Windows.Forms.Button button_DataManipulation_CompactDatabase;
         private System.Windows.Forms.Button button_DataManipulation_DropStatistics;
+        private System.Windows.Forms.Label label_TrajectoryVelocity_Handedness;
+        private System.Windows.Forms.Label label_TrajectoryVelocity_ForceField;
+        private System.Windows.Forms.Label label_TrajectoryVelocity_TrialType;
+        private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_Handedness;
+        private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_ForceField;
+        private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_TrialType;
     }
 }
 

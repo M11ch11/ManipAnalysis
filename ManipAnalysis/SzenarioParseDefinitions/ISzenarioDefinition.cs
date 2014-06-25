@@ -118,6 +118,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return trialsContainer;
         }
 
+        protected double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
         public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, List<Trial> trialsContainer, Trial trial);
     }
 }
