@@ -437,72 +437,16 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName, bool showNormalTrials,
-            bool showCatchTrials, bool showErrorclampTrials)
+        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness)
         {
             IEnumerable<int> retVal;
             try
             {
-                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
-                {
-                    retVal =
+                retVal =
                         _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName)
+                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
                             .Select(t => t.TrialNumberInSzenario)
                             .Distinct();
-                }
-                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.TrialType != Trial.TrialTypeEnum.CatchTrial )
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial)
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.TrialType != Trial.TrialTypeEnum.CatchTrial && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial)
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && (t.TrialType == Trial.TrialTypeEnum.CatchTrial || t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial))
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.TrialType != Trial.TrialTypeEnum.CatchTrial && t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial)
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
-                }
-                else
-                {
-                    retVal = new List<int>();
-                }
             }
             catch (Exception ex)
             {
@@ -514,72 +458,18 @@ namespace ManipAnalysis_v2
         }
 
         public IEnumerable<Trial> GetTrial(string studyName, string groupName, string szenarioName,
-            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, bool showNormalTrials, bool showCatchTrials,
-            bool showErrorclampTrials, FieldsBuilder<Trial> fields)
+            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, 
+            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
-                if (showNormalTrials && showCatchTrials && showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
                         t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
                         t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario)))
+                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && 
+                        forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
                         .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (showNormalTrials && !showCatchTrials && showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && t.TrialType != Trial.TrialTypeEnum.CatchTrial))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (showNormalTrials && showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (showNormalTrials && !showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && t.TrialType != Trial.TrialTypeEnum.CatchTrial && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (!showNormalTrials && showCatchTrials && showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && (t.TrialType == Trial.TrialTypeEnum.CatchTrial || t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial)))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (!showNormalTrials && !showCatchTrials && showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && t.TrialType != Trial.TrialTypeEnum.CatchTrial && t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else if (!showNormalTrials && showCatchTrials && !showErrorclampTrials)
-                {
-                    retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
-                }
-                else
-                {
-                    retVal = null;
-                }
             }
             catch (Exception)
             {
@@ -597,6 +487,27 @@ namespace ManipAnalysis_v2
                 retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
                     t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
                     t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario)))
+                    .SetFields(fields).OrderBy(t => t.TrialNumberInSzenario);
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                retVal = null;
+            }
+
+            return retVal;
+        }
+
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes,
+            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
+        {
+            IEnumerable<Trial> retVal;
+            try
+            {
+                retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
+                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                    t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
+                        forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
                     .SetFields(fields).OrderBy(t => t.TrialNumberInSzenario);
             }
             catch (Exception ex)

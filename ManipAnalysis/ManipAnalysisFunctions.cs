@@ -472,12 +472,9 @@ namespace ManipAnalysis_v2
             }));
         }
 
-        public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, bool showNormalTrials, bool showCatchTrials,
-            bool showErrorclampTrials)
+        public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness)
         {
-            return
-                _myDatabaseWrapper.GetSzenarioTrials(study, szenario, showNormalTrials, showCatchTrials, showErrorclampTrials)
-                    .Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
         }
 
         public void PlotExportDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType,
@@ -2434,8 +2431,8 @@ namespace ManipAnalysis_v2
         }
 
         public void PlotTrajectoryVelocityForce(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, string meanIndividual,
-            string trajectoryVelocityForce,
-            bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, bool showForceVectors, bool showPdForceVectors)
+            string trajectoryVelocityForce, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, 
+            IEnumerable<MongoDb.Trial.HandednessEnum> handedness, bool showForceVectors, bool showPdForceVectors)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -2532,7 +2529,7 @@ namespace ManipAnalysis_v2
                             Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                     tempContainer.Group,
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials,
-                                    showNormalTrials, showCatchTrials, showErrorclampTrials, fields).ToArray();
+                                    trialTypes, forceFields, handedness, fields).ToArray();
 
                             for(int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                             {
@@ -2794,7 +2791,7 @@ namespace ManipAnalysis_v2
                                     Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study,
                                     tempContainer.Group,
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials,
-                                    showNormalTrials, showCatchTrials, showErrorclampTrials, fields).ToArray();
+                                    trialTypes, forceFields, handedness, fields).ToArray();
 
                                     for(int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                                     {
@@ -2939,9 +2936,9 @@ namespace ManipAnalysis_v2
         }
 
         public void ExportTrajectoryVelocityForce(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
-            string meanIndividual, string trajectoryVelocityForce,
-            bool showNormalTrials, bool showCatchTrials, bool showErrorclampTrials, bool showForceVectors, bool showPdForceVectors,
-            string fileName)
+            string meanIndividual, string trajectoryVelocityForce, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, 
+            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, 
+            bool showForceVectors, bool showPdForceVectors, string fileName)
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
@@ -3082,6 +3079,9 @@ namespace ManipAnalysis_v2
                                             tempContainer.Subject,
                                             turnDateTime,
                                             tempContainer.Trials,
+                                            trialTypes,
+                                            forceFields,
+                                            handedness,
                                             fields).ToArray();
 
                         for (int trialsArrayCounter = 0; trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel; trialsArrayCounter++)

@@ -77,9 +77,12 @@ namespace ManipAnalysis_v2
             this.comboBox_TrajectoryVelocity_Study = new System.Windows.Forms.ComboBox();
             this.listBox_TrajectoryVelocity_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_DescriptiveStatistic1 = new System.Windows.Forms.TabPage();
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials = new System.Windows.Forms.CheckBox();
+            this.label_DescriptiveStatistic1_Handedness = new System.Windows.Forms.Label();
+            this.label_DescriptiveStatistic1_ForceField = new System.Windows.Forms.Label();
+            this.label_DescriptiveStatistic1_TrialType = new System.Windows.Forms.Label();
+            this.listBox_DescriptiveStatistic1_Handedness = new System.Windows.Forms.ListBox();
+            this.listBox_DescriptiveStatistic1_ForceField = new System.Windows.Forms.ListBox();
+            this.listBox_DescriptiveStatistic1_TrialType = new System.Windows.Forms.ListBox();
             this.checkBox_DescriptiveStatistic1_PlotFit = new System.Windows.Forms.CheckBox();
             this.textBox_DescriptiveStatistic1_FitEquation = new System.Windows.Forms.TextBox();
             this.button_DescriptiveStatistic1_ExportData = new System.Windows.Forms.Button();
@@ -104,9 +107,12 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic1_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_DescriptiveStatistic2 = new System.Windows.Forms.TabPage();
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials = new System.Windows.Forms.CheckBox();
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials = new System.Windows.Forms.CheckBox();
+            this.label_DescriptiveStatistic2_Handedness = new System.Windows.Forms.Label();
+            this.label_DescriptiveStatistic2_ForceField = new System.Windows.Forms.Label();
+            this.label_DescriptiveStatistic2_TrialType = new System.Windows.Forms.Label();
+            this.listBox_DescriptiveStatistic2_Handedness = new System.Windows.Forms.ListBox();
+            this.listBox_DescriptiveStatistic2_ForceField = new System.Windows.Forms.ListBox();
+            this.listBox_DescriptiveStatistic2_TrialType = new System.Windows.Forms.ListBox();
             this.button_DescriptiveStatistic2_CalculateMeanValues = new System.Windows.Forms.Button();
             this.listBox_DescriptiveStatistic2_Turns = new System.Windows.Forms.ListBox();
             this.label_DescriptiveStatistic2_Turns = new System.Windows.Forms.Label();
@@ -734,9 +740,12 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_DescriptiveStatistic1
             // 
-            this.tabPage_DescriptiveStatistic1.Controls.Add(this.checkBox_DescriptiveStatistic1_ShowNormalTrials);
-            this.tabPage_DescriptiveStatistic1.Controls.Add(this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials);
-            this.tabPage_DescriptiveStatistic1.Controls.Add(this.checkBox_DescriptiveStatistic1_ShowCatchTrials);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.label_DescriptiveStatistic1_Handedness);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.label_DescriptiveStatistic1_ForceField);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.label_DescriptiveStatistic1_TrialType);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.listBox_DescriptiveStatistic1_Handedness);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.listBox_DescriptiveStatistic1_ForceField);
+            this.tabPage_DescriptiveStatistic1.Controls.Add(this.listBox_DescriptiveStatistic1_TrialType);
             this.tabPage_DescriptiveStatistic1.Controls.Add(this.checkBox_DescriptiveStatistic1_PlotFit);
             this.tabPage_DescriptiveStatistic1.Controls.Add(this.textBox_DescriptiveStatistic1_FitEquation);
             this.tabPage_DescriptiveStatistic1.Controls.Add(this.button_DescriptiveStatistic1_ExportData);
@@ -768,44 +777,59 @@ namespace ManipAnalysis_v2
             this.tabPage_DescriptiveStatistic1.UseVisualStyleBackColor = true;
             this.tabPage_DescriptiveStatistic1.Enter += new System.EventHandler(this.tabPage_DescriptiveStatistic1_Enter);
             // 
-            // checkBox_DescriptiveStatistic1_ShowNormalTrials
+            // label_DescriptiveStatistic1_Handedness
             // 
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.Location = new System.Drawing.Point(3, 547);
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.Name = "checkBox_DescriptiveStatistic1_ShowNormalTrials";
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.Size = new System.Drawing.Size(111, 17);
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.TabIndex = 61;
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.Text = "Show normal trials";
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic1_ShowNormalTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged);
+            this.label_DescriptiveStatistic1_Handedness.AutoSize = true;
+            this.label_DescriptiveStatistic1_Handedness.Location = new System.Drawing.Point(552, 449);
+            this.label_DescriptiveStatistic1_Handedness.Name = "label_DescriptiveStatistic1_Handedness";
+            this.label_DescriptiveStatistic1_Handedness.Size = new System.Drawing.Size(70, 13);
+            this.label_DescriptiveStatistic1_Handedness.TabIndex = 70;
+            this.label_DescriptiveStatistic1_Handedness.Text = "Handedness:";
             // 
-            // checkBox_DescriptiveStatistic1_ShowErrorclampTrials
+            // label_DescriptiveStatistic1_ForceField
             // 
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Location = new System.Drawing.Point(3, 582);
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Name = "checkBox_DescriptiveStatistic1_ShowErrorclampTrials";
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.TabIndex = 60;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Text = "Show errorclamp trials";
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged);
+            this.label_DescriptiveStatistic1_ForceField.AutoSize = true;
+            this.label_DescriptiveStatistic1_ForceField.Location = new System.Drawing.Point(388, 449);
+            this.label_DescriptiveStatistic1_ForceField.Name = "label_DescriptiveStatistic1_ForceField";
+            this.label_DescriptiveStatistic1_ForceField.Size = new System.Drawing.Size(59, 13);
+            this.label_DescriptiveStatistic1_ForceField.TabIndex = 69;
+            this.label_DescriptiveStatistic1_ForceField.Text = "Force field:";
             // 
-            // checkBox_DescriptiveStatistic1_ShowCatchTrials
+            // label_DescriptiveStatistic1_TrialType
             // 
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Location = new System.Drawing.Point(3, 565);
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic1_ShowCatchTrials";
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.TabIndex = 59;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.Text = "Show catch trials";
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic1_ShowCatchTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged);
+            this.label_DescriptiveStatistic1_TrialType.AutoSize = true;
+            this.label_DescriptiveStatistic1_TrialType.Location = new System.Drawing.Point(227, 449);
+            this.label_DescriptiveStatistic1_TrialType.Name = "label_DescriptiveStatistic1_TrialType";
+            this.label_DescriptiveStatistic1_TrialType.Size = new System.Drawing.Size(53, 13);
+            this.label_DescriptiveStatistic1_TrialType.TabIndex = 68;
+            this.label_DescriptiveStatistic1_TrialType.Text = "Trial type:";
+            // 
+            // listBox_DescriptiveStatistic1_Handedness
+            // 
+            this.listBox_DescriptiveStatistic1_Handedness.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic1_Handedness.Location = new System.Drawing.Point(555, 467);
+            this.listBox_DescriptiveStatistic1_Handedness.Name = "listBox_DescriptiveStatistic1_Handedness";
+            this.listBox_DescriptiveStatistic1_Handedness.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic1_Handedness.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic1_Handedness.TabIndex = 67;            
+            // 
+            // listBox_DescriptiveStatistic1_ForceField
+            // 
+            this.listBox_DescriptiveStatistic1_ForceField.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic1_ForceField.Location = new System.Drawing.Point(391, 467);
+            this.listBox_DescriptiveStatistic1_ForceField.Name = "listBox_DescriptiveStatistic1_ForceField";
+            this.listBox_DescriptiveStatistic1_ForceField.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic1_ForceField.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic1_ForceField.TabIndex = 66;
+            // 
+            // listBox_DescriptiveStatistic1_TrialType
+            // 
+            this.listBox_DescriptiveStatistic1_TrialType.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic1_TrialType.Location = new System.Drawing.Point(227, 467);
+            this.listBox_DescriptiveStatistic1_TrialType.Name = "listBox_DescriptiveStatistic1_TrialType";
+            this.listBox_DescriptiveStatistic1_TrialType.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic1_TrialType.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic1_TrialType.TabIndex = 65;
             // 
             // checkBox_DescriptiveStatistic1_PlotFit
             // 
@@ -935,7 +959,7 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic1_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_DescriptiveStatistic1_SelectedTrials.Name = "listBox_DescriptiveStatistic1_SelectedTrials";
             this.listBox_DescriptiveStatistic1_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic1_SelectedTrials.Size = new System.Drawing.Size(489, 524);
+            this.listBox_DescriptiveStatistic1_SelectedTrials.Size = new System.Drawing.Size(489, 433);
             this.listBox_DescriptiveStatistic1_SelectedTrials.Sorted = true;
             this.listBox_DescriptiveStatistic1_SelectedTrials.TabIndex = 11;
             // 
@@ -952,7 +976,7 @@ namespace ManipAnalysis_v2
             // label_DescriptiveStatistic1_Trials
             // 
             this.label_DescriptiveStatistic1_Trials.AutoSize = true;
-            this.label_DescriptiveStatistic1_Trials.Location = new System.Drawing.Point(28, 408);
+            this.label_DescriptiveStatistic1_Trials.Location = new System.Drawing.Point(28, 449);
             this.label_DescriptiveStatistic1_Trials.Name = "label_DescriptiveStatistic1_Trials";
             this.label_DescriptiveStatistic1_Trials.Size = new System.Drawing.Size(41, 13);
             this.label_DescriptiveStatistic1_Trials.TabIndex = 9;
@@ -1001,7 +1025,7 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic1_Trials.Name = "listBox_DescriptiveStatistic1_Trials";
             this.listBox_DescriptiveStatistic1_Trials.ScrollAlwaysVisible = true;
             this.listBox_DescriptiveStatistic1_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic1_Trials.Size = new System.Drawing.Size(150, 225);
+            this.listBox_DescriptiveStatistic1_Trials.Size = new System.Drawing.Size(150, 277);
             this.listBox_DescriptiveStatistic1_Trials.Sorted = true;
             this.listBox_DescriptiveStatistic1_Trials.TabIndex = 4;
             // 
@@ -1053,9 +1077,12 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_DescriptiveStatistic2
             // 
-            this.tabPage_DescriptiveStatistic2.Controls.Add(this.checkBox_DescriptiveStatistic2_ShowNormalTrials);
-            this.tabPage_DescriptiveStatistic2.Controls.Add(this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials);
-            this.tabPage_DescriptiveStatistic2.Controls.Add(this.checkBox_DescriptiveStatistic2_ShowCatchTrials);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.label_DescriptiveStatistic2_Handedness);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.label_DescriptiveStatistic2_ForceField);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.label_DescriptiveStatistic2_TrialType);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.listBox_DescriptiveStatistic2_Handedness);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.listBox_DescriptiveStatistic2_ForceField);
+            this.tabPage_DescriptiveStatistic2.Controls.Add(this.listBox_DescriptiveStatistic2_TrialType);
             this.tabPage_DescriptiveStatistic2.Controls.Add(this.button_DescriptiveStatistic2_CalculateMeanValues);
             this.tabPage_DescriptiveStatistic2.Controls.Add(this.listBox_DescriptiveStatistic2_Turns);
             this.tabPage_DescriptiveStatistic2.Controls.Add(this.label_DescriptiveStatistic2_Turns);
@@ -1083,44 +1110,59 @@ namespace ManipAnalysis_v2
             this.tabPage_DescriptiveStatistic2.UseVisualStyleBackColor = true;
             this.tabPage_DescriptiveStatistic2.Enter += new System.EventHandler(this.tabPage_DescriptiveStatistic2_Enter);
             // 
-            // checkBox_DescriptiveStatistic2_ShowNormalTrials
+            // label_DescriptiveStatistic2_Handedness
             // 
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Location = new System.Drawing.Point(3, 547);
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Name = "checkBox_DescriptiveStatistic2_ShowNormalTrials";
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Size = new System.Drawing.Size(111, 17);
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.TabIndex = 64;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.Text = "Show normal trials";
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic2_ShowNormalTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowNormalTrials_CheckedChanged);
+            this.label_DescriptiveStatistic2_Handedness.AutoSize = true;
+            this.label_DescriptiveStatistic2_Handedness.Location = new System.Drawing.Point(552, 449);
+            this.label_DescriptiveStatistic2_Handedness.Name = "label_DescriptiveStatistic2_Handedness";
+            this.label_DescriptiveStatistic2_Handedness.Size = new System.Drawing.Size(70, 13);
+            this.label_DescriptiveStatistic2_Handedness.TabIndex = 70;
+            this.label_DescriptiveStatistic2_Handedness.Text = "Handedness:";
             // 
-            // checkBox_DescriptiveStatistic2_ShowErrorclampTrials
+            // label_DescriptiveStatistic2_ForceField
             // 
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Location = new System.Drawing.Point(3, 582);
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Name = "checkBox_DescriptiveStatistic2_ShowErrorclampTrials";
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Size = new System.Drawing.Size(129, 17);
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.TabIndex = 63;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Text = "Show errorclamp trials";
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged);
+            this.label_DescriptiveStatistic2_ForceField.AutoSize = true;
+            this.label_DescriptiveStatistic2_ForceField.Location = new System.Drawing.Point(388, 449);
+            this.label_DescriptiveStatistic2_ForceField.Name = "label_DescriptiveStatistic2_ForceField";
+            this.label_DescriptiveStatistic2_ForceField.Size = new System.Drawing.Size(59, 13);
+            this.label_DescriptiveStatistic2_ForceField.TabIndex = 69;
+            this.label_DescriptiveStatistic2_ForceField.Text = "Force field:";
             // 
-            // checkBox_DescriptiveStatistic2_ShowCatchTrials
+            // label_DescriptiveStatistic2_TrialType
             // 
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.AutoSize = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Location = new System.Drawing.Point(3, 565);
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Name = "checkBox_DescriptiveStatistic2_ShowCatchTrials";
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Size = new System.Drawing.Size(107, 17);
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.TabIndex = 62;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.Text = "Show catch trials";
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.UseVisualStyleBackColor = true;
-            this.checkBox_DescriptiveStatistic2_ShowCatchTrials.CheckedChanged += new System.EventHandler(this.checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged);
+            this.label_DescriptiveStatistic2_TrialType.AutoSize = true;
+            this.label_DescriptiveStatistic2_TrialType.Location = new System.Drawing.Point(227, 449);
+            this.label_DescriptiveStatistic2_TrialType.Name = "label_DescriptiveStatistic2_TrialType";
+            this.label_DescriptiveStatistic2_TrialType.Size = new System.Drawing.Size(53, 13);
+            this.label_DescriptiveStatistic2_TrialType.TabIndex = 68;
+            this.label_DescriptiveStatistic2_TrialType.Text = "Trial type:";
+            // 
+            // listBox_DescriptiveStatistic2_Handedness
+            // 
+            this.listBox_DescriptiveStatistic2_Handedness.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic2_Handedness.Location = new System.Drawing.Point(555, 467);
+            this.listBox_DescriptiveStatistic2_Handedness.Name = "listBox_DescriptiveStatistic2_Handedness";
+            this.listBox_DescriptiveStatistic2_Handedness.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic2_Handedness.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic2_Handedness.TabIndex = 67;
+            // 
+            // listBox_DescriptiveStatistic2_ForceField
+            // 
+            this.listBox_DescriptiveStatistic2_ForceField.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic2_ForceField.Location = new System.Drawing.Point(391, 467);
+            this.listBox_DescriptiveStatistic2_ForceField.Name = "listBox_DescriptiveStatistic2_ForceField";
+            this.listBox_DescriptiveStatistic2_ForceField.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic2_ForceField.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic2_ForceField.TabIndex = 66;
+            // 
+            // listBox_DescriptiveStatistic2_TrialType
+            // 
+            this.listBox_DescriptiveStatistic2_TrialType.FormattingEnabled = true;
+            this.listBox_DescriptiveStatistic2_TrialType.Location = new System.Drawing.Point(227, 467);
+            this.listBox_DescriptiveStatistic2_TrialType.Name = "listBox_DescriptiveStatistic2_TrialType";
+            this.listBox_DescriptiveStatistic2_TrialType.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_DescriptiveStatistic2_TrialType.Size = new System.Drawing.Size(158, 69);
+            this.listBox_DescriptiveStatistic2_TrialType.TabIndex = 65;
             // 
             // button_DescriptiveStatistic2_CalculateMeanValues
             // 
@@ -1212,7 +1254,7 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic2_SelectedTrials.Location = new System.Drawing.Point(227, 12);
             this.listBox_DescriptiveStatistic2_SelectedTrials.Name = "listBox_DescriptiveStatistic2_SelectedTrials";
             this.listBox_DescriptiveStatistic2_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic2_SelectedTrials.Size = new System.Drawing.Size(489, 524);
+            this.listBox_DescriptiveStatistic2_SelectedTrials.Size = new System.Drawing.Size(489, 433);
             this.listBox_DescriptiveStatistic2_SelectedTrials.Sorted = true;
             this.listBox_DescriptiveStatistic2_SelectedTrials.TabIndex = 33;
             // 
@@ -1229,7 +1271,7 @@ namespace ManipAnalysis_v2
             // label_DescriptiveStatistic2_Trials
             // 
             this.label_DescriptiveStatistic2_Trials.AutoSize = true;
-            this.label_DescriptiveStatistic2_Trials.Location = new System.Drawing.Point(28, 408);
+            this.label_DescriptiveStatistic2_Trials.Location = new System.Drawing.Point(28, 449);
             this.label_DescriptiveStatistic2_Trials.Name = "label_DescriptiveStatistic2_Trials";
             this.label_DescriptiveStatistic2_Trials.Size = new System.Drawing.Size(41, 13);
             this.label_DescriptiveStatistic2_Trials.TabIndex = 31;
@@ -1278,7 +1320,7 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic2_Trials.Name = "listBox_DescriptiveStatistic2_Trials";
             this.listBox_DescriptiveStatistic2_Trials.ScrollAlwaysVisible = true;
             this.listBox_DescriptiveStatistic2_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_DescriptiveStatistic2_Trials.Size = new System.Drawing.Size(150, 225);
+            this.listBox_DescriptiveStatistic2_Trials.Size = new System.Drawing.Size(150, 277);
             this.listBox_DescriptiveStatistic2_Trials.Sorted = true;
             this.listBox_DescriptiveStatistic2_Trials.TabIndex = 26;
             // 
@@ -2582,12 +2624,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
         private System.Windows.Forms.CheckBox checkBox_Cancel;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowNormalTrials;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowErrorclampTrials;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowCatchTrials;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowNormalTrials;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowErrorclampTrials;
-        private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowCatchTrials;
         private System.Windows.Forms.Label label_Start_ServerIP;
         private System.Windows.Forms.ComboBox comboBox_Start_DatabaseServer;
         private System.Windows.Forms.Button button_DataManipulation_EnsureIndexes;
@@ -2601,6 +2637,18 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_Handedness;
         private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_ForceField;
         private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_TrialType;
+        private System.Windows.Forms.Label label_DescriptiveStatistic1_Handedness;
+        private System.Windows.Forms.Label label_DescriptiveStatistic1_ForceField;
+        private System.Windows.Forms.Label label_DescriptiveStatistic1_TrialType;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic1_Handedness;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic1_ForceField;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic1_TrialType;
+        private System.Windows.Forms.Label label_DescriptiveStatistic2_Handedness;
+        private System.Windows.Forms.Label label_DescriptiveStatistic2_ForceField;
+        private System.Windows.Forms.Label label_DescriptiveStatistic2_TrialType;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_Handedness;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_ForceField;
+        private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_TrialType;
     }
 }
 

@@ -410,14 +410,30 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-            bool showNormalTrials = checkBox_DescriptiveStatistic1_ShowNormalTrials.Checked;
-            bool showCatchTrials = checkBox_DescriptiveStatistic1_ShowCatchTrials.Checked;
-            bool showErrorclampTrials = checkBox_DescriptiveStatistic1_ShowErrorclampTrials.Checked;
+
+            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new  List<Trial.TrialTypeEnum>();
+            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new  List<Trial.ForceFieldTypeEnum>();
+            List<MongoDb.Trial.HandednessEnum> handedness = new  List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_DescriptiveStatistic1_TrialType.SelectedItems)
+            {
+                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_DescriptiveStatistic1_ForceField.SelectedItems)
+            {
+                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_DescriptiveStatistic1_Handedness.SelectedItems)
+            {
+                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+            }
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                showNormalTrials,
-                showCatchTrials,
-                showErrorclampTrials);
+                trialTypes,
+                forceFields,
+                handedness);
 
             if (szenarioTrialNames.Any())
             {
@@ -625,6 +641,33 @@ namespace ManipAnalysis_v2
 
         private void tabPage_DescriptiveStatistic1_Enter(object sender, EventArgs e)
         {
+            listBox_DescriptiveStatistic1_TrialType.Items.Clear();
+            listBox_DescriptiveStatistic1_ForceField.Items.Clear();
+            listBox_DescriptiveStatistic1_Handedness.Items.Clear();
+
+            listBox_DescriptiveStatistic1_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
+            listBox_DescriptiveStatistic1_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
+            listBox_DescriptiveStatistic1_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic1_TrialType.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic1_ForceField.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic1_Handedness.SetSelected(listboxIndex, true);
+            }
+
+            listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic1_Handedness.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
+
             comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedIndex = 0;
 
             comboBox_DescriptiveStatistic1_Study.Items.Clear();
@@ -642,7 +685,7 @@ namespace ManipAnalysis_v2
                 {
                     comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
                 }
-            }
+            }            
         }
 
         private void comboBox_DescriptiveStatistic2_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -771,14 +814,30 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-            bool showNormalTrials = checkBox_DescriptiveStatistic2_ShowNormalTrials.Checked;
-            bool showCatchTrials = checkBox_DescriptiveStatistic2_ShowCatchTrials.Checked;
-            bool showErrorclampTrials = checkBox_DescriptiveStatistic2_ShowErrorclampTrials.Checked;
+
+            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_DescriptiveStatistic2_TrialType.SelectedItems)
+            {
+                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_DescriptiveStatistic2_ForceField.SelectedItems)
+            {
+                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_DescriptiveStatistic2_Handedness.SelectedItems)
+            {
+                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+            }
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                showNormalTrials,
-                showCatchTrials,
-                showErrorclampTrials);
+                trialTypes,
+                forceFields,
+                handedness);
 
             if (szenarioTrialNames.Any())
             {
@@ -866,6 +925,33 @@ namespace ManipAnalysis_v2
 
         private void tabPage_DescriptiveStatistic2_Enter(object sender, EventArgs e)
         {
+            listBox_DescriptiveStatistic2_TrialType.Items.Clear();
+            listBox_DescriptiveStatistic2_ForceField.Items.Clear();
+            listBox_DescriptiveStatistic2_Handedness.Items.Clear();
+
+            listBox_DescriptiveStatistic2_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
+            listBox_DescriptiveStatistic2_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
+            listBox_DescriptiveStatistic2_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic2_TrialType.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic2_ForceField.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count; listboxIndex++)
+            {
+                listBox_DescriptiveStatistic2_Handedness.SetSelected(listboxIndex, true);
+            }
+
+            listBox_DescriptiveStatistic2_TrialType.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic2_ForceField.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic2_Handedness.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
+
             comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedIndex = 0;
 
             comboBox_DescriptiveStatistic2_Study.Items.Clear();
@@ -884,7 +970,7 @@ namespace ManipAnalysis_v2
                 {
                     comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
                 }
-            }
+            }            
         }
 
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
@@ -1091,27 +1177,6 @@ namespace ManipAnalysis_v2
 
         private void tabPage_TrajectoryVelocity_Enter(object sender, EventArgs e)
         {
-            comboBox_TrajectoryVelocity_Study.Items.Clear();
-            listBox_TrajectoryVelocity_Groups.Items.Clear();
-            comboBox_TrajectoryVelocity_Szenario.Items.Clear();
-            listBox_TrajectoryVelocity_Subjects.Items.Clear();
-            listBox_TrajectoryVelocity_Turns.Items.Clear();
-            listBox_TrajectoryVelocity_Targets.Items.Clear();
-            listBox_TrajectoryVelocity_Trials.Items.Clear();
-
-            comboBox_TrajectoryVelocity_IndividualMean.SelectedIndex = 0;
-            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedIndex = 0;
-
-            IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames.Any())
-            {
-                comboBox_TrajectoryVelocity_Study.Items.AddRange(studyNames.ToArray());
-                if (comboBox_TrajectoryVelocity_Study.Items.Count > 0)
-                {
-                    comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
-                }
-            }
-
             listBox_TrajectoryVelocity_TrialType.Items.Clear();
             listBox_TrajectoryVelocity_ForceField.Items.Clear();
             listBox_TrajectoryVelocity_Handedness.Items.Clear();
@@ -1134,6 +1199,27 @@ namespace ManipAnalysis_v2
             {
                 listBox_TrajectoryVelocity_Handedness.SetSelected(listboxIndex, true);
             }
+
+            comboBox_TrajectoryVelocity_Study.Items.Clear();
+            listBox_TrajectoryVelocity_Groups.Items.Clear();
+            comboBox_TrajectoryVelocity_Szenario.Items.Clear();
+            listBox_TrajectoryVelocity_Subjects.Items.Clear();
+            listBox_TrajectoryVelocity_Turns.Items.Clear();
+            listBox_TrajectoryVelocity_Targets.Items.Clear();
+            listBox_TrajectoryVelocity_Trials.Items.Clear();
+
+            comboBox_TrajectoryVelocity_IndividualMean.SelectedIndex = 0;
+            comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedIndex = 0;
+
+            IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
+            if (studyNames.Any())
+            {
+                comboBox_TrajectoryVelocity_Study.Items.AddRange(studyNames.ToArray());
+                if (comboBox_TrajectoryVelocity_Study.Items.Count > 0)
+                {
+                    comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
+                }
+            }            
         }
 
         private void comboBox_TrajectoryVelocity_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -1436,17 +1522,34 @@ namespace ManipAnalysis_v2
         {
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
-                /*
+                List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+                List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+                List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+                foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                {
+                    trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                }
+
+                foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                {
+                    forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                }
+
+                foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                {
+                    handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                }
+                
                 _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
                     listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                     comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
                     comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                    checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
-                    checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                    checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                    trialTypes,
+                    forceFields,
+                    handedness,
                     checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
-                 */
+                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);                 
             }
             else
             {
@@ -1588,18 +1691,36 @@ namespace ManipAnalysis_v2
             {
                 if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
                 {
-                    /*
+                    List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+                    List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+                    List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+                    foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                    {
+                        trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                    }
+
+                    foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                    {
+                        forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                    }
+
+                    foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                    {
+                        handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                    }
+
                     _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
                         listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                         comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
                         comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                        checkBox_TrajectoryVelocity_ShowNormalTrials.Checked,
-                        checkBox_TrajectoryVelocity_ShowCatchTrials.Checked,
-                        checkBox_TrajectoryVelocity_ShowErrorclampTrials.Checked,
+                        trialTypes,
+                        forceFields,
+                        handedness,
                         checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                         checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
                         saveFileDialog.FileName);
-                     */
+
                 }
                 else
                 {
@@ -2241,6 +2362,6 @@ namespace ManipAnalysis_v2
         private void button_DataManipulation_DropStatistics_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.DropStatistics();
-        }
+        }        
     }
 }
