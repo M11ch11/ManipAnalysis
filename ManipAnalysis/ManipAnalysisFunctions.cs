@@ -2208,8 +2208,9 @@ namespace ManipAnalysis_v2
                             //if (baseline != null)
                             if (true)
                             {
-                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
-                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
+                                // Commented out for Study 07 (Baseline not implemented yet)
+                                //baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
+                                //baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
                                 trial.PositionNormalized =
                                     Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
                                 trial.VelocityNormalized =
@@ -2286,7 +2287,8 @@ namespace ManipAnalysis_v2
                                 }
 
                                 trial.Statistics = statisticContainer;
-                                trial.BaselineObjectId = baseline.Id;
+                                // Commented out for Study 07 (Baseline not implemented yet)
+                                //trial.BaselineObjectId = baseline.Id;
 
                                 CompressTrialData(new List<Trial>() { trial });
                                 _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
