@@ -75,88 +75,185 @@ R = [0,0;0,0];      % allocation for rotation matrix
 % 3-dimensional rotation of trajectory point and straight line joinig 
 % start & target point to the x-axis (ankle = alpha)
 
-%if(targetNumber == 1)
-if(targetNumber == 5)
-    % alpha = 2*pi/4;
-    R = [0, -1; 1, 0];
+%targetDefinition = 'Study1-6_BioMotionBot';
+%targetDefinition = 'Study1-6_KINARM';
+targetDefinition = 'Study7_KINARM';
 
-%elseif(targetNumber == 2)  
-elseif(targetNumber == 4)
-    % alpha = pi/4;
-    R = [cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
+if(strcmp(targetDefinition, 'Study1-6_BioMotionBot'))
+    if(targetNumber == 1)
+        % alpha = 2*pi/4;
+        R = [0, -1; 1, 0];
 
-elseif(targetNumber == 3)
-    % alpha = 0 = 8*pi/4;   % no rotation neccessary
-    R = [1, 0; 0, 1];       % Identity
+    elseif(targetNumber == 2)  
+        % alpha = pi/4;
+        R = [cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
 
-%elseif(targetNumber == 4)       
-elseif(targetNumber == 2)
-    % alpha = 7*pi/4;
-    R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+    elseif(targetNumber == 3)
+        % alpha = 0 = 8*pi/4;   % no rotation neccessary
+        R = [1, 0; 0, 1];       % Identity
 
-%elseif (targetNumber == 5)    
-elseif (targetNumber == 1)
-    % alpha = 6*pi/4;
-    R = [0, 1; -1, 0];
+    elseif(targetNumber == 4)
+        % alpha = 7*pi/4;
+        R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
 
-%elseif(targetNumber == 6)        
-elseif(targetNumber == 8)
-    % alpha = 5*pi/4;
-    R = [cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+    elseif (targetNumber == 5)    
+        % alpha = 6*pi/4;
+        R = [0, 1; -1, 0];
+
+    elseif(targetNumber == 6) 
+        % alpha = 5*pi/4;
+        R = [cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+
+    elseif(targetNumber == 7)
+        % alpha = 4*pi/4 = pi;
+        R = [-1, 0; 0, -1];
+
+    elseif(targetNumber == 8) 
+        % alpha = 3*pi/4;
+        R = [cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
+
+
+    % Inward-directed movements are rotated and the z-value is multiplicated
+    % with (-1) in order to be able to compare inward- and outward-directed 
+    % movements because direction of force field is acting in opposing direction
+
+    elseif(targetNumber == 9)
+        % alpha = 2*pi/4;
+        R = [1, 0; 0, -1]*[0, -1; 1, 0];
+
+    elseif(targetNumber == 10)
+        % alpha = pi/4;
+        R = [1, 0; 0, -1]*[cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
+
+    elseif(targetNumber == 11)
+        % alpha = 0 = 8*pi/4;   % no rotation neccessary
+        R = [1, 0; 0, -1]*[1, 0; 0, 1];       % Identity
+
+    elseif(targetNumber == 12)   
+        % alpha = 7*pi/4;
+        R = [1, 0; 0, -1]*[cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+
+    elseif (targetNumber == 13)
+        % alpha = 6*pi/4;
+        R = [1, 0; 0, -1]*[0, 1; -1, 0];
+
+    elseif(targetNumber == 14)
+        % alpha = 5*pi/4;
+        R = [1, 0; 0, -1]*[cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+
+    elseif(targetNumber == 15)
+        % alpha = 4*pi/4 = pi;
+        R = [1, 0; 0, -1]*[-1, 0; 0, -1];
+
+    elseif(targetNumber == 16)
+        % alpha = 3*pi/4;
+        R = [1, 0; 0, -1]*[cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
+
+    end
     
-elseif(targetNumber == 7)
-    % alpha = 4*pi/4 = pi;
-    R = [-1, 0; 0, -1];
+elseif(strcmp(targetDefinition, 'Study1-6_KINARM'))
+    if(targetNumber == 5)
+        % alpha = 2*pi/4;
+        R = [0, -1; 1, 0];
 
-%elseif(targetNumber == 8)    
-elseif(targetNumber == 6)
-    % alpha = 3*pi/4;
-    R = [cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
+    elseif(targetNumber == 4)
+        % alpha = pi/4;
+        R = [cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
+
+    elseif(targetNumber == 3)
+        % alpha = 0 = 8*pi/4;   % no rotation neccessary
+        R = [1, 0; 0, 1];       % Identity
+
+    elseif(targetNumber == 2)
+        % alpha = 7*pi/4;
+        R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+
+    elseif (targetNumber == 1)
+        % alpha = 6*pi/4;
+        R = [0, 1; -1, 0];
+
+    elseif(targetNumber == 8)
+        % alpha = 5*pi/4;
+        R = [cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+
+    elseif(targetNumber == 7)
+        % alpha = 4*pi/4 = pi;
+        R = [-1, 0; 0, -1];
+
+    elseif(targetNumber == 6)
+        % alpha = 3*pi/4;
+        R = [cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
+
+    % Inward-directed movements are rotated and the z-value is multiplicated
+    % with (-1) in order to be able to compare inward- and outward-directed 
+    % movements because direction of force field is acting in opposing direction
+
+    elseif(targetNumber == 13)
+        % alpha = 2*pi/4;
+        R = [1, 0; 0, -1]*[0, -1; 1, 0];
+
+    elseif(targetNumber == 12)
+        % alpha = pi/4;
+        R = [1, 0; 0, -1]*[cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
+
+    elseif(targetNumber == 11)
+        % alpha = 0 = 8*pi/4;   % no rotation neccessary
+        R = [1, 0; 0, -1]*[1, 0; 0, 1];       % Identity
+
+    elseif(targetNumber == 10)
+        % alpha = 7*pi/4;
+        R = [1, 0; 0, -1]*[cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+
+    elseif (targetNumber == 9)
+        % alpha = 6*pi/4;
+        R = [1, 0; 0, -1]*[0, 1; -1, 0];
+
+    elseif(targetNumber == 16)
+        % alpha = 5*pi/4;
+        R = [1, 0; 0, -1]*[cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+
+    elseif(targetNumber == 15)
+        % alpha = 4*pi/4 = pi;
+        R = [1, 0; 0, -1]*[-1, 0; 0, -1];
+
+    elseif(targetNumber == 14)
+        % alpha = 3*pi/4;
+        R = [1, 0; 0, -1]*[cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
+
+    end
     
+elseif(strcmp(targetDefinition, 'Study7_KINARM'))
+       
+    if(targetNumber == 3)
+        % alpha = 7*pi/4;
+        R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+    
+    elseif (targetNumber == 2)
+        % alpha = 6*pi/4;
+        R = [0, 1; -1, 0];
+       
+    elseif(targetNumber == 1)
+        % alpha = 5*pi/4;
+        R = [cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
 
-% Inward-directed movements are rotated and the z-value is multiplicated
-% with (-1) in order to be able to compare inward- and outward-directed 
-% movements because direction of force field is acting in opposing direction
 
-%elseif(targetNumber == 9)
-elseif(targetNumber == 13)
-    % alpha = 2*pi/4;
-    R = [1, 0; 0, -1]*[0, -1; 1, 0];
+    % Inward-directed movements are rotated and the z-value is multiplicated
+    % with (-1) in order to be able to compare inward- and outward-directed 
+    % movements because direction of force field is acting in opposing direction
+
+    elseif(targetNumber == 13)
+        % alpha = 7*pi/4;
+        R = [1, 0; 0, -1]*[cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
   
-%elseif(targetNumber == 10)
-elseif(targetNumber == 12)
-    % alpha = pi/4;
-    R = [1, 0; 0, -1]*[cos(pi/4), -sin(pi/4); sin(pi/4), cos(pi/4)];
+    elseif (targetNumber == 12)
+        % alpha = 6*pi/4;
+        R = [1, 0; 0, -1]*[0, 1; -1, 0];
+       
+    elseif(targetNumber == 11)
+        % alpha = 5*pi/4;
+        R = [1, 0; 0, -1]*[cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
 
-elseif(targetNumber == 11)
-    % alpha = 0 = 8*pi/4;   % no rotation neccessary
-    R = [1, 0; 0, -1]*[1, 0; 0, 1];       % Identity
-
-%elseif(targetNumber == 12)       
-elseif(targetNumber == 10)
-    % alpha = 7*pi/4;
-    R = [1, 0; 0, -1]*[cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
-
-%elseif (targetNumber == 13)    
-elseif (targetNumber == 9)
-    % alpha = 6*pi/4;
-    R = [1, 0; 0, -1]*[0, 1; -1, 0];
-
-%elseif(targetNumber == 14)        
-elseif(targetNumber == 16)
-    % alpha = 5*pi/4;
-    R = [1, 0; 0, -1]*[cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
-    
-elseif(targetNumber == 15)
-    % alpha = 4*pi/4 = pi;
-    R = [1, 0; 0, -1]*[-1, 0; 0, -1];
-
-%elseif(targetNumber == 16)    
-elseif(targetNumber == 14)
-    % alpha = 3*pi/4;
-    R = [1, 0; 0, -1]*[cos(3*pi/4), -sin(3*pi/4); sin(3*pi/4), cos(3*pi/4)];
-
-
+    end
 end
 
 % Allocation
