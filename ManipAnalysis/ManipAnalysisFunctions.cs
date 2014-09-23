@@ -2226,15 +2226,13 @@ namespace ManipAnalysis_v2
                                     trial.VelocityNormalized.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("velocityY",
                                     trial.VelocityNormalized.Select(t => t.Y).ToArray());
-                                
-                                _myMatlabWrapper.SetWorkspaceData("baselinePositionX",
-                                    baseline.Position.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselinePositionY",
-                                    baseline.Position.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityX",
-                                    baseline.Velocity.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityY",
-                                    baseline.Velocity.Select(t => t.Y).ToArray());
+
+                                // Commented out for Study 07 (Baseline not implemented yet)
+                                //_myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
+                                //_myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
+                                //_myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
+                                //_myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
+
                                 // Commented out for Study 07 (Baseline not implemented yet)
                                 //_myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
