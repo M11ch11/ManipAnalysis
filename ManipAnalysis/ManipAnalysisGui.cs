@@ -520,10 +520,9 @@ namespace ManipAnalysis_v2
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Sign")
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
-
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
                 {
@@ -532,14 +531,21 @@ namespace ManipAnalysis_v2
                 }
             }
 
-            _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
-                listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
-                textBox_DescriptiveStatistic1_FitEquation.Text,
-                pdTime,
-                checkBox_DescriptiveStatistic1_PlotFit.Checked,
-                checkBox_DescriptiveStatistic1_PlotErrorbars.Checked,
-                null);
+            if (pdTime < 0)
+            {
+                WriteToLogBox("Negative PD-Times are not allowed!");
+            }
+            else
+            {
+                _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
+                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
+                    comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
+                    textBox_DescriptiveStatistic1_FitEquation.Text,
+                    pdTime,
+                    checkBox_DescriptiveStatistic1_PlotFit.Checked,
+                    checkBox_DescriptiveStatistic1_PlotErrorbars.Checked,
+                    null);
+            }
         }
 
         private void button_StatisticPlots_AddAll_Click(object sender, EventArgs e)
@@ -1012,8 +1018,8 @@ namespace ManipAnalysis_v2
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance - Sign")
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
@@ -1022,43 +1028,51 @@ namespace ManipAnalysis_v2
                     inputForm.Dispose();
                 }
             }
-            WriteProgressInfo("Getting data...");
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save mean data file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Second.ToString("00")
-                                      + "-mean-"
-                                      +
-                                      comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
-                                          .Replace("-", pdTime.ToString())
-                                      + "-data";
 
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            if (pdTime < 0)
             {
-                if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
+                WriteToLogBox("Negative PD-Times are not allowed!");
+            }
+            else
+            {
+                WriteProgressInfo("Getting data...");
+                saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Reset();
+                saveFileDialog.Title = @"Save mean data file";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.DefaultExt = ".csv";
+                saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
+                saveFileDialog.OverwritePrompt = true;
+                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                          + "."
+                                          + DateTime.Now.Month.ToString("00")
+                                          + "."
+                                          + DateTime.Now.Day.ToString("00")
+                                          + "-"
+                                          + DateTime.Now.Hour.ToString("00")
+                                          + "."
+                                          + DateTime.Now.Minute.ToString("00")
+                                          + "."
+                                          + DateTime.Now.Second.ToString("00")
+                                          + "-mean-"
+                                          +
+                                          comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
+                                              .Replace("-", pdTime.ToString())
+                                          + "-data";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
-                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                        comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
-                        null,
-                        pdTime,
-                        false,
-                        false,
-                        saveFileDialog.FileName);
+                    if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
+                    {
+                        _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
+                            listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
+                            comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
+                            null,
+                            pdTime,
+                            false,
+                            false,
+                            saveFileDialog.FileName);
+                    }
                 }
             }
         }

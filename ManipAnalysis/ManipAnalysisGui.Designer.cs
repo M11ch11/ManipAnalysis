@@ -811,7 +811,7 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic1_Handedness.Name = "listBox_DescriptiveStatistic1_Handedness";
             this.listBox_DescriptiveStatistic1_Handedness.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox_DescriptiveStatistic1_Handedness.Size = new System.Drawing.Size(158, 69);
-            this.listBox_DescriptiveStatistic1_Handedness.TabIndex = 67;            
+            this.listBox_DescriptiveStatistic1_Handedness.TabIndex = 67;
             // 
             // listBox_DescriptiveStatistic1_ForceField
             // 
@@ -906,11 +906,13 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
-            "Max perpendicular distance - Abs",
-            "Max perpendicular distance - Sign",
-            "Mean perpendicular distance - Abs",
-            "Perpendicular distance - Abs",
-            "Perpendicular distance - Sign",
+            "PD - Abs",
+            "PD - Sign",
+            "PDmax - Abs",
+            "PDmax - Sign",
+            "PDmean - Abs",
+            "PDVmax - Abs",
+            "PDVmax - Sign",
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",

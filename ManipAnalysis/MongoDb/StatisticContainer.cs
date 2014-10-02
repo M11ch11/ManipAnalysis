@@ -14,6 +14,8 @@ namespace ManipAnalysis_v2.MongoDb
         public double AbsoluteBaselineTrajectoryLengthRatio { get; set; }
         public double AbsoluteMaximalPerpendicularDisplacement { get; set; }
         public double SignedMaximalPerpendicularDisplacement { get; set; }
+        public double AbsoluteMaximalPerpendicularDisplacementVmax { get; set; }
+        public double SignedMaximalPerpendicularDisplacementVmax { get; set; }
         public double AbsoluteMeanPerpendicularDisplacement { get; set; }
         public double EnclosedArea { get; set; }
         public double RMSE { get; set; }

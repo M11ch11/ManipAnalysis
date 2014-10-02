@@ -536,11 +536,16 @@ namespace ManipAnalysis_v2
                                             Gzip<StatisticContainer>.DeCompress(
                                                 trialsArray[trialsArrayCounter].ZippedStatistics);
 
-                                        DateTime msIndex = trialsArray[trialsArrayCounter].Statistics
-                                            .AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
-                                            OrderBy(d => Math.Abs(d.Ticks - (trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp)
-                                                                 .ElementAt(0)
-                                                                 .Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks))).ElementAt(0);
+
+                                        long pdTimeTick = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Min(t => t.TimeStamp).Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks; 
+                                       
+                                        DateTime msIndex = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
+                                            OrderBy(t => Math.Abs(t.Ticks - pdTimeTick)).ElementAt(0);
+
+                                        if (pdTimeTick > trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Max(t => t.TimeStamp).Ticks)
+                                        {
+                                            _myManipAnalysisGui.WriteToLogBox("Warning! Selected PD-Time is larger then movement time! [" + tempStatisticPlotContainer.Study + " - " + tempStatisticPlotContainer.Group + " - " + tempStatisticPlotContainer.Szenario + " - " + tempStatisticPlotContainer.Subject + " - " + tempStatisticPlotContainer.Turn + " - Trial " + trialsArray[trialsArrayCounter].TrialNumberInSzenario + "]");
+                                        }
 
                                         switch (statisticType)
                                         {
@@ -567,32 +572,44 @@ namespace ManipAnalysis_v2
                                                 _myMatlabWrapper.ClearWorkspace();
                                                 break;
 
-                                            case "Perpendicular distance - Abs":
+                                            case "PD - Abs":
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                                 break;
 
-                                            case "Mean perpendicular distance - Abs":
+                                            case "PDmean - Abs":
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     trialsArray[trialsArrayCounter].Statistics
                                                         .AbsoluteMeanPerpendicularDisplacement;
                                                 break;
 
-                                            case "Max perpendicular distance - Abs":
+                                            case "PDmax - Abs":
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     trialsArray[trialsArrayCounter].Statistics
                                                         .AbsoluteMaximalPerpendicularDisplacement;
                                                 break;
 
-                                            case "Perpendicular distance - Sign":
+                                            case "PDVmax - Abs":
+                                                statisticData[trialsArrayCounter, meanCount] =
+                                                    trialsArray[trialsArrayCounter].Statistics
+                                                        .AbsoluteMaximalPerpendicularDisplacementVmax;
+                                                break;
+
+                                            case "PD - Sign":
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                                 break;
 
-                                            case "Max perpendicular distance - Sign":
+                                            case "PDmax - Sign":
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     trialsArray[trialsArrayCounter].Statistics
                                                         .SignedMaximalPerpendicularDisplacement;
+                                                break;                                                                                           
+
+                                            case "PDVmax - Sign":
+                                                statisticData[trialsArrayCounter, meanCount] =
+                                                    trialsArray[trialsArrayCounter].Statistics
+                                                        .SignedMaximalPerpendicularDisplacementVmax;
                                                 break;
 
                                             case "Trajectory length abs":
@@ -691,7 +708,7 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Perpendicular distance - Abs":
+                                    case "PD - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " abs plot",
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
@@ -702,7 +719,7 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Mean perpendicular distance - Abs":
+                                    case "PDmean - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
@@ -712,7 +729,7 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Max perpendicular distance - Abs":
+                                    case "PDmax - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("MaxPD abs plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
@@ -722,7 +739,17 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Perpendicular distance - Sign":
+                                    case "PDVmax - Abs":
+                                        _myMatlabWrapper.CreateStatisticFigure("VmaxPD abs plot", "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')",
+                                            "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
+                                            (statisticData.Length / meanCount), 0, 0.05,
+                                            plotFit,
+                                            plotErrorbars);
+                                        break;
+
+                                    case "PD - Sign":
                                         _myMatlabWrapper.CreateStatisticFigure("PD" + pdTime + " sign plot",
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
@@ -733,12 +760,22 @@ namespace ManipAnalysis_v2
                                             plotErrorbars);
                                         break;
 
-                                    case "Max perpendicular distance - Sign":
+                                    case "PDmax - Sign":
                                         _myMatlabWrapper.CreateStatisticFigure("MaxPD sign plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')",
                                             "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
                                             (statisticData.Length/meanCount), -0.05, 0.05,
+                                            plotFit,
+                                            plotErrorbars);
+                                        break;
+
+                                    case "PDVmax - Sign":
+                                        _myMatlabWrapper.CreateStatisticFigure("VmaxPD sign plot", "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')",
+                                            "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
+                                            (statisticData.Length / meanCount), -0.05, 0.05,
                                             plotFit,
                                             plotErrorbars);
                                         break;
@@ -2239,8 +2276,8 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
                                 // Commented out for Study 07 (Baseline not implemented yet)
                                 //_myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                                _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'],targetNumber);");
-                                _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'],targetNumber);");
+                                _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
+                                _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
                                 _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
                                 _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                 _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
@@ -2283,6 +2320,10 @@ namespace ManipAnalysis_v2
                                     statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
                                     statisticContainer.SignedPerpendicularDisplacement.Add(signed);
                                 }
+
+                                DateTime maxVtime = trial.VelocityNormalized.First(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) == trial.VelocityNormalized.Max(u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2)))).TimeStamp;
+                                statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+                                statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
 
                                 trial.Statistics = statisticContainer;
                                 // Commented out for Study 07 (Baseline not implemented yet)
