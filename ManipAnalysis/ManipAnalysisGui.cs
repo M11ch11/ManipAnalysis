@@ -366,29 +366,24 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
-            string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
             SubjectContainer[] subjects =
                 listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int i = 0; i < groups.Length; i++)
+            for (int j = 0; j < subjects.Length; j++)
             {
-                for (int j = 0; j < subjects.Length; j++)
-                {
-                    IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                        subjects[j]);
+                IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
-                    if (tempTurnString != null)
+                if (tempTurnString != null)
+                {
+                    if (turnIntersect == null)
                     {
-                        if (turnIntersect == null)
-                        {
-                            turnIntersect = tempTurnString.ToArray();
-                        }
-                        else
-                        {
-                            turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
-                        }
+                        turnIntersect = tempTurnString.ToArray();
+                    }
+                    else
+                    {
+                        turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
                     }
                 }
             }
@@ -777,31 +772,27 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
-            string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
             SubjectContainer[] subjects =
                 listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int i = 0; i < groups.Length; i++)
+            for (int j = 0; j < subjects.Length; j++)
             {
-                for (int j = 0; j < subjects.Length; j++)
-                {
-                    IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                        subjects[j]);
+                IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
-                    if (tempTurnString.Any())
+                if (tempTurnString.Any())
+                {
+                    if (turnIntersect == null)
                     {
-                        if (turnIntersect == null)
-                        {
-                            turnIntersect = tempTurnString.ToArray();
-                        }
-                        else
-                        {
-                            turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
-                        }
+                        turnIntersect = tempTurnString.ToArray();
+                    }
+                    else
+                    {
+                        turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
                     }
                 }
+
             }
 
             if (turnIntersect != null)
@@ -1321,32 +1312,29 @@ namespace ManipAnalysis_v2
             listBox_TrajectoryVelocity_Trials.Items.Clear();
 
             string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
-            string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
             SubjectContainer[] subjects =
                 listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int i = 0; i < groups.Length; i++)
-            {
-                for (int j = 0; j < subjects.Length; j++)
-                {
-                    IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, groups[i], szenario,
-                        subjects[j]);
 
-                    if (tempTurnString != null)
+            for (int j = 0; j < subjects.Length; j++)
+            {
+                IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
+
+                if (tempTurnString != null)
+                {
+                    if (turnIntersect == null)
                     {
-                        if (turnIntersect == null)
-                        {
-                            turnIntersect = tempTurnString.ToArray();
-                        }
-                        else
-                        {
-                            turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
-                        }
+                        turnIntersect = tempTurnString.ToArray();
+                    }
+                    else
+                    {
+                        turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
                     }
                 }
             }
+            
 
             if (turnIntersect != null)
             {

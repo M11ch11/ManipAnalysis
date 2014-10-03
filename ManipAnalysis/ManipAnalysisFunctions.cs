@@ -144,6 +144,25 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
+        ///     Gets all turns from database of a given study, szenario and subject
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <param name="subject"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetTurns(string study, string szenario, SubjectContainer subject)
+        {
+            var turnList = new List<string>();
+            int turns = _myDatabaseWrapper.GetTurns(study, szenario, subject).Count();
+            for (int turn = 1; turn <= turns; turn++)
+            {
+                turnList.Add("Turn " + turn);
+            }
+            return turnList;
+        }
+
+        /// <summary>
         ///     Gets all turns from database of a given study, group, szenario and subject
         /// </summary>
         /// <param name="study"></param>
@@ -151,8 +170,7 @@ namespace ManipAnalysis_v2
         /// <param name="szenario"></param>
         /// <param name="subject"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetTurns(string study, string group, string szenario,
-            SubjectContainer subject)
+        public IEnumerable<string> GetTurns(string study, string group, string szenario, SubjectContainer subject)
         {
             var turnList = new List<string>();
             int turns = _myDatabaseWrapper.GetTurns(study, group, szenario, subject).Count();
@@ -2841,14 +2859,14 @@ namespace ManipAnalysis_v2
                                     tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials,
                                     trialTypes, forceFields, handedness, fields).ToArray();
 
-                                    for(int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
+                                    for (int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                                     {
                                         if (TaskManager.Cancel)
                                         {
                                             break;
                                         }
-                                        
-                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
+
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
 
                                         if (trialsArray != null)
                                         {
@@ -2880,94 +2898,94 @@ namespace ManipAnalysis_v2
                                             }
                                         }
                                     }
+                                }
+                                int frameCount = 0;
+                                int meanCount = 0;
+                                if (trajectoryVelocityForce == "Trajectory - Normalized")
+                                {
+                                    frameCount = positionData[0].Count;
+                                    meanCount = positionData.Count;
+                                }
+                                else if (trajectoryVelocityForce == "Velocity - Normalized")
+                                {
+                                    frameCount = velocityData[0].Count;
+                                    meanCount = velocityData.Count;
+                                }
+                                else if (trajectoryVelocityForce == "Force - Normalized")
+                                {
+                                    frameCount = forceData[0].Count;
+                                    meanCount = forceData.Count;
+                                }
 
-                                    int frameCount = 0;
-                                    int meanCount = 0;
-                                    if (trajectoryVelocityForce == "Trajectory - Normalized")
-                                    {
-                                        frameCount = positionData[0].Count;
-                                        meanCount = positionData.Count;
-                                    }
-                                    else if (trajectoryVelocityForce == "Velocity - Normalized")
-                                    {
-                                        frameCount = velocityData[0].Count;
-                                        meanCount = velocityData.Count;
-                                    }
-                                    else if (trajectoryVelocityForce == "Force - Normalized")
-                                    {
-                                        frameCount = forceData[0].Count;
-                                        meanCount = forceData.Count;
-                                    }
+                                if (frameCount > 0)
+                                {
+                                    var xData = new double[frameCount];
+                                    var yData = new double[frameCount];
+                                    var zData = new double[frameCount];
 
-                                    if (frameCount > 0)
+                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
-                                        var xData = new double[frameCount];
-                                        var yData = new double[frameCount];
-                                        var zData = new double[frameCount];
-
-                                        for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
-                                        {
-                                            for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
-                                            {
-                                                if (trajectoryVelocityForce == "Trajectory - Normalized")
-                                                {
-                                                    xData[frameCounter] += positionData[meanCounter][frameCounter].X;
-                                                    yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                                    zData[frameCounter] += positionData[meanCounter][frameCounter].Z;
-                                                }
-                                                else if (trajectoryVelocityForce == "Velocity - Normalized")
-                                                {
-                                                    xData[frameCounter] +=
-                                                        Math.Sqrt(Math.Pow(velocityData[meanCounter][frameCounter].X, 2) +
-                                                                  Math.Pow(velocityData[meanCounter][frameCounter].Y, 2));
-                                                }
-                                                else if (trajectoryVelocityForce == "Force - Normalized")
-                                                {
-                                                    xData[frameCounter] += forceData[meanCounter][frameCounter].X;
-                                                    yData[frameCounter] += forceData[meanCounter][frameCounter].Y;
-                                                }
-                                            }
-                                        }
-
                                         for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                         {
                                             if (trajectoryVelocityForce == "Trajectory - Normalized")
                                             {
-                                                xData[frameCounter] /= positionData.Count;
-                                                yData[frameCounter] /= positionData.Count;
-                                                zData[frameCounter] /= positionData.Count;
+                                                xData[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                                yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
+                                                zData[frameCounter] += positionData[meanCounter][frameCounter].Z;
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
-                                                xData[frameCounter] /= meanCount;
+                                                xData[frameCounter] +=
+                                                    Math.Sqrt(Math.Pow(velocityData[meanCounter][frameCounter].X, 2) +
+                                                              Math.Pow(velocityData[meanCounter][frameCounter].Y, 2));
                                             }
                                             else if (trajectoryVelocityForce == "Force - Normalized")
                                             {
-                                                xData[frameCounter] /= meanCount;
-                                                yData[frameCounter] /= meanCount;
+                                                xData[frameCounter] += forceData[meanCounter][frameCounter].X;
+                                                yData[frameCounter] += forceData[meanCounter][frameCounter].Y;
                                             }
                                         }
+                                    }
 
+                                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
+                                    {
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
-                                            _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
-                                            _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
-                                            _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
+                                            xData[frameCounter] /= positionData.Count;
+                                            yData[frameCounter] /= positionData.Count;
+                                            zData[frameCounter] /= positionData.Count;
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
-                                            _myMatlabWrapper.SetWorkspaceData("velocityData", xData);
-                                            _myMatlabWrapper.Plot("velocityData", "black", 2);
+                                            xData[frameCounter] /= meanCount;
                                         }
                                         else if (trajectoryVelocityForce == "Force - Normalized")
                                         {
-                                            _myMatlabWrapper.SetWorkspaceData("forceX", xData);
-                                            _myMatlabWrapper.SetWorkspaceData("forceY", yData);
-                                            _myMatlabWrapper.Plot("forceX", "red", 2);
-                                            _myMatlabWrapper.Plot("forceY", "green", 2);
+                                            xData[frameCounter] /= meanCount;
+                                            yData[frameCounter] /= meanCount;
                                         }
                                     }
+
+                                    if (trajectoryVelocityForce == "Trajectory - Normalized")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
+                                        _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
+                                        _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
+                                    }
+                                    else if (trajectoryVelocityForce == "Velocity - Normalized")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("velocityData", xData);
+                                        _myMatlabWrapper.Plot("velocityData", "black", 2);
+                                    }
+                                    else if (trajectoryVelocityForce == "Force - Normalized")
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("forceX", xData);
+                                        _myMatlabWrapper.SetWorkspaceData("forceY", yData);
+                                        _myMatlabWrapper.Plot("forceX", "red", 2);
+                                        _myMatlabWrapper.Plot("forceY", "green", 2);
+                                    }
                                 }
+
                             }
                         }
                     }

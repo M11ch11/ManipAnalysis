@@ -403,6 +403,25 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public IEnumerable<DateTime> GetTurns(string studyName, string szenarioName, SubjectContainer subject)
+        {
+            try
+            {
+                return
+                    _trialCollection.AsQueryable()
+                        .Where(
+                            t =>
+                                t.Study == studyName && t.Szenario == szenarioName && t.Subject == subject)
+                        .Select(t => t.MeasureFile.CreationTime)
+                        .Distinct();
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetTurns: " + ex);
+                return new List<DateTime>();
+            }
+        }
+
         public IEnumerable<int> GetTargets(string studyName, string szenarioName)
         {
             try

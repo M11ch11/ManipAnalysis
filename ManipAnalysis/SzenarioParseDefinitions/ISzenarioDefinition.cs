@@ -44,6 +44,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 targetContainer.Number = targetNumber;
 
+                currentTrial.StartDateTimeOfTrialRecording = DateTime.Parse(startTime);
                 currentTrial.MeasuredForcesRaw = new List<ForceContainer>();
                 currentTrial.MomentForcesRaw = new List<ForceContainer>();
                 currentTrial.PositionRaw = new List<PositionContainer>();
@@ -108,10 +109,22 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 // Don't forget to close the reader
                 c3DReader.Close();
 
-                currentTrial = setTrialMetadata(myManipAnalysisGui, trialsContainer, currentTrial);
+                currentTrial = setTrialMetadata(myManipAnalysisGui, currentTrial);
                 if (currentTrial != null)
                 {
                     trialsContainer.Add(currentTrial);
+                }
+            }
+
+            foreach(string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+            {
+                foreach(int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
+                {
+                    IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
+                    for (int i = 0; i < tempList.Count(); i++)
+                    {
+                        tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
+                    }
                 }
             }
 
@@ -123,6 +136,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return Math.PI * angle / 180.0;
         }
 
-        public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, List<Trial> trialsContainer, Trial trial);
+        public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MongoDB.Bson;
+using System;
 
 namespace ManipAnalysis_v2.MongoDb
 {
@@ -77,6 +78,8 @@ namespace ManipAnalysis_v2.MongoDb
         public int RawDataSampleRate { get; set; }
         public int FilteredDataSampleRate { get; set; }
         public int NormalizedDataSampleRate { get; set; }
+
+        public DateTime StartDateTimeOfTrialRecording { get; set; }
 
         public string TrialVersion { get; set; }
     }

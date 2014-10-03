@@ -12,7 +12,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         public const string StudyName = "Study07";
         public const string SzenarioName = "LR_02_LRc_Training&NoFFTransfer";
 
-        public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, List<Trial> trialsContainer, Trial trial)
+        public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30) // Target 10/20/30 == StartTrial
             {
@@ -143,21 +143,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "LR_Direct-EC-Transfer";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 180;
-                }
-
-
-                if (trial != null)
-                {
-                    try
-                    {
-                        int maxTargetTrialNumberInSzenario = trialsContainer.Where(t => t.Szenario == trial.Szenario && t.Target.Number == trial.Target.Number).Max(t => t.TargetTrialNumberInSzenario);
-                        trial.TargetTrialNumberInSzenario = maxTargetTrialNumberInSzenario + 1;
-                    }
-                    catch
-                    {
-                        trial.TargetTrialNumberInSzenario = 1;
-                    }
-                }
+                }               
             }
 
             return trial;
