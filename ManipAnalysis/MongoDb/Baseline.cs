@@ -5,6 +5,21 @@ namespace ManipAnalysis_v2.MongoDb
 {
     internal class Baseline
     {
+        public enum TrialTypeEnum
+        {
+            StandardTrial = 0, ErrorClampTrial = 1, CatchTrial = 2
+        };
+
+        public enum ForceFieldTypeEnum
+        {
+            NullField = 0, ForceFieldCW = 1, ForceFieldCCW = 2
+        };
+
+        public enum HandednessEnum
+        {
+            RightHand = 0, LeftHand = 1, Unknown = 2
+        };
+
         public List<ForceContainer> MeasuredForces;
         public List<ForceContainer> MomentForces;
         public List<ForceContainer> NominalForces;

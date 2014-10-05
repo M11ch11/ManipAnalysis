@@ -1200,20 +1200,7 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.ClearWorkspace();
 
                                 #endregion
-
-                                _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
-
-                                #region Calculate baselines
-
-                                if (trialsContainer[0].Szenario == "Szenario02" || // Some previous Studys
-                                    trialsContainer[0].Szenario == "Szenario42" // Study 6 KINARM
-                                    )
-                                {
-                                    baselinesContainer = CalculateBaselines(trialsContainer);
-                                }
-
-                                #endregion
-
+                                
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
 
                                 #region Calculate szenario mean times
@@ -1775,252 +1762,41 @@ namespace ManipAnalysis_v2
             }
         }
 
-        private List<Baseline> CalculateBaselines(List<Trial> trialsContainer)
-        {
-            var baselines = new List<Baseline>();
-
-            foreach(int targetCounter in trialsContainer.Select(t => t.Target.Number).Distinct())
-            {
-                List<Trial> baselineTrials = null;
-                lock (trialsContainer)
-                {
-                    // Get Target-trial 2-MAX (6)
-                    baselineTrials =
-                        trialsContainer.Where(t => t.Target.Number == targetCounter && t.TargetTrialNumberInSzenario > 1).ToList();
-                }
-
-                List<double[]> measuredForcesX =
-                    baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.X).ToArray()).ToList();
-                List<double[]> measuredForcesY =
-                    baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.Y).ToArray()).ToList();
-                List<double[]> measuredForcesZ =
-                    baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.Z).ToArray()).ToList();
-
-                List<double[]> nominalForcesX = null;
-                List<double[]> nominalForcesY = null;
-                List<double[]> nominalForcesZ = null;
-                if (baselineTrials[0].NominalForcesNormalized != null)
-                {
-                    nominalForcesX = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.X).ToArray()).ToList();
-                    nominalForcesY = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.Y).ToArray()).ToList();
-                    nominalForcesZ = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.Z).ToArray()).ToList();
-                }
-
-                List<double[]> momentForcesX =
-                    baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.X).ToArray()).ToList();
-                List<double[]> momentForcesY =
-                    baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.Y).ToArray()).ToList();
-                List<double[]> momentForcesZ =
-                    baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.Z).ToArray()).ToList();
-
-                List<double[]> positionX = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.X).ToArray()).ToList();
-                List<double[]> positionY = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.Y).ToArray()).ToList();
-                List<double[]> positionZ = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.Z).ToArray()).ToList();
-
-                List<double[]> velocityX = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.X).ToArray()).ToList();
-                List<double[]> velocityY = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.Y).ToArray()).ToList();
-                List<double[]> velocityZ = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.Z).ToArray()).ToList();
-
-
-                var tempBaseline = new Baseline();
-                tempBaseline.Group = baselineTrials[0].Group;
-                tempBaseline.Study = baselineTrials[0].Study;
-                tempBaseline.MeasureFile = baselineTrials[0].MeasureFile;
-                tempBaseline.Subject = baselineTrials[0].Subject;
-                tempBaseline.Szenario = baselineTrials[0].Szenario;
-                tempBaseline.Target = baselineTrials[0].Target;
-                tempBaseline.MeasuredForces = new List<ForceContainer>();
-                if (baselineTrials[0].NominalForcesNormalized != null)
-                {
-                    tempBaseline.NominalForces = new List<ForceContainer>();
-                }
-                tempBaseline.MomentForces = new List<ForceContainer>();
-                tempBaseline.Position = new List<PositionContainer>();
-                tempBaseline.Velocity = new List<VelocityContainer>();
-
-                int frameCount = measuredForcesX[0].Length;
-                int baselineTrialCount = baselineTrials.Count;
-
-                var tempMeasuredForcesX = new double[frameCount];
-                var tempMeasuredForcesY = new double[frameCount];
-                var tempMeasuredForcesZ = new double[frameCount];
-
-                double[] tempNominalForcesX = null;
-                double[] tempNominalForcesY = null;
-                double[] tempNominalForcesZ = null;
-                if (nominalForcesX != null)
-                {
-                    tempNominalForcesX = new double[frameCount];
-                    tempNominalForcesY = new double[frameCount];
-                    tempNominalForcesZ = new double[frameCount];
-                }
-                var tempMomentForcesX = new double[frameCount];
-                var tempMomentForcesY = new double[frameCount];
-                var tempMomentForcesZ = new double[frameCount];
-
-                var tempPositionX = new double[frameCount];
-                var tempPositionY = new double[frameCount];
-                var tempPositionZ = new double[frameCount];
-
-                var tempVelocityX = new double[frameCount];
-                var tempVelocityY = new double[frameCount];
-                var tempVelocityZ = new double[frameCount];
-
-                var baselineTimeStamps = new DateTime[frameCount];
-                for (int timeSample = 0; timeSample < frameCount; timeSample++)
-                {
-                    baselineTimeStamps[timeSample] = trialsContainer[0].MeasureFile.CreationTime;
-                    baselineTimeStamps[timeSample] =
-                        baselineTimeStamps[timeSample].AddSeconds((1.0/
-                                                                   Convert.ToDouble(baselineTrials[0].NormalizedDataSampleRate))*
-                                                                  Convert.ToDouble(timeSample));
-                }
-
-                for (int trialCounter = 0; trialCounter < baselineTrialCount; trialCounter++)
-                {
-                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
-                    {
-                        tempMeasuredForcesX[frameCounter] += measuredForcesX[trialCounter][frameCounter];
-                        tempMeasuredForcesY[frameCounter] += measuredForcesY[trialCounter][frameCounter];
-                        tempMeasuredForcesZ[frameCounter] += measuredForcesZ[trialCounter][frameCounter];
-
-                        if (nominalForcesX != null)
-                        {
-                            tempNominalForcesX[frameCounter] += nominalForcesX[trialCounter][frameCounter];
-                            tempNominalForcesY[frameCounter] += nominalForcesY[trialCounter][frameCounter];
-                            tempNominalForcesZ[frameCounter] += nominalForcesZ[trialCounter][frameCounter];
-                        }
-
-                        tempMomentForcesX[frameCounter] += momentForcesX[trialCounter][frameCounter];
-                        tempMomentForcesY[frameCounter] += momentForcesY[trialCounter][frameCounter];
-                        tempMomentForcesZ[frameCounter] += momentForcesZ[trialCounter][frameCounter];
-
-                        tempPositionX[frameCounter] += positionX[trialCounter][frameCounter];
-                        tempPositionY[frameCounter] += positionY[trialCounter][frameCounter];
-                        tempPositionZ[frameCounter] += positionZ[trialCounter][frameCounter];
-
-                        tempVelocityX[frameCounter] += velocityX[trialCounter][frameCounter];
-                        tempVelocityY[frameCounter] += velocityY[trialCounter][frameCounter];
-                        tempVelocityZ[frameCounter] += velocityZ[trialCounter][frameCounter];
-                    }
-                }
-
-                for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
-                {
-                    tempMeasuredForcesX[frameCounter] /= baselineTrialCount;
-                    tempMeasuredForcesY[frameCounter] /= baselineTrialCount;
-                    tempMeasuredForcesZ[frameCounter] /= baselineTrialCount;
-
-                    if (nominalForcesX != null)
-                    {
-                        tempNominalForcesX[frameCounter] /= baselineTrialCount;
-                        tempNominalForcesY[frameCounter] /= baselineTrialCount;
-                        tempNominalForcesZ[frameCounter] /= baselineTrialCount;
-                    }
-
-                    tempMomentForcesX[frameCounter] /= baselineTrialCount;
-                    tempMomentForcesY[frameCounter] /= baselineTrialCount;
-                    tempMomentForcesZ[frameCounter] /= baselineTrialCount;
-
-                    tempPositionX[frameCounter] /= baselineTrialCount;
-                    tempPositionY[frameCounter] /= baselineTrialCount;
-                    tempPositionZ[frameCounter] /= baselineTrialCount;
-
-                    tempVelocityX[frameCounter] /= baselineTrialCount;
-                    tempVelocityY[frameCounter] /= baselineTrialCount;
-                    tempVelocityZ[frameCounter] /= baselineTrialCount;
-
-                    var measuredForceContainer = new ForceContainer();
-                    ForceContainer nominalForceContainer = null;
-                    if (nominalForcesX != null)
-                    {
-                        nominalForceContainer = new ForceContainer();
-                    }
-                    var momentForceContainer = new ForceContainer();
-                    var positionContainer = new PositionContainer();
-                    var velocityContainer = new VelocityContainer();
-
-                    measuredForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
-                    measuredForceContainer.PositionStatus = -1;
-                    measuredForceContainer.X = tempMeasuredForcesX[frameCounter];
-                    measuredForceContainer.Y = tempMeasuredForcesY[frameCounter];
-                    measuredForceContainer.Z = tempMeasuredForcesZ[frameCounter];
-
-                    if (nominalForceContainer != null)
-                    {
-                        nominalForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
-                        nominalForceContainer.PositionStatus = -1;
-                        nominalForceContainer.X = tempNominalForcesX[frameCounter];
-                        nominalForceContainer.Y = tempNominalForcesY[frameCounter];
-                        nominalForceContainer.Z = tempNominalForcesZ[frameCounter];
-                    }
-
-                    momentForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
-                    momentForceContainer.PositionStatus = -1;
-                    momentForceContainer.X = tempMomentForcesX[frameCounter];
-                    momentForceContainer.Y = tempMomentForcesY[frameCounter];
-                    momentForceContainer.Z = tempMomentForcesZ[frameCounter];
-
-                    positionContainer.TimeStamp = baselineTimeStamps[frameCounter];
-                    positionContainer.PositionStatus = -1;
-                    positionContainer.X = tempPositionX[frameCounter];
-                    positionContainer.Y = tempPositionY[frameCounter];
-                    positionContainer.Z = tempPositionZ[frameCounter];
-
-                    velocityContainer.TimeStamp = baselineTimeStamps[frameCounter];
-                    velocityContainer.PositionStatus = -1;
-                    velocityContainer.X = tempVelocityX[frameCounter];
-                    velocityContainer.Y = tempVelocityY[frameCounter];
-                    velocityContainer.Z = tempVelocityZ[frameCounter];
-
-                    tempBaseline.MeasuredForces.Add(measuredForceContainer);
-                    if (nominalForceContainer != null)
-                    {
-                        tempBaseline.NominalForces.Add(nominalForceContainer);
-                    }
-                    tempBaseline.MomentForces.Add(momentForceContainer);
-                    tempBaseline.Position.Add(positionContainer);
-                    tempBaseline.Velocity.Add(velocityContainer);
-                }
-                lock (baselines)
-                {
-                    baselines.Add(tempBaseline);
-                }
-            }
-            return baselines;
-        }
-
         private List<SzenarioMeanTime> CalculateSzenarioMeanTimes(List<Trial> trialsContainer)
         {
             var szenarioMeanTimes = new List<SzenarioMeanTime>();
 
-            foreach (int targetCounter in trialsContainer.Select(t => t.Target.Number).Distinct())
+            foreach (string szenario in trialsContainer.Select(t => t.Szenario))
             {
-                var tempSzenarioMeanTime = new SzenarioMeanTime();
-                var targetContainer = new TargetContainer {Number = targetCounter};
-
-                tempSzenarioMeanTime.Group = trialsContainer[0].Group;
-                tempSzenarioMeanTime.MeasureFile = trialsContainer[0].MeasureFile;
-                tempSzenarioMeanTime.Study = trialsContainer[0].Study;
-                tempSzenarioMeanTime.Subject = trialsContainer[0].Subject;
-                tempSzenarioMeanTime.Szenario = trialsContainer[0].Szenario;
-                tempSzenarioMeanTime.Target = targetContainer;
-
-                long[] targetDurationTimes = null;
-                lock (trialsContainer)
+                IEnumerable<Trial> szenarioTrialsContainer = trialsContainer.Where(t => t.Szenario == szenario);
+                foreach (int targetCounter in szenarioTrialsContainer.Select(t => t.Target.Number).Distinct())
                 {
-                    targetDurationTimes = trialsContainer.Where(t => t.Target.Number == targetCounter)
-                        .Select(
-                            t =>
-                                t.PositionNormalized.Max(u => u.TimeStamp.Ticks) -
-                                t.PositionNormalized.Min(u => u.TimeStamp.Ticks)).ToArray();
-                }
-                tempSzenarioMeanTime.MeanTime = new TimeSpan(Convert.ToInt64(targetDurationTimes.Average()));
-                tempSzenarioMeanTime.MeanTimeStd = new TimeSpan(Convert.ToInt64(targetDurationTimes.StdDev()));
+                    var tempSzenarioMeanTime = new SzenarioMeanTime();
+                    var targetContainer = new TargetContainer { Number = targetCounter };
 
-                lock (szenarioMeanTimes)
-                {
-                    szenarioMeanTimes.Add(tempSzenarioMeanTime);
+                    tempSzenarioMeanTime.Group = szenarioTrialsContainer.ElementAt(0).Group;
+                    tempSzenarioMeanTime.MeasureFile = szenarioTrialsContainer.ElementAt(0).MeasureFile;
+                    tempSzenarioMeanTime.Study = szenarioTrialsContainer.ElementAt(0).Study;
+                    tempSzenarioMeanTime.Subject = szenarioTrialsContainer.ElementAt(0).Subject;
+                    tempSzenarioMeanTime.Szenario = szenarioTrialsContainer.ElementAt(0).Szenario;
+                    tempSzenarioMeanTime.Target = targetContainer;
+
+                    long[] targetDurationTimes = null;
+                    lock (trialsContainer)
+                    {
+                        targetDurationTimes = trialsContainer.Where(t => t.Target.Number == targetCounter)
+                            .Select(
+                                t =>
+                                    t.PositionNormalized.Max(u => u.TimeStamp.Ticks) -
+                                    t.PositionNormalized.Min(u => u.TimeStamp.Ticks)).ToArray();
+                    }
+                    tempSzenarioMeanTime.MeanTime = new TimeSpan(Convert.ToInt64(targetDurationTimes.Average()));
+                    tempSzenarioMeanTime.MeanTimeStd = new TimeSpan(Convert.ToInt64(targetDurationTimes.StdDev()));
+
+                    lock (szenarioMeanTimes)
+                    {
+                        szenarioMeanTimes.Add(tempSzenarioMeanTime);
+                    }
                 }
             }
 
@@ -2219,6 +1995,329 @@ namespace ManipAnalysis_v2
                     }
                 }
             });
+        }
+
+        public void CalculateBaselines()
+        {
+            TaskManager.PushBack(Task.Factory.StartNew(delegate
+            {
+                while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
+                {
+                    Thread.Sleep(100);
+                }
+
+                _myManipAnalysisGui.EnableTabPages(false);
+                _myManipAnalysisGui.WriteProgressInfo("Calculating baselines...");
+
+                try
+                {
+                    foreach(string study in _myDatabaseWrapper.GetStudys())
+                    {
+                        if(study == "Study 7")
+                        {
+                            IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
+                            string[] baselineSzenarios = new string[]{"LR_Base1", "LR_Base2", "RL_Base1", "RL_Base2"};
+                            Dictionary<string, Dictionary<SubjectContainer, List<string>>> baselineGroupSubjectSzenarioDict = new Dictionary<string, Dictionary<SubjectContainer, List<string>>>();
+
+                            foreach (string group in groups)
+                            {
+                                if (baselineGroupSubjectSzenarioDict[group] == null)
+                                {
+                                    baselineGroupSubjectSzenarioDict[group] = new Dictionary<SubjectContainer, List<string>>();
+                                }
+
+                                foreach (string baselineSzenario in baselineSzenarios)
+                                {
+                                    foreach (SubjectContainer subject in _myDatabaseWrapper.GetSubjects(study, group, baselineSzenario))
+                                    {
+                                        if (baselineGroupSubjectSzenarioDict[group][subject] == null)
+                                        {
+                                            baselineGroupSubjectSzenarioDict[group][subject] = new List<string>();
+                                        }
+
+                                        if (!baselineGroupSubjectSzenarioDict[group][subject].Contains(baselineSzenario))
+                                        {
+                                            baselineGroupSubjectSzenarioDict[group][subject].Add(baselineSzenario);
+                                        }
+                                    }
+                                }
+                            }
+
+                            foreach (string group in baselineGroupSubjectSzenarioDict.Keys)
+                            {
+                                foreach(SubjectContainer subject in baselineGroupSubjectSzenarioDict[group].Keys)
+                                {
+                                    if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("LR_")))
+                                    {
+                                        DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base1", subject).ElementAt(0);
+                                        DateTime turnBase2 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2", subject).ElementAt(0);
+
+                                        var baselineFields = new FieldsBuilder<Trial>();
+                                        baselineFields.Include(
+                                            t1 => t1.ZippedPositionNormalized,
+                                            t2 => t2.ZippedVelocityNormalized,
+                                            t3 => t3.ZippedMeasuredForcesNormalized,
+                                            t4 => t4.TrialType,
+                                            t5 => t5.ForceFieldType,
+                                            t6 => t6.Handedness,
+                                            t7 => t7.TrialNumberInSzenario);
+
+                                        List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base1", subject, turnBase1, null, baselineFields).ToList();
+                                        List<Trial> base2 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2", subject, turnBase2, null, baselineFields).ToList();
+
+                                        //_myDatabaseWrapper.UpdateTrialBaselineId
+                                    }
+                                    else if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("RL_")))
+                                    {
+                                        DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base1", subject).ElementAt(0);
+                                        DateTime turnBase2 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2", subject).ElementAt(0);
+
+                                        var baselineFields = new FieldsBuilder<Trial>();
+                                        baselineFields.Include(
+                                            t1 => t1.ZippedPositionNormalized, 
+                                            t2 => t2.ZippedVelocityNormalized,
+                                            t3 => t3.ZippedMeasuredForcesNormalized, 
+                                            t4 => t4.TrialType, 
+                                            t5 => t5.ForceFieldType, 
+                                            t6 => t6.Handedness,
+                                            t7 => t7.TrialNumberInSzenario,
+                                            t8 => t8.Id);
+
+                                        List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base1", subject, turnBase1, null, baselineFields).ToList();
+                                        List<Trial> base2 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2", subject, turnBase2, null, baselineFields).ToList();
+
+                                        //_myDatabaseWrapper.UpdateTrialBaselineId
+                                    }
+                                }
+                            }                           
+                        }
+                    }
+
+                   
+                    /*
+                    var baselines = new List<Baseline>();
+
+                    foreach (int targetCounter in trialsContainer.Select(t => t.Target.Number).Distinct())
+                    {
+                        List<Trial> baselineTrials = null;
+                        lock (trialsContainer)
+                        {
+                            // Get Target-trial 2-MAX (6)
+                            baselineTrials =
+                                trialsContainer.Where(t => t.Target.Number == targetCounter && t.TargetTrialNumberInSzenario > 1).ToList();
+                        }
+
+                        List<double[]> measuredForcesX =
+                            baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.X).ToArray()).ToList();
+                        List<double[]> measuredForcesY =
+                            baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.Y).ToArray()).ToList();
+                        List<double[]> measuredForcesZ =
+                            baselineTrials.Select(t => t.MeasuredForcesNormalized.Select(u => u.Z).ToArray()).ToList();
+
+                        List<double[]> nominalForcesX = null;
+                        List<double[]> nominalForcesY = null;
+                        List<double[]> nominalForcesZ = null;
+                        if (baselineTrials[0].NominalForcesNormalized != null)
+                        {
+                            nominalForcesX = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.X).ToArray()).ToList();
+                            nominalForcesY = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.Y).ToArray()).ToList();
+                            nominalForcesZ = baselineTrials.Select(t => t.NominalForcesNormalized.Select(u => u.Z).ToArray()).ToList();
+                        }
+
+                        List<double[]> momentForcesX =
+                            baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.X).ToArray()).ToList();
+                        List<double[]> momentForcesY =
+                            baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.Y).ToArray()).ToList();
+                        List<double[]> momentForcesZ =
+                            baselineTrials.Select(t => t.MomentForcesNormalized.Select(u => u.Z).ToArray()).ToList();
+
+                        List<double[]> positionX = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.X).ToArray()).ToList();
+                        List<double[]> positionY = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.Y).ToArray()).ToList();
+                        List<double[]> positionZ = baselineTrials.Select(t => t.PositionNormalized.Select(u => u.Z).ToArray()).ToList();
+
+                        List<double[]> velocityX = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.X).ToArray()).ToList();
+                        List<double[]> velocityY = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.Y).ToArray()).ToList();
+                        List<double[]> velocityZ = baselineTrials.Select(t => t.VelocityNormalized.Select(u => u.Z).ToArray()).ToList();
+
+
+                        var tempBaseline = new Baseline();
+                        tempBaseline.Group = baselineTrials[0].Group;
+                        tempBaseline.Study = baselineTrials[0].Study;
+                        tempBaseline.MeasureFile = baselineTrials[0].MeasureFile;
+                        tempBaseline.Subject = baselineTrials[0].Subject;
+                        tempBaseline.Szenario = baselineTrials[0].Szenario;
+                        tempBaseline.Target = baselineTrials[0].Target;
+                        tempBaseline.MeasuredForces = new List<ForceContainer>();
+                        if (baselineTrials[0].NominalForcesNormalized != null)
+                        {
+                            tempBaseline.NominalForces = new List<ForceContainer>();
+                        }
+                        tempBaseline.MomentForces = new List<ForceContainer>();
+                        tempBaseline.Position = new List<PositionContainer>();
+                        tempBaseline.Velocity = new List<VelocityContainer>();
+
+                        int frameCount = measuredForcesX[0].Length;
+                        int baselineTrialCount = baselineTrials.Count;
+
+                        var tempMeasuredForcesX = new double[frameCount];
+                        var tempMeasuredForcesY = new double[frameCount];
+                        var tempMeasuredForcesZ = new double[frameCount];
+
+                        double[] tempNominalForcesX = null;
+                        double[] tempNominalForcesY = null;
+                        double[] tempNominalForcesZ = null;
+                        if (nominalForcesX != null)
+                        {
+                            tempNominalForcesX = new double[frameCount];
+                            tempNominalForcesY = new double[frameCount];
+                            tempNominalForcesZ = new double[frameCount];
+                        }
+                        var tempMomentForcesX = new double[frameCount];
+                        var tempMomentForcesY = new double[frameCount];
+                        var tempMomentForcesZ = new double[frameCount];
+
+                        var tempPositionX = new double[frameCount];
+                        var tempPositionY = new double[frameCount];
+                        var tempPositionZ = new double[frameCount];
+
+                        var tempVelocityX = new double[frameCount];
+                        var tempVelocityY = new double[frameCount];
+                        var tempVelocityZ = new double[frameCount];
+
+                        var baselineTimeStamps = new DateTime[frameCount];
+                        for (int timeSample = 0; timeSample < frameCount; timeSample++)
+                        {
+                            baselineTimeStamps[timeSample] = trialsContainer[0].MeasureFile.CreationTime;
+                            baselineTimeStamps[timeSample] =
+                                baselineTimeStamps[timeSample].AddSeconds((1.0 /
+                                                                           Convert.ToDouble(baselineTrials[0].NormalizedDataSampleRate)) *
+                                                                          Convert.ToDouble(timeSample));
+                        }
+
+                        for (int trialCounter = 0; trialCounter < baselineTrialCount; trialCounter++)
+                        {
+                            for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
+                            {
+                                tempMeasuredForcesX[frameCounter] += measuredForcesX[trialCounter][frameCounter];
+                                tempMeasuredForcesY[frameCounter] += measuredForcesY[trialCounter][frameCounter];
+                                tempMeasuredForcesZ[frameCounter] += measuredForcesZ[trialCounter][frameCounter];
+
+                                if (nominalForcesX != null)
+                                {
+                                    tempNominalForcesX[frameCounter] += nominalForcesX[trialCounter][frameCounter];
+                                    tempNominalForcesY[frameCounter] += nominalForcesY[trialCounter][frameCounter];
+                                    tempNominalForcesZ[frameCounter] += nominalForcesZ[trialCounter][frameCounter];
+                                }
+
+                                tempMomentForcesX[frameCounter] += momentForcesX[trialCounter][frameCounter];
+                                tempMomentForcesY[frameCounter] += momentForcesY[trialCounter][frameCounter];
+                                tempMomentForcesZ[frameCounter] += momentForcesZ[trialCounter][frameCounter];
+
+                                tempPositionX[frameCounter] += positionX[trialCounter][frameCounter];
+                                tempPositionY[frameCounter] += positionY[trialCounter][frameCounter];
+                                tempPositionZ[frameCounter] += positionZ[trialCounter][frameCounter];
+
+                                tempVelocityX[frameCounter] += velocityX[trialCounter][frameCounter];
+                                tempVelocityY[frameCounter] += velocityY[trialCounter][frameCounter];
+                                tempVelocityZ[frameCounter] += velocityZ[trialCounter][frameCounter];
+                            }
+                        }
+
+                        for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
+                        {
+                            tempMeasuredForcesX[frameCounter] /= baselineTrialCount;
+                            tempMeasuredForcesY[frameCounter] /= baselineTrialCount;
+                            tempMeasuredForcesZ[frameCounter] /= baselineTrialCount;
+
+                            if (nominalForcesX != null)
+                            {
+                                tempNominalForcesX[frameCounter] /= baselineTrialCount;
+                                tempNominalForcesY[frameCounter] /= baselineTrialCount;
+                                tempNominalForcesZ[frameCounter] /= baselineTrialCount;
+                            }
+
+                            tempMomentForcesX[frameCounter] /= baselineTrialCount;
+                            tempMomentForcesY[frameCounter] /= baselineTrialCount;
+                            tempMomentForcesZ[frameCounter] /= baselineTrialCount;
+
+                            tempPositionX[frameCounter] /= baselineTrialCount;
+                            tempPositionY[frameCounter] /= baselineTrialCount;
+                            tempPositionZ[frameCounter] /= baselineTrialCount;
+
+                            tempVelocityX[frameCounter] /= baselineTrialCount;
+                            tempVelocityY[frameCounter] /= baselineTrialCount;
+                            tempVelocityZ[frameCounter] /= baselineTrialCount;
+
+                            var measuredForceContainer = new ForceContainer();
+                            ForceContainer nominalForceContainer = null;
+                            if (nominalForcesX != null)
+                            {
+                                nominalForceContainer = new ForceContainer();
+                            }
+                            var momentForceContainer = new ForceContainer();
+                            var positionContainer = new PositionContainer();
+                            var velocityContainer = new VelocityContainer();
+
+                            measuredForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
+                            measuredForceContainer.PositionStatus = -1;
+                            measuredForceContainer.X = tempMeasuredForcesX[frameCounter];
+                            measuredForceContainer.Y = tempMeasuredForcesY[frameCounter];
+                            measuredForceContainer.Z = tempMeasuredForcesZ[frameCounter];
+
+                            if (nominalForceContainer != null)
+                            {
+                                nominalForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
+                                nominalForceContainer.PositionStatus = -1;
+                                nominalForceContainer.X = tempNominalForcesX[frameCounter];
+                                nominalForceContainer.Y = tempNominalForcesY[frameCounter];
+                                nominalForceContainer.Z = tempNominalForcesZ[frameCounter];
+                            }
+
+                            momentForceContainer.TimeStamp = baselineTimeStamps[frameCounter];
+                            momentForceContainer.PositionStatus = -1;
+                            momentForceContainer.X = tempMomentForcesX[frameCounter];
+                            momentForceContainer.Y = tempMomentForcesY[frameCounter];
+                            momentForceContainer.Z = tempMomentForcesZ[frameCounter];
+
+                            positionContainer.TimeStamp = baselineTimeStamps[frameCounter];
+                            positionContainer.PositionStatus = -1;
+                            positionContainer.X = tempPositionX[frameCounter];
+                            positionContainer.Y = tempPositionY[frameCounter];
+                            positionContainer.Z = tempPositionZ[frameCounter];
+
+                            velocityContainer.TimeStamp = baselineTimeStamps[frameCounter];
+                            velocityContainer.PositionStatus = -1;
+                            velocityContainer.X = tempVelocityX[frameCounter];
+                            velocityContainer.Y = tempVelocityY[frameCounter];
+                            velocityContainer.Z = tempVelocityZ[frameCounter];
+
+                            tempBaseline.MeasuredForces.Add(measuredForceContainer);
+                            if (nominalForceContainer != null)
+                            {
+                                tempBaseline.NominalForces.Add(nominalForceContainer);
+                            }
+                            tempBaseline.MomentForces.Add(momentForceContainer);
+                            tempBaseline.Position.Add(positionContainer);
+                            tempBaseline.Velocity.Add(velocityContainer);
+                        }
+                        lock (baselines)
+                        {
+                            baselines.Add(tempBaseline);
+                        }
+                    }
+                    return baselines;
+                    */
+                }                
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                }
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
+                _myManipAnalysisGui.EnableTabPages(true);
+
+                TaskManager.Remove(Task.CurrentId);
+            }));
         }
 
         public void CalculateStatistics()
@@ -4260,374 +4359,6 @@ namespace ManipAnalysis_v2
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
             */
-        }
-
-        public void PlotLearningIndex(string study, string group, string szenario,
-            IEnumerable<SubjectContainer> subjects, int turn)
-        {
-            /*
-            TaskManager.PushBack(Task.Factory.StartNew(() =>
-            {
-                List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
-                string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
-                // List of all trials in the szenario
-                int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
-                var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
-
-                // Info output
-                _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
-                _myManipAnalysisGui.SetProgressBarValue(0);
-
-                // Loops over all subjects. Can also be only one.
-                for (int subjectCounter = 0;
-                    subjectCounter < subjectList.Count() & !TaskManager.Cancel;
-                    subjectCounter++)
-                {
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
-
-                    // Gets the statistic-data for the subject
-                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario,
-                        subjectList[subjectCounter], turn);
-                    DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(study, group, szenario,
-                        subjectList[subjectCounter],
-                        turnDateTime);
-
-                    // Checks wether the amount of statistic-data equals the amount of szenario-trials
-                    if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
-                    {
-                        // Loops over all sets in the szenario
-                        for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                        {
-                            var catchPdSign = new List<double>();
-                            var catchPdAbs = new List<double>();
-                            var fieldPdAbs = new List<double>();
-
-                            // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
-                            for (int rowCounter = (setCounter*16);
-                                rowCounter < ((setCounter + 1)*16) & !TaskManager.Cancel;
-                                rowCounter++)
-                            {
-                                DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
-                                int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                                double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                bool isCatchTrial =
-                                    szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") +
-                                                            " - CatchTrial");
-
-                                if (isCatchTrial)
-                                {
-                                    catchPdAbs.Add(pd300Abs);
-                                    catchPdSign.Add(pd300Sign);
-                                }
-                                else
-                                {
-                                    fieldPdAbs.Add(pd300Abs);
-                                }
-                            }
-
-                            // If a catch-trial was present in the set, the learning-index is calculated and saved
-                            if (catchPdAbs.Count > 0)
-                            {
-                                if (liData[setCounter] == null)
-                                {
-                                    liData[setCounter] = new List<double>();
-                                }
-
-                                liData[setCounter].Add(catchPdSign.Average()/
-                                                       (catchPdAbs.Average() + fieldPdAbs.Average()));
-                            }
-                        }
-                    }
-                }
-
-                // Some necessary Array-magic to leave out the sets with no catch-trials
-                int trueSetCount = liData.Count(t => t != null);
-                var stdAbwArr = new double[trueSetCount];
-                var liDataArr = new double[trueSetCount];
-                var setCountArr = new double[trueSetCount];
-                trueSetCount = 0;
-
-                // Fill the data-arrays and calculate the StdAbv
-                for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                {
-                    if (liData[setCounter] != null)
-                    {
-                        stdAbwArr[trueSetCount] =
-                            Math.Sqrt((liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
-                                      /
-                                      (liData[setCounter].Count - 1)
-                                );
-                        liDataArr[trueSetCount] = liData[setCounter].Average();
-                        setCountArr[trueSetCount] = setCounter + 1;
-                        trueSetCount++;
-                    }
-                }
-
-                _myMatlabWrapper.CreateLearningIndexFigure(setCount);
-                _myMatlabWrapper.SetWorkspaceData("X", setCountArr);
-                _myMatlabWrapper.SetWorkspaceData("Y", liDataArr);
-                _myMatlabWrapper.SetWorkspaceData("std", stdAbwArr);
-                _myMatlabWrapper.PlotMeanTimeErrorBar("X", "Y", "std");
-
-                _myManipAnalysisGui.WriteProgressInfo("Ready.");
-                _myManipAnalysisGui.SetProgressBarValue(0);
-                TaskManager.Remove(Task.CurrentId);
-            }));
-            */
-        }
-
-        public void ExportLearningIndex(string fileName, string study, string group, string szenario,
-            IEnumerable<SubjectContainer> subjects, int turn)
-        {
-            /*
-            TaskManager.PushBack(Task.Factory.StartNew(() =>
-            {
-                List<SubjectContainer> subjectList = subjects.ToList(); // Subject list
-                string[] szenarioTrials = _myDatabaseWrapper.GetSzenarioTrials(study, szenario, true, false, false, false);
-                // List of all trials in the szenario
-                int setCount = szenarioTrials.Length/16; // The number of sets in the szenario
-                var liData = new List<double>[setCount]; // Array of Lists, size is equal to the number of sets
-
-                // Info output
-                _myManipAnalysisGui.WriteProgressInfo("Calculating learning index...");
-                _myManipAnalysisGui.SetProgressBarValue(0);
-
-                // Loops over all subjects. Can also be only one.
-                for (int subjectCounter = 0;
-                    subjectCounter < subjectList.Count() & !TaskManager.Cancel;
-                    subjectCounter++)
-                {
-                    _myManipAnalysisGui.SetProgressBarValue((100.0/subjectList.Count())*subjectCounter);
-
-                    // Gets the statistic-data for the subject
-                    DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(study, group, szenario,
-                        subjectList[subjectCounter], turn);
-                    DataSet statisticDataSet = _myDatabaseWrapper.GetStatisticDataSet(study, group, szenario,
-                        subjectList[subjectCounter],
-                        turnDateTime);
-
-                    // Checks wether the amount of statistic-data equals the amount of szenario-trials
-                    if (statisticDataSet.Tables[0].Rows.Count == szenarioTrials.Length)
-                    {
-                        // Loops over all sets in the szenario
-                        for (int setCounter = 0; setCounter < setCount; setCounter++)
-                        {
-                            var catchPdSign = new List<double>();
-                            var catchPdAbs = new List<double>();
-                            var fieldPdAbs = new List<double>();
-
-                            // Saves the perpendicular displacement data depending on wether a catch-trial is present in the set or not
-                            for (int rowCounter = (setCounter*16);
-                                rowCounter < ((setCounter + 1)*16) & !TaskManager.Cancel;
-                                rowCounter++)
-                            {
-                                DataRow row = statisticDataSet.Tables[0].Rows[rowCounter];
-                                int szenarioTrialNumber = Convert.ToInt32(row["szenario_trial_number"]);
-                                double pd300Abs = Convert.ToDouble(row["perpendicular_displacement_300ms_abs"]);
-                                double pd300Sign = Convert.ToDouble(row["perpendicular_displacement_300ms_sign"]);
-                                bool isCatchTrial =
-                                    szenarioTrials.Contains("Trial " + szenarioTrialNumber.ToString("000") +
-                                                            " - CatchTrial");
-
-                                if (isCatchTrial)
-                                {
-                                    catchPdAbs.Add(pd300Abs);
-                                    catchPdSign.Add(pd300Sign);
-                                }
-                                else
-                                {
-                                    fieldPdAbs.Add(pd300Abs);
-                                }
-                            }
-
-                            // If a catch-trial was present in the set, the learning-index is calculated and saved
-                            if (catchPdAbs.Count > 0)
-                            {
-                                if (liData[setCounter] == null)
-                                {
-                                    liData[setCounter] = new List<double>();
-                                }
-
-                                liData[setCounter].Add(catchPdSign.Average()/
-                                                       (catchPdAbs.Average() + fieldPdAbs.Average()));
-                            }
-                        }
-                    }
-                }
-
-                // Create write-cache and header-line
-                var cache = new List<string>();
-                string line = "SzenarioSetNumber,";
-                for (int subjectCounter = 0; subjectCounter < subjectList.Count & !TaskManager.Cancel; subjectCounter++)
-                {
-                    line += subjectList.ElementAt(subjectCounter).PId + ",";
-                }
-                line += "Mean,Std";
-                cache.Add(line);
-
-
-                // Loops over all sets and adds the data to the cache
-                for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                {
-                    if (liData[setCounter] != null)
-                    {
-                        line = (setCounter + 1).ToString(CultureInfo.InvariantCulture) + ",";
-
-                        for (int subjectCounter = 0;
-                            subjectCounter < liData[setCounter].Count & !TaskManager.Cancel;
-                            subjectCounter++)
-                        {
-                            line += DoubleConverter.ToExactString(liData[setCounter].ElementAt(subjectCounter)) + ",";
-                        }
-
-                        line += DoubleConverter.ToExactString(liData[setCounter].Average()) + ",";
-
-                        line +=
-                            DoubleConverter.ToExactString(
-                                Math.Sqrt((liData[setCounter].Sum(t => Math.Pow(t - liData[setCounter].Average(), 2)))
-                                          /
-                                          (liData[setCounter].Count - 1)
-                                    ));
-
-                        cache.Add(line);
-                    }
-                }
-
-                var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                var dataFileWriter = new StreamWriter(dataFileStream);
-
-                for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
-                {
-                    dataFileWriter.WriteLine(cache[i]);
-                }
-
-                dataFileWriter.Close();
-
-                _myManipAnalysisGui.WriteProgressInfo("Ready.");
-                _myManipAnalysisGui.SetProgressBarValue(0);
-                TaskManager.Remove(Task.CurrentId);
-            }));
-             */
-        }
-
-        public void ForcefieldCompensationFactor(string study, string group, string szenario,
-            SubjectContainer subject, int turn, int msIndex)
-        {
-            /*
-            TaskManager.PushBack(Task.Factory.StartNew(() =>
-            {
-                if (szenario == "Szenario44_N" || szenario == "Szenario44_R" || szenario == "Szenario45_N" ||
-                    szenario == "Szenario45_R")
-                {
-                    // Info output
-                    _myManipAnalysisGui.WriteProgressInfo("Getting data...");
-                    _myManipAnalysisGui.SetProgressBarValue(0);
-
-                    DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
-
-                    IEnumerable<string> trialStringList = GetTrialsOfSzenario(study, szenario, false, false, true);
-                    if (trialStringList != null)
-                    {
-                        var trialList = new List<int>();
-                        for (int i = 0; i < trialStringList.Count(); i++)
-                        {
-                            trialList.Add(Convert.ToInt32(trialStringList.ElementAt(i).Substring(6, 3)));
-                        }
-
-                        _myMatlabWrapper.CreateForcefieldCompensationIndexFigure(trialList.Count);
-
-                        for (int trialCounter = 0; trialCounter < trialList.Count & !TaskManager.Cancel; trialCounter++)
-                        {
-                            _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count())*trialCounter);
-                            int szenarioTrial = trialList.ElementAt(trialCounter);
-                            int trialID = _myDatabaseWrapper.GetTrailID(study, group, szenario, subject, turnDateTime,
-                                szenarioTrial);
-                            DataSet measureDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                            DataSet velocityDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
-                            int sampleCount = measureDataSet.Tables[0].Rows.Count;
-                            var positionData = new double[sampleCount, 2];
-                            var velocityData = new double[sampleCount, 2];
-                            var forceIstData = new double[sampleCount, 2];
-                            //var forceSollData = new double[sampleCount, 2];
-                            var timeStamp = new double[sampleCount];
-
-                            if (measureDataSet.Tables[0].Rows.Count > 0)
-                            {
-                                int targetNumber = Convert.ToInt32(measureDataSet.Tables[0].Rows[0]["target_number"]);
-
-                                for (int sample = 0; sample < sampleCount & !TaskManager.Cancel; sample++)
-                                {
-                                    timeStamp[sample] =
-                                        Convert.ToDateTime(measureDataSet.Tables[0].Rows[sample]["time_stamp"]).Ticks;
-
-                                    positionData[sample, 0] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_x"]);
-                                    positionData[sample, 1] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["position_cartesian_z"]);
-
-                                    velocityData[sample, 0] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_x"]);
-                                    velocityData[sample, 1] =
-                                        Convert.ToDouble(velocityDataSet.Tables[0].Rows[sample]["velocity_z"]);
-
-                                    forceIstData[sample, 0] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_x"]);
-                                    forceIstData[sample, 1] =
-                                        Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_actual_z"]);
-                                    
-                                    //forceSollData[sample, 0] = Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_x"]);
-                                    //forceSollData[sample, 1] = Convert.ToDouble(measureDataSet.Tables[0].Rows[sample]["force_nominal_z"]);
-                                    
-                                }
-
-                                List<double> tempTimeList = timeStamp.ToList();
-                                int timeMsIndex =
-                                    tempTimeList.IndexOf(
-                                        tempTimeList.OrderBy(
-                                            d => Math.Abs(d - (timeStamp[0] + TimeSpan.FromMilliseconds(msIndex).Ticks)))
-                                            .ElementAt(0));
-
-                                _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
-                                _myMatlabWrapper.SetWorkspaceData("positionData", positionData);
-                                _myMatlabWrapper.SetWorkspaceData("velocityData", velocityData);
-                                _myMatlabWrapper.SetWorkspaceData("forceIstData", forceIstData);
-                                //_myMatlabWrapper.SetWorkspaceData("forceSollDataData", forceSollData);
-
-                                _myMatlabWrapper.Execute("forceSollData = bsxfun(@times, velocityData, [20 -20]);");
-                                // CW-ForceField
-
-                                _myMatlabWrapper.Execute("trials(" +
-                                                         (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                                         ") = " +
-                                                         (trialCounter + 1).ToString(CultureInfo.InvariantCulture) + ";");
-                                _myMatlabWrapper.Execute("bars(" +
-                                                         (trialCounter + 1).ToString(CultureInfo.InvariantCulture) +
-                                                         ",1) = forcefieldCompensationFactor(positionData,velocityData,forceIstData,forceSollData,timeMsIndex);");
-
-                                //_myMatlabWrapper.Execute("figure;");
-                                //_myMatlabWrapper.Execute("hold all;");
-                                //_myMatlabWrapper.Execute("plot(forceSollDataData(:,1),forceSollDataData(:,2),'r');");
-                                //_myMatlabWrapper.Execute("plot(forceSollData(:,1),forceSollDataData(:,2),'g');");
-                                //_myMatlabWrapper.Execute("plot(forceIstData(:,1),forceSollDataData(:,2),'b');");
-                                //_myMatlabWrapper.Execute("legend('ForcefieldRobot', 'ForcefieldCalculated', 'ForceMeasured');");
-                                //int a = 0;                                
-                            }
-                        }
-                        _myMatlabWrapper.Execute("bar(trials - 0.125,bars(:,1),0.25,'b');");
-                        _myMatlabWrapper.Execute("legend('Forcefield compensation factor');");
-                    }
-                    _myMatlabWrapper.ClearWorkspace();
-                    _myManipAnalysisGui.WriteProgressInfo("Ready.");
-                    _myManipAnalysisGui.SetProgressBarValue(0);
-                }
-                else
-                {
-                    _myManipAnalysisGui.WriteToLogBox("Szenario doesn't contain any ErrorClamp-Trials.");
-                }
-                TaskManager.Remove(Task.CurrentId);
-            }));
-             */
         }
 
         public void FixIndexes()

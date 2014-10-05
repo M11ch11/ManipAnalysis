@@ -44,7 +44,7 @@ namespace ManipAnalysis_v2
             this.label_Start_ManipAnalysis = new System.Windows.Forms.Label();
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
-            this.tabPage_TrajectoryVelocity = new System.Windows.Forms.TabPage();
+            this.tabPage_TrajectoryVelocityForce = new System.Windows.Forms.TabPage();
             this.label_TrajectoryVelocity_Handedness = new System.Windows.Forms.Label();
             this.label_TrajectoryVelocity_ForceField = new System.Windows.Forms.Label();
             this.label_TrajectoryVelocity_TrialType = new System.Windows.Forms.Label();
@@ -133,13 +133,15 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_Others = new System.Windows.Forms.TabPage();
-            this.label_Others_PlotErrorclampForces_At = new System.Windows.Forms.Label();
-            this.label_Others_PlotErrorclampForces_Ms = new System.Windows.Forms.Label();
-            this.textBox_Others_PlotErrorclampForces_MsIndex = new System.Windows.Forms.TextBox();
-            this.button_Others_PlotForcefieldCompensationFactor = new System.Windows.Forms.Button();
-            this.checkBox_Others_GroupAverage = new System.Windows.Forms.CheckBox();
-            this.button_Others_ExportGroupLi = new System.Windows.Forms.Button();
-            this.button_Others_PlotGroupLi = new System.Windows.Forms.Button();
+            this.label_Others_MeanTimesInformation = new System.Windows.Forms.Label();
+            this.button_Others_ExportForceBaseline = new System.Windows.Forms.Button();
+            this.button_Others_PlotForceBaseline = new System.Windows.Forms.Button();
+            this.label_OtherStatistics_Handedness = new System.Windows.Forms.Label();
+            this.label_OtherStatistics_ForceField = new System.Windows.Forms.Label();
+            this.label_OtherStatistics_TrialType = new System.Windows.Forms.Label();
+            this.listBox_OtherStatistics_Handedness = new System.Windows.Forms.ListBox();
+            this.listBox_OtherStatistics_ForceField = new System.Windows.Forms.ListBox();
+            this.listBox_OtherStatistics_TrialType = new System.Windows.Forms.ListBox();
             this.button_Others_ExportVelocityBaseline = new System.Windows.Forms.Button();
             this.button_Others_PlotVelocityBaseline = new System.Windows.Forms.Button();
             this.button_Others_ExportTrajectoryBaseline = new System.Windows.Forms.Button();
@@ -162,6 +164,7 @@ namespace ManipAnalysis_v2
             this.textBox_Import_PercentPeakVelocity = new System.Windows.Forms.TextBox();
             this.button_Import_ClearMeasureFileList = new System.Windows.Forms.Button();
             this.groupBox_Import_CalculationsImport = new System.Windows.Forms.GroupBox();
+            this.button_Import_CalculateBaselines = new System.Windows.Forms.Button();
             this.button_Import_AutoImport = new System.Windows.Forms.Button();
             this.button_Import_FixBrokenTrials = new System.Windows.Forms.Button();
             this.button_Import_ImportMeasureFiles = new System.Windows.Forms.Button();
@@ -234,7 +237,7 @@ namespace ManipAnalysis_v2
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
             this.tabControl_VisualizationExport.SuspendLayout();
-            this.tabPage_TrajectoryVelocity.SuspendLayout();
+            this.tabPage_TrajectoryVelocityForce.SuspendLayout();
             this.tabPage_DescriptiveStatistic1.SuspendLayout();
             this.tabPage_DescriptiveStatistic2.SuspendLayout();
             this.tabPage_Others.SuspendLayout();
@@ -370,7 +373,7 @@ namespace ManipAnalysis_v2
             // 
             // tabControl_VisualizationExport
             // 
-            this.tabControl_VisualizationExport.Controls.Add(this.tabPage_TrajectoryVelocity);
+            this.tabControl_VisualizationExport.Controls.Add(this.tabPage_TrajectoryVelocityForce);
             this.tabControl_VisualizationExport.Controls.Add(this.tabPage_DescriptiveStatistic1);
             this.tabControl_VisualizationExport.Controls.Add(this.tabPage_DescriptiveStatistic2);
             this.tabControl_VisualizationExport.Controls.Add(this.tabPage_Others);
@@ -380,46 +383,46 @@ namespace ManipAnalysis_v2
             this.tabControl_VisualizationExport.Size = new System.Drawing.Size(727, 628);
             this.tabControl_VisualizationExport.TabIndex = 0;
             // 
-            // tabPage_TrajectoryVelocity
+            // tabPage_TrajectoryVelocityForce
             // 
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Handedness);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_ForceField);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_TrialType);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Handedness);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_ForceField);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_TrialType);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowPDForceVectors);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.checkBox_TrajectoryVelocity_ShowForceVectors);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_Export);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_IndividualMean);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_TrajectoryVelocity);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Targets);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Targets);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Turns);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Turns);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_AddAll);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_Plot);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_ClearAll);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_ClearSelected);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_SelectedTrials);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.button_TrajectoryVelocity_AddSelected);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Trials);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Subjects);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Szenario);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Groups);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.label_TrajectoryVelocity_Study);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Trials);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Subjects);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_Szenario);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.comboBox_TrajectoryVelocity_Study);
-            this.tabPage_TrajectoryVelocity.Controls.Add(this.listBox_TrajectoryVelocity_Groups);
-            this.tabPage_TrajectoryVelocity.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_TrajectoryVelocity.Name = "tabPage_TrajectoryVelocity";
-            this.tabPage_TrajectoryVelocity.Size = new System.Drawing.Size(719, 602);
-            this.tabPage_TrajectoryVelocity.TabIndex = 4;
-            this.tabPage_TrajectoryVelocity.Text = "Trajectory / Velocity";
-            this.tabPage_TrajectoryVelocity.UseVisualStyleBackColor = true;
-            this.tabPage_TrajectoryVelocity.Enter += new System.EventHandler(this.tabPage_TrajectoryVelocity_Enter);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Handedness);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_ForceField);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_TrialType);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Handedness);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_ForceField);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_TrialType);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.checkBox_TrajectoryVelocity_ShowPDForceVectors);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.checkBox_TrajectoryVelocity_ShowForceVectors);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_Export);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.comboBox_TrajectoryVelocity_IndividualMean);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.comboBox_TrajectoryVelocity_TrajectoryVelocity);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Targets);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Targets);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Turns);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Turns);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_AddAll);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_Plot);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_ClearAll);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_ClearSelected);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_SelectedTrials);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.button_TrajectoryVelocity_AddSelected);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Trials);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Subjects);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Szenario);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Groups);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.label_TrajectoryVelocity_Study);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Trials);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Subjects);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.comboBox_TrajectoryVelocity_Szenario);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.comboBox_TrajectoryVelocity_Study);
+            this.tabPage_TrajectoryVelocityForce.Controls.Add(this.listBox_TrajectoryVelocity_Groups);
+            this.tabPage_TrajectoryVelocityForce.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_TrajectoryVelocityForce.Name = "tabPage_TrajectoryVelocityForce";
+            this.tabPage_TrajectoryVelocityForce.Size = new System.Drawing.Size(719, 602);
+            this.tabPage_TrajectoryVelocityForce.TabIndex = 4;
+            this.tabPage_TrajectoryVelocityForce.Text = "Trajectory / Velocity / Force";
+            this.tabPage_TrajectoryVelocityForce.UseVisualStyleBackColor = true;
+            this.tabPage_TrajectoryVelocityForce.Enter += new System.EventHandler(this.tabPage_TrajectoryVelocity_Enter);
             // 
             // label_TrajectoryVelocity_Handedness
             // 
@@ -1374,13 +1377,15 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Others
             // 
-            this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_At);
-            this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_Ms);
-            this.tabPage_Others.Controls.Add(this.textBox_Others_PlotErrorclampForces_MsIndex);
-            this.tabPage_Others.Controls.Add(this.button_Others_PlotForcefieldCompensationFactor);
-            this.tabPage_Others.Controls.Add(this.checkBox_Others_GroupAverage);
-            this.tabPage_Others.Controls.Add(this.button_Others_ExportGroupLi);
-            this.tabPage_Others.Controls.Add(this.button_Others_PlotGroupLi);
+            this.tabPage_Others.Controls.Add(this.label_Others_MeanTimesInformation);
+            this.tabPage_Others.Controls.Add(this.button_Others_ExportForceBaseline);
+            this.tabPage_Others.Controls.Add(this.button_Others_PlotForceBaseline);
+            this.tabPage_Others.Controls.Add(this.label_OtherStatistics_Handedness);
+            this.tabPage_Others.Controls.Add(this.label_OtherStatistics_ForceField);
+            this.tabPage_Others.Controls.Add(this.label_OtherStatistics_TrialType);
+            this.tabPage_Others.Controls.Add(this.listBox_OtherStatistics_Handedness);
+            this.tabPage_Others.Controls.Add(this.listBox_OtherStatistics_ForceField);
+            this.tabPage_Others.Controls.Add(this.listBox_OtherStatistics_TrialType);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportVelocityBaseline);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotVelocityBaseline);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportTrajectoryBaseline);
@@ -1406,75 +1411,90 @@ namespace ManipAnalysis_v2
             this.tabPage_Others.UseVisualStyleBackColor = true;
             this.tabPage_Others.Enter += new System.EventHandler(this.tabPage_Others_Enter);
             // 
-            // label_Others_PlotErrorclampForces_At
+            // label_Others_MeanTimesInformation
             // 
-            this.label_Others_PlotErrorclampForces_At.AutoSize = true;
-            this.label_Others_PlotErrorclampForces_At.Location = new System.Drawing.Point(192, 268);
-            this.label_Others_PlotErrorclampForces_At.Name = "label_Others_PlotErrorclampForces_At";
-            this.label_Others_PlotErrorclampForces_At.Size = new System.Drawing.Size(16, 13);
-            this.label_Others_PlotErrorclampForces_At.TabIndex = 56;
-            this.label_Others_PlotErrorclampForces_At.Text = "at";
+            this.label_Others_MeanTimesInformation.AutoSize = true;
+            this.label_Others_MeanTimesInformation.Location = new System.Drawing.Point(10, 376);
+            this.label_Others_MeanTimesInformation.Name = "label_Others_MeanTimesInformation";
+            this.label_Others_MeanTimesInformation.Size = new System.Drawing.Size(335, 13);
+            this.label_Others_MeanTimesInformation.TabIndex = 79;
+            this.label_Others_MeanTimesInformation.Text = "(With mean times, Trial type, Force field and Handedness are ignored)";
             // 
-            // label_Others_PlotErrorclampForces_Ms
+            // button_Others_ExportForceBaseline
             // 
-            this.label_Others_PlotErrorclampForces_Ms.AutoSize = true;
-            this.label_Others_PlotErrorclampForces_Ms.Location = new System.Drawing.Point(300, 268);
-            this.label_Others_PlotErrorclampForces_Ms.Name = "label_Others_PlotErrorclampForces_Ms";
-            this.label_Others_PlotErrorclampForces_Ms.Size = new System.Drawing.Size(20, 13);
-            this.label_Others_PlotErrorclampForces_Ms.TabIndex = 55;
-            this.label_Others_PlotErrorclampForces_Ms.Text = "ms";
+            this.button_Others_ExportForceBaseline.Location = new System.Drawing.Point(165, 321);
+            this.button_Others_ExportForceBaseline.Name = "button_Others_ExportForceBaseline";
+            this.button_Others_ExportForceBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_ExportForceBaseline.TabIndex = 78;
+            this.button_Others_ExportForceBaseline.Text = "Export force baselines";
+            this.button_Others_ExportForceBaseline.UseVisualStyleBackColor = true;
             // 
-            // textBox_Others_PlotErrorclampForces_MsIndex
+            // button_Others_PlotForceBaseline
             // 
-            this.textBox_Others_PlotErrorclampForces_MsIndex.Location = new System.Drawing.Point(208, 265);
-            this.textBox_Others_PlotErrorclampForces_MsIndex.Name = "textBox_Others_PlotErrorclampForces_MsIndex";
-            this.textBox_Others_PlotErrorclampForces_MsIndex.Size = new System.Drawing.Size(86, 20);
-            this.textBox_Others_PlotErrorclampForces_MsIndex.TabIndex = 54;
-            this.textBox_Others_PlotErrorclampForces_MsIndex.Text = "300";
+            this.button_Others_PlotForceBaseline.Location = new System.Drawing.Point(10, 321);
+            this.button_Others_PlotForceBaseline.Name = "button_Others_PlotForceBaseline";
+            this.button_Others_PlotForceBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotForceBaseline.TabIndex = 77;
+            this.button_Others_PlotForceBaseline.Text = "Plot force baselines";
+            this.button_Others_PlotForceBaseline.UseVisualStyleBackColor = true;
             // 
-            // button_Others_PlotForcefieldCompensationFactor
+            // label_OtherStatistics_Handedness
             // 
-            this.button_Others_PlotForcefieldCompensationFactor.Location = new System.Drawing.Point(15, 263);
-            this.button_Others_PlotForcefieldCompensationFactor.Name = "button_Others_PlotForcefieldCompensationFactor";
-            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(171, 23);
-            this.button_Others_PlotForcefieldCompensationFactor.TabIndex = 53;
-            this.button_Others_PlotForcefieldCompensationFactor.Text = "Forcefield compensation factor";
-            this.button_Others_PlotForcefieldCompensationFactor.UseVisualStyleBackColor = true;
-            this.button_Others_PlotForcefieldCompensationFactor.Click += new System.EventHandler(this.button_Others_ForcefieldCompensationFactor_Click);
+            this.label_OtherStatistics_Handedness.AutoSize = true;
+            this.label_OtherStatistics_Handedness.Location = new System.Drawing.Point(335, 154);
+            this.label_OtherStatistics_Handedness.Name = "label_OtherStatistics_Handedness";
+            this.label_OtherStatistics_Handedness.Size = new System.Drawing.Size(70, 13);
+            this.label_OtherStatistics_Handedness.TabIndex = 76;
+            this.label_OtherStatistics_Handedness.Text = "Handedness:";
             // 
-            // checkBox_Others_GroupAverage
+            // label_OtherStatistics_ForceField
             // 
-            this.checkBox_Others_GroupAverage.AutoSize = true;
-            this.checkBox_Others_GroupAverage.Location = new System.Drawing.Point(326, 238);
-            this.checkBox_Others_GroupAverage.Name = "checkBox_Others_GroupAverage";
-            this.checkBox_Others_GroupAverage.Size = new System.Drawing.Size(97, 17);
-            this.checkBox_Others_GroupAverage.TabIndex = 52;
-            this.checkBox_Others_GroupAverage.Text = "Group average";
-            this.checkBox_Others_GroupAverage.UseVisualStyleBackColor = true;
+            this.label_OtherStatistics_ForceField.AutoSize = true;
+            this.label_OtherStatistics_ForceField.Location = new System.Drawing.Point(171, 154);
+            this.label_OtherStatistics_ForceField.Name = "label_OtherStatistics_ForceField";
+            this.label_OtherStatistics_ForceField.Size = new System.Drawing.Size(59, 13);
+            this.label_OtherStatistics_ForceField.TabIndex = 75;
+            this.label_OtherStatistics_ForceField.Text = "Force field:";
             // 
-            // button_Others_ExportGroupLi
+            // label_OtherStatistics_TrialType
             // 
-            this.button_Others_ExportGroupLi.Location = new System.Drawing.Point(170, 234);
-            this.button_Others_ExportGroupLi.Name = "button_Others_ExportGroupLi";
-            this.button_Others_ExportGroupLi.Size = new System.Drawing.Size(150, 23);
-            this.button_Others_ExportGroupLi.TabIndex = 47;
-            this.button_Others_ExportGroupLi.Text = "Export learning index";
-            this.button_Others_ExportGroupLi.UseVisualStyleBackColor = true;
-            this.button_Others_ExportGroupLi.Click += new System.EventHandler(this.button_Others_ExportGroupLi_Click);
+            this.label_OtherStatistics_TrialType.AutoSize = true;
+            this.label_OtherStatistics_TrialType.Location = new System.Drawing.Point(10, 154);
+            this.label_OtherStatistics_TrialType.Name = "label_OtherStatistics_TrialType";
+            this.label_OtherStatistics_TrialType.Size = new System.Drawing.Size(53, 13);
+            this.label_OtherStatistics_TrialType.TabIndex = 74;
+            this.label_OtherStatistics_TrialType.Text = "Trial type:";
             // 
-            // button_Others_PlotGroupLi
+            // listBox_OtherStatistics_Handedness
             // 
-            this.button_Others_PlotGroupLi.Location = new System.Drawing.Point(15, 234);
-            this.button_Others_PlotGroupLi.Name = "button_Others_PlotGroupLi";
-            this.button_Others_PlotGroupLi.Size = new System.Drawing.Size(150, 23);
-            this.button_Others_PlotGroupLi.TabIndex = 46;
-            this.button_Others_PlotGroupLi.Text = "Plot learning index";
-            this.button_Others_PlotGroupLi.UseVisualStyleBackColor = true;
-            this.button_Others_PlotGroupLi.Click += new System.EventHandler(this.button_Others_PlotGroupLi_Click);
+            this.listBox_OtherStatistics_Handedness.FormattingEnabled = true;
+            this.listBox_OtherStatistics_Handedness.Location = new System.Drawing.Point(338, 172);
+            this.listBox_OtherStatistics_Handedness.Name = "listBox_OtherStatistics_Handedness";
+            this.listBox_OtherStatistics_Handedness.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_OtherStatistics_Handedness.Size = new System.Drawing.Size(158, 69);
+            this.listBox_OtherStatistics_Handedness.TabIndex = 73;
+            // 
+            // listBox_OtherStatistics_ForceField
+            // 
+            this.listBox_OtherStatistics_ForceField.FormattingEnabled = true;
+            this.listBox_OtherStatistics_ForceField.Location = new System.Drawing.Point(174, 172);
+            this.listBox_OtherStatistics_ForceField.Name = "listBox_OtherStatistics_ForceField";
+            this.listBox_OtherStatistics_ForceField.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_OtherStatistics_ForceField.Size = new System.Drawing.Size(158, 69);
+            this.listBox_OtherStatistics_ForceField.TabIndex = 72;
+            // 
+            // listBox_OtherStatistics_TrialType
+            // 
+            this.listBox_OtherStatistics_TrialType.FormattingEnabled = true;
+            this.listBox_OtherStatistics_TrialType.Location = new System.Drawing.Point(10, 172);
+            this.listBox_OtherStatistics_TrialType.Name = "listBox_OtherStatistics_TrialType";
+            this.listBox_OtherStatistics_TrialType.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBox_OtherStatistics_TrialType.Size = new System.Drawing.Size(158, 69);
+            this.listBox_OtherStatistics_TrialType.TabIndex = 71;
             // 
             // button_Others_ExportVelocityBaseline
             // 
-            this.button_Others_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
+            this.button_Others_ExportVelocityBaseline.Location = new System.Drawing.Point(165, 292);
             this.button_Others_ExportVelocityBaseline.Name = "button_Others_ExportVelocityBaseline";
             this.button_Others_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
             this.button_Others_ExportVelocityBaseline.TabIndex = 45;
@@ -1484,7 +1504,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Others_PlotVelocityBaseline
             // 
-            this.button_Others_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
+            this.button_Others_PlotVelocityBaseline.Location = new System.Drawing.Point(10, 292);
             this.button_Others_PlotVelocityBaseline.Name = "button_Others_PlotVelocityBaseline";
             this.button_Others_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
             this.button_Others_PlotVelocityBaseline.TabIndex = 44;
@@ -1494,7 +1514,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Others_ExportTrajectoryBaseline
             // 
-            this.button_Others_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
+            this.button_Others_ExportTrajectoryBaseline.Location = new System.Drawing.Point(165, 263);
             this.button_Others_ExportTrajectoryBaseline.Name = "button_Others_ExportTrajectoryBaseline";
             this.button_Others_ExportTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
             this.button_Others_ExportTrajectoryBaseline.TabIndex = 43;
@@ -1504,7 +1524,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Others_ExportSzenarioMeanTimes
             // 
-            this.button_Others_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(170, 205);
+            this.button_Others_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(165, 350);
             this.button_Others_ExportSzenarioMeanTimes.Name = "button_Others_ExportSzenarioMeanTimes";
             this.button_Others_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
             this.button_Others_ExportSzenarioMeanTimes.TabIndex = 42;
@@ -1613,7 +1633,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Others_PlotTrajectoryBaseline
             // 
-            this.button_Others_PlotTrajectoryBaseline.Location = new System.Drawing.Point(15, 147);
+            this.button_Others_PlotTrajectoryBaseline.Location = new System.Drawing.Point(10, 263);
             this.button_Others_PlotTrajectoryBaseline.Name = "button_Others_PlotTrajectoryBaseline";
             this.button_Others_PlotTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
             this.button_Others_PlotTrajectoryBaseline.TabIndex = 31;
@@ -1623,7 +1643,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Others_PlotSzenarioMeanTimes
             // 
-            this.button_Others_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(15, 205);
+            this.button_Others_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(10, 350);
             this.button_Others_PlotSzenarioMeanTimes.Name = "button_Others_PlotSzenarioMeanTimes";
             this.button_Others_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
             this.button_Others_PlotSzenarioMeanTimes.TabIndex = 22;
@@ -1653,7 +1673,7 @@ namespace ManipAnalysis_v2
             // 
             this.groupBox_Import_VelocityCropping.Controls.Add(this.label_Import_PercentPeakVelocity);
             this.groupBox_Import_VelocityCropping.Controls.Add(this.textBox_Import_PercentPeakVelocity);
-            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(566, 317);
+            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(566, 282);
             this.groupBox_Import_VelocityCropping.Name = "groupBox_Import_VelocityCropping";
             this.groupBox_Import_VelocityCropping.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_VelocityCropping.TabIndex = 35;
@@ -1690,30 +1710,41 @@ namespace ManipAnalysis_v2
             // 
             // groupBox_Import_CalculationsImport
             // 
+            this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateBaselines);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_AutoImport);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_FixBrokenTrials);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_ImportMeasureFiles);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateStatistics);
-            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(566, 431);
+            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(566, 396);
             this.groupBox_Import_CalculationsImport.Name = "groupBox_Import_CalculationsImport";
-            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(161, 154);
+            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(161, 189);
             this.groupBox_Import_CalculationsImport.TabIndex = 36;
             this.groupBox_Import_CalculationsImport.TabStop = false;
             this.groupBox_Import_CalculationsImport.Text = "Calculations / Import";
             // 
+            // button_Import_CalculateBaselines
+            // 
+            this.button_Import_CalculateBaselines.Location = new System.Drawing.Point(6, 102);
+            this.button_Import_CalculateBaselines.Name = "button_Import_CalculateBaselines";
+            this.button_Import_CalculateBaselines.Size = new System.Drawing.Size(149, 23);
+            this.button_Import_CalculateBaselines.TabIndex = 37;
+            this.button_Import_CalculateBaselines.Text = "Calculate Baselines";
+            this.button_Import_CalculateBaselines.UseVisualStyleBackColor = true;
+            this.button_Import_CalculateBaselines.Click += new System.EventHandler(this.button_CalculateBaselines_Click);
+            // 
             // button_Import_AutoImport
             // 
-            this.button_Import_AutoImport.Location = new System.Drawing.Point(6, 19);
+            this.button_Import_AutoImport.Location = new System.Drawing.Point(8, 26);
             this.button_Import_AutoImport.Name = "button_Import_AutoImport";
             this.button_Import_AutoImport.Size = new System.Drawing.Size(149, 41);
             this.button_Import_AutoImport.TabIndex = 36;
-            this.button_Import_AutoImport.Text = "Automatic import and calculation";
+            this.button_Import_AutoImport.Text = "Automatic";
             this.button_Import_AutoImport.UseVisualStyleBackColor = true;
             this.button_Import_AutoImport.Click += new System.EventHandler(this.button_Auto_Click);
             // 
             // button_Import_FixBrokenTrials
             // 
-            this.button_Import_FixBrokenTrials.Location = new System.Drawing.Point(6, 124);
+            this.button_Import_FixBrokenTrials.Location = new System.Drawing.Point(6, 160);
             this.button_Import_FixBrokenTrials.Name = "button_Import_FixBrokenTrials";
             this.button_Import_FixBrokenTrials.Size = new System.Drawing.Size(149, 23);
             this.button_Import_FixBrokenTrials.TabIndex = 19;
@@ -1723,7 +1754,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Import_ImportMeasureFiles
             // 
-            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(6, 66);
+            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(6, 73);
             this.button_Import_ImportMeasureFiles.Name = "button_Import_ImportMeasureFiles";
             this.button_Import_ImportMeasureFiles.Size = new System.Drawing.Size(149, 23);
             this.button_Import_ImportMeasureFiles.TabIndex = 35;
@@ -1733,7 +1764,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Import_CalculateStatistics
             // 
-            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(6, 95);
+            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(6, 131);
             this.button_Import_CalculateStatistics.Name = "button_Import_CalculateStatistics";
             this.button_Import_CalculateStatistics.Size = new System.Drawing.Size(149, 23);
             this.button_Import_CalculateStatistics.TabIndex = 0;
@@ -1745,7 +1776,7 @@ namespace ManipAnalysis_v2
             // 
             this.groupBox_Import_TimeNormalization.Controls.Add(this.label_Import_NewSampleCountText);
             this.groupBox_Import_TimeNormalization.Controls.Add(this.textBox_Import_NewSampleCount);
-            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(566, 374);
+            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(566, 339);
             this.groupBox_Import_TimeNormalization.Name = "groupBox_Import_TimeNormalization";
             this.groupBox_Import_TimeNormalization.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_TimeNormalization.TabIndex = 34;
@@ -1781,7 +1812,7 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_SamplesPerSec);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_FilterOrder);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_FilterOrder);
-            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(566, 183);
+            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(566, 148);
             this.groupBox_Import_ButterworthFilter.Name = "groupBox_Import_ButterworthFilter";
             this.groupBox_Import_ButterworthFilter.Size = new System.Drawing.Size(161, 128);
             this.groupBox_Import_ButterworthFilter.TabIndex = 33;
@@ -2408,8 +2439,8 @@ namespace ManipAnalysis_v2
             this.tabPage_Start.PerformLayout();
             this.tabPage_VisualizationExport.ResumeLayout(false);
             this.tabControl_VisualizationExport.ResumeLayout(false);
-            this.tabPage_TrajectoryVelocity.ResumeLayout(false);
-            this.tabPage_TrajectoryVelocity.PerformLayout();
+            this.tabPage_TrajectoryVelocityForce.ResumeLayout(false);
+            this.tabPage_TrajectoryVelocityForce.PerformLayout();
             this.tabPage_DescriptiveStatistic1.ResumeLayout(false);
             this.tabPage_DescriptiveStatistic1.PerformLayout();
             this.tabPage_DescriptiveStatistic2.ResumeLayout(false);
@@ -2531,7 +2562,7 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Label label_Log;
         private System.Windows.Forms.Button button_Import_AutoImport;
         private System.Windows.Forms.Button button_ClearLog;
-        private System.Windows.Forms.TabPage tabPage_TrajectoryVelocity;
+        private System.Windows.Forms.TabPage tabPage_TrajectoryVelocityForce;
         private System.Windows.Forms.ListBox listBox_TrajectoryVelocity_Turns;
         private System.Windows.Forms.Label label_TrajectoryVelocity_Turns;
         private System.Windows.Forms.Button button_TrajectoryVelocity_AddAll;
@@ -2611,19 +2642,12 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Study;
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Szenario;
         private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaseline;
-        private System.Windows.Forms.Button button_Others_ExportGroupLi;
-        private System.Windows.Forms.Button button_Others_PlotGroupLi;
-        private System.Windows.Forms.CheckBox checkBox_Others_GroupAverage;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
-        private System.Windows.Forms.Button button_Others_PlotForcefieldCompensationFactor;
         private System.Windows.Forms.Label label_Import_CutoffFreqForceForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
         private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqForce;
-        private System.Windows.Forms.Label label_Others_PlotErrorclampForces_At;
-        private System.Windows.Forms.Label label_Others_PlotErrorclampForces_Ms;
-        private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
         private System.Windows.Forms.CheckBox checkBox_Cancel;
         private System.Windows.Forms.Label label_Start_ServerIP;
@@ -2651,6 +2675,16 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_Handedness;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_ForceField;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_TrialType;
+        private System.Windows.Forms.Label label_OtherStatistics_Handedness;
+        private System.Windows.Forms.Label label_OtherStatistics_ForceField;
+        private System.Windows.Forms.Label label_OtherStatistics_TrialType;
+        private System.Windows.Forms.ListBox listBox_OtherStatistics_Handedness;
+        private System.Windows.Forms.ListBox listBox_OtherStatistics_ForceField;
+        private System.Windows.Forms.ListBox listBox_OtherStatistics_TrialType;
+        private System.Windows.Forms.Button button_Others_ExportForceBaseline;
+        private System.Windows.Forms.Button button_Others_PlotForceBaseline;
+        private System.Windows.Forms.Label label_Others_MeanTimesInformation;
+        private System.Windows.Forms.Button button_Import_CalculateBaselines;
     }
 }
 

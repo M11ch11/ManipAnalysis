@@ -1121,6 +1121,11 @@ namespace ManipAnalysis_v2
                 Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }
 
+        private void button_CalculateBaselines_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.CalculateBaselines();
+        }
+
         private void button_CalculateStatistics_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.CalculateStatistics();
@@ -1133,11 +1138,11 @@ namespace ManipAnalysis_v2
 
         private void button_Auto_Click(object sender, EventArgs e)
         {
+            button_DataManipulation_EnsureIndexes_Click(sender, e);
             button_ImportMeasureFiles_Click(sender, e);
+            button_CalculateBaselines_Click(sender, e);
             button_CalculateStatistics_Click(sender, e);
             button_FixBrokenTrials_Click(sender, e);
-            button_DataManipulation_EnsureIndexes_Click(sender, e);
-            button_DataManipulation_RebuildIndexes_Click(sender, e);
         }
 
         private void button_Debug_SaveLogToFile_Click(object sender, EventArgs e)
@@ -1561,6 +1566,29 @@ namespace ManipAnalysis_v2
 
         private void tabPage_Others_Enter(object sender, EventArgs e)
         {
+            listBox_OtherStatistics_TrialType.Items.Clear();
+            listBox_OtherStatistics_ForceField.Items.Clear();
+            listBox_OtherStatistics_Handedness.Items.Clear();
+
+            listBox_OtherStatistics_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
+            listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
+            listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_TrialType.Items.Count; listboxIndex++)
+            {
+                listBox_OtherStatistics_TrialType.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_ForceField.Items.Count; listboxIndex++)
+            {
+                listBox_OtherStatistics_ForceField.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Handedness.Items.Count; listboxIndex++)
+            {
+                listBox_OtherStatistics_Handedness.SetSelected(listboxIndex, true);
+            }
+
             comboBox_Others_Study.Items.Clear();
             comboBox_Others_Group.Items.Clear();
             comboBox_Others_Szenario.Items.Clear();
@@ -2206,97 +2234,6 @@ namespace ManipAnalysis_v2
             {
                 WriteToLogBox("Please add data for all Targets!");
             }
-        }
-
-        private void button_Others_PlotGroupLi_Click(object sender, EventArgs e)
-        {
-            IEnumerable<SubjectContainer> subjects;
-
-            if (checkBox_Others_GroupAverage.Checked)
-            {
-                subjects = comboBox_Others_Subject.Items.Cast<SubjectContainer>();
-            }
-            else
-            {
-                subjects = new List<SubjectContainer>
-                {
-                    (SubjectContainer) comboBox_Others_Subject.SelectedItem
-                };
-            }
-
-            _manipAnalysisFunctions.PlotLearningIndex(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                comboBox_Others_Szenario.SelectedItem.ToString(),
-                subjects,
-                Convert.ToInt32(
-                    comboBox_Others_Turn.SelectedItem.ToString()
-                        .Substring("Turn".Length)));
-        }
-
-        private void button_Others_ExportGroupLi_Click(object sender, EventArgs e)
-        {
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save learning-index file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-"
-                                      + comboBox_Others_Study.SelectedItem
-                                      + "-"
-                                      + comboBox_Others_Group.SelectedItem
-                                      + "-"
-                                      + comboBox_Others_Szenario.SelectedItem
-                                      + "-LearningIndex";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                IEnumerable<SubjectContainer> subjects;
-
-                if (checkBox_Others_GroupAverage.Checked)
-                {
-                    subjects = comboBox_Others_Subject.Items.Cast<SubjectContainer>();
-                }
-                else
-                {
-                    subjects = new List<SubjectContainer>
-                    {
-                        (SubjectContainer) comboBox_Others_Subject.SelectedItem
-                    };
-                }
-
-                _manipAnalysisFunctions.ExportLearningIndex(saveFileDialog.FileName,
-                    comboBox_Others_Study.SelectedItem.ToString(),
-                    comboBox_Others_Group.SelectedItem.ToString(),
-                    comboBox_Others_Szenario.SelectedItem.ToString(),
-                    subjects,
-                    Convert.ToInt32(
-                        comboBox_Others_Turn.SelectedItem.ToString()
-                            .Substring("Turn".Length)));
-            }
-        }
-
-        private void button_Others_ForcefieldCompensationFactor_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.ForcefieldCompensationFactor(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectContainer)
-                    comboBox_Others_Subject.SelectedItem,
-                Convert.ToInt32(
-                    comboBox_Others_Turn.SelectedItem.ToString()
-                        .Substring("Turn".Length)),
-                Convert.ToInt32(textBox_Others_PlotErrorclampForces_MsIndex.Text));
         }
 
         private void checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)

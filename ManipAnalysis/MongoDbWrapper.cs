@@ -546,6 +546,13 @@ namespace ManipAnalysis_v2
             return _trialCollection.Update(query, update);
         }
 
+        public WriteConcernResult UpdateTrialBaselineId(Trial trial)
+        {
+            IMongoQuery query = Query<Trial>.EQ(t => t.Id, trial.Id);
+            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.BaselineObjectId, trial.BaselineObjectId);
+            return _trialCollection.Update(query, update);
+        }
+
         public IEnumerable<Trial> GetTrialsWithoutStatistics(FieldsBuilder<Trial> statisticFields)
         {
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null)).SetFields(statisticFields);
