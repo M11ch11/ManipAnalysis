@@ -1154,7 +1154,7 @@ namespace ManipAnalysis_v2
                             var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
 
                             _myManipAnalysisGui.WriteProgressInfo("Parsing file...");
-                            if (myParser.ParseFile(filename))
+                            if (myParser.ParseFile(filename) && myParser.TrialsContainer.Count > 0)
                             {
                                 List<Trial> trialsContainer = myParser.TrialsContainer;
                                 List<Baseline> baselinesContainer = null;

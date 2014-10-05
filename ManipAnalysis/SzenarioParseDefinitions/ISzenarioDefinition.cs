@@ -116,16 +116,24 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
             }
 
-            foreach(string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+            if (checkTrialCount(trialsContainer.Count))
             {
-                foreach(int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
+                foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
-                    for (int i = 0; i < tempList.Count(); i++)
+                    foreach (int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
                     {
-                        tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
+                        IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
+                        for (int i = 0; i < tempList.Count(); i++)
+                        {
+                            tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
+                        }
                     }
                 }
+            }
+            else
+            {
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");                    
+                trialsContainer.Clear();
             }
 
             return trialsContainer;
@@ -137,5 +145,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         }
 
         public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
+
+        public abstract bool checkTrialCount(int trialCount);
     }
 }

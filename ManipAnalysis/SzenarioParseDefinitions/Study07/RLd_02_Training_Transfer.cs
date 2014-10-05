@@ -151,7 +151,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 186;
                 }
             }
+
             return trial;
+        }
+
+        public override bool checkTrialCount(int trialCount)
+        {
+            return trialCount == 354;
         }
     }
 }
