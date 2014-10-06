@@ -220,11 +220,29 @@ namespace ManipAnalysis_v2
 
         private void button_PlotBaseline_Click(object sender, EventArgs e)
         {
+            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            {
+                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            {
+                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            {
+                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+            }
+
             _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
-                comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectContainer)
-                    comboBox_Others_Subject.SelectedItem);
+                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                trialTypes, forceFields, handedness);
         }
 
         public void EnableTabPages(bool enable)
@@ -1932,11 +1950,29 @@ namespace ManipAnalysis_v2
 
         private void button_Others_PlotVelocityBaseline_Click(object sender, EventArgs e)
         {
+            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            {
+                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            {
+                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            {
+                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+            }
+
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
-                comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectContainer)
-                    comboBox_Others_Subject.SelectedItem);
+                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                trialTypes, forceFields, handedness);
         }
 
         private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
