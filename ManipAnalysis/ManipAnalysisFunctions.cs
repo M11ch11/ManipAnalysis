@@ -275,7 +275,7 @@ namespace ManipAnalysis_v2
                 }
 
                 // Add one more Target (mean) for overall mean value
-                _myMatlabWrapper.SetWorkspaceData("target", szenarioMeanTimes.Select(t => t.Target.Number).Max() + 1);
+                _myMatlabWrapper.SetWorkspaceData("target", 17); //szenarioMeanTimes.Select(t => t.Target.Number).Max() + 1);
                 _myMatlabWrapper.SetWorkspaceData("meanTime", szenarioMeanTimes.Select(t => t.MeanTime.TotalSeconds).Average());
                 _myMatlabWrapper.SetWorkspaceData("meanTimeStd",
                     szenarioMeanTimes.Select(t => t.MeanTimeStd.TotalSeconds).Average());
@@ -2009,12 +2009,12 @@ namespace ManipAnalysis_v2
                         if(study == "Study 7")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
-                            string[] baselineSzenarios = new string[]{"LR_Base1", "LR_Base2", "RL_Base1", "RL_Base2"};
+                            string[] baselineSzenarios = new string[] { "LR_Base1", "LR_Base2a", "LR_Base2b", "RL_Base1", "RL_Base2a", "RL_Base2b" };
                             Dictionary<string, Dictionary<SubjectContainer, List<string>>> baselineGroupSubjectSzenarioDict = new Dictionary<string, Dictionary<SubjectContainer, List<string>>>();
 
                             foreach (string group in groups)
                             {
-                                if (baselineGroupSubjectSzenarioDict[group] == null)
+                                if (!baselineGroupSubjectSzenarioDict.ContainsKey(group))
                                 {
                                     baselineGroupSubjectSzenarioDict[group] = new Dictionary<SubjectContainer, List<string>>();
                                 }
@@ -2023,7 +2023,7 @@ namespace ManipAnalysis_v2
                                 {
                                     foreach (SubjectContainer subject in _myDatabaseWrapper.GetSubjects(study, group, baselineSzenario))
                                     {
-                                        if (baselineGroupSubjectSzenarioDict[group][subject] == null)
+                                        if (!baselineGroupSubjectSzenarioDict[group].ContainsKey(subject))
                                         {
                                             baselineGroupSubjectSzenarioDict[group][subject] = new List<string>();
                                         }
@@ -2043,7 +2043,8 @@ namespace ManipAnalysis_v2
                                     if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("LR_")))
                                     {
                                         DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base1", subject).ElementAt(0);
-                                        DateTime turnBase2 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2", subject).ElementAt(0);
+                                        DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2a", subject).ElementAt(0);
+                                        DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2b", subject).ElementAt(0);
 
                                         var baselineFields = new FieldsBuilder<Trial>();
                                         baselineFields.Include(
@@ -2057,24 +2058,25 @@ namespace ManipAnalysis_v2
                                             t8 => t8.Id);
 
                                         List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base1", subject, turnBase1, Enumerable.Range(1, 108), baselineFields).ToList();
-                                        List<Trial> base2 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2", subject, turnBase2, Enumerable.Range(1, 24), baselineFields).ToList();
+                                        List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
+                                        List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
 
 
-                                        List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-                                        
-                                        List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                        List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+
+                                        List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
                                         
                                         List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-                                        errorClampBaselineLeftHand.AddRange(base2.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
+                                        errorClampBaselineLeftHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
                                         
                                         List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-                                        errorClampBaselineRightHand.AddRange(base2.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
+                                        errorClampBaselineRightHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
 
                                         List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 103 && t.TrialNumberInSzenario <= 108).ToList();
-                                        nullFieldBaselineLeftHand.AddRange(base2.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+                                        nullFieldBaselineLeftHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 49 && t.TrialNumberInSzenario <= 54).ToList();
-                                        nullFieldBaselineRightHand.AddRange(base2.Where(t => t.TrialNumberInSzenario >= 13 && t.TrialNumberInSzenario <= 18));
+                                        nullFieldBaselineRightHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2086,7 +2088,8 @@ namespace ManipAnalysis_v2
                                     else if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("RL_")))
                                     {
                                         DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base1", subject).ElementAt(0);
-                                        DateTime turnBase2 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2", subject).ElementAt(0);
+                                        DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2a", subject).ElementAt(0);
+                                        DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2b", subject).ElementAt(0);
 
                                         var baselineFields = new FieldsBuilder<Trial>();
                                         baselineFields.Include(
@@ -2100,7 +2103,8 @@ namespace ManipAnalysis_v2
                                             t8 => t8.Id);
 
                                         List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base1", subject, turnBase1, Enumerable.Range(1, 108), baselineFields).ToList();
-                                        List<Trial> base2 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2", subject, turnBase2, Enumerable.Range(1, 24), baselineFields).ToList();
+                                        List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
+                                        List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
 
 
                                         List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
@@ -2108,16 +2112,16 @@ namespace ManipAnalysis_v2
                                         List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.CatchTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
                                         
                                         List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-                                        errorClampBaselineLeftHand.AddRange(base2.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
+                                        errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
                                         
                                         List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-                                        errorClampBaselineRightHand.AddRange(base2.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
+                                        errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
 
                                         List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 103 && t.TrialNumberInSzenario <= 108).ToList();
-                                        nullFieldBaselineLeftHand.AddRange(base2.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+                                        nullFieldBaselineLeftHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 49 && t.TrialNumberInSzenario <= 54).ToList();
-                                        nullFieldBaselineRightHand.AddRange(base2.Where(t => t.TrialNumberInSzenario >= 13 && t.TrialNumberInSzenario <= 18));
+                                        nullFieldBaselineRightHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));

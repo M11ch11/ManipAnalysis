@@ -161,7 +161,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.TrialNumberInSzenario >= 325 && trial.TrialNumberInSzenario <= 336)
                 {
-                    trial.Szenario = "RL_Base2";
+                    trial.Szenario = "RL_Base2a";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 288;
                 }
