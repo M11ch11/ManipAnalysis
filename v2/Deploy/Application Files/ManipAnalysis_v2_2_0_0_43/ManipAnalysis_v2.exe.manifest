@@ -4,7 +4,7 @@
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5392.28024" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5392.29351" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="609280">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5392.28024" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="614400">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5392.29351" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>s57zjiHKdmbuE4hCYqu752T7eBv/Znc7soty5R+iw24=</dsig:DigestValue>
+        <dsig:DigestValue>gcN+b9LNdKu0yLLXf0xbN+F1L2+fYBWnxmjPYrA4Du8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
