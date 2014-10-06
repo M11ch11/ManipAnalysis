@@ -233,6 +233,9 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
+            this.label_Others_TrajectoryBaselineInformation = new System.Windows.Forms.Label();
+            this.label_Others_VelocityBaselineInformation = new System.Windows.Forms.Label();
+            this.label_Others_ForceBaselineInformation = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1377,6 +1380,9 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Others
             // 
+            this.tabPage_Others.Controls.Add(this.label_Others_ForceBaselineInformation);
+            this.tabPage_Others.Controls.Add(this.label_Others_VelocityBaselineInformation);
+            this.tabPage_Others.Controls.Add(this.label_Others_TrajectoryBaselineInformation);
             this.tabPage_Others.Controls.Add(this.label_Others_MeanTimesInformation);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportForceBaseline);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotForceBaseline);
@@ -1414,11 +1420,11 @@ namespace ManipAnalysis_v2
             // label_Others_MeanTimesInformation
             // 
             this.label_Others_MeanTimesInformation.AutoSize = true;
-            this.label_Others_MeanTimesInformation.Location = new System.Drawing.Point(10, 376);
+            this.label_Others_MeanTimesInformation.Location = new System.Drawing.Point(321, 355);
             this.label_Others_MeanTimesInformation.Name = "label_Others_MeanTimesInformation";
-            this.label_Others_MeanTimesInformation.Size = new System.Drawing.Size(335, 13);
+            this.label_Others_MeanTimesInformation.Size = new System.Drawing.Size(251, 13);
             this.label_Others_MeanTimesInformation.TabIndex = 79;
-            this.label_Others_MeanTimesInformation.Text = "(With mean times, Trial type, Force field and Handedness are ignored)";
+            this.label_Others_MeanTimesInformation.Text = "(Trial type, Force field and Handedness are ignored)";
             // 
             // button_Others_ExportForceBaseline
             // 
@@ -1437,6 +1443,7 @@ namespace ManipAnalysis_v2
             this.button_Others_PlotForceBaseline.TabIndex = 77;
             this.button_Others_PlotForceBaseline.Text = "Plot force baselines";
             this.button_Others_PlotForceBaseline.UseVisualStyleBackColor = true;
+            this.button_Others_PlotForceBaseline.Click += new System.EventHandler(this.button_Others_PlotForceBaseline_Click);
             // 
             // label_OtherStatistics_Handedness
             // 
@@ -2415,6 +2422,33 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
+            // label_Others_TrajectoryBaselineInformation
+            // 
+            this.label_Others_TrajectoryBaselineInformation.AutoSize = true;
+            this.label_Others_TrajectoryBaselineInformation.Location = new System.Drawing.Point(321, 268);
+            this.label_Others_TrajectoryBaselineInformation.Name = "label_Others_TrajectoryBaselineInformation";
+            this.label_Others_TrajectoryBaselineInformation.Size = new System.Drawing.Size(156, 13);
+            this.label_Others_TrajectoryBaselineInformation.TabIndex = 80;
+            this.label_Others_TrajectoryBaselineInformation.Text = "(Szenario and Turn are ignored)";
+            // 
+            // label_Others_VelocityBaselineInformation
+            // 
+            this.label_Others_VelocityBaselineInformation.AutoSize = true;
+            this.label_Others_VelocityBaselineInformation.Location = new System.Drawing.Point(321, 297);
+            this.label_Others_VelocityBaselineInformation.Name = "label_Others_VelocityBaselineInformation";
+            this.label_Others_VelocityBaselineInformation.Size = new System.Drawing.Size(156, 13);
+            this.label_Others_VelocityBaselineInformation.TabIndex = 81;
+            this.label_Others_VelocityBaselineInformation.Text = "(Szenario and Turn are ignored)";
+            // 
+            // label_Others_ForceBaselineInformation
+            // 
+            this.label_Others_ForceBaselineInformation.AutoSize = true;
+            this.label_Others_ForceBaselineInformation.Location = new System.Drawing.Point(321, 326);
+            this.label_Others_ForceBaselineInformation.Name = "label_Others_ForceBaselineInformation";
+            this.label_Others_ForceBaselineInformation.Size = new System.Drawing.Size(156, 13);
+            this.label_Others_ForceBaselineInformation.TabIndex = 82;
+            this.label_Others_ForceBaselineInformation.Text = "(Szenario and Turn are ignored)";
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2685,6 +2719,9 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Button button_Others_PlotForceBaseline;
         private System.Windows.Forms.Label label_Others_MeanTimesInformation;
         private System.Windows.Forms.Button button_Import_CalculateBaselines;
+        private System.Windows.Forms.Label label_Others_ForceBaselineInformation;
+        private System.Windows.Forms.Label label_Others_VelocityBaselineInformation;
+        private System.Windows.Forms.Label label_Others_TrajectoryBaselineInformation;
     }
 }
 

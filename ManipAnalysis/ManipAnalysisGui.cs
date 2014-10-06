@@ -2337,6 +2337,33 @@ namespace ManipAnalysis_v2
         private void button_DataManipulation_DropStatistics_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.DropStatistics();
+        }
+
+        private void button_Others_PlotForceBaseline_Click(object sender, EventArgs e)
+        {
+            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
+            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
+            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            {
+                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            {
+                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            {
+                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+            }
+
+            _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(),
+                comboBox_Others_Group.SelectedItem.ToString(),
+                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                trialTypes, forceFields, handedness);
         }        
     }
 }
