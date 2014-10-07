@@ -223,6 +223,7 @@ namespace ManipAnalysis_v2
             List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
             List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
             List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
@@ -242,6 +243,7 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                targets,
                 trialTypes, forceFields, handedness);
         }
 
@@ -1953,6 +1955,7 @@ namespace ManipAnalysis_v2
             List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
             List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
             List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
@@ -1972,6 +1975,7 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                targets,
                 trialTypes, forceFields, handedness);
         }
 
@@ -2344,6 +2348,7 @@ namespace ManipAnalysis_v2
             List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
             List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
             List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
@@ -2363,7 +2368,28 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
                 (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                targets,
                 trialTypes, forceFields, handedness);
+        }
+
+        private void comboBox_Others_Turn_SelectedValueChanged(object sender, EventArgs e)
+        {
+            listBox_OtherStatistics_Targets.Items.Clear();
+
+            string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
+            string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
+
+            IEnumerable<string> targets = _manipAnalysisFunctions.GetTargets(study, szenario);
+
+            if (targets.Any())
+            {
+                listBox_OtherStatistics_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
+
+                for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Targets.Items.Count; listboxIndex++)
+                {
+                    listBox_OtherStatistics_Targets.SetSelected(listboxIndex, true);
+                }
+            }
         }        
     }
 }

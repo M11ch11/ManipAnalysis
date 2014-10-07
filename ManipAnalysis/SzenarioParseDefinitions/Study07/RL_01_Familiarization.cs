@@ -139,25 +139,27 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.TrialNumberInSzenario >= 109 && trial.TrialNumberInSzenario <= 162)
                 {
-                    trial.Szenario = "RL_Familiarization";
+                    trial.Szenario = "RL_Base1";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 108;
                 }
                 else if (trial.TrialNumberInSzenario >= 163 && trial.TrialNumberInSzenario <= 216)
                 {
-                    trial.Szenario = "RL_Familiarization";
+                    trial.Szenario = "RL_Base1";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 108;
                 }
                 else if (trial.TrialNumberInSzenario >= 217 && trial.TrialNumberInSzenario <= 270)
                 {
                     trial.Szenario = "RL_Base1";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 192;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 108;
                 }
                 else if (trial.TrialNumberInSzenario >= 271 && trial.TrialNumberInSzenario <= 324)
                 {
                     trial.Szenario = "RL_Base1";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 192;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 108;
                 }
                 else if (trial.TrialNumberInSzenario >= 325 && trial.TrialNumberInSzenario <= 336)
                 {

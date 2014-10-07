@@ -577,14 +577,14 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes,
+        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject, int[] targets, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes,
             IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
                 return
                     _baselineCollection.FindAs<Baseline>(
-                        Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && trialTypes.Contains(t.TrialType) &&
+                        Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) &&
                         forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
                         .SetFields(baselineFields)
                         .ToArray();
