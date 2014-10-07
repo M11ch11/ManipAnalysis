@@ -518,7 +518,6 @@ namespace ManipAnalysis_v2
 
                     if (selectedTrialsList.Any())
                     {
-                        bool isValid = true;
                         List<int> trialList = selectedTrialsList.ElementAt(0).Trials;
 
                         if (selectedTrialsList.Any(temp => !trialList.SequenceEqual(temp.Trials)))
@@ -593,6 +592,24 @@ namespace ManipAnalysis_v2
                                                 statisticData[trialsArrayCounter, meanCount] =
                                                     _myMatlabWrapper.GetWorkspaceData("fisherZ");
                                                 _myMatlabWrapper.ClearWorkspace();
+                                                break;
+
+                                            case "MidMovementForce - PD":
+                                                statisticData[trialsArrayCounter, meanCount] =
+                                                    trialsArray[trialsArrayCounter].Statistics
+                                                        .PerpendicularMidMovementForce;
+                                                break;
+                                            
+                                            case "MidMovementForce - Para":
+                                                statisticData[trialsArrayCounter, meanCount] =
+                                                    trialsArray[trialsArrayCounter].Statistics
+                                                        .ParallelMidMovementForce;
+                                                break;
+                                            
+                                            case "MidMovementForce - Abs":
+                                                statisticData[trialsArrayCounter, meanCount] =
+                                                    trialsArray[trialsArrayCounter].Statistics
+                                                        .AbsoluteMidMovementForce;
                                                 break;
 
                                             case "PD - Abs":
@@ -727,6 +744,39 @@ namespace ManipAnalysis_v2
                                             "statisticDataStd", "[Trial]",
                                             "Velocity Vector Correlation Fisher Z", 1, (statisticData.Length/meanCount),
                                             0.5, 1,
+                                            plotFit,
+                                            plotErrorbars);
+                                        break;
+
+                                    case "MidMovementForce - PD":
+                                        _myMatlabWrapper.CreateStatisticFigure("MidMovementForce PD plot",
+                                            "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')",
+                                            "statisticDataStd", "[Trial]", "Newton [N]", 1,
+                                            (statisticData.Length / meanCount), -3.0, 3.0,
+                                            plotFit,
+                                            plotErrorbars);
+                                        break;
+
+                                    case "MidMovementForce - Para":
+                                        _myMatlabWrapper.CreateStatisticFigure("MidMovementForce Para plot",
+                                            "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')",
+                                            "statisticDataStd", "[Trial]", "Newton [N]", 1,
+                                            (statisticData.Length / meanCount), -3.0, 3.0,
+                                            plotFit,
+                                            plotErrorbars);
+                                        break;
+
+                                    case "MidMovementForce - Abs":
+                                        _myMatlabWrapper.CreateStatisticFigure("MidMovementForce Abs plot",
+                                            "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')",
+                                            "statisticDataStd", "[Trial]", "Newton [N]", 1,
+                                            (statisticData.Length / meanCount), -3.0, 3.0,
                                             plotFit,
                                             plotErrorbars);
                                         break;

@@ -914,6 +914,9 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "MidMovementForce - Abs",
+            "MidMovementForce - Para",
+            "MidMovementForce - PD",
             "PD - Abs",
             "PD - Sign",
             "PDmax - Abs",
