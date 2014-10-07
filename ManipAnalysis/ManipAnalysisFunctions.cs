@@ -2097,10 +2097,10 @@ namespace ManipAnalysis_v2
                                         List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
                                         errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
 
-                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 103 && t.TrialNumberInSzenario <= 108).ToList();
+                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
                                         nullFieldBaselineLeftHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
-                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 49 && t.TrialNumberInSzenario <= 54).ToList();
+                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
                                         nullFieldBaselineRightHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
@@ -2145,10 +2145,10 @@ namespace ManipAnalysis_v2
                                         List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
                                         errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
 
-                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 103 && t.TrialNumberInSzenario <= 108).ToList();
+                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
                                         nullFieldBaselineLeftHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
-                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 49 && t.TrialNumberInSzenario <= 54).ToList();
+                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
                                         nullFieldBaselineRightHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
