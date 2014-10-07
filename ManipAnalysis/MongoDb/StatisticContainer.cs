@@ -19,5 +19,8 @@ namespace ManipAnalysis_v2.MongoDb
         public double AbsoluteMeanPerpendicularDisplacement { get; set; }
         public double EnclosedArea { get; set; }
         public double RMSE { get; set; }
+        public double ParallelMidMovementForce { get; set; }
+        public double PerpendicularMidMovementForce { get; set; }
+        public double AbsoluteMidMovementForce { get; set; }
     }
 }

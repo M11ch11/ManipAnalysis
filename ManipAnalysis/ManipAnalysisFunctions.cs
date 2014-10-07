@@ -484,7 +484,7 @@ namespace ManipAnalysis_v2
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].Position =
-                        Gzip<List<PositionContainer>>.DeCompress(baselines[baselineCounter].ZippedPosition);
+                        Gzip<List<PositionContainer>>.DeCompress(baselines[baselineCounter].ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("X", baselines[baselineCounter].Position.Select(u => u.X).ToArray());
                     _myMatlabWrapper.SetWorkspaceData("Y", baselines[baselineCounter].Position.Select(u => u.Y).ToArray());
                     _myMatlabWrapper.Plot("X", "Y", "black", 2);
@@ -2072,20 +2072,20 @@ namespace ManipAnalysis_v2
                                         List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
                                         List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
 
-                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
                                         List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
@@ -2120,20 +2120,20 @@ namespace ManipAnalysis_v2
                                         List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
                                         List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
 
-                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized));
-                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized));
-                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized));
-                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized));
+                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
                                         List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
@@ -2428,22 +2428,39 @@ namespace ManipAnalysis_v2
 
                             var baselineFields = new FieldsBuilder<Baseline>();
                             baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition, t2 => t2.ZippedMeasuredForces);
-                            Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                            Baseline baseline = null;
+
+                            if (trial.Study == "Study 7")
+                            {
+                                if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
+                                {
+                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                }
+                                else
+                                {
+                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                }
+                            }
+                            else
+                            {
+                                baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                            }
 
                             if (baseline != null)
                             {
-                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
-                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
-                                baseline.MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baseline.ZippedMeasuredForces);
+                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
+                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity).OrderBy(t => t.TimeStamp).ToList();
+                                baseline.MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baseline.ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
                                 trial.PositionNormalized =
-                                    Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
+                                    Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                 trial.VelocityNormalized =
-                                    Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
+                                    Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
                                 trial.MeasuredForcesNormalized =
-                                    Gzip<List<ForceContainer>>.DeCompress(trial.ZippedMeasuredForcesNormalized);
+                                    Gzip<List<ForceContainer>>.DeCompress(trial.ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
+
+                                _myMatlabWrapper.ClearWorkspace();
 
                                 _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
-
                                 _myMatlabWrapper.SetWorkspaceData("positionX",
                                     trial.PositionNormalized.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("positionY",
@@ -2452,13 +2469,19 @@ namespace ManipAnalysis_v2
                                     trial.VelocityNormalized.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("velocityY",
                                     trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("forceX",
+                                    trial.MeasuredForcesNormalized.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("forceY",
+                                    trial.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
 
                                 _myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
                                 _myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineForceX", baseline.MeasuredForces.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineForceY", baseline.MeasuredForces.Select(t => t.Y).ToArray());
 
-                                
+                                // Matlab statistic calculations
                                 _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
                                 _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
@@ -2471,6 +2494,7 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
                                 _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
+                                // Create StatisticContainer and fill it with calculated Matlab statistics
                                 var statisticContainer = new StatisticContainer();
                                 statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
                                 statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
@@ -2484,6 +2508,7 @@ namespace ManipAnalysis_v2
                                     _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
                                 statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
 
+                                // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
                                 double[,] absolutePerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceAbs");
                                 double[,] signedPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceSign");
 
@@ -2503,10 +2528,52 @@ namespace ManipAnalysis_v2
                                     statisticContainer.SignedPerpendicularDisplacement.Add(signed);
                                 }
 
+                                // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
                                 DateTime maxVtime = trial.VelocityNormalized.First(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) == trial.VelocityNormalized.Max(u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2)))).TimeStamp;
                                 statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
                                 statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
 
+                                // Calculate MidMovementForce
+                                List<DateTime> vMaxCorridor = trial.VelocityNormalized.Where(t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70).Select(t => t.TimeStamp).ToList();
+                                List<double> perpendicularForces = new List<double>();
+                                List<double> parallelForces = new List<double>();
+                                List<double> absoluteForces = new List<double>();
+
+                                for (int i = 2; i <= trial.PositionNormalized.Count; i++)
+                                {
+                                    if (vMaxCorridor.Contains(trial.PositionNormalized[i - 2].TimeStamp))
+                                    {
+                                        _myMatlabWrapper.Execute(
+                                                "forcePD = pdForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
+                                        _myMatlabWrapper.Execute(
+                                                "baselineForcePD = pdForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
+
+                                        _myMatlabWrapper.Execute(
+                                               "forcePara = paraForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
+                                        _myMatlabWrapper.Execute(
+                                                "baselineForcePara = paraForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
+
+                                        _myMatlabWrapper.Execute("forcePD = sqrt(forcePD(1)^2 + forcePD(2)^2);");
+                                        _myMatlabWrapper.Execute("baselineForcePD = sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
+
+                                        _myMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
+                                        _myMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
+
+                                        _myMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (i - 1) + ")^2 + forceY(" + (i - 1) + ")^2);");
+                                        _myMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (i - 1) + ")^2 + baselineForceY(" + (i - 1) + ")^2);");
+
+
+                                        perpendicularForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePD") - _myMatlabWrapper.GetWorkspaceData("baselineForcePD"));
+                                        parallelForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePara") - _myMatlabWrapper.GetWorkspaceData("baselineForcePara"));
+                                        absoluteForces.Add(_myMatlabWrapper.GetWorkspaceData("absoluteForce") - _myMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
+                                    }
+                                }
+
+                                statisticContainer.PerpendicularMidMovementForce = perpendicularForces.Average();
+                                statisticContainer.ParallelMidMovementForce = parallelForces.Average();
+                                statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
+
+                                // Set Metadata and upload to Database
                                 trial.Statistics = statisticContainer;
                                 trial.BaselineObjectId = baseline.Id;
 
@@ -2777,7 +2844,7 @@ namespace ManipAnalysis_v2
                                     if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
                                         trialsArray[trialsArrayCounter].VelocityNormalized =
-                                            Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized);
+                                            Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
                                         _myMatlabWrapper.SetWorkspaceData("velocity",
                                             trialsArray[trialsArrayCounter].VelocityNormalized.Select(
                                                 t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
@@ -2786,7 +2853,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Velocity - Filtered")
                                     {
                                         trialsArray[trialsArrayCounter].VelocityFiltered =
-                                            Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityFiltered);
+                                            Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityFiltered).OrderBy(t => t.TimeStamp).ToList();
                                         _myMatlabWrapper.SetWorkspaceData("velocity",
                                             trialsArray[trialsArrayCounter].VelocityFiltered.Select(
                                                 t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))
@@ -2796,7 +2863,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Trajectory - Normalized")
                                     {
                                         trialsArray[trialsArrayCounter].PositionNormalized =
-                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized);
+                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
 
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ToArray());
@@ -2809,7 +2876,7 @@ namespace ManipAnalysis_v2
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesNormalized =
                                                 Gzip<List<ForceContainer>>.DeCompress(
-                                                    trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized);
+                                                    trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
                                             for (int i = 2; i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
@@ -2849,7 +2916,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                                     {
                                         trialsArray[trialsArrayCounter].PositionFiltered =
-                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered);
+                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered).OrderBy(t => t.TimeStamp).ToList();
 
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.X).ToArray());
@@ -2861,7 +2928,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesFiltered =
-                                                Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered);
+                                                Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
                                             for (int i = 2; i < trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
@@ -2901,7 +2968,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                                     {
                                         trialsArray[trialsArrayCounter].PositionRaw =
-                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw);
+                                            Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw).OrderBy(t => t.TimeStamp).ToList();
 
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX",
                                             trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.X).ToArray());
@@ -2913,7 +2980,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesRaw =
-                                                Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw);
+                                                Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
                                             for (int i = 2; i < trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[]
@@ -2953,7 +3020,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
                                         trialsArray[trialsArrayCounter].MeasuredForcesNormalized =
-                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized);
+                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -2965,7 +3032,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Force - Filtered")
                                     {
                                         trialsArray[trialsArrayCounter].MeasuredForcesFiltered =
-                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered);
+                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -2977,7 +3044,7 @@ namespace ManipAnalysis_v2
                                     else if (trajectoryVelocityForce == "Force - Raw")
                                     {
                                         trialsArray[trialsArrayCounter].MeasuredForcesRaw =
-                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw);
+                                            Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
                                         _myMatlabWrapper.SetWorkspaceData("forceX",
                                             trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
                                         _myMatlabWrapper.SetWorkspaceData("forceY",
@@ -3040,21 +3107,21 @@ namespace ManipAnalysis_v2
                                             {
                                                 trialsArray[trialsArrayCounter].PositionNormalized =
                                                     Gzip<List<PositionContainer>>.DeCompress(
-                                                        trialsArray[trialsArrayCounter].ZippedPositionNormalized);
+                                                        trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                                 positionData.Add(trialsArray[trialsArrayCounter].PositionNormalized);
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
                                                 trialsArray[trialsArrayCounter].VelocityNormalized =
                                                     Gzip<List<VelocityContainer>>.DeCompress(
-                                                        trialsArray[trialsArrayCounter].ZippedVelocityNormalized);
+                                                        trialsArray[trialsArrayCounter].ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
                                                 velocityData.Add(trialsArray[trialsArrayCounter].VelocityNormalized);
                                             }
                                             else if (trajectoryVelocityForce == "Force - Normalized")
                                             {
                                                 trialsArray[trialsArrayCounter].MeasuredForcesNormalized =
                                                     Gzip<List<ForceContainer>>.DeCompress(
-                                                        trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized);
+                                                        trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
                                                 forceData.Add(trialsArray[trialsArrayCounter].MeasuredForcesNormalized);
                                             }
                                             else
@@ -3330,7 +3397,7 @@ namespace ManipAnalysis_v2
                                 if (trajectoryVelocityForce == "Velocity - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].VelocityNormalized =
-                                        Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized);
+                                        Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].VelocityNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3352,7 +3419,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Velocity - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].VelocityFiltered =
-                                        Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityFiltered);
+                                        Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityFiltered).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].VelocityFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3373,7 +3440,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].PositionNormalized =
-                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized);
+                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].PositionNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3395,7 +3462,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].PositionFiltered =
-                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered);
+                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].PositionFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3416,7 +3483,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Raw")
                                 {
                                     trialsArray[trialsArrayCounter].PositionRaw =
-                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw);
+                                        Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].PositionRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3437,7 +3504,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesNormalized =
-                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized);
+                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3459,7 +3526,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesFiltered =
-                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered);
+                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3481,7 +3548,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Raw")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesRaw =
-                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw);
+                                        Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
                                     for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" +
@@ -3556,20 +3623,20 @@ namespace ManipAnalysis_v2
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
                                             trialsArray[trialsArrayCounter].PositionNormalized =
-                                                Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized);
+                                                Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                             positionData.Add(trialsArray[trialsArrayCounter].PositionNormalized);
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
                                             trialsArray[trialsArrayCounter].VelocityNormalized =
-                                                Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized);
+                                                Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
                                             velocityData.Add(trialsArray[trialsArrayCounter].VelocityNormalized);
                                         }
                                         else if (trajectoryVelocityForce == "Force - Normalized")
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesNormalized =
                                                 Gzip<List<ForceContainer>>.DeCompress(
-                                                    trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized);
+                                                    trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
                                             forceData.Add(trialsArray[trialsArrayCounter].MeasuredForcesNormalized);
                                         }
                                         else
@@ -4253,7 +4320,7 @@ namespace ManipAnalysis_v2
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].Velocity =
-                        Gzip<List<VelocityContainer>>.DeCompress(baselines[baselineCounter].ZippedVelocity);
+                        Gzip<List<VelocityContainer>>.DeCompress(baselines[baselineCounter].ZippedVelocity).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("XY",
                         baselines[baselineCounter].Velocity.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
                     _myMatlabWrapper.Plot("XY", "black", 2);
@@ -4282,7 +4349,7 @@ namespace ManipAnalysis_v2
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].MeasuredForces =
-                        Gzip<List<ForceContainer>>.DeCompress(baselines[baselineCounter].ZippedMeasuredForces);
+                        Gzip<List<ForceContainer>>.DeCompress(baselines[baselineCounter].ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("Fabs",
                         baselines[baselineCounter].MeasuredForces.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
                     _myMatlabWrapper.Plot("Fabs", "black", 2);
