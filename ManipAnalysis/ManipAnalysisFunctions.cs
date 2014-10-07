@@ -2408,7 +2408,7 @@ namespace ManipAnalysis_v2
                 {
                     var statisticFields = new FieldsBuilder<Trial>();
                     statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized,
-                        t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target);
+                        t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target, t7 => t7.TrialType, t8 => t8.ForceFieldType, t9 => t9.Handedness);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     if (trialList.Count() > 0)
@@ -2428,15 +2428,12 @@ namespace ManipAnalysis_v2
 
                             var baselineFields = new FieldsBuilder<Baseline>();
                             baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
-                            Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, baselineFields);
+                            Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
 
-                            // Commented out for Study 07 (Baseline not implemented yet)
-                            //if (baseline != null)
-                            if (true)
+                            if (baseline != null)
                             {
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
-                                //baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
+                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
+                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
                                 trial.PositionNormalized =
                                     Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
                                 trial.VelocityNormalized =
@@ -2453,43 +2450,36 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.SetWorkspaceData("velocityY",
                                     trial.VelocityNormalized.Select(t => t.Y).ToArray());
 
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //_myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
-                                //_myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
-                                //_myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
-                                //_myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
+                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
 
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //_myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                                
+                                _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
                                 _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //_myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                                _myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
                                 _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
                                 _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
                                 _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
                                 _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                 _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
                                 _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //_myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
                                 var statisticContainer = new StatisticContainer();
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
                                 statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
-                                statisticContainer.AbsoluteTrajectoryLength =
-                                    _myMatlabWrapper.GetWorkspaceData("length_abs");
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                                statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
+                                statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
                                 statisticContainer.AbsoluteMeanPerpendicularDisplacement =
                                     _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
                                 statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
                                     _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
                                 statisticContainer.SignedMaximalPerpendicularDisplacement =
                                     _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
+                                statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
 
                                 double[,] absolutePerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceAbs");
                                 double[,] signedPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceSign");
@@ -2515,8 +2505,7 @@ namespace ManipAnalysis_v2
                                 statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
 
                                 trial.Statistics = statisticContainer;
-                                // Commented out for Study 07 (Baseline not implemented yet)
-                                //trial.BaselineObjectId = baseline.Id;
+                                trial.BaselineObjectId = baseline.Id;
 
                                 CompressTrialData(new List<Trial>() { trial });
                                 _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);

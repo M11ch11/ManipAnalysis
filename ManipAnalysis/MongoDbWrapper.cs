@@ -558,15 +558,16 @@ namespace ManipAnalysis_v2
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null)).SetFields(statisticFields);
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
-            FieldsBuilder<Baseline> baselineFields)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber, MongoDb.Trial.TrialTypeEnum trialType,
+            MongoDb.Trial.ForceFieldTypeEnum forceField, MongoDb.Trial.HandednessEnum handedness, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
                 return
                     _baselineCollection.FindAs<Baseline>(
                         Query<Trial>.Where(
-                            t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber))
+                            t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber && t.TrialType == trialType &&
+                            t.ForceFieldType == forceField && t.Handedness == handedness))
                         .SetFields(baselineFields)
                         .SetLimit(1)
                         .First();
