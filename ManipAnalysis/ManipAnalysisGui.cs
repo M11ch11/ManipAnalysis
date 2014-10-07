@@ -474,7 +474,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -577,7 +577,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -880,7 +880,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -910,7 +910,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -1416,7 +1416,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -1481,7 +1481,7 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects)
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
