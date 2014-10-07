@@ -2407,8 +2407,8 @@ namespace ManipAnalysis_v2
                 try
                 {
                     var statisticFields = new FieldsBuilder<Trial>();
-                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized,
-                        t3 => t3.Subject, t4 => t4.Study, t5 => t5.Group, t6 => t6.Target, t7 => t7.TrialType, t8 => t8.ForceFieldType, t9 => t9.Handedness);
+                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized,
+                        t4 => t4.Study, t5 => t5.Group,  t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     if (trialList.Count() > 0)
@@ -2427,17 +2427,20 @@ namespace ManipAnalysis_v2
                             counter++;
 
                             var baselineFields = new FieldsBuilder<Baseline>();
-                            baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition);
+                            baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition, t2 => t2.ZippedMeasuredForces);
                             Baseline baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
 
                             if (baseline != null)
                             {
                                 baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition);
                                 baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity);
+                                baseline.MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baseline.ZippedMeasuredForces);
                                 trial.PositionNormalized =
                                     Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized);
                                 trial.VelocityNormalized =
                                     Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized);
+                                trial.MeasuredForcesNormalized =
+                                    Gzip<List<ForceContainer>>.DeCompress(trial.ZippedMeasuredForcesNormalized);
 
                                 _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
 
@@ -2512,9 +2515,12 @@ namespace ManipAnalysis_v2
                             }
                             else
                             {
-                                _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial:" + trial.Study + "/" +
-                                                                  trial.Group + "/" + trial.Subject.PId + "/" +
-                                                                  trial.Szenario);
+                                _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial: " + trial.Study + " / " +
+                                                                  trial.Group + " / " + trial.Subject.PId + " / " +
+                                                                  trial.Szenario + " / Trial " + trial.TrialNumberInSzenario + " / " +
+                                                                  Enum.GetName(typeof(MongoDb.Trial.TrialTypeEnum), trial.TrialType) + " / " +
+                                                                  Enum.GetName(typeof(MongoDb.Trial.ForceFieldTypeEnum), trial.ForceFieldType) + " / " +
+                                                                  Enum.GetName(typeof(MongoDb.Trial.HandednessEnum), trial.Handedness));
                             }
                         }
                     }
