@@ -7,7 +7,7 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   07.11.2013                                                          %
+%   07.10.2014                                                         %
 %=======================================================================%
 
 %   normVectorLine_CS.m for ManipAnalysis
