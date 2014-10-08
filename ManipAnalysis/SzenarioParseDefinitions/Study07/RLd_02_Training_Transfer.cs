@@ -54,7 +54,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 53) // 30s Pause + Wechsel R=>L
                 {
                     trial.Target.Number = trial.Target.Number - 40;
-                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
                 else if (trial.Target.Number >= 54 && trial.Target.Number <= 56) // 30s Pause + Wechsel L=>R
