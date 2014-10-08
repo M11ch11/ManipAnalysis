@@ -2112,10 +2112,10 @@ namespace ManipAnalysis_v2
                                     base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
                                     base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-
-                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-
+                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 18 || t.TrialNumberInSzenario == 31 || t.TrialNumberInSzenario == 44 || t.TrialNumberInSzenario == 117 || t.TrialNumberInSzenario == 135 || t.TrialNumberInSzenario == 150).ToList();
+                                    
+                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 92 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
+                                    
                                     List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
                                     errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
 
@@ -2176,9 +2176,9 @@ namespace ManipAnalysis_v2
                                     base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
                                     base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 92 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
 
-                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario == 18 || t.TrialNumberInSzenario == 31 || t.TrialNumberInSzenario == 44 || t.TrialNumberInSzenario == 117 || t.TrialNumberInSzenario == 135 || t.TrialNumberInSzenario == 150).ToList();
 
                                     List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
                                     errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
