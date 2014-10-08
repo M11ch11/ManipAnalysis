@@ -2064,38 +2064,10 @@ namespace ManipAnalysis_v2
                         if(study == "Study 7")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
-                            string[] baselineSzenarios = new string[] { "LR_Base1", "LR_Base2a", "LR_Base2b", "RL_Base1", "RL_Base2a", "RL_Base2b" };
-                            Dictionary<string, Dictionary<SubjectContainer, List<string>>> baselineGroupSubjectSzenarioDict = new Dictionary<string, Dictionary<SubjectContainer, List<string>>>();
-
+                            
                             foreach (string group in groups)
                             {
-                                if (!baselineGroupSubjectSzenarioDict.ContainsKey(group))
-                                {
-                                    baselineGroupSubjectSzenarioDict[group] = new Dictionary<SubjectContainer, List<string>>();
-                                }
-
-                                foreach (string baselineSzenario in baselineSzenarios)
-                                {
-                                    foreach (SubjectContainer subject in _myDatabaseWrapper.GetSubjects(study, group, baselineSzenario))
-                                    {
-                                        if (!baselineGroupSubjectSzenarioDict[group].ContainsKey(subject))
-                                        {
-                                            baselineGroupSubjectSzenarioDict[group][subject] = new List<string>();
-                                        }
-
-                                        if (!baselineGroupSubjectSzenarioDict[group][subject].Contains(baselineSzenario))
-                                        {
-                                            baselineGroupSubjectSzenarioDict[group][subject].Add(baselineSzenario);
-                                        }
-                                    }
-                                }
-                            }
-
-                            foreach (string group in baselineGroupSubjectSzenarioDict.Keys)
-                            {
-                                foreach(SubjectContainer subject in baselineGroupSubjectSzenarioDict[group].Keys)
-                                {
-                                    var baselineFields = new FieldsBuilder<Trial>();
+                                var baselineFields = new FieldsBuilder<Trial>();
                                     baselineFields.Include(
                                         t1 => t1.ZippedPositionNormalized,
                                         t2 => t2.ZippedVelocityNormalized,
@@ -2112,47 +2084,54 @@ namespace ManipAnalysis_v2
                                         t13 => t13.NormalizedDataSampleRate,
                                         t14 => t14.Id);
 
-                                    if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("LR_")))
+                                IEnumerable<SubjectContainer> subjectsLR = _myDatabaseWrapper.GetSubjects(study, group, "LR_Base1");
+                                IEnumerable<SubjectContainer> subjectsRL = _myDatabaseWrapper.GetSubjects(study, group, "RL_Base1");
+
+                                foreach (SubjectContainer subject in subjectsLR)
+                                {
+                                    DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base1", subject).ElementAt(0);
+                                    DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2a", subject).ElementAt(0);
+                                    DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2b", subject).ElementAt(0);
+
+                                    List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base1", subject, turnBase1, Enumerable.Range(1, 216), baselineFields).ToList();
+                                    List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
+                                    List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
+
+                                    base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+
+                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+
+                                    List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
+
+                                    List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
+
+                                    List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
+                                    nullFieldBaselineLeftHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+
+                                    List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
+                                    nullFieldBaselineRightHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+
+                                    if (forceFieldCatchTrialBaselineLeftHand.Count == 6 && forceFieldCatchTrialBaselineRightHand.Count == 6 &&
+                                        errorClampBaselineLeftHand.Count == 12 && errorClampBaselineRightHand.Count == 12 &&
+                                        nullFieldBaselineLeftHand.Count == 12 && nullFieldBaselineLeftHand.Count == 12)
                                     {
-                                        DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base1", subject).ElementAt(0);
-                                        DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2a", subject).ElementAt(0);
-                                        DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2b", subject).ElementAt(0);
-                                                                                
-                                        List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "LR_Base1", subject, turnBase1, Enumerable.Range(1, 216), baselineFields).ToList();
-                                        List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
-                                        List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "LR_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
-
-                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-
-                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-
-                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-
-                                        List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-
-                                        List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-
-                                        List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-                                        errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
-
-                                        List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-                                        errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
-
-                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
-                                        nullFieldBaselineLeftHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
-
-                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
-                                        nullFieldBaselineRightHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
-
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(errorClampBaselineLeftHand));
@@ -2160,53 +2139,80 @@ namespace ManipAnalysis_v2
                                         baselinesContainer.AddRange(doBaselineCalculation(nullFieldBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(nullFieldBaselineRightHand));
                                     }
-                                    else if(baselineGroupSubjectSzenarioDict[group][subject].All(t => t.StartsWith("RL_")))
+                                    else
                                     {
-                                        DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base1", subject).ElementAt(0);
-                                        DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2a", subject).ElementAt(0);
-                                        DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2b", subject).ElementAt(0);
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialCount found: \n" + 
+                                            "forceFieldCatchTrialBaselineLeftHand: " + forceFieldCatchTrialBaselineLeftHand.Count + " of 6\n" +
+                                            "forceFieldCatchTrialBaselineRightHand: " + forceFieldCatchTrialBaselineRightHand.Count + " of 6\n" +
+                                            "errorClampBaselineLeftHand: " + errorClampBaselineLeftHand.Count + " of 12\n" +
+                                            "errorClampBaselineRightHand: " + errorClampBaselineRightHand.Count + " of 12\n" +
+                                            "nullFieldBaselineLeftHand: " + nullFieldBaselineLeftHand.Count + " of 12\n" +
+                                            "nullFieldBaselineRightHand: " + nullFieldBaselineRightHand.Count + " of 12\n");
+                                    }
+                                }
 
-                                        List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base1", subject, turnBase1, Enumerable.Range(1, 216), baselineFields).ToList();
-                                        List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
-                                        List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
+                                foreach (SubjectContainer subject in subjectsRL)
+                                {
+                                    DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base1", subject).ElementAt(0);
+                                    DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2a", subject).ElementAt(0);
+                                    DateTime turnBase2b = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2b", subject).ElementAt(0);
 
-                                        base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    List<Trial> base1 = _myDatabaseWrapper.GetTrials(study, group, "RL_Base1", subject, turnBase1, Enumerable.Range(1, 216), baselineFields).ToList();
+                                    List<Trial> base2a = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2a", subject, turnBase2a, Enumerable.Range(1, 12), baselineFields).ToList();
+                                    List<Trial> base2b = _myDatabaseWrapper.GetTrials(study, group, "RL_Base2b", subject, turnBase2b, Enumerable.Range(1, 12), baselineFields).ToList();
 
-                                        base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base1.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                        base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2a.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    base2b.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                        List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
-                                        List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
-                                        errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
+                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
-                                        List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
-                                        errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
+                                    List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    errorClampBaselineLeftHand.AddRange(base2a.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.LeftHand));
 
-                                        List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
-                                        nullFieldBaselineLeftHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+                                    List<Trial> errorClampBaselineRightHand = base1.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    errorClampBaselineRightHand.AddRange(base2b.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.Handedness == Trial.HandednessEnum.RightHand));
 
-                                        List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
-                                        nullFieldBaselineRightHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+                                    List<Trial> nullFieldBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
+                                    nullFieldBaselineLeftHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
+                                    List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
+                                    nullFieldBaselineRightHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
+
+                                    if (forceFieldCatchTrialBaselineLeftHand.Count == 6 && forceFieldCatchTrialBaselineRightHand.Count == 6 &&
+                                        errorClampBaselineLeftHand.Count == 12 && errorClampBaselineRightHand.Count == 12 &&
+                                        nullFieldBaselineLeftHand.Count == 12 && nullFieldBaselineLeftHand.Count == 12)
+                                    {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(errorClampBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(errorClampBaselineRightHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(nullFieldBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(nullFieldBaselineRightHand));
+                                        
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialCount found: \n" +
+                                                "forceFieldCatchTrialBaselineLeftHand: " + forceFieldCatchTrialBaselineLeftHand.Count + " of 6\n" +
+                                                "forceFieldCatchTrialBaselineRightHand: " + forceFieldCatchTrialBaselineRightHand.Count + " of 6\n" +
+                                                "errorClampBaselineLeftHand: " + errorClampBaselineLeftHand.Count + " of 12\n" +
+                                                "errorClampBaselineRightHand: " + errorClampBaselineRightHand.Count + " of 12\n" +
+                                                "nullFieldBaselineLeftHand: " + nullFieldBaselineLeftHand.Count + " of 12\n" +
+                                                "nullFieldBaselineRightHand: " + nullFieldBaselineRightHand.Count + " of 12\n");
                                     }
                                 }
                             }                           
@@ -2458,7 +2464,7 @@ namespace ManipAnalysis_v2
                 {
                     var statisticFields = new FieldsBuilder<Trial>();
                     statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized,
-                        t4 => t4.Study, t5 => t5.Group,  t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness);
+                        t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     if (trialList.Count() > 0)

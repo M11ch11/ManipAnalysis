@@ -165,7 +165,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Szenario = "RL_Base2a";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 288;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 324;
                 }
             }
 
