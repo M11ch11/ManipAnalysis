@@ -171,7 +171,6 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_CalculationsImport = new System.Windows.Forms.GroupBox();
             this.button_Import_CalculateBaselines = new System.Windows.Forms.Button();
             this.button_Import_AutoImport = new System.Windows.Forms.Button();
-            this.button_Import_FixBrokenTrials = new System.Windows.Forms.Button();
             this.button_Import_ImportMeasureFiles = new System.Windows.Forms.Button();
             this.button_Import_CalculateStatistics = new System.Windows.Forms.Button();
             this.groupBox_Import_TimeNormalization = new System.Windows.Forms.GroupBox();
@@ -197,7 +196,6 @@ namespace ManipAnalysis_v2
             this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
             this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
             this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
-            this.button_Debug_showFaultyTrials = new System.Windows.Forms.Button();
             this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
             this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
             this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
@@ -917,6 +915,7 @@ namespace ManipAnalysis_v2
             "MidMovementForce - Abs",
             "MidMovementForce - Para",
             "MidMovementForce - PD",
+            "MidMovementForce - PD Raw",
             "PD - Abs",
             "PD - Sign",
             "PDmax - Abs",
@@ -1224,11 +1223,17 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
-            "Max perpendicular distance - Abs",
-            "Max perpendicular distance - Sign",
-            "Mean perpendicular distance - Abs",
-            "Perpendicular distance 300ms - Abs",
-            "Perpendicular distance 300ms - Sign",
+            "MidMovementForce - Abs",
+            "MidMovementForce - Para",
+            "MidMovementForce - PD",
+            "MidMovementForce - PD Raw",
+            "PD - Abs",
+            "PD - Sign",
+            "PDmax - Abs",
+            "PDmax - Sign",
+            "PDmean - Abs",
+            "PDVmax - Abs",
+            "PDVmax - Sign",
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
@@ -1734,7 +1739,7 @@ namespace ManipAnalysis_v2
             // 
             this.groupBox_Import_VelocityCropping.Controls.Add(this.label_Import_PercentPeakVelocity);
             this.groupBox_Import_VelocityCropping.Controls.Add(this.textBox_Import_PercentPeakVelocity);
-            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(566, 282);
+            this.groupBox_Import_VelocityCropping.Location = new System.Drawing.Point(566, 314);
             this.groupBox_Import_VelocityCropping.Name = "groupBox_Import_VelocityCropping";
             this.groupBox_Import_VelocityCropping.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_VelocityCropping.TabIndex = 35;
@@ -1773,29 +1778,28 @@ namespace ManipAnalysis_v2
             // 
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateBaselines);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_AutoImport);
-            this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_FixBrokenTrials);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_ImportMeasureFiles);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateStatistics);
-            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(566, 396);
+            this.groupBox_Import_CalculationsImport.Location = new System.Drawing.Point(566, 428);
             this.groupBox_Import_CalculationsImport.Name = "groupBox_Import_CalculationsImport";
-            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(161, 189);
+            this.groupBox_Import_CalculationsImport.Size = new System.Drawing.Size(161, 157);
             this.groupBox_Import_CalculationsImport.TabIndex = 36;
             this.groupBox_Import_CalculationsImport.TabStop = false;
             this.groupBox_Import_CalculationsImport.Text = "Calculations / Import";
             // 
             // button_Import_CalculateBaselines
             // 
-            this.button_Import_CalculateBaselines.Location = new System.Drawing.Point(6, 102);
+            this.button_Import_CalculateBaselines.Location = new System.Drawing.Point(7, 95);
             this.button_Import_CalculateBaselines.Name = "button_Import_CalculateBaselines";
             this.button_Import_CalculateBaselines.Size = new System.Drawing.Size(149, 23);
             this.button_Import_CalculateBaselines.TabIndex = 37;
-            this.button_Import_CalculateBaselines.Text = "Calculate Baselines";
+            this.button_Import_CalculateBaselines.Text = "Calculate baselines";
             this.button_Import_CalculateBaselines.UseVisualStyleBackColor = true;
             this.button_Import_CalculateBaselines.Click += new System.EventHandler(this.button_CalculateBaselines_Click);
             // 
             // button_Import_AutoImport
             // 
-            this.button_Import_AutoImport.Location = new System.Drawing.Point(8, 26);
+            this.button_Import_AutoImport.Location = new System.Drawing.Point(9, 19);
             this.button_Import_AutoImport.Name = "button_Import_AutoImport";
             this.button_Import_AutoImport.Size = new System.Drawing.Size(149, 41);
             this.button_Import_AutoImport.TabIndex = 36;
@@ -1803,19 +1807,9 @@ namespace ManipAnalysis_v2
             this.button_Import_AutoImport.UseVisualStyleBackColor = true;
             this.button_Import_AutoImport.Click += new System.EventHandler(this.button_Auto_Click);
             // 
-            // button_Import_FixBrokenTrials
-            // 
-            this.button_Import_FixBrokenTrials.Location = new System.Drawing.Point(6, 160);
-            this.button_Import_FixBrokenTrials.Name = "button_Import_FixBrokenTrials";
-            this.button_Import_FixBrokenTrials.Size = new System.Drawing.Size(149, 23);
-            this.button_Import_FixBrokenTrials.TabIndex = 19;
-            this.button_Import_FixBrokenTrials.Text = "Fix broken Trials";
-            this.button_Import_FixBrokenTrials.UseVisualStyleBackColor = true;
-            this.button_Import_FixBrokenTrials.Click += new System.EventHandler(this.button_FixBrokenTrials_Click);
-            // 
             // button_Import_ImportMeasureFiles
             // 
-            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(6, 73);
+            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(7, 66);
             this.button_Import_ImportMeasureFiles.Name = "button_Import_ImportMeasureFiles";
             this.button_Import_ImportMeasureFiles.Size = new System.Drawing.Size(149, 23);
             this.button_Import_ImportMeasureFiles.TabIndex = 35;
@@ -1825,7 +1819,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Import_CalculateStatistics
             // 
-            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(6, 131);
+            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(7, 124);
             this.button_Import_CalculateStatistics.Name = "button_Import_CalculateStatistics";
             this.button_Import_CalculateStatistics.Size = new System.Drawing.Size(149, 23);
             this.button_Import_CalculateStatistics.TabIndex = 0;
@@ -1837,7 +1831,7 @@ namespace ManipAnalysis_v2
             // 
             this.groupBox_Import_TimeNormalization.Controls.Add(this.label_Import_NewSampleCountText);
             this.groupBox_Import_TimeNormalization.Controls.Add(this.textBox_Import_NewSampleCount);
-            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(566, 339);
+            this.groupBox_Import_TimeNormalization.Location = new System.Drawing.Point(566, 371);
             this.groupBox_Import_TimeNormalization.Name = "groupBox_Import_TimeNormalization";
             this.groupBox_Import_TimeNormalization.Size = new System.Drawing.Size(161, 51);
             this.groupBox_Import_TimeNormalization.TabIndex = 34;
@@ -1873,7 +1867,7 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_SamplesPerSec);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.textBox_Import_FilterOrder);
             this.groupBox_Import_ButterworthFilter.Controls.Add(this.label_Import_FilterOrder);
-            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(566, 148);
+            this.groupBox_Import_ButterworthFilter.Location = new System.Drawing.Point(566, 180);
             this.groupBox_Import_ButterworthFilter.Name = "groupBox_Import_ButterworthFilter";
             this.groupBox_Import_ButterworthFilter.Size = new System.Drawing.Size(161, 128);
             this.groupBox_Import_ButterworthFilter.TabIndex = 33;
@@ -2021,7 +2015,6 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_showFaultyTrials);
             this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
             this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
@@ -2060,16 +2053,6 @@ namespace ManipAnalysis_v2
             this.button_Debug_ShowMatlabWorkspace.Text = "Show MATLAB workspace";
             this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
             this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
-            // 
-            // button_Debug_showFaultyTrials
-            // 
-            this.button_Debug_showFaultyTrials.Location = new System.Drawing.Point(6, 149);
-            this.button_Debug_showFaultyTrials.Name = "button_Debug_showFaultyTrials";
-            this.button_Debug_showFaultyTrials.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_showFaultyTrials.TabIndex = 7;
-            this.button_Debug_showFaultyTrials.Text = "Show faulty Trials";
-            this.button_Debug_showFaultyTrials.UseVisualStyleBackColor = true;
-            this.button_Debug_showFaultyTrials.Click += new System.EventHandler(this.button_showFaultyTrials_Click);
             // 
             // button_Debug_SaveLogToFile
             // 
@@ -2559,7 +2542,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Button button_DescriptiveStatistic1_PlotMeanStd;
         private System.Windows.Forms.Button button_DescriptiveStatistic1_AddAll;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_PlotErrorbars;
-        private System.Windows.Forms.Button button_Debug_showFaultyTrials;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.TabPage tabPage_Start;
         private System.Windows.Forms.Label label_Start_ManipAnalysis;
@@ -2617,7 +2599,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.TextBox textBox_Import_FilterOrder;
         private System.Windows.Forms.Label label_Import_FilterOrder;
         private System.Windows.Forms.GroupBox groupBox_Import_CalculationsImport;
-        private System.Windows.Forms.Button button_Import_FixBrokenTrials;
         private System.Windows.Forms.Button button_Import_CalculateStatistics;
         private System.Windows.Forms.Button button_Debug_SaveLogToFile;
         private System.Windows.Forms.Label label_Log;

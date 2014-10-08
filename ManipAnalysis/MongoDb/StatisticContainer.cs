@@ -21,6 +21,7 @@ namespace ManipAnalysis_v2.MongoDb
         public double RMSE { get; set; }
         public double ParallelMidMovementForce { get; set; }
         public double PerpendicularMidMovementForce { get; set; }
+        public double PerpendicularMidMovementForceRaw { get; set; }
         public double AbsoluteMidMovementForce { get; set; }
     }
 }

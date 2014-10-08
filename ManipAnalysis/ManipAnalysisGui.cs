@@ -619,46 +619,7 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
-        }
-
-        private void button_showFaultyTrials_Click(object sender, EventArgs e)
-        {
-            IEnumerable<object[]> faultyTrialInfo = _manipAnalysisFunctions.GetFaultyTrialInformation();
-
-            if (faultyTrialInfo != null)
-            {
-                List<object[]> faultyTrialInfoList = faultyTrialInfo.ToList();
-
-                if (faultyTrialInfoList.Any())
-                {
-                    List<string[]> cache = faultyTrialInfoList.Select(t => new[]
-                    {
-                        Convert.ToString(t[0]), Convert.ToString(t[1]), Convert.ToString(t[2]),
-                        Convert.ToString(t[3]), Convert.ToString(t[4]), Convert.ToString(t[5]),
-                        Convert.ToString(Convert.ToDateTime(t[6])), Convert.ToString(Convert.ToInt32(t[7]))
-                    }).ToList();
-
-                    string output =
-                        cache.OrderBy(t => t[4])
-                            .Select(
-                                t =>
-                                    " TrialID " + t[0] + " - FileID " + t[1] + " -" + t[2] + " - " + t[3] +
-                                    " - SubjectID " + t[4] + " - " + t[5] + " - " + t[6] + " - Trial " + t[7])
-                            .ToArray()
-                            .Aggregate(
-                                "\n------------------------------------------------------- Faulty trial list -------------------------------------------------------\n",
-                                (current, line) => current + (line + "\n"));
-                    output +=
-                        "-----------------------------------------------------------------------------------------------------------------------------------";
-
-                    WriteToLogBox(output);
-                }
-            }
-            else
-            {
-                WriteToLogBox("No faulty Trials!");
-            }
-        }
+        }        
 
         private void tabPage_DescriptiveStatistic1_Enter(object sender, EventArgs e)
         {
@@ -992,38 +953,55 @@ namespace ManipAnalysis_v2
 
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
         {
-            WriteProgressInfo("Getting data...");
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save mean data file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-mean-"
-                                      + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem
-                                      + "-data";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            int pdTime = 300;
+            if (comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
+                comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
-                if (listBox_DescriptiveStatistic2_SelectedTrials.Items.Count > 0)
+                var inputForm = new PerpendicularDisplacementTimeInputForm();
+                if (inputForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    _manipAnalysisFunctions.ExportDescriptiveStatistic2Data(
-                        listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                        comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(), saveFileDialog.FileName);
+                    pdTime = inputForm.getMilliseconds();
+                    inputForm.Dispose();
                 }
             }
-            WriteProgressInfo("Ready");
-            SetProgressBarValue(0);
+
+            if (pdTime < 0)
+            {
+                WriteToLogBox("Negative PD-Times are not allowed!");
+            }
+            else
+            {
+                WriteProgressInfo("Getting data...");
+                saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Reset();
+                saveFileDialog.Title = @"Save mean data file";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.DefaultExt = ".csv";
+                saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
+                saveFileDialog.OverwritePrompt = true;
+                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                          + "."
+                                          + DateTime.Now.Month.ToString("00")
+                                          + "."
+                                          + DateTime.Now.Day.ToString("00")
+                                          + "-"
+                                          + DateTime.Now.Hour.ToString("00")
+                                          + "."
+                                          + DateTime.Now.Minute.ToString("00")
+                                          + "-mean-"
+                                          + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem
+                                          + "-data";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (listBox_DescriptiveStatistic2_SelectedTrials.Items.Count > 0)
+                    {
+                        _manipAnalysisFunctions.ExportDescriptiveStatistic2Data(
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
+                            comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(), saveFileDialog.FileName, pdTime);
+                    }
+                }
+            }
         }
 
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
@@ -1151,18 +1129,12 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.CalculateStatistics();
         }
 
-        private void button_FixBrokenTrials_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.FixBrokenTrials();
-        }
-
         private void button_Auto_Click(object sender, EventArgs e)
         {
             button_DataManipulation_EnsureIndexes_Click(sender, e);
             button_ImportMeasureFiles_Click(sender, e);
             button_CalculateBaselines_Click(sender, e);
             button_CalculateStatistics_Click(sender, e);
-            button_FixBrokenTrials_Click(sender, e);
         }
 
         private void button_Debug_SaveLogToFile_Click(object sender, EventArgs e)
