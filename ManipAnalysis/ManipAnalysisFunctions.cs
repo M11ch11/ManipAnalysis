@@ -2114,7 +2114,7 @@ namespace ManipAnalysis_v2
 
                                     List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 18 || t.TrialNumberInSzenario == 31 || t.TrialNumberInSzenario == 44 || t.TrialNumberInSzenario == 117 || t.TrialNumberInSzenario == 135 || t.TrialNumberInSzenario == 150).ToList();
                                     
-                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 92 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
+                                    List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 98 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
 
                                     List<Trial> errorClampBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 15 || t.TrialNumberInSzenario == 28 || t.TrialNumberInSzenario == 52 || t.TrialNumberInSzenario == 115 || t.TrialNumberInSzenario == 130 || t.TrialNumberInSzenario == 145).ToList();
                                     errorClampBaselineLeftHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 7 && t.TrialNumberInSzenario <= 12));
@@ -2133,7 +2133,7 @@ namespace ManipAnalysis_v2
                                         errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) &&
                                         errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
                                         nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) &&
-                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                        nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
                                     {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2144,7 +2144,7 @@ namespace ManipAnalysis_v2
                                     }
                                     else
                                     {
-                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);                                        
                                     }
                                 }
 
@@ -2173,7 +2173,7 @@ namespace ManipAnalysis_v2
                                     base2b.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
                                     base2b.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 92 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
+                                    List<Trial> forceFieldCatchTrialBaselineLeftHand = base1.Where(t => t.TrialNumberInSzenario == 72 || t.TrialNumberInSzenario == 85 || t.TrialNumberInSzenario == 98 || t.TrialNumberInSzenario == 171 || t.TrialNumberInSzenario == 189 || t.TrialNumberInSzenario == 204).ToList();
 
                                     List<Trial> forceFieldCatchTrialBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario == 18 || t.TrialNumberInSzenario == 31 || t.TrialNumberInSzenario == 44 || t.TrialNumberInSzenario == 117 || t.TrialNumberInSzenario == 135 || t.TrialNumberInSzenario == 150).ToList();
 
@@ -2194,7 +2194,7 @@ namespace ManipAnalysis_v2
                                        errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) &&
                                        errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) &&
-                                       nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                       nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
                                     {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2206,7 +2206,7 @@ namespace ManipAnalysis_v2
                                     }
                                     else
                                     {
-                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);                                        
                                     }
                                 }
                             }                           
