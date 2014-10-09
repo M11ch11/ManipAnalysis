@@ -26,12 +26,16 @@
 %   - Output:
 %       pd_force = Orthogonal force vector for the line segment
 
-function [ pd_force ] = pdForceLineSegment(force_vector, v_pos_1, v_pos_2)
+function [ pd_force, sign ] = pdForceLineSegment(force_vector, v_pos_1, v_pos_2)
 
 position_vector = v_pos_2 - v_pos_1;
 theta = 90;
 R = [cosd(theta) -sind(theta); sind(theta) cosd(theta)];
 pd_position_vector = position_vector * R;
 
-pd_force = ( dot(force_vector, pd_position_vector) / norm(pd_position_vector)^2 ) * pd_position_vector;
+pd_force = ( dot(force_vector, pd_position_vector) / norm(pd_position_vector) ) * pd_position_vector;
+
+cross_product = cross(position_vector, pd_force)
+sign = cross_product(3) / sqrt(cross_product(3)^2)
+
 end

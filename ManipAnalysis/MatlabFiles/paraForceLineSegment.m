@@ -7,7 +7,7 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   07.10.2014                                                         %
+%   07.10.2014                                                          %
 %=======================================================================%
 
 %   normVectorLine_CS.m for ManipAnalysis
@@ -33,5 +33,5 @@ theta = 0;
 R = [cosd(theta) -sind(theta); sind(theta) cosd(theta)];
 para_position_vector = position_vector * R;
 
-para_force = ( dot(force_vector, para_position_vector) / norm(para_position_vector)^2 ) * para_position_vector;
+para_force = ( dot(force_vector, para_position_vector) / norm(para_position_vector) ) * para_position_vector;
 end
