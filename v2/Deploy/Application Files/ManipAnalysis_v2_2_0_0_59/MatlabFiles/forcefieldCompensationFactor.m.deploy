@@ -29,7 +29,7 @@
 %========================================================================%
 function [ffcf] = forcefieldCompensationFactor(position,velocity,forceIst,forceSoll,index)
 
-fIstPD = pdForceLineSegment(forceIst(index,:), position(index,:), position(index + 1,:));
-fSollPD = pdForceLineSegment(forceSoll(index,:), position(index,:), position(index + 1,:));
+[fIstPD, fIstPDsign] = pdForceLineSegment(forceIst(index,:), position(index,:), position(index + 1,:));
+[fSollPD, fSollPDsign] = pdForceLineSegment(forceSoll(index,:), position(index,:), position(index + 1,:));
 
 ffcf = sqrt(fIstPD(1)^2 + fIstPD(2)^2) / sqrt(fSollPD(1)^2 + fSollPD(2)^2) * 100.0;
