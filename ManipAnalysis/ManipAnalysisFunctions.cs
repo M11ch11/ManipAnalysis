@@ -2656,63 +2656,63 @@ namespace ManipAnalysis_v2
                                 _myMatlabWrapper.SetWorkspaceData("baselineForceY", baseline.MeasuredForces.Select(t => t.Y).ToArray());
 
                                 // Matlab statistic calculations
-                                _myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                                //_myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
                                 _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
-                                _myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
-                                _myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                                _myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
+                                //_myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
+                                //_myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                                //_myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
                                 _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
-                                _myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
-                                _myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                                //_myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+                                //_myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                 _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
                                 _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                _myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                //_myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
 
                                 // Create StatisticContainer and fill it with calculated Matlab statistics
                                 var statisticContainer = new StatisticContainer();
-                                statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
-                                statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");
-                                statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
-                                statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
-                                statisticContainer.AbsoluteMeanPerpendicularDisplacement =
-                                    _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
-                                statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
-                                    _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                                //statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");                                
+                                //statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
+                                //statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
+                                //statisticContainer.AbsoluteMeanPerpendicularDisplacement =
+                                //    _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+                                //statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
+                                //    _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
                                 statisticContainer.SignedMaximalPerpendicularDisplacement =
                                     _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                                statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
+                                //statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
 
                                 // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
-                                double[,] absolutePerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceAbs");
+                                //double[,] absolutePerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceAbs");
                                 double[,] signedPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceSign");
 
                                 for (int perpendicularDisplacementCounter = 0; perpendicularDisplacementCounter < trial.PositionNormalized.Select(t => t.TimeStamp).Count();
                                     perpendicularDisplacementCounter++)
                                 {
-                                    PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
+                                    //PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
                                     PerpendicularDisplacementContainer signed = new PerpendicularDisplacementContainer();
 
-                                    absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter, 0];
-                                    absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
+                                    //absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter, 0];
+                                    //absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
                                     signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
                                     signed.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
 
-                                    statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
+                                    //statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
                                     statisticContainer.SignedPerpendicularDisplacement.Add(signed);
                                 }
 
                                 // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
                                 DateTime maxVtime = trial.VelocityNormalized.First(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) == trial.VelocityNormalized.Max(u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2)))).TimeStamp;
-                                statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+                                //statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
                                 statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
 
                                 // Calculate MidMovementForce
                                 List<DateTime> vMaxCorridor = trial.VelocityNormalized.Where(t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70).Select(t => t.TimeStamp).ToList();
                                 List<double> perpendicularForces = new List<double>();
                                 List<double> perpendicularForcesRaw = new List<double>();
-                                List<double> parallelForces = new List<double>();
-                                List<double> absoluteForces = new List<double>();
+                                //List<double> parallelForces = new List<double>();
+                                //List<double> absoluteForces = new List<double>();
 
                                 for (int i = 2; i <= trial.PositionNormalized.Count; i++)
                                 {
@@ -2723,32 +2723,32 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.Execute(
                                                 "[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
 
-                                        _myMatlabWrapper.Execute(
-                                               "forcePara = paraForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
-                                        _myMatlabWrapper.Execute(
-                                                "baselineForcePara = paraForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
+                                        //_myMatlabWrapper.Execute(
+                                        //       "forcePara = paraForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
+                                        //_myMatlabWrapper.Execute(
+                                        //        "baselineForcePara = paraForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
 
                                         _myMatlabWrapper.Execute("forcePD = forcePDsign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
                                         _myMatlabWrapper.Execute("baselineForcePD = baselineForcePDsign * sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
 
-                                        _myMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
-                                        _myMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
+                                        //_myMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
+                                        //_myMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
 
-                                        _myMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (i - 1) + ")^2 + forceY(" + (i - 1) + ")^2);");
-                                        _myMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (i - 1) + ")^2 + baselineForceY(" + (i - 1) + ")^2);");
+                                        //_myMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (i - 1) + ")^2 + forceY(" + (i - 1) + ")^2);");
+                                        //_myMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (i - 1) + ")^2 + baselineForceY(" + (i - 1) + ")^2);");
 
 
                                         perpendicularForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePD") - _myMatlabWrapper.GetWorkspaceData("baselineForcePD"));
                                         perpendicularForcesRaw.Add(_myMatlabWrapper.GetWorkspaceData("forcePD"));
-                                        parallelForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePara") - _myMatlabWrapper.GetWorkspaceData("baselineForcePara"));
-                                        absoluteForces.Add(_myMatlabWrapper.GetWorkspaceData("absoluteForce") - _myMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
+                                        //parallelForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePara") - _myMatlabWrapper.GetWorkspaceData("baselineForcePara"));
+                                        //absoluteForces.Add(_myMatlabWrapper.GetWorkspaceData("absoluteForce") - _myMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
                                     }
                                 }
 
                                 statisticContainer.PerpendicularMidMovementForce = perpendicularForces.Average();
                                 statisticContainer.PerpendicularMidMovementForceRaw = perpendicularForcesRaw.Average();
-                                statisticContainer.ParallelMidMovementForce = parallelForces.Average();
-                                statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
+                                //statisticContainer.ParallelMidMovementForce = parallelForces.Average();
+                                //statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
 
                                 // Set Metadata and upload to Database
                                 trial.Statistics = statisticContainer;

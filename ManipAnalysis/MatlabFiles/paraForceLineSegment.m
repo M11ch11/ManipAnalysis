@@ -29,9 +29,8 @@
 function [ para_force ] = paraForceLineSegment(force_vector, v_pos_1, v_pos_2)
 
 position_vector = v_pos_2 - v_pos_1;
-theta = 0;
-R = [cosd(theta) -sind(theta); sind(theta) cosd(theta)];
-para_position_vector = position_vector * R;
+R = [1 0; 0 1];
+para_position_vector = R * transpose(position_vector);
 
-para_force = ( dot(force_vector, para_position_vector) / norm(para_position_vector) ) * para_position_vector;
+para_force = ( dot(force_vector, para_position_vector) / norm(para_position_vector)^2 ) * para_position_vector;
 end
