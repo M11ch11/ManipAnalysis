@@ -7,7 +7,7 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   07.11.2013                                                          %
+%   09.10.2014                                                          %
 %=======================================================================%
 
 %   pdForceLineSegment.m for ManipAnalysis
@@ -26,16 +26,15 @@
 %   - Output:
 %       pd_force = Orthogonal force vector for the line segment
 
-function [ pd_force, sign ] = pdForceLineSegment(force_vector, v_pos_1, v_pos_2)
+function [ pd_force, sign_pd ] = pdForceLineSegment(force_vector, v_pos_1, v_pos_2)
 
 position_vector = v_pos_2 - v_pos_1;
-theta = 90;
-R = [cosd(theta) -sind(theta); sind(theta) cosd(theta)];
-pd_position_vector = position_vector * R;
+R = [0 -1; 1 0];
+pd_position_vector = R * transpose(position_vector);
 
-pd_force = ( dot(force_vector, pd_position_vector) / norm(pd_position_vector) ) * pd_position_vector;
+pd_force = dot(force_vector, pd_position_vector) * (pd_position_vector ./ norm(pd_position_vector));
 
-cross_product = cross(position_vector, pd_force)
-sign = cross_product(3) / sqrt(cross_product(3)^2)
+cross_product = cross([position_vector 0], [force_vector 0]);
+sign_pd = sign(cross_product(3));
 
 end

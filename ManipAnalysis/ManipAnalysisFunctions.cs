@@ -2164,8 +2164,9 @@ namespace ManipAnalysis_v2
                 try
                 {
                     List<Baseline> baselinesContainer = new List<Baseline>();
+                    IEnumerable<string> studys = _myDatabaseWrapper.GetStudys();
 
-                    foreach(string study in _myDatabaseWrapper.GetStudys())
+                    foreach (string study in studys)
                     {
                         if(study == "Study 7")
                         {
@@ -2585,18 +2586,15 @@ namespace ManipAnalysis_v2
                             counter++;
 
                             var baselineFields = new FieldsBuilder<Baseline>();
-                            baselineFields.Include(t1 => t1.ZippedVelocity, t2 => t2.ZippedPosition, t2 => t2.ZippedMeasuredForces);
+                            baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Target, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.ZippedVelocity, t9 => t9.ZippedPosition, t10 => t10.ZippedMeasuredForces);
                             Baseline baseline = null;
 
                             if (trial.Study == "Study 7")
                             {
                                 if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
                                 {
-                                    try
-                                    {
-                                        baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
-                                    }
-                                    catch
+                                    baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                    if (baseline == null)
                                     {
                                         baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
                                         baselineBuffer.Add(baseline);
@@ -2604,11 +2602,8 @@ namespace ManipAnalysis_v2
                                 }
                                 else
                                 {
-                                    try
-                                    {
-                                        baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
-                                    }
-                                    catch
+                                    baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                    if (baseline == null)
                                     {
                                         baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
                                         baselineBuffer.Add(baseline);
@@ -2617,11 +2612,8 @@ namespace ManipAnalysis_v2
                             }
                             else
                             {
-                                try
-                                {
-                                    baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
-                                }
-                                catch
+                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                if (baseline == null)
                                 {
                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
                                     baselineBuffer.Add(baseline);
@@ -2727,9 +2719,9 @@ namespace ManipAnalysis_v2
                                     if (vMaxCorridor.Contains(trial.PositionNormalized[i - 2].TimeStamp))
                                     {
                                         _myMatlabWrapper.Execute(
-                                                "forcePD, forcePDsign = pdForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
+                                                "[forcePD, forcePDsign] = pdForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
                                         _myMatlabWrapper.Execute(
-                                                "baselineForcePD, baselineForcePDsign = pdForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
+                                                "[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
 
                                         _myMatlabWrapper.Execute(
                                                "forcePara = paraForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
@@ -2971,7 +2963,7 @@ namespace ManipAnalysis_v2
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "fPD, fPDsign = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                        "[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
                                                     _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
@@ -3023,7 +3015,7 @@ namespace ManipAnalysis_v2
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "fPD, fPDsign = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                        "[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
                                                     _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
@@ -3075,7 +3067,7 @@ namespace ManipAnalysis_v2
                                                 if (showPdForceVectors)
                                                 {
                                                     _myMatlabWrapper.Execute(
-                                                        "fPD, fPDsign = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                        "[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
                                                     _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
                                                 }
                                             }
