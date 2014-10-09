@@ -1000,236 +1000,254 @@ namespace ManipAnalysis_v2
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
-                    List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
-                    double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
-                    double processedTrialsCount = 0;
+                List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
 
-                    var fields = new FieldsBuilder<Trial>();
-                    fields.Include(t => t.ZippedStatistics);
-                    fields.Include(t => t.TrialNumberInSzenario); // Neccessary for sorting!
+                var fields = new FieldsBuilder<Trial>();
+                fields.Include(t => t.ZippedStatistics);
+                fields.Include(t => t.TrialNumberInSzenario); // Neccessary for sorting!
 
-                    if (selectedTrialsList.Any())
+                if (selectedTrialsList.Any())
+                {
+                    List<int> trialList = selectedTrialsList.ElementAt(0).Trials;
+
+                    if (selectedTrialsList.Any(temp => !trialList.SequenceEqual(temp.Trials)))
                     {
-                        List<int> trialList = selectedTrialsList.ElementAt(0).Trials;
+                        _myManipAnalysisGui.WriteToLogBox("Trial selections are not equal!");
+                    }
+                    else
+                    {
+                        var statisticData = new double[selectedTrialsList.Count(), trialList.Count];
 
-                        if (selectedTrialsList.Any(temp => !trialList.SequenceEqual(temp.Trials)))
+                        int subjectCounter = 0;
+                        for (subjectCounter = 0; subjectCounter < selectedTrialsList.Count & !TaskManager.Cancel; subjectCounter++)
                         {
-                            _myManipAnalysisGui.WriteToLogBox("Trial selections are not equal!");
-                        }
-                        else
-                        {
-                            int meanCount = 0;
-                            var statisticData = new double[trialList.Count, selectedTrialsList.Count()];
-                            for (meanCount = 0; meanCount < selectedTrialsList.Count() & !TaskManager.Cancel; meanCount++)
+                            StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(subjectCounter);
+
+                            DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
+                                tempStatisticPlotContainer.Group,
+                                tempStatisticPlotContainer.Szenario,
+                                tempStatisticPlotContainer.Subject,
+                                Convert.ToInt32(
+                                    tempStatisticPlotContainer.Turn.Substring(
+                                        "Turn".Length)));
+
+                            Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group,
+                                        tempStatisticPlotContainer.Szenario,
+                                        tempStatisticPlotContainer.Subject,
+                                        turnDateTime,
+                                        trialList,
+                                        fields).ToArray();
+
+                            for (int trialsArrayCounter = 0;
+                                trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
+                                trialsArrayCounter++)
                             {
-                                StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCount);
+                                _myManipAnalysisGui.SetProgressBarValue((100.0 / selectedTrialsList.Count) * subjectCounter);
 
-                                DateTime turnDateTime = GetTurnDateTime(tempStatisticPlotContainer.Study,
-                                    tempStatisticPlotContainer.Group,
-                                    tempStatisticPlotContainer.Szenario,
-                                    tempStatisticPlotContainer.Subject,
-                                    Convert.ToInt32(
-                                        tempStatisticPlotContainer.Turn.Substring(
-                                            "Turn".Length)));
+                                trialsArray[trialsArrayCounter].Statistics =
+                                    Gzip<StatisticContainer>.DeCompress(
+                                        trialsArray[trialsArrayCounter].ZippedStatistics);
 
-                                Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempStatisticPlotContainer.Study,
-                                            tempStatisticPlotContainer.Group,
-                                            tempStatisticPlotContainer.Szenario,
-                                            tempStatisticPlotContainer.Subject,
-                                            turnDateTime,
-                                            trialList,
-                                            fields).ToArray();
 
-                                for (int trialsArrayCounter = 0;
-                                    trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
-                                    trialsArrayCounter++)
+                                long pdTimeTick = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Min(t => t.TimeStamp).Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks;
+
+                                DateTime msIndex = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
+                                    OrderBy(t => Math.Abs(t.Ticks - pdTimeTick)).ElementAt(0);
+
+                                if (pdTimeTick > trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Max(t => t.TimeStamp).Ticks)
                                 {
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / sumOfAllTrials) * processedTrialsCount++);
+                                    _myManipAnalysisGui.WriteToLogBox("Warning! Selected PD-Time is larger then movement time! [" + tempStatisticPlotContainer.Study + " - " + tempStatisticPlotContainer.Group + " - " + tempStatisticPlotContainer.Szenario + " - " + tempStatisticPlotContainer.Subject + " - " + tempStatisticPlotContainer.Turn + " - Trial " + trialsArray[trialsArrayCounter].TrialNumberInSzenario + "]");
+                                }
 
-                                    trialsArray[trialsArrayCounter].Statistics =
-                                        Gzip<StatisticContainer>.DeCompress(
-                                            trialsArray[trialsArrayCounter].ZippedStatistics);
+                                switch (statisticType)
+                                {
+                                    case "Vector correlation":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation;
+                                        break;
 
+                                    case "Vector correlation fisher-z":
+                                        _myMatlabWrapper.SetWorkspaceData("vcorr",
+                                            trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
+                                        _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                        _myMatlabWrapper.ClearWorkspace();
+                                        break;
 
-                                    long pdTimeTick = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Min(t => t.TimeStamp).Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks;
+                                    case "Vector correlation fisher-z to r-values":
+                                        _myMatlabWrapper.SetWorkspaceData("vcorr",
+                                            trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
+                                        _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            _myMatlabWrapper.GetWorkspaceData("fisherZ");
+                                        _myMatlabWrapper.ClearWorkspace();
+                                        break;
 
-                                    DateTime msIndex = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
-                                        OrderBy(t => Math.Abs(t.Ticks - pdTimeTick)).ElementAt(0);
+                                    case "MidMovementForce - PD":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .PerpendicularMidMovementForce;
+                                        break;
 
-                                    if (pdTimeTick > trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Max(t => t.TimeStamp).Ticks)
-                                    {
-                                        _myManipAnalysisGui.WriteToLogBox("Warning! Selected PD-Time is larger then movement time! [" + tempStatisticPlotContainer.Study + " - " + tempStatisticPlotContainer.Group + " - " + tempStatisticPlotContainer.Szenario + " - " + tempStatisticPlotContainer.Subject + " - " + tempStatisticPlotContainer.Turn + " - Trial " + trialsArray[trialsArrayCounter].TrialNumberInSzenario + "]");
-                                    }
+                                    case "MidMovementForce - PD Raw":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .PerpendicularMidMovementForceRaw;
+                                        break;
 
-                                    switch (statisticType)
-                                    {
-                                        case "Vector correlation":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation;
-                                            break;
+                                    case "MidMovementForce - Para":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .ParallelMidMovementForce;
+                                        break;
 
-                                        case "Vector correlation fisher-z":
-                                            _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                            _myMatlabWrapper.ClearWorkspace();
-                                            break;
+                                    case "MidMovementForce - Abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .AbsoluteMidMovementForce;
+                                        break;
 
-                                        case "Vector correlation fisher-z to r-values":
-                                            _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                            _myMatlabWrapper.Execute("fisherZ = vectorCorrelationFisherZTransform(vcorr);");
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                            _myMatlabWrapper.ClearWorkspace();
-                                            break;
+                                    case "PD - Abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
+                                        break;
 
-                                        case "MidMovementForce - PD":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .PerpendicularMidMovementForce;
-                                            break;
+                                    case "PDmean - Abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .AbsoluteMeanPerpendicularDisplacement;
+                                        break;
 
-                                        case "MidMovementForce - PD Raw":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .PerpendicularMidMovementForceRaw;
-                                            break;
+                                    case "PDmax - Abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .AbsoluteMaximalPerpendicularDisplacement;
+                                        break;
 
-                                        case "MidMovementForce - Para":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .ParallelMidMovementForce;
-                                            break;
+                                    case "PDVmax - Abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .AbsoluteMaximalPerpendicularDisplacementVmax;
+                                        break;
 
-                                        case "MidMovementForce - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteMidMovementForce;
-                                            break;
+                                    case "PD - Sign":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
+                                        break;
 
-                                        case "PD - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
-                                            break;
+                                    case "PDmax - Sign":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .SignedMaximalPerpendicularDisplacement;
+                                        break;
 
-                                        case "PDmean - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteMeanPerpendicularDisplacement;
-                                            break;
+                                    case "PDVmax - Sign":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .SignedMaximalPerpendicularDisplacementVmax;
+                                        break;
 
-                                        case "PDmax - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteMaximalPerpendicularDisplacement;
-                                            break;
+                                    case "Trajectory length abs":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
+                                        break;
 
-                                        case "PDVmax - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteMaximalPerpendicularDisplacementVmax;
-                                            break;
+                                    case "Trajectory length ratio":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics
+                                                .AbsoluteBaselineTrajectoryLengthRatio;
+                                        break;
 
-                                        case "PD - Sign":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
-                                            break;
+                                    case "Enclosed area":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
+                                        break;
 
-                                        case "PDmax - Sign":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .SignedMaximalPerpendicularDisplacement;
-                                            break;
-
-                                        case "PDVmax - Sign":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .SignedMaximalPerpendicularDisplacementVmax;
-                                            break;
-
-                                        case "Trajectory length abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
-                                            break;
-
-                                        case "Trajectory length ratio":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteBaselineTrajectoryLengthRatio;
-                                            break;
-
-                                        case "Enclosed area":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
-                                            break;
-
-                                        case "RMSE":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.RMSE;
-                                            break;
-                                    }
+                                    case "RMSE":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.RMSE;
+                                        break;
                                 }
                             }
+                        }
 
-                            double[,] dataMean;
-                            double[,] dataStd;
-
-                            if (trialList.Count > 1 & selectedTrialsList.Count() > 1)
+                        _myMatlabWrapper.SetWorkspaceData("statisticData", statisticData);
+                        if (trialList.Count > 1)
+                        {
+                            if (statisticType == "Vector correlation fisher-z to r-values")
                             {
-                                _myMatlabWrapper.SetWorkspaceData("data", statisticData);
-
-                                if (statisticType == "Vector correlation fisher-z to r-values")
-                                {
-                                    _myMatlabWrapper.Execute("dataMean = fisherZVectorCorrelationTransform(mean(transpose(data)));");
-                                    _myMatlabWrapper.Execute("dataStd = fisherZVectorCorrelationTransform(std(transpose(data)));");
-                                }
-                                else
-                                {
-                                    _myMatlabWrapper.Execute("dataMean = mean(transpose(data));");
-                                    _myMatlabWrapper.Execute("dataStd = std(transpose(data));");
-                                }
-
-                                dataMean = _myMatlabWrapper.GetWorkspaceData("dataMean");
-                                dataStd = _myMatlabWrapper.GetWorkspaceData("dataStd");
+                                _myMatlabWrapper.Execute(
+                                    "statisticDataMean = transpose(fisherZVectorCorrelationTransform(mean(transpose(statisticData))));");
+                                _myMatlabWrapper.Execute(
+                                    "statisticDataStd = transpose(fisherZVectorCorrelationTransform(std(transpose(statisticData))));");
                             }
                             else
                             {
-                                dataMean = new[,] { { statisticData[0, 0], 0 } };
-                                dataStd = new double[,] { { 0, 0 } };
+                                _myMatlabWrapper.Execute("statisticDataMean = transpose(mean(transpose(statisticData)));");
+                                _myMatlabWrapper.Execute("statisticDataStd = transpose(std(transpose(statisticData)));");
                             }
-
-                            var cache = new List<string>();
-                            var meanDataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                            var meanDataFileWriter = new StreamWriter(meanDataFileStream);
-                            cache.Add("Study;Group;Szenario;Subject;Turn;Trials;Mean;Std");
-
-                            cache.AddRange(selectedTrialsList.Cast<object>()
-                                .Select((t, i) => selectedTrialsList.ElementAt(i))
-                                .Select(
-                                    (tempStatisticPlotContainer, i) =>
-                                        tempStatisticPlotContainer.Study + ";" +
-                                        tempStatisticPlotContainer.Group + ";" +
-                                        tempStatisticPlotContainer.Szenario + ";" +
-                                        tempStatisticPlotContainer.Subject + ";" +
-                                        tempStatisticPlotContainer.Turn + ";" +
-                                        tempStatisticPlotContainer.GetTrialsString() +
-                                        ";" +
-                                        DoubleConverter.ToExactString(dataMean[0, i]) +
-                                        ";" +
-                                        DoubleConverter.ToExactString(dataStd[0, i])));
-
-                            for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
-                            {
-                                meanDataFileWriter.WriteLine(cache[i]);
-                            }
-
-                            meanDataFileWriter.Close();
                         }
+                        else
+                        {
+                            if (statisticType == "Vector correlation fisher-z to r-values")
+                            {
+                                _myMatlabWrapper.Execute(
+                                    "statisticDataMean = fisherZVectorCorrelationTransform(statisticData);");
+                            }
+                            else
+                            {
+                                _myMatlabWrapper.Execute("statisticDataMean = statisticData;");
+                            }
+                        }
+
+                        double[,] dataMean = null;
+                        double[,] dataStd = null;
+                        if (subjectCounter > 1)
+                        {
+                            dataMean = _myMatlabWrapper.GetWorkspaceData("statisticDataMean");
+                            dataStd = _myMatlabWrapper.GetWorkspaceData("statisticDataStd");
+                        }
+                        else
+                        {
+                            dataMean = new double[1, 1];
+                            dataMean[0, 0] = _myMatlabWrapper.GetWorkspaceData("statisticDataMean");
+                        }
+
+                        var cache = new List<string>();
+                        var meanDataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                        var meanDataFileWriter = new StreamWriter(meanDataFileStream);
+                        cache.Add("Study;Group;Szenario;Subject;Turn;Trials;Mean;Std");
+
+
+                        for (int i = 0; i < selectedTrialsList.Count & !TaskManager.Cancel; i++)
+                        {
+                            StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(i);
+                            string meanValue = DoubleConverter.ToExactString(dataMean[i, 0]);
+                            string stdValue = dataStd == null ? "" : DoubleConverter.ToExactString(dataStd[i, 0]);
+
+                            cache.Add(tempStatisticPlotContainer.Study + ";" +
+                                     tempStatisticPlotContainer.Group + ";" +
+                                     tempStatisticPlotContainer.Szenario + ";" +
+                                     tempStatisticPlotContainer.Subject + ";" +
+                                     tempStatisticPlotContainer.Turn + ";" +
+                                     tempStatisticPlotContainer.GetTrialsString() +
+                                     ";" +
+                                     meanValue +
+                                     ";" +
+                                     stdValue);
+                        }
+
+                        for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
+                        {
+                            meanDataFileWriter.WriteLine(cache[i]);
+                        }
+
+                        meanDataFileWriter.Close();
                     }
-            
+                }
+
                 _myMatlabWrapper.ClearWorkspace();
                 _myManipAnalysisGui.WriteProgressInfo("Ready");
                 _myManipAnalysisGui.SetProgressBarValue(0);

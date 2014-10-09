@@ -293,7 +293,7 @@ namespace ManipAnalysis_v2
             this.comboBox_Start_DatabaseServer.Items.AddRange(new object[] {
             "IFS96",
             "localhost",
-            "7.16.150.60"});
+            "7.9.229.20"});
             this.comboBox_Start_DatabaseServer.Location = new System.Drawing.Point(14, 130);
             this.comboBox_Start_DatabaseServer.Name = "comboBox_Start_DatabaseServer";
             this.comboBox_Start_DatabaseServer.Size = new System.Drawing.Size(281, 21);
