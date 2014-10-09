@@ -32,22 +32,9 @@ position_vector = v_pos_2 - v_pos_1;
 R = [0 -1; 1 0];
 pd_position_vector = R * transpose(position_vector);
 
-pd_force = dot(force_vector, pd_position_vector) * (pd_position_vector ./ norm(pd_position_vector));
-
-cross_product = cross([position_vector 0], [force_vector 0]);
-sign_pd = sign(cross_product(3));
-
-
-
-position_vector = v_pos_2 - v_pos_1;
-R = [0 -1; 1 0];
-pd_position_vector = R * transpose(position_vector);
-
 pd_force = ( dot(force_vector, pd_position_vector) ./ norm(pd_position_vector) ) * ( pd_position_vector ./ norm(pd_position_vector) );
 
 cross_product = cross([position_vector 0], [force_vector 0]);
 sign_pd = sign(cross_product(3));
-
-
 
 end
