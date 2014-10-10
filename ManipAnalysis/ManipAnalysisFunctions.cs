@@ -1050,12 +1050,12 @@ namespace ManipAnalysis_v2
                                         trialsArray[trialsArrayCounter].ZippedStatistics);
 
 
-                                long pdTimeTick = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Min(t => t.TimeStamp).Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks;
+                                long pdTimeTick = trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Min(t => t.TimeStamp).Ticks + TimeSpan.FromMilliseconds(pdTime).Ticks;
 
-                                DateTime msIndex = trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Select(t => t.TimeStamp).
+                                DateTime msIndex = trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Select(t => t.TimeStamp).
                                     OrderBy(t => Math.Abs(t.Ticks - pdTimeTick)).ElementAt(0);
 
-                                if (pdTimeTick > trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement.Max(t => t.TimeStamp).Ticks)
+                                if (pdTimeTick > trialsArray[trialsArrayCounter].Statistics.SignedPerpendicularDisplacement.Max(t => t.TimeStamp).Ticks)
                                 {
                                     _myManipAnalysisGui.WriteToLogBox("Warning! Selected PD-Time is larger then movement time! [" + tempStatisticPlotContainer.Study + " - " + tempStatisticPlotContainer.Group + " - " + tempStatisticPlotContainer.Szenario + " - " + tempStatisticPlotContainer.Subject + " - " + tempStatisticPlotContainer.Turn + " - Trial " + trialsArray[trialsArrayCounter].TrialNumberInSzenario + "]");
                                 }
