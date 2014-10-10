@@ -60,6 +60,6 @@ namespace ManipAnalysis_v2
 
             return Enumerable.Range(0, arrays[0].Length)
                        .Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
-        }
+        }        
     }
 }

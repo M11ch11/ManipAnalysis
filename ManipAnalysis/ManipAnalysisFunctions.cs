@@ -2569,203 +2569,275 @@ namespace ManipAnalysis_v2
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     List<Baseline> baselineBuffer = new List<Baseline>();
-                    
-                    if (trialList.Count() > 0)
+                    int cpuCount = 7;//Environment.ProcessorCount;
+
+
+                    if (trialList.Count > 0)
                     {
-                        foreach (Trial trial in trialList)
+                        List<List<Trial>> taskTrialListParts = new List<List<Trial>>();
+                        int threadCount = 0;
+
+                        if (trialList.Count > cpuCount)
+                        {                            
+                            for (int cpuCounter = 0; cpuCounter < cpuCount; cpuCounter++)
+                            {
+                                taskTrialListParts.Add(new List<Trial>());
+                            }
+
+                            int trialCounter = 0;
+                            int listCounter = 0;
+                            while (trialCounter < trialList.Count)
+                            {
+                                taskTrialListParts[listCounter].Add(trialList[trialCounter]);
+                                trialCounter++;
+                                listCounter++;
+                                if(listCounter >= cpuCount)
+                                {
+                                    listCounter = 0;
+                                }
+                            }
+
+                            threadCount = cpuCount;
+                        }
+                        else
                         {
-                            if (TaskManager.Cancel)
-                            {
-                                break;
-                            }
-                            while (TaskManager.Pause & !TaskManager.Cancel)
-                            {
-                                Thread.Sleep(100);
-                            }
-                            _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count()) * counter);
-                            counter++;
+                            taskTrialListParts.Add(trialList);
+                            threadCount = 1;
+                        }
 
-                            var baselineFields = new FieldsBuilder<Baseline>();
-                            baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Target, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.ZippedVelocity, t9 => t9.ZippedPosition, t10 => t10.ZippedMeasuredForces);
-                            Baseline baseline = null;
+                        List<Task> calculatingTasks = new List<Task>();
 
-                            if (trial.Study == "Study 7")
+                        for (int i = 0; i < threadCount; i++)
+                        {
+                            List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
+
+                            Task tempTask = Task.Factory.StartNew(delegate
                             {
-                                if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
+                                List<Trial> taskTrialList = tempTaskTrialList;
+                                MatlabWrapper taskMatlabWrapper = new MatlabWrapper(_myManipAnalysisGui, MatlabWrapper.MatlabInstanceType.Single);
+
+                                try
                                 {
-                                    baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
-                                    if (baseline == null)
+                                    foreach (Trial trial in taskTrialList)
                                     {
-                                        baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
-                                        baselineBuffer.Add(baseline);
+                                        if (TaskManager.Cancel)
+                                        {
+                                            break;
+                                        }
+                                        while (TaskManager.Pause & !TaskManager.Cancel)
+                                        {
+                                            Thread.Sleep(100);
+                                        }
+
+                                        var baselineFields = new FieldsBuilder<Baseline>();
+                                        baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Target, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.ZippedVelocity, t9 => t9.ZippedPosition, t10 => t10.ZippedMeasuredForces);
+                                        Baseline baseline = null;
+
+                                        if (trial.Study == "Study 7")
+                                        {
+                                            if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    lock (baselineBuffer)
+                                                    {
+                                                        baselineBuffer.Add(baseline);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    lock (baselineBuffer)
+                                                    {
+                                                        baselineBuffer.Add(baseline);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                            if (baseline == null)
+                                            {
+                                                baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                lock (baselineBuffer)
+                                                {
+                                                    baselineBuffer.Add(baseline);
+                                                }
+                                            }
+                                        }
+
+                                        if (baseline != null)
+                                        {
+                                            baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
+                                            baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity).OrderBy(t => t.TimeStamp).ToList();
+                                            baseline.MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baseline.ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
+                                            trial.PositionNormalized =
+                                                Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
+                                            trial.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
+                                            trial.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(trial.ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
+
+                                            taskMatlabWrapper.ClearWorkspace();
+
+                                            taskMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
+                                            taskMatlabWrapper.SetWorkspaceData("positionX",
+                                                trial.PositionNormalized.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("positionY",
+                                                trial.PositionNormalized.Select(t => t.Y).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("velocityX",
+                                                trial.VelocityNormalized.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("velocityY",
+                                                trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("forceX",
+                                                trial.MeasuredForcesNormalized.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("forceY",
+                                                trial.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
+
+                                            taskMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("baselineForceX", baseline.MeasuredForces.Select(t => t.X).ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("baselineForceY", baseline.MeasuredForces.Select(t => t.Y).ToArray());
+
+                                            // Matlab statistic calculations
+                                            taskMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+                                            taskMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
+                                            taskMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
+                                            taskMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+                                            taskMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
+                                            taskMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
+                                            taskMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+                                            taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                                            taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                            taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                            taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+
+                                            // Create StatisticContainer and fill it with calculated Matlab statistics
+                                            var statisticContainer = new StatisticContainer();
+                                            statisticContainer.VelocityVectorCorrelation = taskMatlabWrapper.GetWorkspaceData("vector_correlation");
+                                            statisticContainer.EnclosedArea = taskMatlabWrapper.GetWorkspaceData("enclosed_area");
+                                            statisticContainer.AbsoluteTrajectoryLength = taskMatlabWrapper.GetWorkspaceData("length_abs");
+                                            statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = taskMatlabWrapper.GetWorkspaceData("length_ratio");
+                                            statisticContainer.AbsoluteMeanPerpendicularDisplacement =
+                                                taskMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+                                            statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
+                                                taskMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                                            statisticContainer.SignedMaximalPerpendicularDisplacement =
+                                                taskMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+                                            statisticContainer.RMSE = taskMatlabWrapper.GetWorkspaceData("rmse");
+
+                                            // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
+                                            double[,] absolutePerpendicularDisplacement = taskMatlabWrapper.GetWorkspaceData("distanceAbs");
+                                            double[,] signedPerpendicularDisplacement = taskMatlabWrapper.GetWorkspaceData("distanceSign");
+
+                                            for (int perpendicularDisplacementCounter = 0; perpendicularDisplacementCounter < trial.PositionNormalized.Select(t => t.TimeStamp).Count();
+                                                perpendicularDisplacementCounter++)
+                                            {
+                                                PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
+                                                PerpendicularDisplacementContainer signed = new PerpendicularDisplacementContainer();
+
+                                                absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter, 0];
+                                                absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
+
+                                                signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
+                                                signed.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
+
+                                                statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
+                                                statisticContainer.SignedPerpendicularDisplacement.Add(signed);
+                                            }
+
+                                            // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
+                                            DateTime maxVtime = trial.VelocityNormalized.First(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) == trial.VelocityNormalized.Max(u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2)))).TimeStamp;
+                                            statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+                                            statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+
+                                            // Calculate MidMovementForce
+                                            List<DateTime> vMaxCorridor = trial.VelocityNormalized.Where(t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70).Select(t => t.TimeStamp).ToList();
+                                            List<double> perpendicularForces = new List<double>();
+                                            List<double> perpendicularForcesRaw = new List<double>();
+                                            List<double> parallelForces = new List<double>();
+                                            List<double> absoluteForces = new List<double>();
+
+                                            for (int dataPoint = 2; dataPoint <= trial.PositionNormalized.Count; dataPoint++)
+                                            {
+                                                if (vMaxCorridor.Contains(trial.PositionNormalized[dataPoint - 2].TimeStamp))
+                                                {
+                                                    taskMatlabWrapper.Execute(
+                                                            "[forcePD, forcePDsign] = pdForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
+                                                    taskMatlabWrapper.Execute(
+                                                            "[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
+
+                                                    taskMatlabWrapper.Execute(
+                                                           "forcePara = paraForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
+                                                    taskMatlabWrapper.Execute(
+                                                            "baselineForcePara = paraForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
+
+                                                    taskMatlabWrapper.Execute("forcePD = forcePDsign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
+                                                    taskMatlabWrapper.Execute("baselineForcePD = baselineForcePDsign * sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
+
+                                                    taskMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
+                                                    taskMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
+
+                                                    taskMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (dataPoint - 1) + ")^2 + forceY(" + (dataPoint - 1) + ")^2);");
+                                                    taskMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (dataPoint - 1) + ")^2 + baselineForceY(" + (dataPoint - 1) + ")^2);");
+
+
+                                                    perpendicularForces.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
+                                                    perpendicularForcesRaw.Add(taskMatlabWrapper.GetWorkspaceData("forcePD"));
+                                                    parallelForces.Add(taskMatlabWrapper.GetWorkspaceData("forcePara") - taskMatlabWrapper.GetWorkspaceData("baselineForcePara"));
+                                                    absoluteForces.Add(taskMatlabWrapper.GetWorkspaceData("absoluteForce") - taskMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
+                                                }
+                                            }
+
+                                            statisticContainer.PerpendicularMidMovementForce = perpendicularForces.Average();
+                                            statisticContainer.PerpendicularMidMovementForceRaw = perpendicularForcesRaw.Average();
+                                            statisticContainer.ParallelMidMovementForce = parallelForces.Average();
+                                            statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
+
+                                            // Set Metadata and upload to Database
+                                            trial.Statistics = statisticContainer;
+                                            trial.BaselineObjectId = baseline.Id;
+
+                                            CompressTrialData(new List<Trial>() { trial });
+                                            _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
+
+                                            _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count) * ++counter);
+                                        }
+                                        else
+                                        {
+                                            _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial: " + trial.Study + " / " +
+                                                                              trial.Group + " / " + trial.Subject.PId + " / " +
+                                                                              trial.Szenario + " / Trial " + trial.TrialNumberInSzenario + " / " +
+                                                                              Enum.GetName(typeof(MongoDb.Trial.TrialTypeEnum), trial.TrialType) + " / " +
+                                                                              Enum.GetName(typeof(MongoDb.Trial.ForceFieldTypeEnum), trial.ForceFieldType) + " / " +
+                                                                              Enum.GetName(typeof(MongoDb.Trial.HandednessEnum), trial.Handedness));
+                                        }
                                     }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
-                                    if (baseline == null)
-                                    {
-                                        baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
-                                        baselineBuffer.Add(baseline);
-                                    }
+                                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                                    taskMatlabWrapper.Dispose();
                                 }
-                            }
-                            else
-                            {
-                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
-                                if (baseline == null)
-                                {
-                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
-                                    baselineBuffer.Add(baseline);
-                                }
-                            }
+                               
+                                taskMatlabWrapper.Dispose();
+                                
+                            });
+                            calculatingTasks.Add(tempTask);
+                        }
 
-                            if (baseline != null)
-                            {
-                                baseline.Position = Gzip<List<PositionContainer>>.DeCompress(baseline.ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
-                                baseline.Velocity = Gzip<List<VelocityContainer>>.DeCompress(baseline.ZippedVelocity).OrderBy(t => t.TimeStamp).ToList();
-                                baseline.MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baseline.ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
-                                trial.PositionNormalized =
-                                    Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                trial.VelocityNormalized =
-                                    Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                trial.MeasuredForcesNormalized =
-                                    Gzip<List<ForceContainer>>.DeCompress(trial.ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-
-                                _myMatlabWrapper.ClearWorkspace();
-
-                                _myMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
-                                _myMatlabWrapper.SetWorkspaceData("positionX",
-                                    trial.PositionNormalized.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("positionY",
-                                    trial.PositionNormalized.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("velocityX",
-                                    trial.VelocityNormalized.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("velocityY",
-                                    trial.VelocityNormalized.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("forceX",
-                                    trial.MeasuredForcesNormalized.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("forceY",
-                                    trial.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
-
-                                _myMatlabWrapper.SetWorkspaceData("baselinePositionX", baseline.Position.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselinePositionY", baseline.Position.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityX", baseline.Velocity.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineVelocityY", baseline.Velocity.Select(t => t.Y).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineForceX", baseline.MeasuredForces.Select(t => t.X).ToArray());
-                                _myMatlabWrapper.SetWorkspaceData("baselineForceY", baseline.MeasuredForces.Select(t => t.Y).ToArray());
-
-                                // Matlab statistic calculations
-                                //_myMatlabWrapper.Execute("vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
-                                _myMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
-                                //_myMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
-                                //_myMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                                //_myMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
-                                _myMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
-                                //_myMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
-                                //_myMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
-                                _myMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                _myMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                //_myMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
-
-                                // Create StatisticContainer and fill it with calculated Matlab statistics
-                                var statisticContainer = new StatisticContainer();
-                                //statisticContainer.VelocityVectorCorrelation = _myMatlabWrapper.GetWorkspaceData("vector_correlation");
-                                statisticContainer.EnclosedArea = _myMatlabWrapper.GetWorkspaceData("enclosed_area");                                
-                                //statisticContainer.AbsoluteTrajectoryLength = _myMatlabWrapper.GetWorkspaceData("length_abs");
-                                //statisticContainer.AbsoluteBaselineTrajectoryLengthRatio = _myMatlabWrapper.GetWorkspaceData("length_ratio");
-                                //statisticContainer.AbsoluteMeanPerpendicularDisplacement =
-                                //    _myMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
-                                //statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
-                                //    _myMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
-                                statisticContainer.SignedMaximalPerpendicularDisplacement =
-                                    _myMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                                //statisticContainer.RMSE = _myMatlabWrapper.GetWorkspaceData("rmse");
-
-                                // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
-                                //double[,] absolutePerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceAbs");
-                                double[,] signedPerpendicularDisplacement = _myMatlabWrapper.GetWorkspaceData("distanceSign");
-
-                                for (int perpendicularDisplacementCounter = 0; perpendicularDisplacementCounter < trial.PositionNormalized.Select(t => t.TimeStamp).Count();
-                                    perpendicularDisplacementCounter++)
-                                {
-                                    //PerpendicularDisplacementContainer absolute = new PerpendicularDisplacementContainer();
-                                    PerpendicularDisplacementContainer signed = new PerpendicularDisplacementContainer();
-
-                                    //absolute.PerpendicularDisplacement = absolutePerpendicularDisplacement[perpendicularDisplacementCounter, 0];
-                                    //absolute.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
-
-                                    signed.PerpendicularDisplacement = signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
-                                    signed.TimeStamp = trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
-
-                                    //statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
-                                    statisticContainer.SignedPerpendicularDisplacement.Add(signed);
-                                }
-
-                                // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
-                                DateTime maxVtime = trial.VelocityNormalized.First(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) == trial.VelocityNormalized.Max(u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2)))).TimeStamp;
-                                //statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax = statisticContainer.AbsolutePerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
-                                statisticContainer.SignedMaximalPerpendicularDisplacementVmax = statisticContainer.SignedPerpendicularDisplacement.First(t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
-
-                                // Calculate MidMovementForce
-                                List<DateTime> vMaxCorridor = trial.VelocityNormalized.Where(t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70).Select(t => t.TimeStamp).ToList();
-                                List<double> perpendicularForces = new List<double>();
-                                List<double> perpendicularForcesRaw = new List<double>();
-                                //List<double> parallelForces = new List<double>();
-                                //List<double> absoluteForces = new List<double>();
-
-                                for (int i = 2; i <= trial.PositionNormalized.Count; i++)
-                                {
-                                    if (vMaxCorridor.Contains(trial.PositionNormalized[i - 2].TimeStamp))
-                                    {
-                                        _myMatlabWrapper.Execute(
-                                                "[forcePD, forcePDsign] = pdForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
-                                        _myMatlabWrapper.Execute(
-                                                "[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
-
-                                        //_myMatlabWrapper.Execute(
-                                        //       "forcePara = paraForceLineSegment([forceX(" + (i - 1) + ") forceY(" + (i - 1) + ")], [positionX(" + (i - 1) + ") positionY(" + (i - 1) + ")], [positionX(" + i + ") positionY(" + i + ")]);");
-                                        //_myMatlabWrapper.Execute(
-                                        //        "baselineForcePara = paraForceLineSegment([baselineForceX(" + (i - 1) + ") baselineForceY(" + (i - 1) + ")], [baselinePositionX(" + (i - 1) + ") baselinePositionY(" + (i - 1) + ")], [baselinePositionX(" + i + ") baselinePositionY(" + i + ")]);");
-
-                                        _myMatlabWrapper.Execute("forcePD = forcePDsign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
-                                        _myMatlabWrapper.Execute("baselineForcePD = baselineForcePDsign * sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
-
-                                        //_myMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
-                                        //_myMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
-
-                                        //_myMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (i - 1) + ")^2 + forceY(" + (i - 1) + ")^2);");
-                                        //_myMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (i - 1) + ")^2 + baselineForceY(" + (i - 1) + ")^2);");
-
-
-                                        perpendicularForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePD") - _myMatlabWrapper.GetWorkspaceData("baselineForcePD"));
-                                        perpendicularForcesRaw.Add(_myMatlabWrapper.GetWorkspaceData("forcePD"));
-                                        //parallelForces.Add(_myMatlabWrapper.GetWorkspaceData("forcePara") - _myMatlabWrapper.GetWorkspaceData("baselineForcePara"));
-                                        //absoluteForces.Add(_myMatlabWrapper.GetWorkspaceData("absoluteForce") - _myMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
-                                    }
-                                }
-
-                                statisticContainer.PerpendicularMidMovementForce = perpendicularForces.Average();
-                                statisticContainer.PerpendicularMidMovementForceRaw = perpendicularForcesRaw.Average();
-                                //statisticContainer.ParallelMidMovementForce = parallelForces.Average();
-                                //statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
-
-                                // Set Metadata and upload to Database
-                                trial.Statistics = statisticContainer;
-                                trial.BaselineObjectId = baseline.Id;
-
-                                CompressTrialData(new List<Trial>() { trial });
-                                _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
-                            }
-                            else
-                            {
-                                _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial: " + trial.Study + " / " +
-                                                                  trial.Group + " / " + trial.Subject.PId + " / " +
-                                                                  trial.Szenario + " / Trial " + trial.TrialNumberInSzenario + " / " +
-                                                                  Enum.GetName(typeof(MongoDb.Trial.TrialTypeEnum), trial.TrialType) + " / " +
-                                                                  Enum.GetName(typeof(MongoDb.Trial.ForceFieldTypeEnum), trial.ForceFieldType) + " / " +
-                                                                  Enum.GetName(typeof(MongoDb.Trial.HandednessEnum), trial.Handedness));
-                            }
+                        while(calculatingTasks.Any(t => t.Status == TaskStatus.Running))
+                        {
+                            Thread.Sleep(500);
                         }
                     }
                     else
@@ -2777,6 +2849,7 @@ namespace ManipAnalysis_v2
                 {
                     _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 }
+
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 _myManipAnalysisGui.WriteProgressInfo("Ready");
                 _myManipAnalysisGui.EnableTabPages(true);

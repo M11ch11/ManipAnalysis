@@ -19,7 +19,7 @@ namespace ManipAnalysis_v2
             splash.Show();
 
             var manipAnalysisGui = new ManipAnalysisGui();
-            var matlabWrapper = new MatlabWrapper(manipAnalysisGui);
+            var matlabWrapper = new MatlabWrapper(manipAnalysisGui, MatlabWrapper.MatlabInstanceType.Shared);
             var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
             var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, mongoDbWrapper);
             manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);

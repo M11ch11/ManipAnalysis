@@ -7,14 +7,30 @@ namespace ManipAnalysis_v2
 {
     internal class MatlabWrapper : IDisposable
     {
-        private static readonly Type MatlabType = Type.GetTypeFromProgID("Matlab.Application");
+        private Type _matlabType;
+        private MatlabInstanceType _instanceType;
         private readonly ManipAnalysisGui _manipAnalysisGui;
         private readonly object _matlab;
         private bool _showMatlabWindow;
 
-        public MatlabWrapper(ManipAnalysisGui manipAnalysisGui)
+        public enum MatlabInstanceType
         {
-            _matlab = Activator.CreateInstance(MatlabType);
+            Shared, Single
+        }
+
+        public MatlabWrapper(ManipAnalysisGui manipAnalysisGui, MatlabInstanceType instanceType)
+        {
+            _instanceType = instanceType;
+            if (_instanceType == MatlabInstanceType.Shared)
+            {
+                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver");
+            }
+            else if (_instanceType == MatlabInstanceType.Single)
+            {
+                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver.Single");
+            }
+
+            _matlab = Activator.CreateInstance(_matlabType);
             _manipAnalysisGui = manipAnalysisGui;
             _showMatlabWindow = false;
 
@@ -33,14 +49,23 @@ namespace ManipAnalysis_v2
         public void Dispose()
         {
             ClearWorkspace();
-            Execute("exit");
+
+            if (_instanceType == MatlabInstanceType.Shared)
+            {
+                Execute("exit");
+            }
+            else if (_instanceType == MatlabInstanceType.Single)
+            {
+                _matlabType.InvokeMember("Quit", BindingFlags.InvokeMethod, null, _matlab, null);
+            }
+            
         }
 
         public void Execute(string command)
         {
             try
             {
-                MatlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] {command});
+                _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] {command});
             }
             catch (Exception ex)
             {
@@ -395,7 +420,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                MatlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
+                _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
                     new[] {name, "base", variable});
             }
             catch (Exception ex)
@@ -408,7 +433,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return MatlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
+                return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
                     new Object[] {name, "base"}, null);
             }
             catch (Exception ex)
