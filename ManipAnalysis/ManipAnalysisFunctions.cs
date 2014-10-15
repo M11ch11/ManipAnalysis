@@ -1294,6 +1294,13 @@ namespace ManipAnalysis_v2
                 _myManipAnalysisGui.EnableTabPages(false);
                 _myManipAnalysisGui.SetProgressBarValue(0);
 
+                int cpuCount = Environment.ProcessorCount;
+                List<MatlabWrapper> taskMatlabWrappers = new List<MatlabWrapper>();
+                for (int i = 0; i < cpuCount; i++)
+                {
+                    taskMatlabWrappers.Add(new MatlabWrapper(_myManipAnalysisGui, MatlabWrapper.MatlabInstanceType.Single));
+                }
+
                 for (int files = 0; files < measureFilesList.Count & !TaskManager.Cancel; files++)
                 {
                     try
@@ -1307,7 +1314,7 @@ namespace ManipAnalysis_v2
 
                         string filename = measureFilesList.ElementAt(files);
 
-                        string tempFileHash = Md5.ComputeHash(filename);
+                        string tempFileHash = Md5.ComputeHash(filename);                        
 
                         if (!_myDatabaseWrapper.CheckIfMeasureFileHashExists(tempFileHash))
                         {
@@ -1319,15 +1326,68 @@ namespace ManipAnalysis_v2
                             {
                                 List<Trial> trialsContainer = myParser.TrialsContainer;
                                 List<SzenarioMeanTime> szenarioMeanTimesContainer;
-
-                                _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
-                                ButterWorthFilter(trialsContainer, butterFilterOrder, butterFilterCutOffPosition, butterFilterCutOffForce, samplesPerSecond);
-
-                                _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
-                                VelocityCalculation(trialsContainer, samplesPerSecond);
                                 
-                                _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
-                                TimeNormalization(trialsContainer, timeNormalizationSamples, percentPeakVelocity);
+                                List<List<Trial>> taskTrialListParts = new List<List<Trial>>();
+                                int threadCount = 0;
+
+                                if (trialsContainer.Count > cpuCount)
+                                {
+                                    for (int cpuCounter = 0; cpuCounter < cpuCount; cpuCounter++)
+                                    {
+                                        taskTrialListParts.Add(new List<Trial>());
+                                    }
+
+                                    int trialCounter = 0;
+                                    int listCounter = 0;
+                                    while (trialCounter < trialsContainer.Count)
+                                    {
+                                        taskTrialListParts[listCounter].Add(trialsContainer[trialCounter]);
+                                        trialCounter++;
+                                        listCounter++;
+                                        if (listCounter >= cpuCount)
+                                        {
+                                            listCounter = 0;
+                                        }
+                                    }
+
+                                    threadCount = cpuCount;
+                                }
+                                else
+                                {
+                                    taskTrialListParts.Add(trialsContainer);
+                                    threadCount = 1;
+                                }
+
+                                List<Task> calculatingTasks = new List<Task>();
+
+                                for (int i = 0; i < threadCount; i++)
+                                {
+                                    List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
+                                    MatlabWrapper tempMatlabWrapper = taskMatlabWrappers.ElementAt(i);
+
+                                    Task tempTask = Task.Factory.StartNew(delegate
+                                    {
+                                        List<Trial> taskTrialList = tempTaskTrialList;
+                                        MatlabWrapper taskMatlabWrapper = tempMatlabWrapper;
+
+                                        _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
+                                        ButterWorthFilter(taskMatlabWrapper, taskTrialList, butterFilterOrder, butterFilterCutOffPosition, butterFilterCutOffForce, samplesPerSecond);
+
+                                        _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
+                                        VelocityCalculation(taskMatlabWrapper, taskTrialList, samplesPerSecond);
+
+                                        _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
+                                        TimeNormalization(taskMatlabWrapper, taskTrialList, timeNormalizationSamples, percentPeakVelocity);
+
+                                    });
+
+                                    calculatingTasks.Add(tempTask);
+                                }
+
+                                while (calculatingTasks.Any(t => t.Status == TaskStatus.Running))
+                                {
+                                    Thread.Sleep(500);
+                                }
                                 
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
                                 szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
@@ -1364,6 +1424,10 @@ namespace ManipAnalysis_v2
                                                           ex +
                                                           "\nSkipped file.");
                     }
+                    finally
+                    {
+                        taskMatlabWrappers.ForEach(t => t.Dispose());
+                    }
                 }
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 _myManipAnalysisGui.WriteProgressInfo("Ready");
@@ -1373,77 +1437,77 @@ namespace ManipAnalysis_v2
             }));
         }
 
-        private void ButterWorthFilter(List<Trial> trialsContainer, int butterFilterOrder, int butterFilterCutOffPosition, int butterFilterCutOffForce, int samplesPerSecond)
+        private void ButterWorthFilter(MatlabWrapper myMatlabWrapper, List<Trial> trialsContainer, int butterFilterOrder, int butterFilterCutOffPosition, int butterFilterCutOffForce, int samplesPerSecond)
         {
-            _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
-            _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
+            myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
+            myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
                 Convert.ToDouble(butterFilterCutOffPosition));
-            _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
+            myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
                 Convert.ToDouble(butterFilterCutOffForce));
-            _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
-            _myMatlabWrapper.Execute(
+            myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+            myMatlabWrapper.Execute(
                 "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
-            _myMatlabWrapper.Execute(
+            myMatlabWrapper.Execute(
                 "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
 
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
-                _myMatlabWrapper.SetWorkspaceData("force_actual_x",
+                myMatlabWrapper.SetWorkspaceData("force_actual_x",
                     trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("force_actual_y",
+                myMatlabWrapper.SetWorkspaceData("force_actual_y",
                     trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("force_actual_z",
+                myMatlabWrapper.SetWorkspaceData("force_actual_z",
                     trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Z).ToArray());
 
                 if (trialsContainer[trialCounter].NominalForcesRaw != null)
                 {
-                    _myMatlabWrapper.SetWorkspaceData("force_nominal_x",
+                    myMatlabWrapper.SetWorkspaceData("force_nominal_x",
                         trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.X).ToArray());
-                    _myMatlabWrapper.SetWorkspaceData("force_nominal_y",
+                    myMatlabWrapper.SetWorkspaceData("force_nominal_y",
                         trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Y).ToArray());
-                    _myMatlabWrapper.SetWorkspaceData("force_nominal_z",
+                    myMatlabWrapper.SetWorkspaceData("force_nominal_z",
                         trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Z).ToArray());
                 }
 
-                _myMatlabWrapper.SetWorkspaceData("force_moment_x",
+                myMatlabWrapper.SetWorkspaceData("force_moment_x",
                     trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("force_moment_y",
+                myMatlabWrapper.SetWorkspaceData("force_moment_y",
                     trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("force_moment_z",
+                myMatlabWrapper.SetWorkspaceData("force_moment_z",
                     trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
                     trialsContainer[trialCounter].PositionRaw.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
                     trialsContainer[trialCounter].PositionRaw.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
                     trialsContainer[trialCounter].PositionRaw.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.Execute("force_actual_x = filtfilt(bForce, aForce, force_actual_x);");
-                _myMatlabWrapper.Execute("force_actual_y = filtfilt(bForce, aForce, force_actual_y);");
-                _myMatlabWrapper.Execute("force_actual_z = filtfilt(bForce, aForce, force_actual_z);");
+                myMatlabWrapper.Execute("force_actual_x = filtfilt(bForce, aForce, force_actual_x);");
+                myMatlabWrapper.Execute("force_actual_y = filtfilt(bForce, aForce, force_actual_y);");
+                myMatlabWrapper.Execute("force_actual_z = filtfilt(bForce, aForce, force_actual_z);");
 
                 if (trialsContainer[trialCounter].NominalForcesRaw != null)
                 {
-                    _myMatlabWrapper.Execute("force_nominal_x = filtfilt(bForce, aForce,force_nominal_x);");
-                    _myMatlabWrapper.Execute("force_nominal_y = filtfilt(bForce, aForce,force_nominal_y);");
-                    _myMatlabWrapper.Execute("force_nominal_z = filtfilt(bForce, aForce,force_nominal_z);");
+                    myMatlabWrapper.Execute("force_nominal_x = filtfilt(bForce, aForce,force_nominal_x);");
+                    myMatlabWrapper.Execute("force_nominal_y = filtfilt(bForce, aForce,force_nominal_y);");
+                    myMatlabWrapper.Execute("force_nominal_z = filtfilt(bForce, aForce,force_nominal_z);");
                 }
-                _myMatlabWrapper.Execute("force_moment_x = filtfilt(bForce, aForce, force_moment_x);");
-                _myMatlabWrapper.Execute("force_moment_y = filtfilt(bForce, aForce, force_moment_y);");
-                _myMatlabWrapper.Execute("force_moment_z = filtfilt(bForce, aForce, force_moment_z);");
+                myMatlabWrapper.Execute("force_moment_x = filtfilt(bForce, aForce, force_moment_x);");
+                myMatlabWrapper.Execute("force_moment_y = filtfilt(bForce, aForce, force_moment_y);");
+                myMatlabWrapper.Execute("force_moment_z = filtfilt(bForce, aForce, force_moment_z);");
 
-                _myMatlabWrapper.Execute("position_cartesian_x = filtfilt(bPosition, aPosition, position_cartesian_x);");
-                _myMatlabWrapper.Execute("position_cartesian_y = filtfilt(bPosition, aPosition, position_cartesian_y);");
-                _myMatlabWrapper.Execute("position_cartesian_z = filtfilt(bPosition, aPosition, position_cartesian_z);");
+                myMatlabWrapper.Execute("position_cartesian_x = filtfilt(bPosition, aPosition, position_cartesian_x);");
+                myMatlabWrapper.Execute("position_cartesian_y = filtfilt(bPosition, aPosition, position_cartesian_y);");
+                myMatlabWrapper.Execute("position_cartesian_z = filtfilt(bPosition, aPosition, position_cartesian_z);");
 
 
                 double[,] forceActualX =
-                    _myMatlabWrapper.GetWorkspaceData("force_actual_x");
+                    myMatlabWrapper.GetWorkspaceData("force_actual_x");
                 double[,] forceActualY =
-                    _myMatlabWrapper.GetWorkspaceData("force_actual_y");
+                    myMatlabWrapper.GetWorkspaceData("force_actual_y");
                 double[,] forceActualZ =
-                    _myMatlabWrapper.GetWorkspaceData("force_actual_z");
+                    myMatlabWrapper.GetWorkspaceData("force_actual_z");
 
                 double[,] forceNominalX = null;
                 double[,] forceNominalY = null;
@@ -1451,25 +1515,25 @@ namespace ManipAnalysis_v2
                 if (trialsContainer[trialCounter].NominalForcesRaw != null)
                 {
                     forceNominalX =
-                        _myMatlabWrapper.GetWorkspaceData("force_nominal_x");
+                        myMatlabWrapper.GetWorkspaceData("force_nominal_x");
                     forceNominalY =
-                        _myMatlabWrapper.GetWorkspaceData("force_nominal_y");
+                        myMatlabWrapper.GetWorkspaceData("force_nominal_y");
                     forceNominalZ =
-                        _myMatlabWrapper.GetWorkspaceData("force_nominal_z");
+                        myMatlabWrapper.GetWorkspaceData("force_nominal_z");
                 }
                 double[,] forceMomentX =
-                    _myMatlabWrapper.GetWorkspaceData("force_moment_x");
+                    myMatlabWrapper.GetWorkspaceData("force_moment_x");
                 double[,] forceMomentY =
-                    _myMatlabWrapper.GetWorkspaceData("force_moment_y");
+                    myMatlabWrapper.GetWorkspaceData("force_moment_y");
                 double[,] forceMomentZ =
-                    _myMatlabWrapper.GetWorkspaceData("force_moment_z");
+                    myMatlabWrapper.GetWorkspaceData("force_moment_z");
 
                 double[,] positionCartesianX =
-                    _myMatlabWrapper.GetWorkspaceData("position_cartesian_x");
+                    myMatlabWrapper.GetWorkspaceData("position_cartesian_x");
                 double[,] positionCartesianY =
-                    _myMatlabWrapper.GetWorkspaceData("position_cartesian_y");
+                    myMatlabWrapper.GetWorkspaceData("position_cartesian_y");
                 double[,] positionCartesianZ =
-                    _myMatlabWrapper.GetWorkspaceData("position_cartesian_z");
+                    myMatlabWrapper.GetWorkspaceData("position_cartesian_z");
 
 
                 trialsContainer[trialCounter].MeasuredForcesFiltered = new List<ForceContainer>();
@@ -1532,47 +1596,47 @@ namespace ManipAnalysis_v2
                         trialsContainer[trialCounter].RawDataSampleRate;
                 }
 
-                _myMatlabWrapper.ClearWorkspaceData("force_actual_x");
-                _myMatlabWrapper.ClearWorkspaceData("force_actual_y");
-                _myMatlabWrapper.ClearWorkspaceData("force_actual_z");
+                myMatlabWrapper.ClearWorkspaceData("force_actual_x");
+                myMatlabWrapper.ClearWorkspaceData("force_actual_y");
+                myMatlabWrapper.ClearWorkspaceData("force_actual_z");
 
-                _myMatlabWrapper.ClearWorkspaceData("force_nominal_x");
-                _myMatlabWrapper.ClearWorkspaceData("force_nominal_y");
-                _myMatlabWrapper.ClearWorkspaceData("force_nominal_z");
+                myMatlabWrapper.ClearWorkspaceData("force_nominal_x");
+                myMatlabWrapper.ClearWorkspaceData("force_nominal_y");
+                myMatlabWrapper.ClearWorkspaceData("force_nominal_z");
 
-                _myMatlabWrapper.ClearWorkspaceData("force_moment_x");
-                _myMatlabWrapper.ClearWorkspaceData("force_moment_y");
-                _myMatlabWrapper.ClearWorkspaceData("force_moment_z");
+                myMatlabWrapper.ClearWorkspaceData("force_moment_x");
+                myMatlabWrapper.ClearWorkspaceData("force_moment_y");
+                myMatlabWrapper.ClearWorkspaceData("force_moment_z");
 
-                _myMatlabWrapper.ClearWorkspaceData("position_cartesian_x");
-                _myMatlabWrapper.ClearWorkspaceData("position_cartesian_y");
-                _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");                
+                myMatlabWrapper.ClearWorkspaceData("position_cartesian_x");
+                myMatlabWrapper.ClearWorkspaceData("position_cartesian_y");
+                myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");                
             }
 
-            _myMatlabWrapper.ClearWorkspace();
+            myMatlabWrapper.ClearWorkspace();
         }
 
 
-        private void VelocityCalculation(List<Trial> trialsContainer, double samplesPerSecond)
+        private void VelocityCalculation(MatlabWrapper myMatlabWrapper, List<Trial> trialsContainer, double samplesPerSecond)
         {
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
                     trialsContainer[trialCounter].PositionFiltered.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
                     trialsContainer[trialCounter].PositionFiltered.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
+                myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
                     trialsContainer[trialCounter].PositionFiltered.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("sampleRate", samplesPerSecond);
+                myMatlabWrapper.SetWorkspaceData("sampleRate", samplesPerSecond);
 
-                _myMatlabWrapper.Execute("velocity_x = numDiff(position_cartesian_x, sampleRate);");
-                _myMatlabWrapper.Execute("velocity_y = numDiff(position_cartesian_y, sampleRate);");
-                _myMatlabWrapper.Execute("velocity_z = numDiff(position_cartesian_z, sampleRate);");
+                myMatlabWrapper.Execute("velocity_x = numDiff(position_cartesian_x, sampleRate);");
+                myMatlabWrapper.Execute("velocity_y = numDiff(position_cartesian_y, sampleRate);");
+                myMatlabWrapper.Execute("velocity_z = numDiff(position_cartesian_z, sampleRate);");
 
-                double[,] velocityX = _myMatlabWrapper.GetWorkspaceData("velocity_x");
-                double[,] velocityY = _myMatlabWrapper.GetWorkspaceData("velocity_y");
-                double[,] velocityZ = _myMatlabWrapper.GetWorkspaceData("velocity_z");
+                double[,] velocityX = myMatlabWrapper.GetWorkspaceData("velocity_x");
+                double[,] velocityY = myMatlabWrapper.GetWorkspaceData("velocity_y");
+                double[,] velocityZ = myMatlabWrapper.GetWorkspaceData("velocity_z");
 
                 trialsContainer[trialCounter].VelocityFiltered = new List<VelocityContainer>();
 
@@ -1588,16 +1652,16 @@ namespace ManipAnalysis_v2
                     trialsContainer[trialCounter].VelocityFiltered.Add(velocityFiltered);
                 }
 
-                _myMatlabWrapper.ClearWorkspace();
+                myMatlabWrapper.ClearWorkspace();
             }
-            _myMatlabWrapper.ClearWorkspace();
+            myMatlabWrapper.ClearWorkspace();
         }
 
-        private void TimeNormalization(List<Trial> trialsContainer, int timeNormalizationSamples, double percentPeakVelocity)
+        private void TimeNormalization(MatlabWrapper myMatlabWrapper, List<Trial> trialsContainer, int timeNormalizationSamples, double percentPeakVelocity)
         {
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
-                _myMatlabWrapper.SetWorkspaceData("newSampleRate", Convert.ToDouble(timeNormalizationSamples));
+                myMatlabWrapper.SetWorkspaceData("newSampleRate", Convert.ToDouble(timeNormalizationSamples));
 
                 trialsContainer[trialCounter].NormalizedDataSampleRate = timeNormalizationSamples;
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
@@ -1664,76 +1728,76 @@ namespace ManipAnalysis_v2
                         t => t.TimeStamp >= startTime && t.TimeStamp <= stopTime).OrderBy(t => t.TimeStamp);
 
 
-                _myMatlabWrapper.SetWorkspaceData("measure_data_time",
+                myMatlabWrapper.SetWorkspaceData("measure_data_time",
                     positionFilteredCut.Select(t => Convert.ToDouble(t.TimeStamp.Ticks)).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("forceActualX", measuredForcesFilteredCut.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("forceActualY", measuredForcesFilteredCut.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("forceActualZ", measuredForcesFilteredCut.Select(t => t.Z).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceActualX", measuredForcesFilteredCut.Select(t => t.X).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceActualY", measuredForcesFilteredCut.Select(t => t.Y).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceActualZ", measuredForcesFilteredCut.Select(t => t.Z).ToArray());
 
                 if (nominalForcesFilteredCut != null)
                 {
-                    _myMatlabWrapper.SetWorkspaceData("forceNominalX", nominalForcesFilteredCut.Select(t => t.X).ToArray());
-                    _myMatlabWrapper.SetWorkspaceData("forceNominalY", nominalForcesFilteredCut.Select(t => t.Y).ToArray());
-                    _myMatlabWrapper.SetWorkspaceData("forceNominalY", nominalForcesFilteredCut.Select(t => t.Z).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("forceNominalX", nominalForcesFilteredCut.Select(t => t.X).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("forceNominalY", nominalForcesFilteredCut.Select(t => t.Y).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("forceNominalY", nominalForcesFilteredCut.Select(t => t.Z).ToArray());
                 }
 
-                _myMatlabWrapper.SetWorkspaceData("forceMomentX", momentForcesFilteredCut.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("forceMomentY", momentForcesFilteredCut.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("forceMomentZ", momentForcesFilteredCut.Select(t => t.Z).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceMomentX", momentForcesFilteredCut.Select(t => t.X).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceMomentY", momentForcesFilteredCut.Select(t => t.Y).ToArray());
+                myMatlabWrapper.SetWorkspaceData("forceMomentZ", momentForcesFilteredCut.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("positionCartesianX", positionFilteredCut.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("positionCartesianY", positionFilteredCut.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("positionCartesianZ", positionFilteredCut.Select(t => t.Z).ToArray());
+                myMatlabWrapper.SetWorkspaceData("positionCartesianX", positionFilteredCut.Select(t => t.X).ToArray());
+                myMatlabWrapper.SetWorkspaceData("positionCartesianY", positionFilteredCut.Select(t => t.Y).ToArray());
+                myMatlabWrapper.SetWorkspaceData("positionCartesianZ", positionFilteredCut.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("velocityX", velocityFilteredCut.Select(t => t.X).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("velocityY", velocityFilteredCut.Select(t => t.Y).ToArray());
-                _myMatlabWrapper.SetWorkspaceData("velocityZ", velocityFilteredCut.Select(t => t.Z).ToArray());
+                myMatlabWrapper.SetWorkspaceData("velocityX", velocityFilteredCut.Select(t => t.X).ToArray());
+                myMatlabWrapper.SetWorkspaceData("velocityY", velocityFilteredCut.Select(t => t.Y).ToArray());
+                myMatlabWrapper.SetWorkspaceData("velocityZ", velocityFilteredCut.Select(t => t.Z).ToArray());
 
-                _myMatlabWrapper.SetWorkspaceData("positionStatus",
+                myMatlabWrapper.SetWorkspaceData("positionStatus",
                     velocityFilteredCut.Select(t => Convert.ToDouble(t.PositionStatus)).ToArray());
 
                 var errorList = new List<string>();
 
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar1, forceActualX, newMeasureTime] = timeNorm(forceActualX, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar2, forceActualY, newMeasureTime] = timeNorm(forceActualY, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar3, forceActualZ, newMeasureTime] = timeNorm(forceActualZ, measure_data_time, newSampleRate);");
 
                 if (nominalForcesFilteredCut != null)
                 {
-                    _myMatlabWrapper.Execute(
+                    myMatlabWrapper.Execute(
                         "[errorvar4, forceNominalX, newMeasureTime] = timeNorm(forceNominalX, measure_data_time, newSampleRate);");
-                    _myMatlabWrapper.Execute(
+                    myMatlabWrapper.Execute(
                         "[errorvar5, forceNominalY, newMeasureTime] = timeNorm(forceNominalY, measure_data_time, newSampleRate);");
-                    _myMatlabWrapper.Execute(
+                    myMatlabWrapper.Execute(
                         "[errorvar6, forceNominalZ, newMeasureTime] = timeNorm(forceNominalZ, measure_data_time, newSampleRate);");
                 }
 
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar7, forceMomentX, newMeasureTime] = timeNorm(forceMomentX, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar8, forceMomentY, newMeasureTime] = timeNorm(forceMomentY, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar9, forceMomentZ, newMeasureTime] = timeNorm(forceMomentZ, measure_data_time, newSampleRate);");
 
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar10, positionCartesianX, newMeasureTime] = timeNorm(positionCartesianX, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar11, positionCartesianY, newMeasureTime] = timeNorm(positionCartesianY, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar12, positionCartesianZ, newMeasureTime] = timeNorm(positionCartesianZ, measure_data_time, newSampleRate);");
 
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar13, velocityX, newMeasureTime] = timeNorm(velocityX, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar14, velocityY, newMeasureTime] = timeNorm(velocityY, measure_data_time, newSampleRate);");
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar15, velocityZ, newMeasureTime] = timeNorm(velocityZ, measure_data_time, newSampleRate);");
 
-                _myMatlabWrapper.Execute(
+                myMatlabWrapper.Execute(
                     "[errorvar16, positionStatus, newMeasureTime] = timeNorm(positionStatus, measure_data_time, newSampleRate);");
 
 
@@ -1744,7 +1808,7 @@ namespace ManipAnalysis_v2
                     }
                     else
                     {
-                        errorList.Add(Convert.ToString(_myMatlabWrapper.GetWorkspaceData("errorvar" + errorVarCounterCounter)));
+                        errorList.Add(Convert.ToString(myMatlabWrapper.GetWorkspaceData("errorvar" + errorVarCounterCounter)));
                     }
                 }
 
@@ -1761,14 +1825,14 @@ namespace ManipAnalysis_v2
                 }
 
                 double[,] measureDataTime =
-                    _myMatlabWrapper.GetWorkspaceData("newMeasureTime");
+                    myMatlabWrapper.GetWorkspaceData("newMeasureTime");
 
                 double[,] forceActualX =
-                    _myMatlabWrapper.GetWorkspaceData("forceActualX");
+                    myMatlabWrapper.GetWorkspaceData("forceActualX");
                 double[,] forceActualY =
-                    _myMatlabWrapper.GetWorkspaceData("forceActualY");
+                    myMatlabWrapper.GetWorkspaceData("forceActualY");
                 double[,] forceActualZ =
-                    _myMatlabWrapper.GetWorkspaceData("forceActualZ");
+                    myMatlabWrapper.GetWorkspaceData("forceActualZ");
 
                 double[,] forceNominalX = null;
                 double[,] forceNominalY = null;
@@ -1776,35 +1840,35 @@ namespace ManipAnalysis_v2
                 if (nominalForcesFilteredCut != null)
                 {
                     forceNominalX =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalX");
+                        myMatlabWrapper.GetWorkspaceData("forceNominalX");
                     forceNominalY =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalY");
+                        myMatlabWrapper.GetWorkspaceData("forceNominalY");
                     forceNominalZ =
-                        _myMatlabWrapper.GetWorkspaceData("forceNominalZ");
+                        myMatlabWrapper.GetWorkspaceData("forceNominalZ");
                 }
                 double[,] forceMomentX =
-                    _myMatlabWrapper.GetWorkspaceData("forceMomentX");
+                    myMatlabWrapper.GetWorkspaceData("forceMomentX");
                 double[,] forceMomentY =
-                    _myMatlabWrapper.GetWorkspaceData("forceMomentY");
+                    myMatlabWrapper.GetWorkspaceData("forceMomentY");
                 double[,] forceMomentZ =
-                    _myMatlabWrapper.GetWorkspaceData("forceMomentZ");
+                    myMatlabWrapper.GetWorkspaceData("forceMomentZ");
 
                 double[,] positionCartesianX =
-                    _myMatlabWrapper.GetWorkspaceData("positionCartesianX");
+                    myMatlabWrapper.GetWorkspaceData("positionCartesianX");
                 double[,] positionCartesianY =
-                    _myMatlabWrapper.GetWorkspaceData("positionCartesianY");
+                    myMatlabWrapper.GetWorkspaceData("positionCartesianY");
                 double[,] positionCartesianZ =
-                    _myMatlabWrapper.GetWorkspaceData("positionCartesianZ");
+                    myMatlabWrapper.GetWorkspaceData("positionCartesianZ");
 
                 double[,] positionStatus =
-                    _myMatlabWrapper.GetWorkspaceData("positionStatus");
+                    myMatlabWrapper.GetWorkspaceData("positionStatus");
 
                 double[,] velocityX =
-                    _myMatlabWrapper.GetWorkspaceData("velocityX");
+                    myMatlabWrapper.GetWorkspaceData("velocityX");
                 double[,] velocityY =
-                    _myMatlabWrapper.GetWorkspaceData("velocityY");
+                    myMatlabWrapper.GetWorkspaceData("velocityY");
                 double[,] velocityZ =
-                    _myMatlabWrapper.GetWorkspaceData("velocityZ");
+                    myMatlabWrapper.GetWorkspaceData("velocityZ");
 
                 //-----
 
@@ -1875,10 +1939,10 @@ namespace ManipAnalysis_v2
                     trialsContainer[trialCounter].VelocityNormalized.Add(velocityNormalized);
                 }
 
-                _myMatlabWrapper.ClearWorkspace();
+                myMatlabWrapper.ClearWorkspace();
             }
 
-            _myMatlabWrapper.ClearWorkspace();
+            myMatlabWrapper.ClearWorkspace();
         }
 
         private List<SzenarioMeanTime> CalculateSzenarioMeanTimes(List<Trial> trialsContainer)
