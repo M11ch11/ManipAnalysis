@@ -1365,7 +1365,7 @@ namespace ManipAnalysis_v2
                                     List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
                                     MatlabWrapper tempMatlabWrapper = taskMatlabWrappers.ElementAt(i);
 
-                                    Task tempTask = Task.Factory.StartNew(delegate
+                                    calculatingTasks.Add(Task.Factory.StartNew(delegate
                                     {
                                         List<Trial> taskTrialList = tempTaskTrialList;
                                         MatlabWrapper taskMatlabWrapper = tempMatlabWrapper;
@@ -1379,12 +1379,14 @@ namespace ManipAnalysis_v2
                                         _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
                                         TimeNormalization(taskMatlabWrapper, taskTrialList, timeNormalizationSamples, percentPeakVelocity);
 
-                                    });
-
-                                    calculatingTasks.Add(tempTask);
+                                        lock (calculatingTasks)
+                                        {
+                                            calculatingTasks.Remove(calculatingTasks.First(t => t.Id == Task.CurrentId));
+                                        }
+                                    }));
                                 }
 
-                                while (calculatingTasks.Any(t => t.Status == TaskStatus.Running))
+                                while (calculatingTasks.Any())
                                 {
                                     Thread.Sleep(500);
                                 }
@@ -2641,7 +2643,7 @@ namespace ManipAnalysis_v2
                         {
                             List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
 
-                            Task tempTask = Task.Factory.StartNew(delegate
+                            calculatingTasks.Add(Task.Factory.StartNew(delegate
                             {
                                 List<Trial> taskTrialList = tempTaskTrialList;
                                 MatlabWrapper taskMatlabWrapper = new MatlabWrapper(_myManipAnalysisGui, MatlabWrapper.MatlabInstanceType.Single);
@@ -2860,12 +2862,15 @@ namespace ManipAnalysis_v2
                                 }
                                
                                 taskMatlabWrapper.Dispose();
-                                
-                            });
-                            calculatingTasks.Add(tempTask);
+
+                                lock (calculatingTasks)
+                                {
+                                    calculatingTasks.Remove(calculatingTasks.First(t => t.Id == Task.CurrentId));
+                                }
+                            }));
                         }
 
-                        while(calculatingTasks.Any(t => t.Status == TaskStatus.Running))
+                        while(calculatingTasks.Any())
                         {
                             Thread.Sleep(500);
                         }
