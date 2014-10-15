@@ -17,7 +17,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         {
             List<Trial> trialsContainer = new List<Trial>();
 
-            for (int filesCounter = 0; filesCounter < c3DFiles.Length; filesCounter++)
+            Parallel.For(0, c3DFiles.Length, filesCounter =>
             {
                 var c3DReader = new C3dReader();
                 c3DReader.Open(c3DFiles[filesCounter]);
@@ -112,9 +112,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 currentTrial = setTrialMetadata(myManipAnalysisGui, currentTrial);
                 if (currentTrial != null)
                 {
-                    trialsContainer.Add(currentTrial);
+                    lock (trialsContainer)
+                    {
+                        trialsContainer.Add(currentTrial);
+                    }
+
                 }
-            }
+            });
 
             if (checkTrialCount(trialsContainer.Count))
             {
