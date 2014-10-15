@@ -1321,68 +1321,21 @@ namespace ManipAnalysis_v2
                                 List<SzenarioMeanTime> szenarioMeanTimesContainer;
 
                                 _myManipAnalysisGui.WriteProgressInfo("Filtering data...");
-
-                                #region Butterworth filter
-
-                                _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
-                                _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
-                                    Convert.ToDouble(butterFilterCutOffPosition));
-                                _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
-                                    Convert.ToDouble(butterFilterCutOffForce));
-                                _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
-                                _myMatlabWrapper.Execute(
-                                    "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
-                                _myMatlabWrapper.Execute(
-                                    "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
-
-                                ButterWorthFilter(trialsContainer);
-
-                                _myMatlabWrapper.ClearWorkspace();
-
-                                #endregion
+                                ButterWorthFilter(trialsContainer, butterFilterOrder, butterFilterCutOffPosition, butterFilterCutOffForce, samplesPerSecond);
 
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating velocity...");
-
-                                #region Velocity calcultion
-
                                 VelocityCalculation(trialsContainer, samplesPerSecond);
-
-                                _myMatlabWrapper.ClearWorkspace();
-
-                                #endregion
-
+                                
                                 _myManipAnalysisGui.WriteProgressInfo("Normalizing data...");
-
-                                #region Time normalization
-
                                 TimeNormalization(trialsContainer, timeNormalizationSamples, percentPeakVelocity);
-
-                                _myMatlabWrapper.ClearWorkspace();
-
-                                #endregion
                                 
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
-
-                                #region Calculate szenario mean times
-
                                 szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
 
-                                _myMatlabWrapper.ClearWorkspace();
-
-                                #endregion
-
                                 _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
-
-                                #region CompressData
-
                                 CompressTrialData(trialsContainer);
 
-                                #endregion
-
                                 _myManipAnalysisGui.WriteProgressInfo("Uploading into database...");
-
-                                #region Uploading data to MongoDB
-
                                 try
                                 {
                                     _myDatabaseWrapper.Insert(trialsContainer);                                    
@@ -1393,8 +1346,6 @@ namespace ManipAnalysis_v2
                                     _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
                                     throw ex;
                                 }
-
-                                #endregion
                             }
                             else
                             {
@@ -1422,8 +1373,19 @@ namespace ManipAnalysis_v2
             }));
         }
 
-        private void ButterWorthFilter(List<Trial> trialsContainer)
+        private void ButterWorthFilter(List<Trial> trialsContainer, int butterFilterOrder, int butterFilterCutOffPosition, int butterFilterCutOffForce, int samplesPerSecond)
         {
+            _myMatlabWrapper.SetWorkspaceData("filterOrder", Convert.ToDouble(butterFilterOrder));
+            _myMatlabWrapper.SetWorkspaceData("cutoffFreqPosition",
+                Convert.ToDouble(butterFilterCutOffPosition));
+            _myMatlabWrapper.SetWorkspaceData("cutoffFreqForce",
+                Convert.ToDouble(butterFilterCutOffForce));
+            _myMatlabWrapper.SetWorkspaceData("samplesPerSecond", Convert.ToDouble(samplesPerSecond));
+            _myMatlabWrapper.Execute(
+                "[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
+            _myMatlabWrapper.Execute(
+                "[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
+
             for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
                 _myMatlabWrapper.SetWorkspaceData("force_actual_x",
@@ -1584,8 +1546,10 @@ namespace ManipAnalysis_v2
 
                 _myMatlabWrapper.ClearWorkspaceData("position_cartesian_x");
                 _myMatlabWrapper.ClearWorkspaceData("position_cartesian_y");
-                _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");
+                _myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");                
             }
+
+            _myMatlabWrapper.ClearWorkspace();
         }
 
 
@@ -1626,6 +1590,7 @@ namespace ManipAnalysis_v2
 
                 _myMatlabWrapper.ClearWorkspace();
             }
+            _myMatlabWrapper.ClearWorkspace();
         }
 
         private void TimeNormalization(List<Trial> trialsContainer, int timeNormalizationSamples, double percentPeakVelocity)
@@ -1912,6 +1877,8 @@ namespace ManipAnalysis_v2
 
                 _myMatlabWrapper.ClearWorkspace();
             }
+
+            _myMatlabWrapper.ClearWorkspace();
         }
 
         private List<SzenarioMeanTime> CalculateSzenarioMeanTimes(List<Trial> trialsContainer)
@@ -2569,8 +2536,7 @@ namespace ManipAnalysis_v2
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     List<Baseline> baselineBuffer = new List<Baseline>();
-                    int cpuCount = 7;//Environment.ProcessorCount;
-
+                    int cpuCount = Environment.ProcessorCount;
 
                     if (trialList.Count > 0)
                     {
