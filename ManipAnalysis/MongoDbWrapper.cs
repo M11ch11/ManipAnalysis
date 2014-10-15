@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ManipAnalysis_v2.MongoDb;
@@ -88,6 +87,7 @@ namespace ManipAnalysis_v2
             try
             {
                 #region TrialCollection indexes
+
                 /*
                  * GetTrial(string studyName, string groupName, string szenarioName,
                  *           SubjectContainer subject, DateTime turn, int target, 
@@ -204,9 +204,11 @@ namespace ManipAnalysis_v2
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
                 _trialCollection.EnsureIndex(trialCollectionKeys, options);
+
                 #endregion
 
                 #region BaselineCollection indexes
+
                 /*
                  * GetBaseline
                  */
@@ -229,9 +231,11 @@ namespace ManipAnalysis_v2
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
                 _baselineCollection.EnsureIndex(trialCollectionKeys, options);
+
                 #endregion
 
                 #region SzenarioMeanTimeCollection indexes
+
                 /*
                  * GetSzenarioMeanTime
                  */
@@ -255,6 +259,7 @@ namespace ManipAnalysis_v2
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
                 _szenarioMeanTimeCollection.EnsureIndex(trialCollectionKeys, options);
+
                 #endregion
             }
             catch (Exception ex)
@@ -384,7 +389,8 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<DateTime> GetTurns(string studyName, string groupName, string szenarioName, SubjectContainer subject)
+        public IEnumerable<DateTime> GetTurns(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject)
         {
             try
             {
@@ -392,7 +398,8 @@ namespace ManipAnalysis_v2
                     _trialCollection.AsQueryable()
                         .Where(
                             t =>
-                                t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject)
+                                t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                                t.Subject == subject)
                         .Select(t => t.MeasureFile.CreationTime)
                         .Distinct();
             }
@@ -456,16 +463,21 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness)
+        public IEnumerable<int> GetSzenarioTrials(string studyName, string szenarioName,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
+            IEnumerable<Trial.HandednessEnum> handedness)
         {
             IEnumerable<int> retVal;
             try
             {
                 retVal =
-                        _trialCollection.AsQueryable()
-                            .Where(t => t.Study == studyName && t.Szenario == szenarioName && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
-                            .Select(t => t.TrialNumberInSzenario)
-                            .Distinct();
+                    _trialCollection.AsQueryable()
+                        .Where(
+                            t =>
+                                t.Study == studyName && t.Szenario == szenarioName && trialTypes.Contains(t.TrialType) &&
+                                forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
+                        .Select(t => t.TrialNumberInSzenario)
+                        .Distinct();
             }
             catch (Exception ex)
             {
@@ -477,18 +489,20 @@ namespace ManipAnalysis_v2
         }
 
         public IEnumerable<Trial> GetTrial(string studyName, string groupName, string szenarioName,
-            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes, 
-            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
+            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes,
+            IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness,
+            FieldsBuilder<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
-                        t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                        t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
-                        targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && 
-                        forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
-                        .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
+                    t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                    t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                    targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
+                    forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
+                    .SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
             }
             catch (Exception)
             {
@@ -498,14 +512,16 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, FieldsBuilder<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, FieldsBuilder<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
                     t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                    t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario)))
+                    t.Subject == subject && t.MeasureFile.CreationTime == turn &&
+                    szenarioTrials.Contains(t.TrialNumberInSzenario)))
                     .SetFields(fields).OrderBy(t => t.TrialNumberInSzenario);
             }
             catch (Exception ex)
@@ -517,16 +533,20 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes,
-            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes,
+            IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness,
+            FieldsBuilder<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t =>
                     t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                    t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
-                        forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
+                    t.Subject == subject && t.MeasureFile.CreationTime == turn &&
+                    szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
+                    forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
                     .SetFields(fields).OrderBy(t => t.TrialNumberInSzenario);
             }
             catch (Exception ex)
@@ -555,19 +575,24 @@ namespace ManipAnalysis_v2
 
         public IEnumerable<Trial> GetTrialsWithoutStatistics(FieldsBuilder<Trial> statisticFields)
         {
-            return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null)).SetFields(statisticFields);
+            return
+                _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null))
+                    .SetFields(statisticFields);
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber, MongoDb.Trial.TrialTypeEnum trialType,
-            MongoDb.Trial.ForceFieldTypeEnum forceField, MongoDb.Trial.HandednessEnum handedness, FieldsBuilder<Baseline> baselineFields)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
+            Trial.TrialTypeEnum trialType,
+            Trial.ForceFieldTypeEnum forceField, Trial.HandednessEnum handedness, FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
                 return
                     _baselineCollection.FindAs<Baseline>(
                         Query<Trial>.Where(
-                            t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber && t.TrialType == trialType &&
-                            t.ForceFieldType == forceField && t.Handedness == handedness))
+                            t =>
+                                t.Study == study && t.Group == group && t.Subject == subject &&
+                                t.Target.Number == targetNumber && t.TrialType == trialType &&
+                                t.ForceFieldType == forceField && t.Handedness == handedness))
                         .SetFields(baselineFields)
                         .SetLimit(1)
                         .First();
@@ -578,15 +603,20 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject, int[] targets, IEnumerable<MongoDb.Trial.TrialTypeEnum> trialTypes,
-            IEnumerable<MongoDb.Trial.ForceFieldTypeEnum> forceFields, IEnumerable<MongoDb.Trial.HandednessEnum> handedness, FieldsBuilder<Baseline> baselineFields)
+        public Baseline[] GetBaseline(string study, string group, SubjectContainer subject, int[] targets,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes,
+            IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness,
+            FieldsBuilder<Baseline> baselineFields)
         {
             try
             {
                 return
                     _baselineCollection.FindAs<Baseline>(
-                        Query<Trial>.Where(t => t.Study == study && t.Group == group && t.Subject == subject && targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) &&
-                        forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
+                        Query<Trial>.Where(
+                            t =>
+                                t.Study == study && t.Group == group && t.Subject == subject &&
+                                targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) &&
+                                forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)))
                         .SetFields(baselineFields)
                         .ToArray();
             }
@@ -612,7 +642,8 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public SzenarioMeanTime[] GetSzenarioMeanTime(string study, string group, string szenario, SubjectContainer subject,
+        public SzenarioMeanTime[] GetSzenarioMeanTime(string study, string group, string szenario,
+            SubjectContainer subject,
             DateTime turn)
         {
             try

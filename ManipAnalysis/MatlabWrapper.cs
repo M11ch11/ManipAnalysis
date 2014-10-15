@@ -7,16 +7,17 @@ namespace ManipAnalysis_v2
 {
     internal class MatlabWrapper : IDisposable
     {
-        private Type _matlabType;
-        private MatlabInstanceType _instanceType;
-        private readonly ManipAnalysisGui _manipAnalysisGui;
-        private readonly object _matlab;
-        private bool _showMatlabWindow;
-
         public enum MatlabInstanceType
         {
-            Shared, Single
+            Shared,
+            Single
         }
+
+        private readonly MatlabInstanceType _instanceType;
+        private readonly ManipAnalysisGui _manipAnalysisGui;
+        private readonly object _matlab;
+        private readonly Type _matlabType;
+        private bool _showMatlabWindow;
 
         public MatlabWrapper(ManipAnalysisGui manipAnalysisGui, MatlabInstanceType instanceType)
         {
@@ -58,7 +59,6 @@ namespace ManipAnalysis_v2
             {
                 _matlabType.InvokeMember("Quit", BindingFlags.InvokeMethod, null, _matlab, null);
             }
-            
         }
 
         public void Execute(string command)
@@ -329,7 +329,7 @@ namespace ManipAnalysis_v2
                         ", sin(degtorad(270)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
                         ", sin(degtorad(315)) * " + radiusString + ");");
-                 */ 
+                 */
                 Execute("drawCircle(" + diameterString + ", " +
                         centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
                         centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
@@ -497,6 +497,7 @@ namespace ManipAnalysis_v2
             }
         }
         */
+
         public void Plot(string xVar, int lineWidth)
         {
             try

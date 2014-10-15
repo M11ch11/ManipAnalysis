@@ -211,7 +211,8 @@ namespace ManipAnalysis_v2
         private void button_Debug_InitialiseDatabase_Click(object sender, EventArgs e)
         {
             if (
-                MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) ==
+                MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?",
+                    MessageBoxButtons.YesNo) ==
                 DialogResult.Yes)
             {
                 _manipAnalysisFunctions.DropDatabase();
@@ -220,29 +221,32 @@ namespace ManipAnalysis_v2
 
         private void button_PlotBaseline_Click(object sender, EventArgs e)
         {
-            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
-            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
+            int[] targets =
+                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
+                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
+                    .ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
-                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
-                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
-                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
             _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
                 targets,
                 trialTypes, forceFields, handedness);
         }
@@ -277,8 +281,11 @@ namespace ManipAnalysis_v2
                 {
                     progressBar.Refresh();
                     gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
-                        new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
-                            progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
+                        new PointF(
+                            progressBar.Width/2 -
+                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
+                            progressBar.Height/2 -
+                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
                 }
             }
         }
@@ -297,8 +304,11 @@ namespace ManipAnalysis_v2
                     progressBar.Text = text;
                     progressBar.Refresh();
                     gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
-                        new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
-                            progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
+                        new PointF(
+                            progressBar.Width/2 -
+                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
+                            progressBar.Height/2 -
+                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
                 }
             }
         }
@@ -426,23 +436,23 @@ namespace ManipAnalysis_v2
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
 
-            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new  List<Trial.TrialTypeEnum>();
-            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new  List<Trial.ForceFieldTypeEnum>();
-            List<MongoDb.Trial.HandednessEnum> handedness = new  List<Trial.HandednessEnum>();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
 
             foreach (string item in listBox_DescriptiveStatistic1_TrialType.SelectedItems)
             {
-                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
             foreach (string item in listBox_DescriptiveStatistic1_ForceField.SelectedItems)
             {
-                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
             foreach (string item in listBox_DescriptiveStatistic1_Handedness.SelectedItems)
             {
-                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
@@ -474,7 +484,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -577,7 +593,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -619,7 +641,7 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
-        }        
+        }
 
         private void tabPage_DescriptiveStatistic1_Enter(object sender, EventArgs e)
         {
@@ -627,28 +649,37 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_ForceField.Items.Clear();
             listBox_DescriptiveStatistic1_Handedness.Items.Clear();
 
-            listBox_DescriptiveStatistic1_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
-            listBox_DescriptiveStatistic1_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
-            listBox_DescriptiveStatistic1_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+            listBox_DescriptiveStatistic1_TrialType.Items.AddRange(Enum.GetNames(typeof (Trial.TrialTypeEnum)));
+            listBox_DescriptiveStatistic1_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
+            listBox_DescriptiveStatistic1_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic1_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic1_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic1_Handedness.SetSelected(listboxIndex, true);
             }
 
-            listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
-            listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
-            listBox_DescriptiveStatistic1_Handedness.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic1_Handedness.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
 
             comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedIndex = 0;
 
@@ -667,7 +698,7 @@ namespace ManipAnalysis_v2
                 {
                     comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
                 }
-            }            
+            }
         }
 
         private void comboBox_DescriptiveStatistic2_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -773,7 +804,6 @@ namespace ManipAnalysis_v2
                         turnIntersect = turnIntersect.Intersect(tempTurnString).ToArray();
                     }
                 }
-
             }
 
             if (turnIntersect != null)
@@ -793,23 +823,23 @@ namespace ManipAnalysis_v2
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
 
-            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
 
             foreach (string item in listBox_DescriptiveStatistic2_TrialType.SelectedItems)
             {
-                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
             foreach (string item in listBox_DescriptiveStatistic2_ForceField.SelectedItems)
             {
-                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
             foreach (string item in listBox_DescriptiveStatistic2_Handedness.SelectedItems)
             {
-                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
             IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
@@ -841,7 +871,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -871,7 +907,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -907,28 +949,37 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic2_ForceField.Items.Clear();
             listBox_DescriptiveStatistic2_Handedness.Items.Clear();
 
-            listBox_DescriptiveStatistic2_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
-            listBox_DescriptiveStatistic2_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
-            listBox_DescriptiveStatistic2_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+            listBox_DescriptiveStatistic2_TrialType.Items.AddRange(Enum.GetNames(typeof (Trial.TrialTypeEnum)));
+            listBox_DescriptiveStatistic2_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
+            listBox_DescriptiveStatistic2_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic2_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic2_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count;
+                listboxIndex++)
             {
                 listBox_DescriptiveStatistic2_Handedness.SetSelected(listboxIndex, true);
             }
 
-            listBox_DescriptiveStatistic2_TrialType.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
-            listBox_DescriptiveStatistic2_ForceField.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
-            listBox_DescriptiveStatistic2_Handedness.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged);
+            listBox_DescriptiveStatistic2_TrialType.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic2_ForceField.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic2_Handedness.SelectedIndexChanged +=
+                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
 
             comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedIndex = 0;
 
@@ -948,7 +999,7 @@ namespace ManipAnalysis_v2
                 {
                     comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
                 }
-            }            
+            }
         }
 
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
@@ -998,7 +1049,8 @@ namespace ManipAnalysis_v2
                     {
                         _manipAnalysisFunctions.ExportDescriptiveStatistic2Data(
                             listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                            comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(), saveFileDialog.FileName, pdTime);
+                            comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(),
+                            saveFileDialog.FileName, pdTime);
                     }
                 }
             }
@@ -1110,7 +1162,8 @@ namespace ManipAnalysis_v2
 
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(),
+            _manipAnalysisFunctions.ImportMeasureFiles(
+                listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(),
                 Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
                 Convert.ToInt32(textBox_Import_FilterOrder.Text),
                 Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text),
@@ -1183,9 +1236,9 @@ namespace ManipAnalysis_v2
             listBox_TrajectoryVelocity_ForceField.Items.Clear();
             listBox_TrajectoryVelocity_Handedness.Items.Clear();
 
-            listBox_TrajectoryVelocity_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
-            listBox_TrajectoryVelocity_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
-            listBox_TrajectoryVelocity_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+            listBox_TrajectoryVelocity_TrialType.Items.AddRange(Enum.GetNames(typeof (Trial.TrialTypeEnum)));
+            listBox_TrajectoryVelocity_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
+            listBox_TrajectoryVelocity_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
             for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count; listboxIndex++)
             {
@@ -1221,7 +1274,7 @@ namespace ManipAnalysis_v2
                 {
                     comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
                 }
-            }            
+            }
         }
 
         private void comboBox_TrajectoryVelocity_Study_SelectedIndexChanged(object sender, EventArgs e)
@@ -1331,7 +1384,7 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
-            
+
 
             if (turnIntersect != null)
             {
@@ -1388,7 +1441,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -1453,7 +1512,13 @@ namespace ManipAnalysis_v2
 
                 foreach (string group in groups)
                 {
-                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (
+                        SubjectContainer subject in
+                            subjects.Where(
+                                t =>
+                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
+                                        .Select(u => u.PId)
+                                        .Contains(t.PId)))
                     {
                         foreach (string turn in turns)
                         {
@@ -1521,25 +1586,25 @@ namespace ManipAnalysis_v2
         {
             if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
             {
-                List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-                List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-                List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+                var trialTypes = new List<Trial.TrialTypeEnum>();
+                var forceFields = new List<Trial.ForceFieldTypeEnum>();
+                var handedness = new List<Trial.HandednessEnum>();
 
                 foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
                 {
-                    trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                    trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                 }
 
                 foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
                 {
-                    forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                    forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                 }
 
                 foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
                 {
-                    handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                    handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                 }
-                
+
                 _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
                     listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
                     comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
@@ -1548,7 +1613,7 @@ namespace ManipAnalysis_v2
                     forceFields,
                     handedness,
                     checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);                 
+                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
             }
             else
             {
@@ -1562,9 +1627,9 @@ namespace ManipAnalysis_v2
             listBox_OtherStatistics_ForceField.Items.Clear();
             listBox_OtherStatistics_Handedness.Items.Clear();
 
-            listBox_OtherStatistics_TrialType.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.TrialTypeEnum)));
-            listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.ForceFieldTypeEnum)));
-            listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof(MongoDb.Trial.HandednessEnum)));
+            listBox_OtherStatistics_TrialType.Items.AddRange(Enum.GetNames(typeof (Trial.TrialTypeEnum)));
+            listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
+            listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
             for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_TrialType.Items.Count; listboxIndex++)
             {
@@ -1713,23 +1778,23 @@ namespace ManipAnalysis_v2
             {
                 if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count != 0)
                 {
-                    List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-                    List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-                    List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
+                    var trialTypes = new List<Trial.TrialTypeEnum>();
+                    var forceFields = new List<Trial.ForceFieldTypeEnum>();
+                    var handedness = new List<Trial.HandednessEnum>();
 
                     foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
                     {
-                        trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                        trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                     }
 
                     foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
                     {
-                        forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                        forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                     }
 
                     foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
                     {
-                        handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                        handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                     }
 
                     _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
@@ -1742,7 +1807,6 @@ namespace ManipAnalysis_v2
                         checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
                         checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
                         saveFileDialog.FileName);
-
                 }
                 else
                 {
@@ -1846,7 +1910,8 @@ namespace ManipAnalysis_v2
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text) && comboBox_Start_Database.Items.Count > 0)
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text) &&
+                comboBox_Start_Database.Items.Count > 0)
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
@@ -1924,29 +1989,32 @@ namespace ManipAnalysis_v2
 
         private void button_Others_PlotVelocityBaseline_Click(object sender, EventArgs e)
         {
-            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
-            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
+            int[] targets =
+                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
+                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
+                    .ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
-                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
-                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
-                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
                 targets,
                 trialTypes, forceFields, handedness);
         }
@@ -2298,18 +2366,6 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.CompactDatabase();
         }
 
-        private delegate void LogBoxCallbackAddString(string text);
-
-        private delegate void LogBoxCallbackClearItems();
-
-        private delegate string[] LogBoxCallbackGetText();
-
-        private delegate void ProgressBarCallback(double value);
-
-        private delegate void ProgressLabelCallback(string text);
-
-        private delegate void TabControlCallback(bool enable);
-
         private void button_DataManipulation_DropStatistics_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.DropStatistics();
@@ -2317,29 +2373,32 @@ namespace ManipAnalysis_v2
 
         private void button_Others_PlotForceBaseline_Click(object sender, EventArgs e)
         {
-            List<MongoDb.Trial.TrialTypeEnum> trialTypes = new List<Trial.TrialTypeEnum>();
-            List<MongoDb.Trial.ForceFieldTypeEnum> forceFields = new List<Trial.ForceFieldTypeEnum>();
-            List<MongoDb.Trial.HandednessEnum> handedness = new List<Trial.HandednessEnum>();
-            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
+            int[] targets =
+                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
+                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
+                    .ToArray();
 
             foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
-                trialTypes.Add((MongoDb.Trial.TrialTypeEnum)Enum.Parse(typeof(MongoDb.Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
-                forceFields.Add((MongoDb.Trial.ForceFieldTypeEnum)Enum.Parse(typeof(MongoDb.Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
             foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
-                handedness.Add((MongoDb.Trial.HandednessEnum)Enum.Parse(typeof(MongoDb.Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
             _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(),
                 comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer)comboBox_Others_Subject.SelectedItem,
+                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
                 targets,
                 trialTypes, forceFields, handedness);
         }
@@ -2362,6 +2421,18 @@ namespace ManipAnalysis_v2
                     listBox_OtherStatistics_Targets.SetSelected(listboxIndex, true);
                 }
             }
-        }        
+        }
+
+        private delegate void LogBoxCallbackAddString(string text);
+
+        private delegate void LogBoxCallbackClearItems();
+
+        private delegate string[] LogBoxCallbackGetText();
+
+        private delegate void ProgressBarCallback(double value);
+
+        private delegate void ProgressLabelCallback(string text);
+
+        private delegate void TabControlCallback(bool enable);
     }
 }

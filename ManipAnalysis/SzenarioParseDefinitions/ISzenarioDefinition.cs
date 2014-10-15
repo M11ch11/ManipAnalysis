@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ManipAnalysis_v2.MongoDb;
-using System.IO;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    abstract class ISzenarioDefinition
+    internal abstract class ISzenarioDefinition
     {
         public const string StudyName = "Unknown";
         public const string SzenarioName = "Unknown";
 
-        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName)
+        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
+            DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
+            string groupName, string studyName, string szenarioName)
         {
-            List<Trial> trialsContainer = new List<Trial>();
+            var trialsContainer = new List<Trial>();
 
             Parallel.For(0, c3DFiles.Length, filesCounter =>
             {
@@ -30,7 +31,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 string startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
                 var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
                 var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
-                float frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
+                float frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
                 int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
                 // -1 == Compensation of first Trial
                 int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
@@ -65,7 +66,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     var measuredForcesRaw = new ForceContainer();
                     var momentForcesRaw = new ForceContainer();
                     var positionRaw = new PositionContainer();
-                    double timeOffset = frameTimeInc * frame;
+                    double timeOffset = frameTimeInc*frame;
                     DateTime timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                     // Returns an array of all points, it is necessary to call this method in each cycle
@@ -116,7 +117,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     {
                         trialsContainer.Add(currentTrial);
                     }
-
                 }
             });
 
@@ -124,9 +124,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             {
                 foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    foreach (int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
+                    foreach (
+                        int target in
+                            trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
                     {
-                        IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
+                        IOrderedEnumerable<Trial> tempList =
+                            trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target)
+                                .OrderBy(t => t.StartDateTimeOfTrialRecording);
                         for (int i = 0; i < tempList.Count(); i++)
                         {
                             tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
@@ -136,7 +140,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
             else
             {
-                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");                    
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " +
+                                                 measureFilePath + "\nSkipping File.");
                 trialsContainer.Clear();
             }
 
@@ -145,7 +150,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         protected double DegreeToRadian(double angle)
         {
-            return Math.PI * angle / 180.0;
+            return Math.PI*angle/180.0;
         }
 
         public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);

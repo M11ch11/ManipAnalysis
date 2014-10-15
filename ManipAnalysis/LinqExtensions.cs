@@ -42,24 +42,24 @@ namespace ManipAnalysis_v2
             return ret;
         }
 
-        
+
         public static double[] ArrayAverage(List<double[]> arrays)
         {
             //Checks wether all arrays are the same size
-            var arrayLength = arrays.Select(a => a.Length).Distinct().Single();
+            int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
             return Enumerable.Range(0, arrays[0].Length)
-                       .Select(i => arrays.Select(a => a.Skip(i).First()).Average())
-                       .ToArray();
+                .Select(i => arrays.Select(a => a.Skip(i).First()).Average())
+                .ToArray();
         }
-        
+
         public static long[] ArrayAverage(List<long[]> arrays)
         {
             //Checks wether all arrays are the same size
-            var arrayLength = arrays.Select(a => a.Length).Distinct().Single();
+            int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
             return Enumerable.Range(0, arrays[0].Length)
-                       .Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
-        }        
+                .Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
+        }
     }
 }

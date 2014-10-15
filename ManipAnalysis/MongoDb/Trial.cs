@@ -1,24 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
-using System;
 
 namespace ManipAnalysis_v2.MongoDb
 {
     internal class Trial
     {
-        public enum TrialTypeEnum
-        {
-            StandardTrial = 0, ErrorClampTrial = 1, CatchTrial = 2
-        };
-
         public enum ForceFieldTypeEnum
         {
-            NullField = 0, ForceFieldCW = 1, ForceFieldCCW = 2
+            NullField = 0,
+            ForceFieldCW = 1,
+            ForceFieldCCW = 2
         };
 
         public enum HandednessEnum
         {
-            RightHand = 0, LeftHand = 1, Unknown = 2
+            RightHand = 0,
+            LeftHand = 1,
+            Unknown = 2
+        };
+
+        public enum TrialTypeEnum
+        {
+            StandardTrial = 0,
+            ErrorClampTrial = 1,
+            CatchTrial = 2
         };
 
         public List<ForceContainer> MeasuredForcesFiltered;
@@ -49,9 +55,9 @@ namespace ManipAnalysis_v2.MongoDb
         public byte[] ZippedPositionFiltered;
         public byte[] ZippedPositionNormalized;
         public byte[] ZippedPositionRaw;
+        public byte[] ZippedStatistics;
         public byte[] ZippedVelocityFiltered;
         public byte[] ZippedVelocityNormalized;
-        public byte[] ZippedStatistics;
         public ObjectId Id { get; set; }
         public ObjectId BaselineObjectId { get; set; }
 

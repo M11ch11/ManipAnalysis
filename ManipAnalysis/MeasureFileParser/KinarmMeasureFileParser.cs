@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using ManipAnalysis_v2.MongoDb;
+using ManipAnalysis_v2.SzenarioParseDefinitions;
 
 namespace ManipAnalysis_v2.MeasureFileParser
 {
@@ -13,14 +14,14 @@ namespace ManipAnalysis_v2.MeasureFileParser
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
         private string[] _c3DFiles;
-        private List<Trial> _trialsContainer;
-        private string _measureFilePath;
-        private string _measureFileHash;
-        private string _studyName;
         private string _groupName;
-        private string _szenarioName;
-        private string _probandId;
         private DateTime _measureFileCreationDateTime;
+        private string _measureFileHash;
+        private string _measureFilePath;
+        private string _probandId;
+        private string _studyName;
+        private string _szenarioName;
+        private List<Trial> _trialsContainer;
 
 
         public KinarmMeasureFileParser(ManipAnalysisGui myManipAnalysisGui)
@@ -33,7 +34,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
             get { return _trialsContainer; }
         }
 
-        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions,
+        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui,
+            ManipAnalysisFunctions myManipAnalysisFunctions,
             string filePath)
         {
             bool retVal = false;
@@ -75,7 +77,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 }
                 else
                 {
-                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " + _szenarioName + ".");
+                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " +
+                                                      _szenarioName + ".");
                 }
             }
             return retVal;
@@ -102,7 +105,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 _c3DFiles = Directory.EnumerateFiles(tempPath + @"\raw", "*_*_*.c3d*").ToArray();
                 string _commonFile = tempPath + @"\raw\common.c3d";
-                
+
                 c3DReader.Open(_commonFile);
 
                 _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
@@ -111,16 +114,21 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 try
                 {
-                    foreach (Type szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                    foreach (
+                        Type szenarioDefinitionIterable in
+                            Assembly.GetExecutingAssembly()
+                                .GetTypes()
+                                .Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)) //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))
+                            //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
                         }
                     }
                 }
-                catch 
+                catch
                 {
                     szenarioDefinitionType = null;
                 }
@@ -143,7 +151,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _probandId = fileName.Split('_')[0].Trim();
                 string datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
                                   fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
-                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
+                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss",
+                    CultureInfo.InvariantCulture);
 
                 _trialsContainer = new List<Trial>();
             }
@@ -162,8 +171,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
             bool retVal = true;
             try
             {
-                var szenarioDefinition = (SzenarioParseDefinitions.ISzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
-                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName));
+                var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
+                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles,
+                    _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
+                    _szenarioName));
             }
             catch (Exception ex)
             {

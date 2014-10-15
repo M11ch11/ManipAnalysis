@@ -4,19 +4,24 @@ namespace ManipAnalysis_v2.Container
 {
     internal class MeasureDataContainer
     {
-        public enum TrialTypeEnum
-        {
-            StandardTrial, ErrorClampTrial, CatchTrial
-        };
-
         public enum ForceFieldTypeEnum
         {
-            ForceFieldCW, ForceFieldCCW, NullField
+            ForceFieldCW,
+            ForceFieldCCW,
+            NullField
+        };
+
+        public enum TrialTypeEnum
+        {
+            StandardTrial,
+            ErrorClampTrial,
+            CatchTrial
         };
 
         public readonly double ForceActualX;
         public readonly double ForceActualY;
         public readonly double ForceActualZ;
+        public readonly ForceFieldTypeEnum ForceFieldType;
 
         public readonly double ForceMomentX;
         public readonly double ForceMomentY;
@@ -25,15 +30,13 @@ namespace ManipAnalysis_v2.Container
         public readonly double ForceNominalY;
         public readonly double ForceNominalZ;
 
-        public readonly TrialTypeEnum TrialType;
-        public readonly ForceFieldTypeEnum ForceFieldType;
-
         public readonly double PositionCartesianX;
         public readonly double PositionCartesianY;
         public readonly double PositionCartesianZ;
         public readonly int PositionStatus;
 
         public readonly int TargetNumber;
+        public readonly TrialTypeEnum TrialType;
         public bool ContainsDuplicates;
         public int SzenarioTrialNumber;
 

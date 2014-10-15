@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ManipAnalysis_v2.MongoDb
 {
@@ -7,8 +6,10 @@ namespace ManipAnalysis_v2.MongoDb
     {
         public List<PerpendicularDisplacementContainer> AbsolutePerpendicularDisplacement =
             new List<PerpendicularDisplacementContainer>();
+
         public List<PerpendicularDisplacementContainer> SignedPerpendicularDisplacement =
             new List<PerpendicularDisplacementContainer>();
+
         public double VelocityVectorCorrelation { get; set; }
         public double AbsoluteTrajectoryLength { get; set; }
         public double AbsoluteBaselineTrajectoryLengthRatio { get; set; }

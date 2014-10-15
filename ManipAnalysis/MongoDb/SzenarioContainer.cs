@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    class SzenarioContainer
+    internal class SzenarioContainer
     {
         public string GroupName;
         public DateTime MeasureFileCreationDateTime;
