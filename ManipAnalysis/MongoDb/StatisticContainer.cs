@@ -36,8 +36,8 @@ namespace ManipAnalysis_v2.MongoDb
 
         public double AbsoluteMidMovementForce { get; set; }
 
-        public double ForcefieldCompenstionFactor { get; set; }
+        public List<double> ForcefieldCompenstionFactor = new List<double>();
 
-        public double ForcefieldCompenstionFactorRaw { get; set; }
+        public List<double> ForcefieldCompenstionFactorRaw = new List<double>();
     }
 }

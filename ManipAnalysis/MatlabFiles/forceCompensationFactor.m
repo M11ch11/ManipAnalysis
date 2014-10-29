@@ -36,37 +36,25 @@
 %
 %========================================================================%
 
-function fcp = forceCompensationFactor(forcePD, forceSign, velocity)
+function fcp = forceCompensationFactor(forcePD, velocity)
 
 % Check for errors: number of input arguments
 if (nargin < 2)
-    error('distance2curve: ERROR - invalid input arguments - at least 2 input arguments needed!')
-elseif (nargin <2)
-    error('distance2curve: ERROR - invalid input arguments - too many input arguments.')
+    error('forceCompensationFactor: ERROR - invalid input arguments - at least 2 input arguments needed!')
+elseif (nargin > 2)
+    error('forceCompensationFactor: ERROR - invalid input arguments - too many input arguments.')
 end
 
 %-------------------------------------------------------------------------%
 % Identify and check dimension of given points
-[nTraj, pTraj] = size(forcePD);  % in general: nTraj=100, pTraj=2
+[nTraj, pTraj] = size(forcePD);  % in general: nTraj=100, pTraj=1
 
-if (pTraj ~= 2)
-    error('distance2curve: ERROR - points must live in 2-dimensional space.')
+if (pTraj ~= 1)
+    error('forceCompensationFactor: ERROR - points must live in 1-dimensional space.')
 end
 
 if (nTraj == 1)
-    error('distance2curve: ERROR - trajectory is only a single point.')
-end
-
-%-------------------------------------------------------------------------%
-% Identify and check dimension of given points
-[nTraj, pTraj] = size(forceSign);  % in general: nTraj=100, pTraj=2
-
-if (pTraj ~= 2)
-    error('distance2curve: ERROR - points must live in 2-dimensional space.')
-end
-
-if (nTraj == 1)
-    error('distance2curve: ERROR - trajectory is only a single point.')
+    error('forceCompensationFactor: ERROR - trajectory is only a single point.')
 end
 
 %-------------------------------------------------------------------------%
@@ -74,11 +62,11 @@ end
 [nTraj, pTraj] = size(velocity);  % in general: nTraj=101, pTraj=2
 
 if (pTraj ~= 2)
-    error('distance2curve: ERROR - points must live in 2-dimensional space.')
+    error('forceCompensationFactor: ERROR - points must live in 2-dimensional space.')
 end
 
 if (nTraj == 1)
-    error('distance2curve: ERROR - trajectory is only a single point.')
+    error('forceCompensationFactor: ERROR - trajectory is only a single point.')
 end
 
 %-------------------------------------------------------------------------%
@@ -86,6 +74,6 @@ end
 
 
 %-------------------------------------------------------------------------%
-fcp = 0;   % Return value
+fcp = [1:1:100];   % Return values
 
 end

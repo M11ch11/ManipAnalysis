@@ -2523,45 +2523,61 @@ namespace ManipAnalysis_v2
 
                                             // Calculate MidMovementForce
                                             List<DateTime> vMaxCorridor = trial.VelocityNormalized.Where(t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70).Select(t => t.TimeStamp).ToList();
-                                            var perpendicularForces = new List<double>();
-                                            var perpendicularForcesRaw = new List<double>();
-                                            var parallelForces = new List<double>();
-                                            var absoluteForces = new List<double>();
+                                            var perpendicularForcesMidMovementForce = new List<double>();
+                                            var perpendicularForcesRawMidMovementForce = new List<double>();
+                                            var parallelForcesMidMovementForce = new List<double>();
+                                            var absoluteForcesMidMovementForce = new List<double>();
+                                            var perpendicularForcesForcefieldCompenstionFactor = new List<double>();
+                                            var perpendicularForcesRawForcefieldCompenstionFactor = new List<double>();
 
                                             for (int dataPoint = 2; dataPoint <= trial.PositionNormalized.Count; dataPoint++)
                                             {
+                                                taskMatlabWrapper.Execute("[forcePD, forcePDsign] = pdForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
+                                                taskMatlabWrapper.Execute("[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
+
+                                                taskMatlabWrapper.Execute("forcePara = paraForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
+                                                taskMatlabWrapper.Execute("baselineForcePara = paraForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
+
+                                                taskMatlabWrapper.Execute("forcePD = forcePDsign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
+                                                taskMatlabWrapper.Execute("baselineForcePD = baselineForcePDsign * sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
+
+                                                taskMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
+                                                taskMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
+
+                                                taskMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (dataPoint - 1) + ")^2 + forceY(" + (dataPoint - 1) + ")^2);");
+                                                taskMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (dataPoint - 1) + ")^2 + baselineForceY(" + (dataPoint - 1) + ")^2);");
+
+                                                perpendicularForcesForcefieldCompenstionFactor.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
+                                                perpendicularForcesRawForcefieldCompenstionFactor.Add(taskMatlabWrapper.GetWorkspaceData("forcePD"));
+                                                
                                                 if (vMaxCorridor.Contains(trial.PositionNormalized[dataPoint - 2].TimeStamp))
                                                 {
-                                                    taskMatlabWrapper.Execute("[forcePD, forcePDsign] = pdForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
-                                                    taskMatlabWrapper.Execute("[baselineForcePD, baselineForcePDsign] = pdForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
-
-                                                    taskMatlabWrapper.Execute("forcePara = paraForceLineSegment([forceX(" + (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) + ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint + ") positionY(" + dataPoint + ")]);");
-                                                    taskMatlabWrapper.Execute("baselineForcePara = paraForceLineSegment([baselineForceX(" + (dataPoint - 1) + ") baselineForceY(" + (dataPoint - 1) + ")], [baselinePositionX(" + (dataPoint - 1) + ") baselinePositionY(" + (dataPoint - 1) + ")], [baselinePositionX(" + dataPoint + ") baselinePositionY(" + dataPoint + ")]);");
-
-                                                    taskMatlabWrapper.Execute("forcePD = forcePDsign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
-                                                    taskMatlabWrapper.Execute("baselineForcePD = baselineForcePDsign * sqrt(baselineForcePD(1)^2 + baselineForcePD(2)^2);");
-
-                                                    taskMatlabWrapper.Execute("forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
-                                                    taskMatlabWrapper.Execute("baselineForcePara = sqrt(baselineForcePara(1)^2 + baselineForcePara(2)^2);");
-
-                                                    taskMatlabWrapper.Execute("absoluteForce = sqrt(forceX(" + (dataPoint - 1) + ")^2 + forceY(" + (dataPoint - 1) + ")^2);");
-                                                    taskMatlabWrapper.Execute("baselineAbsoluteForce = sqrt(baselineForceX(" + (dataPoint - 1) + ")^2 + baselineForceY(" + (dataPoint - 1) + ")^2);");
-
-
-                                                    perpendicularForces.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
-                                                    perpendicularForcesRaw.Add(taskMatlabWrapper.GetWorkspaceData("forcePD"));
-                                                    parallelForces.Add(taskMatlabWrapper.GetWorkspaceData("forcePara") - taskMatlabWrapper.GetWorkspaceData("baselineForcePara"));
-                                                    absoluteForces.Add(taskMatlabWrapper.GetWorkspaceData("absoluteForce") - taskMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
+                                                    perpendicularForcesMidMovementForce.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
+                                                    perpendicularForcesRawMidMovementForce.Add(taskMatlabWrapper.GetWorkspaceData("forcePD"));
+                                                    parallelForcesMidMovementForce.Add(taskMatlabWrapper.GetWorkspaceData("forcePara") - taskMatlabWrapper.GetWorkspaceData("baselineForcePara"));
+                                                    absoluteForcesMidMovementForce.Add(taskMatlabWrapper.GetWorkspaceData("absoluteForce") - taskMatlabWrapper.GetWorkspaceData("baselineAbsoluteForce"));
                                                 }
                                             }
-                                            
-                                            // Calculate ForcefieldCompenstionFactor
-                                            taskMatlabWrapper.Execute("fcp = forceCompensationFactor(forcePD, [velocityX velocityY]);");
 
-                                            statisticContainer.PerpendicularMidMovementForce = perpendicularForces.Average();
-                                            statisticContainer.PerpendicularMidMovementForceRaw = perpendicularForcesRaw.Average();
-                                            statisticContainer.ParallelMidMovementForce = parallelForces.Average();
-                                            statisticContainer.AbsoluteMidMovementForce = absoluteForces.Average();
+                                            statisticContainer.PerpendicularMidMovementForce = perpendicularForcesMidMovementForce.Average();
+                                            statisticContainer.PerpendicularMidMovementForceRaw = perpendicularForcesRawMidMovementForce.Average();
+                                            statisticContainer.ParallelMidMovementForce = parallelForcesMidMovementForce.Average();
+                                            statisticContainer.AbsoluteMidMovementForce = absoluteForcesMidMovementForce.Average();
+
+                                            // Calculate ForcefieldCompenstionFactor
+                                            taskMatlabWrapper.SetWorkspaceData("forcePDArray", perpendicularForcesForcefieldCompenstionFactor.ToArray());
+                                            taskMatlabWrapper.SetWorkspaceData("forcePDRawArray", perpendicularForcesRawForcefieldCompenstionFactor.ToArray());
+                                            taskMatlabWrapper.Execute("forceCompFactor = forceCompensationFactor(forcePDArray', [velocityX' velocityY']);");
+                                            taskMatlabWrapper.Execute("forceCompFactorRaw = forceCompensationFactor(forcePDRawArray', [velocityX' velocityY']);");
+
+                                            double[,] forceCompFactor = taskMatlabWrapper.GetWorkspaceData("forceCompFactor");
+                                            double[,] forceCompFactorRaw = taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
+
+                                            for (int forceCompFactorCounter = 0; forceCompFactorCounter < perpendicularForcesForcefieldCompenstionFactor.Count; forceCompFactorCounter++)
+                                            {
+                                                statisticContainer.ForcefieldCompenstionFactor.Add(forceCompFactor[0, forceCompFactorCounter]);
+                                                statisticContainer.ForcefieldCompenstionFactorRaw.Add(forceCompFactorRaw[0, forceCompFactorCounter]);
+                                            }
 
                                             // Set Metadata and upload to Database
                                             trial.Statistics = statisticContainer;

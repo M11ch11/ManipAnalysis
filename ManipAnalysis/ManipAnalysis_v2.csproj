@@ -243,7 +243,9 @@
     <Content Include="MatlabFiles\drawCircle.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MatlabFiles\forceCompensationFactor.m" />
+    <Content Include="MatlabFiles\forceCompensationFactor.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\enclosedArea.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
