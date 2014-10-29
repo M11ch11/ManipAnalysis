@@ -48,7 +48,10 @@ namespace ManipAnalysis_v2
             //Calculate the hash code for the array
             int hashCode = 0;
             bool isFirst = true;
-            foreach (int i in intArray)
+            foreach (int
+                i
+                in
+                intArray)
             {
                 if (isFirst)
                 {

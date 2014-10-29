@@ -42,7 +42,10 @@ namespace ManipAnalysis_v2
             {
                 string[] textArray = text.Split('\n');
 
-                for (int i = 0; i < textArray.Length; i++)
+                for (int i = 0;
+                    i < textArray.Length;
+                    i
+                        ++)
                 {
                     if (i == 0)
                     {
@@ -53,15 +56,9 @@ namespace ManipAnalysis_v2
                         listBox_LogBox.Items.Add(textArray[i]);
                     }
 
-                    if (listBox_LogBox.HorizontalExtent <
-                        TextRenderer.MeasureText(listBox_LogBox.Items[listBox_LogBox.Items.Count - 1].ToString(),
-                            listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                            TextFormatFlags.NoPrefix).Width)
+                    if (listBox_LogBox.HorizontalExtent < TextRenderer.MeasureText(listBox_LogBox.Items[listBox_LogBox.Items.Count - 1].ToString(), listBox_LogBox.Font, listBox_LogBox.ClientSize, TextFormatFlags.NoPrefix).Width)
                     {
-                        listBox_LogBox.HorizontalExtent =
-                            TextRenderer.MeasureText(listBox_LogBox.Items[listBox_LogBox.Items.Count - 1].ToString(),
-                                listBox_LogBox.Font, listBox_LogBox.ClientSize,
-                                TextFormatFlags.NoPrefix).Width;
+                        listBox_LogBox.HorizontalExtent = TextRenderer.MeasureText(listBox_LogBox.Items[listBox_LogBox.Items.Count - 1].ToString(), listBox_LogBox.Font, listBox_LogBox.ClientSize, TextFormatFlags.NoPrefix).Width;
                     }
                 }
                 listBox_LogBox.TopIndex = listBox_LogBox.Items.Count - 1;
@@ -112,7 +109,10 @@ namespace ManipAnalysis_v2
 
             var filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
 
-            for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter++)
+            for (int filesCounter = 0;
+                filesCounter < filesList.Count;
+                filesCounter
+                    ++)
             {
                 if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                 {
@@ -146,7 +146,10 @@ namespace ManipAnalysis_v2
 
                 GetSubDirectories(ref directoriesList, rootDir);
 
-                for (int i = 0; i < directoriesList.Count; i++)
+                for (int i = 0;
+                    i < directoriesList.Count;
+                    i
+                        ++)
                 {
                     DirectoryInfo di = directoriesList[i];
                     filesList.AddRange(di.GetFiles("*.csv"));
@@ -154,7 +157,10 @@ namespace ManipAnalysis_v2
                 }
                 directoriesList.Clear();
 
-                for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter++)
+                for (int filesCounter = 0;
+                    filesCounter < filesList.Count;
+                    filesCounter
+                        ++)
                 {
                     if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                     {
@@ -210,10 +216,7 @@ namespace ManipAnalysis_v2
 
         private void button_Debug_InitialiseDatabase_Click(object sender, EventArgs e)
         {
-            if (
-                MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?",
-                    MessageBoxButtons.YesNo) ==
-                DialogResult.Yes)
+            if (MessageBox.Show(@"Are you really sure you want to initialise the Database?", @"Really?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _manipAnalysisFunctions.DropDatabase();
             }
@@ -224,31 +227,33 @@ namespace ManipAnalysis_v2
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
-            int[] targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets,
-                trialTypes, forceFields, handedness);
+            _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, targets, trialTypes, forceFields, handedness);
         }
 
         public void EnableTabPages(bool enable)
@@ -280,12 +285,7 @@ namespace ManipAnalysis_v2
                 using (Graphics gr = progressBar.CreateGraphics())
                 {
                     progressBar.Refresh();
-                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
-                        new PointF(
-                            progressBar.Width/2 -
-                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
-                            progressBar.Height/2 -
-                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
+                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black, new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F), progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
                 }
             }
         }
@@ -303,12 +303,7 @@ namespace ManipAnalysis_v2
                 {
                     progressBar.Text = text;
                     progressBar.Refresh();
-                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black,
-                        new PointF(
-                            progressBar.Width/2 -
-                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F),
-                            progressBar.Height/2 -
-                            (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
+                    gr.DrawString(progressBar.Text, SystemFonts.DefaultFont, Brushes.Black, new PointF(progressBar.Width/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Width/2.0F), progressBar.Height/2 - (gr.MeasureString(progressBar.Text, SystemFonts.DefaultFont).Height/2.0F)));
                 }
             }
         }
@@ -321,8 +316,7 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_Turns.Items.Clear();
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
-            IEnumerable<string> groupNames =
-                _manipAnalysisFunctions.GetGroups(comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString());
+            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString());
             if (groupNames != null)
             {
                 listBox_DescriptiveStatistic1_Groups.Items.AddRange(groupNames.ToArray());
@@ -348,11 +342,12 @@ namespace ManipAnalysis_v2
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
                 if (szenarioIntersect != null)
                 {
-                    for (int i = 1; i < groups.Length; i++)
+                    for (int i = 1;
+                        i < groups.Length;
+                        i
+                            ++)
                     {
-                        szenarioIntersect =
-                            szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]))
-                                .ToArray();
+                        szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i])).ToArray();
                     }
 
                     comboBox_DescriptiveStatistic1_Szenario.Items.AddRange(szenarioIntersect.ToArray());
@@ -374,11 +369,12 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
 
-            for (int i = 0; i < groups.Length; i++)
+            for (int i = 0;
+                i < groups.Length;
+                i
+                    ++)
             {
-                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
-                    groups[i],
-                    szenario);
+                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (tempSubjects != null)
                 {
                     listBox_DescriptiveStatistic1_Subjects.Items.AddRange(tempSubjects.ToArray());
@@ -397,11 +393,13 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-            SubjectContainer[] subjects =
-                listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int j = 0; j < subjects.Length; j++)
+            for (int j = 0;
+                j < subjects.Length;
+                j
+                    ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -440,25 +438,31 @@ namespace ManipAnalysis_v2
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
 
-            foreach (string item in listBox_DescriptiveStatistic1_TrialType.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic1_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string item in listBox_DescriptiveStatistic1_ForceField.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic1_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string item in listBox_DescriptiveStatistic1_Handedness.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic1_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                trialTypes,
-                forceFields,
-                handedness);
+            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
 
             if (szenarioTrialNames.Any())
             {
@@ -477,55 +481,50 @@ namespace ManipAnalysis_v2
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
                             if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                             {
                                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                                 {
                                     bool canBeUpdated = false;
-                                    foreach (
-                                        StatisticPlotContainer temp in
-                                            listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                                    foreach (StatisticPlotContainer
+                                        temp
+                                        in
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items)
                                     {
-                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
-                                            trials))
+                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn, trials))
                                         {
-                                            typeof (ListBox).InvokeMember("RefreshItems",
-                                                BindingFlags.NonPublic | BindingFlags.Instance |
-                                                BindingFlags.InvokeMethod,
-                                                null,
-                                                listBox_DescriptiveStatistic1_SelectedTrials,
-                                                new object[] {});
+                                            typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_DescriptiveStatistic1_SelectedTrials, new object[] {});
                                             canBeUpdated = true;
                                         }
                                     }
 
                                     if (!canBeUpdated)
                                     {
-                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
-                                            new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                     }
                                 }
                                 else
                                 {
-                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
-                                        new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                 }
                             }
                         }
@@ -538,8 +537,7 @@ namespace ManipAnalysis_v2
         {
             while (listBox_DescriptiveStatistic1_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_DescriptiveStatistic1_SelectedTrials.Items.Remove(
-                    listBox_DescriptiveStatistic1_SelectedTrials.SelectedItem);
+                listBox_DescriptiveStatistic1_SelectedTrials.Items.Remove(listBox_DescriptiveStatistic1_SelectedTrials.SelectedItem);
             }
         }
 
@@ -551,8 +549,7 @@ namespace ManipAnalysis_v2
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" || comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
@@ -568,14 +565,7 @@ namespace ManipAnalysis_v2
             }
             else
             {
-                _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
-                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                    comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
-                    textBox_DescriptiveStatistic1_FitEquation.Text,
-                    pdTime,
-                    checkBox_DescriptiveStatistic1_PlotFit.Checked,
-                    checkBox_DescriptiveStatistic1_PlotErrorbars.Checked,
-                    null);
+                _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(), comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(), textBox_DescriptiveStatistic1_FitEquation.Text, pdTime, checkBox_DescriptiveStatistic1_PlotFit.Checked, checkBox_DescriptiveStatistic1_PlotErrorbars.Checked, null);
             }
         }
 
@@ -586,55 +576,50 @@ namespace ManipAnalysis_v2
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic1_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
                             if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                             {
                                 if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                                 {
                                     bool canBeUpdated = false;
-                                    foreach (
-                                        StatisticPlotContainer temp in
-                                            listBox_DescriptiveStatistic1_SelectedTrials.Items)
+                                    foreach (StatisticPlotContainer
+                                        temp
+                                        in
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items)
                                     {
-                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
-                                            trials))
+                                        if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn, trials))
                                         {
-                                            typeof (ListBox).InvokeMember("RefreshItems",
-                                                BindingFlags.NonPublic | BindingFlags.Instance |
-                                                BindingFlags.InvokeMethod,
-                                                null,
-                                                listBox_DescriptiveStatistic1_SelectedTrials,
-                                                new object[] {});
+                                            typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_DescriptiveStatistic1_SelectedTrials, new object[] {});
                                             canBeUpdated = true;
                                         }
                                     }
 
                                     if (!canBeUpdated)
                                     {
-                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
-                                            new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                        listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                     }
                                 }
                                 else
                                 {
-                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(
-                                        new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
+                                    listBox_DescriptiveStatistic1_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                                 }
                             }
                         }
@@ -655,31 +640,31 @@ namespace ManipAnalysis_v2
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic1_TrialType.SetSelected(listboxIndex, true);
             }
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic1_ForceField.SetSelected(listboxIndex, true);
             }
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic1_Handedness.SetSelected(listboxIndex, true);
             }
 
-            listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
-            listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
-            listBox_DescriptiveStatistic1_Handedness.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged += listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged += listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic1_Handedness.SelectedIndexChanged += listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
 
             comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedIndex = 0;
 
@@ -709,8 +694,7 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic2_Turns.Items.Clear();
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
-            IEnumerable<string> groupNames =
-                _manipAnalysisFunctions.GetGroups(comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString());
+            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString());
 
             if (groupNames.Any())
             {
@@ -737,10 +721,12 @@ namespace ManipAnalysis_v2
 
                 if (szenarioIntersect.Any())
                 {
-                    for (int i = 1; i < groups.Length; i++)
+                    for (int i = 1;
+                        i < groups.Length;
+                        i
+                            ++)
                     {
-                        szenarioIntersect =
-                            szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
+                        szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
                     }
 
                     comboBox_DescriptiveStatistic2_Szenario.Items.AddRange(szenarioIntersect.ToArray());
@@ -762,11 +748,12 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
 
-            for (int i = 0; i < groups.Length; i++)
+            for (int i = 0;
+                i < groups.Length;
+                i
+                    ++)
             {
-                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study,
-                    groups[i],
-                    szenario);
+                IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (tempSubjects.Any())
                 {
                     listBox_DescriptiveStatistic2_Subjects.Items.AddRange(tempSubjects.ToArray());
@@ -785,11 +772,13 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-            SubjectContainer[] subjects =
-                listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            SubjectContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int j = 0; j < subjects.Length; j++)
+            for (int j = 0;
+                j < subjects.Length;
+                j
+                    ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -827,25 +816,31 @@ namespace ManipAnalysis_v2
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
 
-            foreach (string item in listBox_DescriptiveStatistic2_TrialType.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic2_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string item in listBox_DescriptiveStatistic2_ForceField.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic2_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string item in listBox_DescriptiveStatistic2_Handedness.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_DescriptiveStatistic2_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario,
-                trialTypes,
-                forceFields,
-                handedness);
+            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
 
             if (szenarioTrialNames.Any())
             {
@@ -864,29 +859,26 @@ namespace ManipAnalysis_v2
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
-                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study,
-                                group,
-                                szenario,
-                                subject,
-                                turn,
-                                trials));
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                         }
                     }
                 }
@@ -900,29 +892,26 @@ namespace ManipAnalysis_v2
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
                 string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
-                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study,
-                                group,
-                                szenario,
-                                subject,
-                                turn,
-                                trials));
+                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                         }
                     }
                 }
@@ -933,8 +922,7 @@ namespace ManipAnalysis_v2
         {
             while (listBox_DescriptiveStatistic2_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_DescriptiveStatistic2_SelectedTrials.Items.Remove(
-                    listBox_DescriptiveStatistic2_SelectedTrials.SelectedItem);
+                listBox_DescriptiveStatistic2_SelectedTrials.Items.Remove(listBox_DescriptiveStatistic2_SelectedTrials.SelectedItem);
             }
         }
 
@@ -955,31 +943,31 @@ namespace ManipAnalysis_v2
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic2_TrialType.SetSelected(listboxIndex, true);
             }
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic2_ForceField.SetSelected(listboxIndex, true);
             }
 
             for (int listboxIndex = 0;
                 listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count;
-                listboxIndex++)
+                listboxIndex
+                    ++)
             {
                 listBox_DescriptiveStatistic2_Handedness.SetSelected(listboxIndex, true);
             }
 
-            listBox_DescriptiveStatistic2_TrialType.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
-            listBox_DescriptiveStatistic2_ForceField.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
-            listBox_DescriptiveStatistic2_Handedness.SelectedIndexChanged +=
-                listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic2_TrialType.SelectedIndexChanged += listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic2_ForceField.SelectedIndexChanged += listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
+            listBox_DescriptiveStatistic2_Handedness.SelectedIndexChanged += listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged;
 
             comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedIndex = 0;
 
@@ -1005,8 +993,7 @@ namespace ManipAnalysis_v2
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-            if (comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
-                comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
+            if (comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" || comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
@@ -1030,27 +1017,13 @@ namespace ManipAnalysis_v2
                 saveFileDialog.DefaultExt = ".csv";
                 saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
                 saveFileDialog.OverwritePrompt = true;
-                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                          + "."
-                                          + DateTime.Now.Month.ToString("00")
-                                          + "."
-                                          + DateTime.Now.Day.ToString("00")
-                                          + "-"
-                                          + DateTime.Now.Hour.ToString("00")
-                                          + "."
-                                          + DateTime.Now.Minute.ToString("00")
-                                          + "-mean-"
-                                          + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem
-                                          + "-data";
+                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-mean-" + comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem + "-data";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     if (listBox_DescriptiveStatistic2_SelectedTrials.Items.Count > 0)
                     {
-                        _manipAnalysisFunctions.ExportDescriptiveStatistic2Data(
-                            listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                            comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(),
-                            saveFileDialog.FileName, pdTime);
+                        _manipAnalysisFunctions.ExportDescriptiveStatistic2Data(listBox_DescriptiveStatistic2_SelectedTrials.Items.Cast<StatisticPlotContainer>(), comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString(), saveFileDialog.FileName, pdTime);
                     }
                 }
             }
@@ -1059,8 +1032,7 @@ namespace ManipAnalysis_v2
         private void button_DescriptiveStatistic1_ExportData_Click(object sender, EventArgs e)
         {
             int pdTime = 300;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" || comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
                 if (inputForm.ShowDialog(this) == DialogResult.OK)
@@ -1084,35 +1056,13 @@ namespace ManipAnalysis_v2
                 saveFileDialog.DefaultExt = ".csv";
                 saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
                 saveFileDialog.OverwritePrompt = true;
-                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                          + "."
-                                          + DateTime.Now.Month.ToString("00")
-                                          + "."
-                                          + DateTime.Now.Day.ToString("00")
-                                          + "-"
-                                          + DateTime.Now.Hour.ToString("00")
-                                          + "."
-                                          + DateTime.Now.Minute.ToString("00")
-                                          + "."
-                                          + DateTime.Now.Second.ToString("00")
-                                          + "-mean-"
-                                          +
-                                          comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString()
-                                              .Replace("-", pdTime.ToString())
-                                          + "-data";
+                saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "." + DateTime.Now.Second.ToString("00") + "-mean-" + comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString().Replace("-", pdTime.ToString()) + "-data";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     if (listBox_DescriptiveStatistic1_SelectedTrials.Items.Count > 0)
                     {
-                        _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(
-                            listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
-                            comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(),
-                            null,
-                            pdTime,
-                            false,
-                            false,
-                            saveFileDialog.FileName);
+                        _manipAnalysisFunctions.PlotExportDescriptiveStatistic1(listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(), comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString(), null, pdTime, false, false, saveFileDialog.FileName);
                     }
                 }
             }
@@ -1124,7 +1074,8 @@ namespace ManipAnalysis_v2
             {
                 Process.Start(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\MatlabFiles");
             }
-            catch (Exception ex)
+            catch (Exception
+                ex)
             {
                 WriteToLogBox(ex.ToString());
             }
@@ -1162,14 +1113,7 @@ namespace ManipAnalysis_v2
 
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.ImportMeasureFiles(
-                listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(),
-                Convert.ToInt32(textBox_Import_SamplesPerSec.Text),
-                Convert.ToInt32(textBox_Import_FilterOrder.Text),
-                Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text),
-                Convert.ToInt32(textBox_Import_CutoffFreqForce.Text),
-                Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),
-                Convert.ToInt32(textBox_Import_NewSampleCount.Text));
+            _manipAnalysisFunctions.ImportMeasureFiles(listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(), Convert.ToInt32(textBox_Import_SamplesPerSec.Text), Convert.ToInt32(textBox_Import_FilterOrder.Text), Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text), Convert.ToInt32(textBox_Import_CutoffFreqForce.Text), Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text), Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }
 
         private void button_CalculateBaselines_Click(object sender, EventArgs e)
@@ -1199,16 +1143,7 @@ namespace ManipAnalysis_v2
             saveFileDialog.DefaultExt = ".txt";
             saveFileDialog.Filter = @"LogFiles (*.txt)|.txt";
             saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-LogFile";
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-LogFile";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -1216,7 +1151,10 @@ namespace ManipAnalysis_v2
                 var logFileWriter = new StreamWriter(logFileStream);
 
                 string[] logText = GetLogBoxText();
-                for (int i = 0; i < logText.Length; i++)
+                for (int i = 0;
+                    i < logText.Length;
+                    i
+                        ++)
                 {
                     logFileWriter.WriteLine(logText[i]);
                 }
@@ -1240,17 +1178,26 @@ namespace ManipAnalysis_v2
             listBox_TrajectoryVelocity_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_TrajectoryVelocity_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_TrajectoryVelocity_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_ForceField.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_TrajectoryVelocity_ForceField.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_TrajectoryVelocity_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_Handedness.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_TrajectoryVelocity_Handedness.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_TrajectoryVelocity_Handedness.SetSelected(listboxIndex, true);
             }
@@ -1286,8 +1233,7 @@ namespace ManipAnalysis_v2
             listBox_TrajectoryVelocity_Targets.Items.Clear();
             listBox_TrajectoryVelocity_Trials.Items.Clear();
 
-            IEnumerable<string> groupNames =
-                _manipAnalysisFunctions.GetGroups(comboBox_TrajectoryVelocity_Study.SelectedItem.ToString());
+            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_TrajectoryVelocity_Study.SelectedItem.ToString());
             if (groupNames.Any())
             {
                 listBox_TrajectoryVelocity_Groups.Items.AddRange(groupNames.ToArray());
@@ -1314,10 +1260,12 @@ namespace ManipAnalysis_v2
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
                 if (szenarioIntersect.Any())
                 {
-                    for (int i = 1; i < groups.Length; i++)
+                    for (int i = 1;
+                        i < groups.Length;
+                        i
+                            ++)
                     {
-                        szenarioIntersect =
-                            szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
+                        szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
                     }
 
                     comboBox_TrajectoryVelocity_Szenario.Items.AddRange(szenarioIntersect.ToArray());
@@ -1340,10 +1288,12 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
 
-            for (int i = 0; i < groups.Length; i++)
+            for (int i = 0;
+                i < groups.Length;
+                i
+                    ++)
             {
-                IEnumerable<SubjectContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i],
-                    szenario);
+                IEnumerable<SubjectContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (subjects != null)
                 {
                     listBox_TrajectoryVelocity_Subjects.Items.AddRange(subjects.ToArray());
@@ -1363,12 +1313,14 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-            SubjectContainer[] subjects =
-                listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            SubjectContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
 
-            for (int j = 0; j < subjects.Length; j++)
+            for (int j = 0;
+                j < subjects.Length;
+                j
+                    ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -1433,61 +1385,56 @@ namespace ManipAnalysis_v2
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
-                            foreach (string target in targets)
+                            foreach (string
+                                target
+                                in
+                                targets)
                             {
                                 if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (
-                                            TrajectoryVelocityPlotContainer temp in
-                                                listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (TrajectoryVelocityPlotContainer
+                                            temp
+                                            in
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
-                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                                subject, turn, target, trials))
+                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                             {
-                                                typeof (ListBox).InvokeMember("RefreshItems",
-                                                    BindingFlags.NonPublic |
-                                                    BindingFlags.Instance |
-                                                    BindingFlags.InvokeMethod,
-                                                    null,
-                                                    listBox_TrajectoryVelocity_SelectedTrials,
-                                                    new object[] {});
+                                                typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_TrajectoryVelocity_SelectedTrials, new object[] {});
                                                 canBeUpdated = true;
                                             }
                                         }
 
                                         if (!canBeUpdated)
                                         {
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
-                                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                    turn, target, trials));
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                                         }
                                     }
                                     else
                                     {
-                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
-                                            new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                                target, trials));
+                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                                     }
                                 }
                             }
@@ -1504,61 +1451,56 @@ namespace ManipAnalysis_v2
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
                 string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
                 string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
-                SubjectContainer[] subjects =
-                    listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+                SubjectContainer[] subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 string[] turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string group in groups)
+                foreach (string
+                    group
+                    in
+                    groups)
                 {
-                    foreach (
-                        SubjectContainer subject in
-                            subjects.Where(
-                                t =>
-                                    _manipAnalysisFunctions.GetSubjects(study, group, szenario)
-                                        .Select(u => u.PId)
-                                        .Contains(t.PId)))
+                    foreach (SubjectContainer
+                        subject
+                        in
+                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string turn in turns)
+                        foreach (string
+                            turn
+                            in
+                            turns)
                         {
-                            foreach (string target in targets)
+                            foreach (string
+                                target
+                                in
+                                targets)
                             {
                                 if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (
-                                            TrajectoryVelocityPlotContainer temp in
-                                                listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (TrajectoryVelocityPlotContainer
+                                            temp
+                                            in
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
-                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                                subject, turn, target, trials))
+                                            if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                             {
-                                                typeof (ListBox).InvokeMember("RefreshItems",
-                                                    BindingFlags.NonPublic |
-                                                    BindingFlags.Instance |
-                                                    BindingFlags.InvokeMethod,
-                                                    null,
-                                                    listBox_TrajectoryVelocity_SelectedTrials,
-                                                    new object[] {});
+                                                typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_TrajectoryVelocity_SelectedTrials, new object[] {});
                                                 canBeUpdated = true;
                                             }
                                         }
 
                                         if (!canBeUpdated)
                                         {
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
-                                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                    turn, target, trials));
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                                         }
                                     }
                                     else
                                     {
-                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
-                                            new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                                target, trials));
+                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                                     }
                                 }
                             }
@@ -1572,8 +1514,7 @@ namespace ManipAnalysis_v2
         {
             while (listBox_TrajectoryVelocity_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_TrajectoryVelocity_SelectedTrials.Items.Remove(
-                    listBox_TrajectoryVelocity_SelectedTrials.SelectedItem);
+                listBox_TrajectoryVelocity_SelectedTrials.Items.Remove(listBox_TrajectoryVelocity_SelectedTrials.SelectedItem);
             }
         }
 
@@ -1590,30 +1531,31 @@ namespace ManipAnalysis_v2
                 var forceFields = new List<Trial.ForceFieldTypeEnum>();
                 var handedness = new List<Trial.HandednessEnum>();
 
-                foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                foreach (string
+                    item
+                    in
+                    listBox_TrajectoryVelocity_TrialType.SelectedItems)
                 {
                     trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                 }
 
-                foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                foreach (string
+                    item
+                    in
+                    listBox_TrajectoryVelocity_ForceField.SelectedItems)
                 {
                     forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                 }
 
-                foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                foreach (string
+                    item
+                    in
+                    listBox_TrajectoryVelocity_Handedness.SelectedItems)
                 {
                     handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                 }
 
-                _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
-                    listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                    comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                    comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                    trialTypes,
-                    forceFields,
-                    handedness,
-                    checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                    checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
+                _manipAnalysisFunctions.PlotTrajectoryVelocityForce(listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(), comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(), comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(), trialTypes, forceFields, handedness, checkBox_TrajectoryVelocity_ShowForceVectors.Checked, checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked);
             }
             else
             {
@@ -1631,17 +1573,26 @@ namespace ManipAnalysis_v2
             listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_TrialType.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_OtherStatistics_TrialType.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_OtherStatistics_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_ForceField.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_OtherStatistics_ForceField.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_OtherStatistics_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Handedness.Items.Count; listboxIndex++)
+            for (int listboxIndex = 0;
+                listboxIndex < listBox_OtherStatistics_Handedness.Items.Count;
+                listboxIndex
+                    ++)
             {
                 listBox_OtherStatistics_Handedness.SetSelected(listboxIndex, true);
             }
@@ -1670,8 +1621,7 @@ namespace ManipAnalysis_v2
             comboBox_Others_Subject.Items.Clear();
             comboBox_Others_Turn.Items.Clear();
 
-            IEnumerable<string> groupNames =
-                _manipAnalysisFunctions.GetGroups(comboBox_Others_Study.SelectedItem.ToString());
+            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_Others_Study.SelectedItem.ToString());
             if (groupNames.Any())
             {
                 comboBox_Others_Group.Items.AddRange(groupNames.ToArray());
@@ -1711,8 +1661,7 @@ namespace ManipAnalysis_v2
             string group = comboBox_Others_Group.SelectedItem.ToString();
             string szenario = comboBox_Others_Szenario.SelectedItem.ToString();
 
-            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
-                szenario);
+            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group, szenario);
             if (subjectNames.Any())
             {
                 comboBox_Others_Subject.Items.AddRange(subjectNames.ToArray());
@@ -1759,20 +1708,7 @@ namespace ManipAnalysis_v2
             saveFileDialog.DefaultExt = ".csv";
             saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-"
-                                      + comboBox_TrajectoryVelocity_IndividualMean.SelectedItem
-                                      + "-"
-                                      + comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem
-                                      + "-data";
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-" + comboBox_TrajectoryVelocity_IndividualMean.SelectedItem + "-" + comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem + "-data";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -1782,31 +1718,31 @@ namespace ManipAnalysis_v2
                     var forceFields = new List<Trial.ForceFieldTypeEnum>();
                     var handedness = new List<Trial.HandednessEnum>();
 
-                    foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                    foreach (string
+                        item
+                        in
+                        listBox_TrajectoryVelocity_TrialType.SelectedItems)
                     {
                         trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                     }
 
-                    foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                    foreach (string
+                        item
+                        in
+                        listBox_TrajectoryVelocity_ForceField.SelectedItems)
                     {
                         forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                     }
 
-                    foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                    foreach (string
+                        item
+                        in
+                        listBox_TrajectoryVelocity_Handedness.SelectedItems)
                     {
                         handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                     }
 
-                    _manipAnalysisFunctions.ExportTrajectoryVelocityForce(
-                        listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
-                        comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
-                        comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(),
-                        trialTypes,
-                        forceFields,
-                        handedness,
-                        checkBox_TrajectoryVelocity_ShowForceVectors.Checked,
-                        checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked,
-                        saveFileDialog.FileName);
+                    _manipAnalysisFunctions.ExportTrajectoryVelocityForce(listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(), comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(), comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(), trialTypes, forceFields, handedness, checkBox_TrajectoryVelocity_ShowForceVectors.Checked, checkBox_TrajectoryVelocity_ShowPDForceVectors.Checked, saveFileDialog.FileName);
                 }
                 else
                 {
@@ -1824,28 +1760,11 @@ namespace ManipAnalysis_v2
             saveFileDialog.DefaultExt = ".csv";
             saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-"
-                                      + comboBox_Others_Subject.SelectedItem
-                                      + "-TrajectoryBaselineData";
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem + "-TrajectoryBaselineData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportTrajectoryBaseline(
-                    comboBox_Others_Study.SelectedItem.ToString(),
-                    comboBox_Others_Group.SelectedItem.ToString(),
-                    comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectContainer)
-                        comboBox_Others_Subject.SelectedItem,
-                    saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, saveFileDialog.FileName);
             }
         }
 
@@ -1858,31 +1777,11 @@ namespace ManipAnalysis_v2
             saveFileDialog.DefaultExt = ".csv";
             saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-"
-                                      + comboBox_Others_Subject.SelectedItem
-                                      + "-SzenarioMeanTimeData";
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem + "-SzenarioMeanTimeData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportSzenarioMeanTimes(
-                    comboBox_Others_Study.SelectedItem.ToString(),
-                    comboBox_Others_Group.SelectedItem.ToString(),
-                    comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectContainer)
-                        comboBox_Others_Subject.SelectedItem,
-                    Convert.ToInt32(
-                        comboBox_Others_Turn.SelectedItem.ToString()
-                            .Substring("Turn".Length)),
-                    saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)), saveFileDialog.FileName);
             }
         }
 
@@ -1910,8 +1809,7 @@ namespace ManipAnalysis_v2
 
             comboBox_Start_Database.Items.Clear();
 
-            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text) &&
-                comboBox_Start_Database.Items.Count > 0)
+            if (_manipAnalysisFunctions.ConnectToDatabaseServer(comboBox_Start_DatabaseServer.Text) && comboBox_Start_Database.Items.Count > 0)
             {
                 comboBox_Start_Database.SelectedIndex = 0;
                 comboBox_Start_Database.Enabled = true;
@@ -1943,14 +1841,7 @@ namespace ManipAnalysis_v2
 
         private void button_Others_PlotSzenarioMeanTimes_Click(object sender, EventArgs e)
         {
-            _manipAnalysisFunctions.PlotSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectContainer)
-                    comboBox_Others_Subject.SelectedItem,
-                Convert.ToInt32(
-                    comboBox_Others_Turn.SelectedItem.ToString()
-                        .Substring("Turn".Length)));
+            _manipAnalysisFunctions.PlotSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)));
         }
 
         private void button_Others_ExportVelocityBaseline_Click(object sender, EventArgs e)
@@ -1962,28 +1853,11 @@ namespace ManipAnalysis_v2
             saveFileDialog.DefaultExt = ".csv";
             saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
             saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
-                                      + "."
-                                      + DateTime.Now.Month.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Day.ToString("00")
-                                      + "-"
-                                      + DateTime.Now.Hour.ToString("00")
-                                      + "."
-                                      + DateTime.Now.Minute.ToString("00")
-                                      + "-"
-                                      + comboBox_Others_Subject.SelectedItem
-                                      + "-VelocityBaselineData";
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." + DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." + DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem + "-VelocityBaselineData";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportVelocityBaseline(
-                    comboBox_Others_Study.SelectedItem.ToString(),
-                    comboBox_Others_Group.SelectedItem.ToString(),
-                    comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectContainer)
-                        comboBox_Others_Subject.SelectedItem,
-                    saveFileDialog.FileName);
+                _manipAnalysisFunctions.ExportVelocityBaseline(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, saveFileDialog.FileName);
             }
         }
 
@@ -1992,31 +1866,33 @@ namespace ManipAnalysis_v2
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
-            int[] targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets,
-                trialTypes, forceFields, handedness);
+            _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, targets, trialTypes, forceFields, handedness);
         }
 
         private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
@@ -2047,8 +1923,7 @@ namespace ManipAnalysis_v2
             listBox_BaselineRecalculation_Targets.Items.Clear();
             listBox_BaselineRecalculation_Trials.Items.Clear();
 
-            IEnumerable<string> groupNames =
-                _manipAnalysisFunctions.GetGroups(comboBox_BaselineRecalculation_Study.SelectedItem.ToString());
+            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_BaselineRecalculation_Study.SelectedItem.ToString());
 
             if (groupNames != null)
             {
@@ -2091,8 +1966,7 @@ namespace ManipAnalysis_v2
             string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
             string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
 
-            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group,
-                szenario);
+            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group, szenario);
             if (subjectNames != null)
             {
                 comboBox_BaselineRecalculation_Subject.Items.AddRange(subjectNames.ToArray());
@@ -2146,43 +2020,36 @@ namespace ManipAnalysis_v2
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string target in targets)
+                foreach (string
+                    target
+                    in
+                    targets)
                 {
                     if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                     {
                         if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
                         {
                             bool canBeUpdated = false;
-                            foreach (
-                                TrajectoryVelocityPlotContainer temp in
-                                    listBox_BaselineRecalculation_SelectedTrials.Items)
+                            foreach (TrajectoryVelocityPlotContainer
+                                temp
+                                in
+                                listBox_BaselineRecalculation_SelectedTrials.Items)
                             {
-                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                    subject, turn, target, trials))
+                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                 {
-                                    typeof (ListBox).InvokeMember("RefreshItems",
-                                        BindingFlags.NonPublic |
-                                        BindingFlags.Instance |
-                                        BindingFlags.InvokeMethod,
-                                        null,
-                                        listBox_BaselineRecalculation_SelectedTrials,
-                                        new object[] {});
+                                    typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_BaselineRecalculation_SelectedTrials, new object[] {});
                                     canBeUpdated = true;
                                 }
                             }
 
                             if (!canBeUpdated)
                             {
-                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(
-                                    new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                        turn, target, trials));
+                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                             }
                         }
                         else
                         {
-                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(
-                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                    target, trials));
+                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                         }
                     }
                 }
@@ -2202,43 +2069,36 @@ namespace ManipAnalysis_v2
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string target in targets)
+                foreach (string
+                    target
+                    in
+                    targets)
                 {
                     if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                     {
                         if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
                         {
                             bool canBeUpdated = false;
-                            foreach (
-                                TrajectoryVelocityPlotContainer temp in
-                                    listBox_BaselineRecalculation_SelectedTrials.Items)
+                            foreach (TrajectoryVelocityPlotContainer
+                                temp
+                                in
+                                listBox_BaselineRecalculation_SelectedTrials.Items)
                             {
-                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                    subject, turn, target, trials))
+                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                 {
-                                    typeof (ListBox).InvokeMember("RefreshItems",
-                                        BindingFlags.NonPublic |
-                                        BindingFlags.Instance |
-                                        BindingFlags.InvokeMethod,
-                                        null,
-                                        listBox_BaselineRecalculation_SelectedTrials,
-                                        new object[] {});
+                                    typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_BaselineRecalculation_SelectedTrials, new object[] {});
                                     canBeUpdated = true;
                                 }
                             }
 
                             if (!canBeUpdated)
                             {
-                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(
-                                    new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                        turn, target, trials));
+                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                             }
                         }
                         else
                         {
-                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(
-                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                    target, trials));
+                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
                         }
                     }
                 }
@@ -2249,8 +2109,7 @@ namespace ManipAnalysis_v2
         {
             while (listBox_BaselineRecalculation_SelectedTrials.SelectedItems.Count > 0)
             {
-                listBox_BaselineRecalculation_SelectedTrials.Items.Remove(
-                    listBox_BaselineRecalculation_SelectedTrials.SelectedItem);
+                listBox_BaselineRecalculation_SelectedTrials.Items.Remove(listBox_BaselineRecalculation_SelectedTrials.SelectedItem);
             }
         }
 
@@ -2261,34 +2120,17 @@ namespace ManipAnalysis_v2
 
         private void button_BaselineRecalculation_RecalculateBaseline_Click(object sender, EventArgs e)
         {
-            if (listBox_BaselineRecalculation_SelectedTrials.Items.Count ==
-                listBox_BaselineRecalculation_Targets.Items.Count)
+            if (listBox_BaselineRecalculation_SelectedTrials.Items.Count == listBox_BaselineRecalculation_Targets.Items.Count)
             {
-                if (
-                    listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>()
-                        .Select(t => t.Study)
-                        .Distinct()
-                        .Count() == 1)
+                if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Study).Distinct().Count() == 1)
                 {
-                    if (
-                        listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>()
-                            .Select(t => t.Group)
-                            .Distinct()
-                            .Count() == 1)
+                    if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Group).Distinct().Count() == 1)
                     {
-                        if (
-                            listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>()
-                                .Select(t => t.Subject)
-                                .Distinct()
-                                .Count() == 1)
+                        if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Subject).Distinct().Count() == 1)
                         {
-                            if (
-                                listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>
-                                    ().Select(t => t.Szenario).Distinct().Count() == 1)
+                            if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Szenario).Distinct().Count() == 1)
                             {
-                                _manipAnalysisFunctions.RecalculateBaselines(
-                                    listBox_BaselineRecalculation_SelectedTrials.Items
-                                        .Cast<TrajectoryVelocityPlotContainer>());
+                                _manipAnalysisFunctions.RecalculateBaselines(listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>());
                             }
                             else
                             {
@@ -2376,31 +2218,33 @@ namespace ManipAnalysis_v2
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
-            int[] targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
+            int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string
+                item
+                in
+                listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(),
-                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets,
-                trialTypes, forceFields, handedness);
+            _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, targets, trialTypes, forceFields, handedness);
         }
 
         private void comboBox_Others_Turn_SelectedValueChanged(object sender, EventArgs e)
@@ -2416,7 +2260,10 @@ namespace ManipAnalysis_v2
             {
                 listBox_OtherStatistics_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
 
-                for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Targets.Items.Count; listboxIndex++)
+                for (int listboxIndex = 0;
+                    listboxIndex < listBox_OtherStatistics_Targets.Items.Count;
+                    listboxIndex
+                        ++)
                 {
                     listBox_OtherStatistics_Targets.SetSelected(listboxIndex, true);
                 }

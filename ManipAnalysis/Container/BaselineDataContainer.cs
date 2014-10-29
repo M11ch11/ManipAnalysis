@@ -5,21 +5,22 @@ namespace ManipAnalysis_v2.Container
     internal class BaselineDataContainer
     {
         public readonly double BaselinePositionCartesianX;
+
         public readonly double BaselinePositionCartesianY;
+
         public readonly double BaselinePositionCartesianZ;
 
         public readonly double BaselineVelocityX;
+
         public readonly double BaselineVelocityY;
+
         public readonly double BaselineVelocityZ;
 
         public readonly int TargetNumber;
+
         public DateTime PseudoTimeStamp;
 
-        public BaselineDataContainer(DateTime pseudoTimeStamp,
-            double baselinePositionCartesianX, double baselinePositionCartesianY,
-            double baselinePositionCartesianZ,
-            double baselineVelocityX, double baselineVelocityY, double baselineVelocityZ,
-            int targetNumber)
+        public BaselineDataContainer(DateTime pseudoTimeStamp, double baselinePositionCartesianX, double baselinePositionCartesianY, double baselinePositionCartesianZ, double baselineVelocityX, double baselineVelocityY, double baselineVelocityZ, int targetNumber)
         {
             PseudoTimeStamp = pseudoTimeStamp;
 

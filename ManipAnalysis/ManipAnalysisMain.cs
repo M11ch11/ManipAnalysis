@@ -29,8 +29,7 @@ namespace ManipAnalysis_v2
             Application.EnableVisualStyles();
             Application.Run(manipAnalysisGui);
 
-            if (MessageBox.Show(@"Close the MATLAB-Instance as well?", @"Close MATLAB?", MessageBoxButtons.YesNo) ==
-                DialogResult.Yes)
+            if (MessageBox.Show(@"Close the MATLAB-Instance as well?", @"Close MATLAB?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 matlabWrapper.Dispose();
             }

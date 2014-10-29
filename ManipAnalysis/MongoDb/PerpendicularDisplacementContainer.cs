@@ -5,6 +5,7 @@ namespace ManipAnalysis_v2.MongoDb
     public class PerpendicularDisplacementContainer
     {
         private DateTime _timeStamp;
+
         public double PerpendicularDisplacement { get; set; }
 
         /// <summary>

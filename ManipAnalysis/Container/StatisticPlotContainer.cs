@@ -9,14 +9,18 @@ namespace ManipAnalysis_v2.Container
     internal class StatisticPlotContainer
     {
         private readonly string _group;
+
         private readonly string _study;
+
         private readonly SubjectContainer _subject;
+
         private readonly string _szenario;
+
         private readonly List<int> _trials;
+
         private readonly string _turn;
 
-        public StatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject,
-            string turn, IEnumerable<string> trials)
+        public StatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn, IEnumerable<string> trials)
         {
             _study = study;
             _group = group;
@@ -26,7 +30,10 @@ namespace ManipAnalysis_v2.Container
 
             _trials = new List<int>();
 
-            foreach (string trial in trials)
+            foreach (string
+                trial
+                in
+                trials)
             {
                 _trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
             }
@@ -62,16 +69,16 @@ namespace ManipAnalysis_v2.Container
             get { return _turn; }
         }
 
-        public bool UpdateStatisticPlotContainer(string study, string group, string szenario,
-            SubjectContainer subject, string turn,
-            IEnumerable<string> trials)
+        public bool UpdateStatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn, IEnumerable<string> trials)
         {
             bool retval = false;
 
-            if ((_study == study) && (_group == group) && (_szenario == szenario) &&
-                (_subject.PId == subject.PId) && (_turn == turn))
+            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.PId == subject.PId) && (_turn == turn))
             {
-                foreach (string trial in trials)
+                foreach (string
+                    trial
+                    in
+                    trials)
                 {
                     int temp = Convert.ToInt32(trial.Substring(6, 3));
                     if (!_trials.Contains(temp))
@@ -88,12 +95,14 @@ namespace ManipAnalysis_v2.Container
         public override string ToString()
         {
             _trials.Sort();
-            string retVal = _study + " - " + _group + " - " + _szenario + " - " + _subject + " - " + _turn +
-                            " - Trials ";
+            string retVal = _study + " - " + _group + " - " + _szenario + " - " + _subject + " - " + _turn + " - Trials ";
 
             retVal += _trials[0];
             int tempCounter = 0;
-            for (int i = 1; i < _trials.Count(); i++)
+            for (int i = 1;
+                i < _trials.Count();
+                i
+                    ++)
             {
                 if (_trials[i - 1] != _trials[i] - 1)
                 {
@@ -119,7 +128,10 @@ namespace ManipAnalysis_v2.Container
             string retVal = _trials[0].ToString(CultureInfo.InvariantCulture);
 
             int tempCounter = 0;
-            for (int i = 1; i < _trials.Count(); i++)
+            for (int i = 1;
+                i < _trials.Count();
+                i
+                    ++)
             {
                 if (_trials[i - 1] != _trials[i] - 1)
                 {

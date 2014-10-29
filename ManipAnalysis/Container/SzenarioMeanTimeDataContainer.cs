@@ -5,7 +5,9 @@ namespace ManipAnalysis_v2.Container
     internal class SzenarioMeanTimeDataContainer
     {
         public readonly int TargetNumber;
+
         public TimeSpan MeanTime;
+
         public TimeSpan MeanTimeStd;
 
         public SzenarioMeanTimeDataContainer(TimeSpan meanTime, TimeSpan meanTimeStd, int targetNumber)

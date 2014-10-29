@@ -48,9 +48,7 @@ namespace ManipAnalysis_v2
             //Checks wether all arrays are the same size
             int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
-            return Enumerable.Range(0, arrays[0].Length)
-                .Select(i => arrays.Select(a => a.Skip(i).First()).Average())
-                .ToArray();
+            return Enumerable.Range(0, arrays[0].Length).Select(i => arrays.Select(a => a.Skip(i).First()).Average()).ToArray();
         }
 
         public static long[] ArrayAverage(List<long[]> arrays)
@@ -58,8 +56,7 @@ namespace ManipAnalysis_v2
             //Checks wether all arrays are the same size
             int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
-            return Enumerable.Range(0, arrays[0].Length)
-                .Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
+            return Enumerable.Range(0, arrays[0].Length).Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
         }
     }
 }

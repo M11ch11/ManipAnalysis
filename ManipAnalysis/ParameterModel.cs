@@ -38,6 +38,7 @@ namespace ManipAnalysis_v2
     public abstract class ParameterModel
     {
         public const int BLOCK_SIZE = 512;
+
         private long _offsetInFile = -1;
 
         public ParameterModel()
@@ -65,19 +66,20 @@ namespace ManipAnalysis_v2
         }
 
         protected abstract Int16 GetContentLength();
+
         protected abstract void WriteContent(BinaryWriter writer);
 
         public void WriteTo(BinaryWriter writer, bool isLast = false)
         {
             writer.Write((sbyte) Name.Length);
             writer.Write(Id);
-            writer.Write(Name.ToCharArray()); //  string name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
+            writer.Write(Name.ToCharArray());
+            //  string name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
 
             // compute offset of the next item
             var nextItem = (Int16) (isLast
                 ? 0
-                : (Description.Length
-                   + 2 // next item number 
+                : (Description.Length + 2 // next item number 
                    + 1 // desc length number
                    + GetContentLength()));
 
@@ -149,7 +151,10 @@ namespace ManipAnalysis_v2
 
         public bool HasParameter(string name)
         {
-            foreach (Parameter p in _parameters)
+            foreach (Parameter
+                p
+                in
+                _parameters)
             {
                 if (p.Name == name)
                 {
@@ -161,7 +166,10 @@ namespace ManipAnalysis_v2
 
         public Parameter GetParameter(string name)
         {
-            foreach (Parameter p in _parameters)
+            foreach (Parameter
+                p
+                in
+                _parameters)
             {
                 if (p.Name == name)
                 {
@@ -175,7 +183,9 @@ namespace ManipAnalysis_v2
         protected override Int16 GetContentLength()
         {
             return 0;
-        } // ParameterGroup doesn't have content (NOTE: Parameters are children, not content)
+        }
+
+        // ParameterGroup doesn't have content (NOTE: Parameters are children, not content)
 
         protected override void WriteContent(BinaryWriter writer)
         {
@@ -189,9 +199,13 @@ namespace ManipAnalysis_v2
     public class Parameter : ParameterModel
     {
         private readonly int _C3DParameterSize;
+
         private int[] _dimensions;
+
         private int _length;
+
         private sbyte _paramType;
+
         private byte[] _vectorData;
 
         public Parameter(BinaryReader reader)
@@ -199,7 +213,8 @@ namespace ManipAnalysis_v2
             long position = reader.BaseStream.Position;
             // read parameter
             _paramType = reader.ReadSByte();
-            byte dimensions = reader.ReadByte(); // 0 means that parameter is scalar
+            byte dimensions = reader.ReadByte();
+            // 0 means that parameter is scalar
 
             if (dimensions > 0)
             {
@@ -235,7 +250,10 @@ namespace ManipAnalysis_v2
         {
             _length = 1;
             _dimensions = new int[dimensions];
-            for (int i = 0; i < dimensions; i++)
+            for (int i = 0;
+                i < dimensions;
+                i
+                    ++)
             {
                 _dimensions[i] = reader.ReadByte();
                 _length *= _dimensions[i];
@@ -297,11 +315,10 @@ namespace ManipAnalysis_v2
 
         protected override Int16 GetContentLength()
         {
-            return (Int16) (
-                _vectorData.Length +
-                1 + // to store parameter type (sbyte)
-                1 + // to store number of dimensions type (byte)
-                _dimensions.Length // +
+            return (Int16) (_vectorData.Length + 1 + // to store parameter type (sbyte)
+                            1 + // to store number of dimensions type (byte)
+                            _dimensions.Length
+                // +
                 //_vectorData.Length
                 );
         }
@@ -310,7 +327,10 @@ namespace ManipAnalysis_v2
         {
             writer.Write(_paramType);
             writer.Write((byte) _dimensions.Length);
-            for (int i = 0; i < _dimensions.Length; i++)
+            for (int i = 0;
+                i < _dimensions.Length;
+                i
+                    ++)
             {
                 writer.Write((byte) _dimensions[i]);
             }
@@ -361,7 +381,8 @@ namespace ManipAnalysis_v2
                 _dimensions = new[] {((string) (object) data).Length};
                 _paramType = -1;
                 _vectorData = Encoding.ASCII.GetBytes((string) (object) data);
-                _length = _vectorData.Length; // it is the same length as it is in string because ASCII encoding
+                _length = _vectorData.Length;
+                // it is the same length as it is in string because ASCII encoding
                 IsScalar = false;
             }
 
@@ -372,7 +393,10 @@ namespace ManipAnalysis_v2
             {
                 int count = ((string[]) (object) data).Length;
                 int maxLen = 0;
-                foreach (string s in ((string[]) (object) data))
+                foreach (string
+                    s
+                    in
+                    ((string[]) (object) data))
                 {
                     maxLen = Math.Max(s.Length, maxLen);
                 }
@@ -384,11 +408,19 @@ namespace ManipAnalysis_v2
                 // in C# there is really no other method for initialising arrays to a non-default value (without creating temporary objects)
                 // this is fastest way, see this -> http://www.dotnetperls.com/initialize-array
                 // but yes, it's ugly, indeed
-                for (int i = 0; i < _vectorData.Length; i++) _vectorData[i] = 32;
+                for (int i = 0;
+                    i < _vectorData.Length;
+                    i
+                        ++)
+                    _vectorData[i] = 32;
 
 
-                _length = _vectorData.Length; // it is the same length as it is in string because ASCII encoding
-                for (int i = 0; i < count; i++)
+                _length = _vectorData.Length;
+                // it is the same length as it is in string because ASCII encoding
+                for (int i = 0;
+                    i < count;
+                    i
+                        ++)
                 {
                     string s = ((string[]) (object) data)[i];
                     Encoding.ASCII.GetBytes(s, 0, s.Length, _vectorData, i*maxLen);
@@ -402,8 +434,12 @@ namespace ManipAnalysis_v2
                 _paramType = 4;
                 _vectorData = new byte[count*GetSize(4)];
 
-                _length = _vectorData.Length; // it is the same length as it is in string because ASCII encoding
-                for (int i = 0; i < count; i++)
+                _length = _vectorData.Length;
+                // it is the same length as it is in string because ASCII encoding
+                for (int i = 0;
+                    i < count;
+                    i
+                        ++)
                 {
                     float f = ((float[]) (object) data)[i];
                     Array.Copy(BitConverter.GetBytes(f), 0, _vectorData, i*GetSize(_paramType), GetSize(_paramType));
@@ -416,8 +452,12 @@ namespace ManipAnalysis_v2
                 _dimensions = new[] {count};
                 _paramType = 2;
                 _vectorData = new byte[count*GetSize(2)];
-                _length = _vectorData.Length; // it is the same length as it is in string because ASCII encoding
-                for (int i = 0; i < count; i++)
+                _length = _vectorData.Length;
+                // it is the same length as it is in string because ASCII encoding
+                for (int i = 0;
+                    i < count;
+                    i
+                        ++)
                 {
                     Int16 n = ((Int16[]) (object) data)[i];
 
@@ -470,7 +510,8 @@ namespace ManipAnalysis_v2
 
         public T GetData<T>(int i)
         {
-            T ret; // = default(T);
+            T ret;
+            // = default(T);
             //
             //  BASIC TYPES
             //
@@ -540,9 +581,15 @@ namespace ManipAnalysis_v2
             if (_dimensions.Length != 2)
                 throw new ApplicationException("Parameter " + Name + " is not 2D array.");
             var array = new T[_dimensions[0], _dimensions[1]];
-            for (int x = 0; x < _dimensions[0]; x++)
+            for (int x = 0;
+                x < _dimensions[0];
+                x
+                    ++)
             {
-                for (int y = 0; y < _dimensions[1]; y++)
+                for (int y = 0;
+                    y < _dimensions[1];
+                    y
+                        ++)
                 {
                     // TODO: still need to test following line
                     array[x, y] = GetData<T>(x + y*x);
@@ -557,7 +604,10 @@ namespace ManipAnalysis_v2
             if (_dimensions.Length != 1)
                 throw new ApplicationException("Parameter " + Name + " is not 1D array.");
             var array = new T[_dimensions[0]];
-            for (int i = 0; i < _dimensions[0]; i++)
+            for (int i = 0;
+                i < _dimensions[0];
+                i
+                    ++)
             {
                 array[i] = GetData<T>(i);
             }
@@ -580,10 +630,12 @@ namespace ManipAnalysis_v2
 
             retArray = new string[_dimensions[1]];
 
-            for (int i = 0; i < _dimensions[1]; i++)
+            for (int i = 0;
+                i < _dimensions[1];
+                i
+                    ++)
             {
-                retArray[i] =
-                    Encoding.UTF8.GetString(_vectorData, i*_dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
+                retArray[i] = Encoding.UTF8.GetString(_vectorData, i*_dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
             }
             return retArray;
         }

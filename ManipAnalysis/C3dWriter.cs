@@ -16,21 +16,28 @@ namespace ManipAnalysis_v2
     public class C3dWriter
     {
         private readonly Dictionary<int, ParameterGroup> _idToGroups;
+
         private readonly Dictionary<string, ParameterGroup> _nameToGroups;
+
         private HashSet<Parameter> _allParameters;
+
         private string _c3dFile;
 
         //private int _dataStartOffset;
         private FileStream _fs;
+
         private sbyte _nextGroupId = -1;
+
         //private int _pointFramesOffset;
 
         private int _writePos;
+
         private BinaryWriter _writer;
 
         #region Properties
 
         private readonly C3dHeader _header;
+
         private readonly List<string> _pointsLabels;
 
         private int _currentFrame = 0;
@@ -96,7 +103,8 @@ namespace ManipAnalysis_v2
 
                 //_writer.BaseStream.Seek(_dataStart, 0);
             }
-            catch (Exception e)
+            catch (Exception
+                e)
             {
                 Console.Error.WriteLine("C3dReader.Open(\"" + c3dFile + "\"): " + e.Message);
                 return false;
@@ -116,7 +124,8 @@ namespace ManipAnalysis_v2
             _writer.Seek(0, 0);
             _writer.Write(_header.GetRawData());
 
-            _writer.Seek((int) position, 0); // to be sure, put pointer to the end
+            _writer.Seek((int) position, 0);
+            // to be sure, put pointer to the end
             _writer.Close();
             _writer = null;
             _fs.Close();
@@ -142,7 +151,10 @@ namespace ManipAnalysis_v2
             _writePos += 4;
 
 
-            foreach (int id in _idToGroups.Keys)
+            foreach (int
+                id
+                in
+                _idToGroups.Keys)
             {
                 ParameterGroup grp = _idToGroups[id];
 
@@ -152,10 +164,9 @@ namespace ManipAnalysis_v2
             }
 
             // update data start offset
-            int dataStart = (int) ((_writer.BaseStream.Position
-                                    + 5 // size of the last group
-                )/ParameterModel.BLOCK_SIZE)
-                            + 2;
+            int dataStart = (int) ((_writer.BaseStream.Position + 5
+                // size of the last group
+                )/ParameterModel.BLOCK_SIZE) + 2;
             // 1 because we are counting from zero and 1 because we want to point on to the next block
 
 
@@ -181,7 +192,10 @@ namespace ManipAnalysis_v2
 
         private void WriteParametersOfGroup(ParameterGroup grp)
         {
-            foreach (Parameter p in grp.Parameters)
+            foreach (Parameter
+                p
+                in
+                grp.Parameters)
             {
                 p.Id = (sbyte) -grp.Id;
                 p.OffsetInFile = _writer.BaseStream.Position;
@@ -237,23 +251,21 @@ namespace ManipAnalysis_v2
                 if (_fs == null)
                 {
                     var group = new ParameterGroup();
-                    group.Id = _nextGroupId--;
+                    group.Id = _nextGroupId
+                        --;
                     group.Name = elements[0];
                     _nameToGroups.Add(group.Name, group);
                     _idToGroups.Add(group.Id, group);
                 }
                 else
                 {
-                    throw new ApplicationException("Cannot create a parameter group " + elements[0] +
-                                                   " after file was open.");
+                    throw new ApplicationException("Cannot create a parameter group " + elements[0] + " after file was open.");
                 }
             }
 
             ParameterGroup grp = _nameToGroups[elements[0]];
 
-            Parameter p = grp.HasParameter(elements[1])
-                ? grp.GetParameter(elements[1])
-                : new Parameter();
+            Parameter p = grp.HasParameter(elements[1]) ? grp.GetParameter(elements[1]) : new Parameter();
 
             p.Name = elements[1];
             p.SetData(parameterValue);
@@ -279,8 +291,12 @@ namespace ManipAnalysis_v2
 
         public void WriteFloatFrame(Vector3[] data)
         {
-            _header.LastSampleNumber++;
-            for (int i = 0; i < data.Length; i++)
+            _header.LastSampleNumber
+                ++;
+            for (int i = 0;
+                i < data.Length;
+                i
+                    ++)
             {
                 _writer.Write(data[i].X);
                 _writer.Write(data[i].Y);
@@ -295,8 +311,12 @@ namespace ManipAnalysis_v2
 
         public void WriteIntFrame(Vector3[] data)
         {
-            _header.LastSampleNumber++;
-            for (int i = 0; i < data.Length; i++)
+            _header.LastSampleNumber
+                ++;
+            for (int i = 0;
+                i < data.Length;
+                i
+                    ++)
             {
                 _writer.Write((Int16) data[i].X);
                 _writer.Write((Int16) data[i].Y);
@@ -311,11 +331,13 @@ namespace ManipAnalysis_v2
         {
             if (data_channels.Length != _header.AnalogChannels)
             {
-                throw new ApplicationException(
-                    "Number of channels in data has to be the same as it is declared in header and parameters' section");
+                throw new ApplicationException("Number of channels in data has to be the same as it is declared in header and parameters' section");
             }
 
-            for (int i = 0; i < data_channels.Length; i++)
+            for (int i = 0;
+                i < data_channels.Length;
+                i
+                    ++)
             {
                 _writer.Write(data_channels[i]);
             }
@@ -325,11 +347,13 @@ namespace ManipAnalysis_v2
         {
             if (data_channels.Length != _header.AnalogChannels)
             {
-                throw new ApplicationException(
-                    "Number of channels in data has to be the same as it is declared in header and parameters' section");
+                throw new ApplicationException("Number of channels in data has to be the same as it is declared in header and parameters' section");
             }
 
-            for (int i = 0; i < data_channels.Length; i++)
+            for (int i = 0;
+                i < data_channels.Length;
+                i
+                    ++)
             {
                 _writer.Write(data_channels[i]);
             }

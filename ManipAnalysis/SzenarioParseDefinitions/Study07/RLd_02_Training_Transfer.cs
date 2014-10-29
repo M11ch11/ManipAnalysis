@@ -6,6 +6,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
     internal class RLd_02_Training_Transfer : ISzenarioDefinition
     {
         public const string StudyName = "Study07";
+
         public const string SzenarioName = "RL_02_RLd_Training&Transfer";
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
@@ -13,54 +14,55 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30)
                 // Target 10/20/30 == StartTrial
             {
-                myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " +
-                                                 trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                 trial = null;
             }
             else
             {
-                if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) ||
-                    (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
+                if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || (trial.Target.Number >= 11 && trial.Target.Number <= 13))
+                    // NullField
                 {
                     trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if ((trial.Target.Number >= 4 && trial.Target.Number <= 6) ||
-                         (trial.Target.Number >= 14 && trial.Target.Number <= 16)) // CW ForceField
+                else if ((trial.Target.Number >= 4 && trial.Target.Number <= 6) || (trial.Target.Number >= 14 && trial.Target.Number <= 16))
+                    // CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 3;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if ((trial.Target.Number >= 21 && trial.Target.Number <= 23) ||
-                         (trial.Target.Number >= 31 && trial.Target.Number <= 33)) // ErrorClampTrial
+                else if ((trial.Target.Number >= 21 && trial.Target.Number <= 23) || (trial.Target.Number >= 31 && trial.Target.Number <= 33))
+                    // ErrorClampTrial
                 {
                     trial.Target.Number = trial.Target.Number - 20;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
-                else if ((trial.Target.Number >= 24 && trial.Target.Number <= 26) ||
-                         (trial.Target.Number >= 34 && trial.Target.Number <= 36))
+                else if ((trial.Target.Number >= 24 && trial.Target.Number <= 26) || (trial.Target.Number >= 34 && trial.Target.Number <= 36))
                     // ErrorClampTrial + CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 23;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
-                else if (trial.Target.Number >= 41 && trial.Target.Number <= 43) // 30s Pause
+                else if (trial.Target.Number >= 41 && trial.Target.Number <= 43)
+                    // 30s Pause
                 {
                     trial.Target.Number = trial.Target.Number - 30;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if (trial.Target.Number >= 51 && trial.Target.Number <= 53) // 30s Pause + Wechsel R=>L
+                else if (trial.Target.Number >= 51 && trial.Target.Number <= 53)
+                    // 30s Pause + Wechsel R=>L
                 {
                     trial.Target.Number = trial.Target.Number - 40;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if (trial.Target.Number >= 54 && trial.Target.Number <= 56) // 30s Pause + Wechsel L=>R
+                else if (trial.Target.Number >= 54 && trial.Target.Number <= 56)
+                    // 30s Pause + Wechsel L=>R
                 {
                     trial.Target.Number = trial.Target.Number - 43;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
@@ -96,10 +98,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else
                 {
-                    myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " +
-                                                     trial.Szenario + ", Trail " +
-                                                     trial.TrialNumberInSzenario +
-                                                     ", Target " + trial.Target.Number);
+                    myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
 
@@ -134,8 +133,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 354)
                 {
-                    myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " +
-                                                     trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                    myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
                 else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 12)

@@ -13,14 +13,23 @@ namespace ManipAnalysis_v2.MeasureFileParser
     internal class KinarmMeasureFileParser
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
+
         private string[] _c3DFiles;
+
         private string _groupName;
+
         private DateTime _measureFileCreationDateTime;
+
         private string _measureFileHash;
+
         private string _measureFilePath;
+
         private string _probandId;
+
         private string _studyName;
+
         private string _szenarioName;
+
         private List<Trial> _trialsContainer;
 
 
@@ -34,9 +43,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
             get { return _trialsContainer; }
         }
 
-        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui,
-            ManipAnalysisFunctions myManipAnalysisFunctions,
-            string filePath)
+        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions, string filePath)
         {
             bool retVal = false;
             try
@@ -54,7 +61,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception
+                ex)
             {
                 myManipAnalysisGui.WriteToLogBox("ParseFileInfo-Error: " + ex);
             }
@@ -77,8 +85,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 }
                 else
                 {
-                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " +
-                                                      _szenarioName + ".");
+                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " + _szenarioName + ".");
                 }
             }
             return retVal;
@@ -114,11 +121,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 try
                 {
-                    foreach (
-                        Type szenarioDefinitionIterable in
-                            Assembly.GetExecutingAssembly()
-                                .GetTypes()
-                                .Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                    foreach (Type
+                        szenarioDefinitionIterable
+                        in
+                        Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
                         if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))
                             //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
@@ -149,14 +155,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 c3DReader.Close();
 
                 _probandId = fileName.Split('_')[0].Trim();
-                string datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
-                                  fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
-                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss",
-                    CultureInfo.InvariantCulture);
+                string datetime = fileName.Split('_')[1].Replace('-', '.') + " " + fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
+                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
 
                 _trialsContainer = new List<Trial>();
             }
-            catch (Exception ex)
+            catch (Exception
+                ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("ParseFileInfo-Error: " + ex);
                 c3DReader.Close();
@@ -172,11 +177,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
             try
             {
                 var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
-                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles,
-                    _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
-                    _szenarioName));
+                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName));
             }
-            catch (Exception ex)
+            catch (Exception
+                ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("ParseMeasureData-Error: " + ex);
                 retVal = false;

@@ -10,11 +10,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
     internal abstract class ISzenarioDefinition
     {
         public const string StudyName = "Unknown";
+
         public const string SzenarioName = "Unknown";
 
-        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
-            DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
-            string groupName, string studyName, string szenarioName)
+        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName)
         {
             var trialsContainer = new List<Trial>();
 
@@ -61,7 +60,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 currentTrial.TrialVersion = "KINARM_1.0";
                 currentTrial.PositionOffset.Y = -0.14;
 
-                for (int frame = 0; frame < c3DReader.FramesCount; frame++)
+                for (int frame = 0;
+                    frame < c3DReader.FramesCount;
+                    frame
+                        ++)
                 {
                     var measuredForcesRaw = new ForceContainer();
                     var momentForcesRaw = new ForceContainer();
@@ -70,7 +72,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     DateTime timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                     // Returns an array of all points, it is necessary to call this method in each cycle
-                    Vector3 positionDataVector = c3DReader.ReadFrame()[0]; // [0] == Right Hand
+                    Vector3 positionDataVector = c3DReader.ReadFrame()[0];
+                    // [0] == Right Hand
 
                     /*
                     <Event code="1" name="TRIAL_STARTED"  desc="Trial has started" />
@@ -122,16 +125,21 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
             if (checkTrialCount(trialsContainer.Count))
             {
-                foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+                foreach (string
+                    szenario
+                    in
+                    trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    foreach (
-                        int target in
-                            trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
+                    foreach (int
+                        target
+                        in
+                        trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
                     {
-                        IOrderedEnumerable<Trial> tempList =
-                            trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target)
-                                .OrderBy(t => t.StartDateTimeOfTrialRecording);
-                        for (int i = 0; i < tempList.Count(); i++)
+                        IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
+                        for (int i = 0;
+                            i < tempList.Count();
+                            i
+                                ++)
                         {
                             tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
                         }
@@ -140,8 +148,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
             else
             {
-                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " +
-                                                 measureFilePath + "\nSkipping File.");
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");
                 trialsContainer.Clear();
             }
 

@@ -6,7 +6,9 @@ namespace ManipAnalysis_v2
     internal static class TaskManager
     {
         private static readonly List<Task> RunningTasks = new List<Task>();
+
         public static bool Pause;
+
         public static bool Cancel;
 
         public static void PushBack(Task task)
@@ -18,7 +20,10 @@ namespace ManipAnalysis_v2
         {
             int retVal = -1;
 
-            for (int i = 0; i < RunningTasks.Count; i++)
+            for (int i = 0;
+                i < RunningTasks.Count;
+                i
+                    ++)
             {
                 if (taskID == RunningTasks[i].Id)
                 {
@@ -30,7 +35,10 @@ namespace ManipAnalysis_v2
 
         public static void Remove(int? taskID)
         {
-            for (int i = 0; i < RunningTasks.Count; i++)
+            for (int i = 0;
+                i < RunningTasks.Count;
+                i
+                    ++)
             {
                 if (taskID == RunningTasks[i].Id)
                 {

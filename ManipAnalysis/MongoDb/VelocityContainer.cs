@@ -5,8 +5,11 @@ namespace ManipAnalysis_v2.MongoDb
     public class VelocityContainer
     {
         private DateTime _timeStamp;
+
         public double X { get; set; }
+
         public double Y { get; set; }
+
         public double Z { get; set; }
 
         /// <summary>
