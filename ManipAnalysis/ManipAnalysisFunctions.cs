@@ -56,6 +56,10 @@ namespace ManipAnalysis_v2
                     tcp.EndConnect(ar);
                     serverAvailable = true;
                 }
+                catch
+                {
+                    
+                }
                 finally
                 {
                     wh.Close();
@@ -2784,10 +2788,7 @@ namespace ManipAnalysis_v2
                                 var velocityData = new List<List<VelocityContainer>>();
                                 var forceData = new List<List<ForceContainer>>();
 
-                                foreach (TrajectoryVelocityPlotContainer
-                                    tempContainer
-                                    in
-                                    selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
+                                foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
                                 {
                                     if (TaskManager.Cancel)
                                     {
@@ -2813,6 +2814,12 @@ namespace ManipAnalysis_v2
                                             {
                                                 trialsArray[trialsArrayCounter].PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                                 positionData.Add(trialsArray[trialsArrayCounter].PositionNormalized);
+
+                                                if (showForceVectors || showPdForceVectors)
+                                                {
+                                                    trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
+                                                    forceData.Add(trialsArray[trialsArrayCounter].MeasuredForcesNormalized);
+                                                }
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
@@ -2831,8 +2838,10 @@ namespace ManipAnalysis_v2
                                         }
                                     }
                                 }
+
                                 int frameCount = 0;
                                 int meanCount = 0;
+                                
                                 if (trajectoryVelocityForce == "Trajectory - Normalized")
                                 {
                                     frameCount = positionData[0].Count;
@@ -2853,6 +2862,8 @@ namespace ManipAnalysis_v2
                                 {
                                     var xData = new double[frameCount];
                                     var yData = new double[frameCount];
+                                    var forceVectorDataX = new double[frameCount];
+                                    var forceVectorDataY = new double[frameCount];
 
                                     for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
@@ -2862,6 +2873,12 @@ namespace ManipAnalysis_v2
                                             {
                                                 xData[frameCounter] += positionData[meanCounter][frameCounter].X;
                                                 yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
+
+                                                if (showForceVectors || showPdForceVectors)
+                                                {
+                                                    forceVectorDataX[frameCounter] += forceData[meanCounter][frameCounter].X;
+                                                    forceVectorDataY[frameCounter] += forceData[meanCounter][frameCounter].Y;
+                                                }
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
@@ -2881,6 +2898,12 @@ namespace ManipAnalysis_v2
                                         {
                                             xData[frameCounter] /= positionData.Count;
                                             yData[frameCounter] /= positionData.Count;
+
+                                            if (showForceVectors || showPdForceVectors)
+                                            {
+                                                forceVectorDataX[frameCounter] /= positionData.Count;
+                                                forceVectorDataY[frameCounter] /= positionData.Count;
+                                            }
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
@@ -2898,17 +2921,16 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
                                         _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
-                                        /*
+                                        
                                         if (showForceVectors || showPdForceVectors)
                                         {
-                                            trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
+                                            for (int i = 2; i < xData.Length & !TaskManager.Pause; i++)
                                             {
-                                                _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 2) });
+                                                _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { xData[i - 2], yData[i - 2] });
 
-                                                _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 1), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 1) });
+                                                _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { xData[i - 1], yData[i - 1] });
 
-                                                _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2) / 100.0, trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2) / 100.0 });
+                                                _myMatlabWrapper.SetWorkspaceData("vforce", new[] { forceVectorDataX[i - 2] / 100.0, forceVectorDataY[i - 2] / 100.0 });
 
                                                 if (showForceVectors)
                                                 {
@@ -2921,7 +2943,7 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
-                                         */
+                                        
                                     }
                                     else if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
