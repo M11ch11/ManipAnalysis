@@ -2615,17 +2615,17 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesNormalized);
+                        fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedMeasuredForcesNormalized);
                         _myMatlabWrapper.CreateForceFigure("Force plot normalized", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesFiltered);
+                        fields.Include(t1 => t1.ZippedPositionFiltered, t2 => t2.ZippedMeasuredForcesFiltered);
                         _myMatlabWrapper.CreateForceFigure("Force plot filtered", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Raw")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesRaw);
+                        fields.Include(t1 => t1.ZippedPositionRaw, t2 => t2.ZippedMeasuredForcesRaw);
                         _myMatlabWrapper.CreateForceFigure("Force plot raw", "[Samples]", "Force [N]");
                     }
 
@@ -2680,7 +2680,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
+                                            for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2712,7 +2712,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesFiltered = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause; i++)
+                                            for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2744,7 +2744,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesRaw = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause; i++)
+                                            for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2766,30 +2766,87 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
+                                        trialsArray[trialsArrayCounter].PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                         trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                        _myMatlabWrapper.SetWorkspaceData("forceX", trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("forceY", trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.Plot("forceX", "red", 2);
-                                        _myMatlabWrapper.Plot("forceY", "green", 2);
-                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
+
+                                        _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionNormalized.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionNormalized.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionNormalized.Count - 1) + ");");
+
+                                        for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
+                                        {
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 2) });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 1), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 1) });
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2) });
+                                            
+                                            _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                                            _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                        }
+
+                                        _myMatlabWrapper.Plot("forcePDVector", "blue", 2);
+                                        _myMatlabWrapper.Plot("forceParaVector", "red", 2);
+                                        _myMatlabWrapper.Plot("forceAbsVector", "black", 2);
+                                        _myMatlabWrapper.AddLegend("Force PD", "Force Para", "Force Abs");
                                     }
                                     else if (trajectoryVelocityForce == "Force - Filtered")
                                     {
+                                        trialsArray[trialsArrayCounter].PositionFiltered = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered).OrderBy(t => t.TimeStamp).ToList();
                                         trialsArray[trialsArrayCounter].MeasuredForcesFiltered = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                        _myMatlabWrapper.SetWorkspaceData("forceX", trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.X).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("forceY", trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.Plot("forceX", "red", 2);
-                                        _myMatlabWrapper.Plot("forceY", "green", 2);
-                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
+
+                                        _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionFiltered.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionFiltered.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionFiltered.Count - 1) + ");");
+
+                                        for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause; i++)
+                                        {
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.Y).ElementAt(i - 2) });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.X).ElementAt(i - 1), trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.Y).ElementAt(i - 1) });
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.Y).ElementAt(i - 2) });
+
+                                            _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                                            _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                        }
+
+                                        _myMatlabWrapper.Plot("forcePDVector", "blue", 2);
+                                        _myMatlabWrapper.Plot("forceParaVector", "red", 2);
+                                        _myMatlabWrapper.Plot("forceAbsVector", "black", 2);
+                                        _myMatlabWrapper.AddLegend("Force PD", "Force Para", "Force Abs");
                                     }
                                     else if (trajectoryVelocityForce == "Force - Raw")
                                     {
+                                        trialsArray[trialsArrayCounter].PositionRaw = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw).OrderBy(t => t.TimeStamp).ToList();
                                         trialsArray[trialsArrayCounter].MeasuredForcesRaw = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
-                                        _myMatlabWrapper.SetWorkspaceData("forceX", trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
-                                        _myMatlabWrapper.SetWorkspaceData("forceY", trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.Y).ToArray());
-                                        _myMatlabWrapper.Plot("forceX", "red", 2);
-                                        _myMatlabWrapper.Plot("forceY", "green", 2);
-                                        _myMatlabWrapper.AddLegend("Force X", "Force Y");
+
+                                        _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionRaw.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionRaw.Count - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (trialsArray[trialsArrayCounter].PositionRaw.Count - 1) + ");");
+
+                                        for (int i = 2; i <= trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause; i++)
+                                        {
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.Y).ElementAt(i - 2) });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.X).ElementAt(i - 1), trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.Y).ElementAt(i - 1) });
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.Y).ElementAt(i - 2) });
+
+                                            _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                                            _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                        }
+
+                                        _myMatlabWrapper.Plot("forcePDVector", "blue", 2);
+                                        _myMatlabWrapper.Plot("forceParaVector", "red", 2);
+                                        _myMatlabWrapper.Plot("forceAbsVector", "black", 2);
+                                        _myMatlabWrapper.AddLegend("Force PD", "Force Para", "Force Abs");
                                     }
                                 }
                             }
@@ -2851,7 +2908,9 @@ namespace ManipAnalysis_v2
                                             }
                                             else if (trajectoryVelocityForce == "Force - Normalized")
                                             {
+                                                trialsArray[trialsArrayCounter].PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
                                                 trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
+                                                positionData.Add(trialsArray[trialsArrayCounter].PositionNormalized);
                                                 forceData.Add(trialsArray[trialsArrayCounter].MeasuredForcesNormalized);
                                             }
                                             else
@@ -2909,8 +2968,10 @@ namespace ManipAnalysis_v2
                                             }
                                             else if (trajectoryVelocityForce == "Force - Normalized")
                                             {
-                                                xData[frameCounter] += forceData[meanCounter][frameCounter].X;
-                                                yData[frameCounter] += forceData[meanCounter][frameCounter].Y;
+                                                xData[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                                yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
+                                                forceVectorDataX[frameCounter] += forceData[meanCounter][frameCounter].X;
+                                                forceVectorDataY[frameCounter] += forceData[meanCounter][frameCounter].Y;
                                             }
                                         }
                                     }
@@ -2936,6 +2997,8 @@ namespace ManipAnalysis_v2
                                         {
                                             xData[frameCounter] /= meanCount;
                                             yData[frameCounter] /= meanCount;
+                                            forceVectorDataX[frameCounter] /= positionData.Count;
+                                            forceVectorDataY[frameCounter] /= positionData.Count;
                                         }
                                     }
 
@@ -2947,7 +3010,7 @@ namespace ManipAnalysis_v2
                                         
                                         if (showForceVectors || showPdForceVectors)
                                         {
-                                            for (int i = 2; i < xData.Length & !TaskManager.Pause; i++)
+                                            for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { xData[i - 2], yData[i - 2] });
 
@@ -2975,18 +3038,35 @@ namespace ManipAnalysis_v2
                                     }
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
-                                        _myMatlabWrapper.SetWorkspaceData("forceX", xData);
-                                        _myMatlabWrapper.SetWorkspaceData("forceY", yData);
-                                        _myMatlabWrapper.Plot("forceX", "red", 2);
-                                        _myMatlabWrapper.Plot("forceY", "green", 2);
+                                        _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (xData.Length - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (xData.Length - 1) + ");");
+                                        _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (xData.Length - 1) + ");");
+
+                                        for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
+                                        {
+                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { xData[i - 2], yData[i - 2] });
+                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { xData[i - 1], yData[i - 1] });
+                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[] { forceVectorDataX[i - 2], forceVectorDataY[i - 2] });
+
+                                            _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                                            _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                        }
+
+                                        _myMatlabWrapper.Plot("forcePDVector", "blue", 2);
+                                        _myMatlabWrapper.Plot("forceParaVector", "red", 2);
+                                        _myMatlabWrapper.Plot("forceAbsVector", "black", 2);
+                                        _myMatlabWrapper.AddLegend("Force PD", "Force Para", "Force Abs");
                                     }
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception
-                    ex)
+                catch (Exception ex)
                 {
                     _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 }
@@ -3914,14 +3994,36 @@ namespace ManipAnalysis_v2
                 _myMatlabWrapper.CreateForceFigure("Force baseline plot", "[Samples]", "Force [N]");
 
                 var baselineFields = new FieldsBuilder<Baseline>();
-                baselineFields.Include(t => t.ZippedMeasuredForces);
+                baselineFields.Include(t => t.ZippedMeasuredForces, t2 => t2.ZippedPosition);
                 Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
 
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
+                    baselines[baselineCounter].Position = Gzip<List<PositionContainer>>.DeCompress(baselines[baselineCounter].ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
                     baselines[baselineCounter].MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baselines[baselineCounter].ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
-                    _myMatlabWrapper.SetWorkspaceData("Fabs", baselines[baselineCounter].MeasuredForces.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
-                    _myMatlabWrapper.Plot("Fabs", "black", 2);
+
+                    _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (baselines[baselineCounter].Position.Count - 1) + ");");
+                    _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (baselines[baselineCounter].Position.Count - 1) + ");");
+                    _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (baselines[baselineCounter].Position.Count - 1) + ");");
+
+                    for (int i = 2; i <= baselines[baselineCounter].Position.Count & !TaskManager.Pause; i++)
+                    {
+                        _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { baselines[baselineCounter].Position.Select(t => t.X).ElementAt(i - 2), baselines[baselineCounter].Position.Select(t => t.Y).ElementAt(i - 2) });
+                        _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { baselines[baselineCounter].Position.Select(t => t.X).ElementAt(i - 1), baselines[baselineCounter].Position.Select(t => t.Y).ElementAt(i - 1) });
+                        _myMatlabWrapper.SetWorkspaceData("vforce", new[] { baselines[baselineCounter].MeasuredForces.Select(t => t.X).ElementAt(i - 2), baselines[baselineCounter].MeasuredForces.Select(t => t.Y).ElementAt(i - 2) });
+
+                        _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                        _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                        _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                        _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                        _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                    }
+
+                    _myMatlabWrapper.Plot("forcePDVector", "blue", 2);
+                    _myMatlabWrapper.Plot("forceParaVector", "red", 2);
+                    _myMatlabWrapper.Plot("forceAbsVector", "black", 2);
+                    _myMatlabWrapper.AddLegend("Force PD", "Force Para", "Force Abs");
                 }
 
                 _myMatlabWrapper.ClearWorkspace();

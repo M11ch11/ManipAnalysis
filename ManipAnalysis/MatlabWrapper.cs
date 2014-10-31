@@ -128,6 +128,19 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public void AddLegend(string legend1, string legend2, string legend3)
+        {
+            try
+            {
+                Execute("legend('" + legend1 + "','" + legend2 + "','" + legend3 + "');");
+            }
+            catch (Exception
+                ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateMeanTimeFigure()
         {
             try
