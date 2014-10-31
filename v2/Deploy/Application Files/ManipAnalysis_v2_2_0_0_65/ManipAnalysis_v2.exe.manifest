@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.64" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.65" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5417.21752" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5417.27294" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="656384">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5417.21752" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="664576">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5417.27294" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>BJeh1XQ1yp5VBeQfP62K39t6Z71byHG1NYPEDGiOA4k=</dsig:DigestValue>
+        <dsig:DigestValue>ay2l9kIwFquc1BizyE9YbDw4Q+hpPNkivjV/5Te3R8w=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -150,13 +150,13 @@
       <dsig:DigestValue>FwwpkQJqKoQQJjI95gYPWWnNzy5h147n6L0fagnTiPE=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\paraForceLineSegment.m" size="1789">
+  <file name="MatlabFiles\paraForceLineSegment.m" size="1787">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>RueKn2vbulqFfnGxvUNN6ae1mySXyHj6pIHfSZ6rQPY=</dsig:DigestValue>
+      <dsig:DigestValue>V9N7S15WcfR/1Ld8DrUKjLVgoA+Vkg65pgyR3glqe5A=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\pdForceLineSegment.m" size="1915">
