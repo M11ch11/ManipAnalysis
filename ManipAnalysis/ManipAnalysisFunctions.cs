@@ -620,6 +620,14 @@ namespace ManipAnalysis_v2
                                             statisticData[trialsArrayCounter, meanCount] = trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
                                             break;
 
+                                        case "ForcefieldCompenstionFactor":
+                                            statisticData[trialsArrayCounter, meanCount] = trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactor;
+                                            break;
+
+                                        case "ForcefieldCompenstionFactor Raw":
+                                            statisticData[trialsArrayCounter, meanCount] = trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactorRaw;
+                                            break;
+
                                         case "RMSE":
                                             statisticData[trialsArrayCounter, meanCount] = trialsArray[trialsArrayCounter].Statistics.RMSE;
                                             break;
@@ -658,7 +666,6 @@ namespace ManipAnalysis_v2
                                 switch (statisticType)
                                 {
                                     case "Vector correlation":
-
                                         _myMatlabWrapper.CreateStatisticFigure("Velocity Vector Correlation plot", "statisticDataPlot", "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" + fitEquation + "')", "statisticDataStd", "[Trial]", "Velocity Vector Correlation", 1, (statisticData.Length/meanCount), 0.5, 1, plotFit, plotErrorbars);
                                         break;
 
@@ -724,6 +731,14 @@ namespace ManipAnalysis_v2
 
                                     case "Enclosed area":
                                         _myMatlabWrapper.CreateStatisticFigure("Enclosed area plot", "statisticDataPlot", "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" + fitEquation + "')", "statisticDataStd", "[Trial]", "Enclosed Area [m²]", 1, (statisticData.Length/meanCount), 0, 0.002, plotFit, plotErrorbars);
+                                        break;
+
+                                    case "ForcefieldCompenstionFactor":
+                                        _myMatlabWrapper.CreateStatisticFigure("Forcefield Compenstion Factor plot", "statisticDataPlot", "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" + fitEquation + "')", "statisticDataStd", "[Trial]", "Forcefield Compenstion Factor", 1, (statisticData.Length / meanCount), -1.0, 1.0, plotFit, plotErrorbars);
+                                        break;
+
+                                    case "ForcefieldCompenstionFactor Raw":
+                                        _myMatlabWrapper.CreateStatisticFigure("Forcefield Compenstion Factor Raw plot", "statisticDataPlot", "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" + fitEquation + "')", "statisticDataStd", "[Trial]", "Forcefield Compenstion Factor", 1, (statisticData.Length / meanCount), -1.0, 1.0, plotFit, plotErrorbars);
                                         break;
 
                                     case "RMSE":
@@ -930,6 +945,14 @@ namespace ManipAnalysis_v2
 
                                     case "Enclosed area":
                                         statisticData[subjectCounter, trialsArrayCounter] = trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
+                                        break;
+
+                                    case "ForcefieldCompenstionFactor":
+                                        statisticData[subjectCounter, trialsArrayCounter] = trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactor;
+                                        break;
+
+                                    case "ForcefieldCompenstionFactor Raw":
+                                        statisticData[subjectCounter, trialsArrayCounter] = trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactorRaw;
                                         break;
 
                                     case "RMSE":

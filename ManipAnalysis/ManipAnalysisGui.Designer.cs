@@ -912,6 +912,8 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "ForcefieldCompenstionFactor",
+            "ForcefieldCompenstionFactor Raw",
             "MidMovementForce - Abs",
             "MidMovementForce - Para",
             "MidMovementForce - PD",
@@ -1223,6 +1225,8 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "ForcefieldCompenstionFactor",
+            "ForcefieldCompenstionFactor Raw",
             "MidMovementForce - Abs",
             "MidMovementForce - Para",
             "MidMovementForce - PD",
