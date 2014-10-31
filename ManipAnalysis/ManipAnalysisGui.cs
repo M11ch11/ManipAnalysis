@@ -42,10 +42,8 @@ namespace ManipAnalysis_v2
             {
                 string[] textArray = text.Split('\n');
 
-                for (int i = 0;
-                    i < textArray.Length;
-                    i
-                        ++)
+                for (int i = 0; i < textArray.Length; i
+                                                          ++)
                 {
                     if (i == 0)
                     {
@@ -109,10 +107,8 @@ namespace ManipAnalysis_v2
 
             var filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
 
-            for (int filesCounter = 0;
-                filesCounter < filesList.Count;
-                filesCounter
-                    ++)
+            for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter
+                                                                           ++)
             {
                 if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                 {
@@ -146,10 +142,8 @@ namespace ManipAnalysis_v2
 
                 GetSubDirectories(ref directoriesList, rootDir);
 
-                for (int i = 0;
-                    i < directoriesList.Count;
-                    i
-                        ++)
+                for (int i = 0; i < directoriesList.Count; i
+                                                               ++)
                 {
                     DirectoryInfo di = directoriesList[i];
                     filesList.AddRange(di.GetFiles("*.csv"));
@@ -157,10 +151,8 @@ namespace ManipAnalysis_v2
                 }
                 directoriesList.Clear();
 
-                for (int filesCounter = 0;
-                    filesCounter < filesList.Count;
-                    filesCounter
-                        ++)
+                for (int filesCounter = 0; filesCounter < filesList.Count; filesCounter
+                                                                               ++)
                 {
                     if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
                     {
@@ -342,10 +334,8 @@ namespace ManipAnalysis_v2
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
                 if (szenarioIntersect != null)
                 {
-                    for (int i = 1;
-                        i < groups.Length;
-                        i
-                            ++)
+                    for (int i = 1; i < groups.Length; i
+                                                           ++)
                     {
                         szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i])).ToArray();
                     }
@@ -369,10 +359,8 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
 
-            for (int i = 0;
-                i < groups.Length;
-                i
-                    ++)
+            for (int i = 0; i < groups.Length; i
+                                                   ++)
             {
                 IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (tempSubjects != null)
@@ -396,10 +384,8 @@ namespace ManipAnalysis_v2
             SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int j = 0;
-                j < subjects.Length;
-                j
-                    ++)
+            for (int j = 0; j < subjects.Length; j
+                                                     ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -638,26 +624,20 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_DescriptiveStatistic1_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_TrialType.Items.Count; listboxIndex
+                                                                                                               ++)
             {
                 listBox_DescriptiveStatistic1_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_ForceField.Items.Count; listboxIndex
+                                                                                                                ++)
             {
                 listBox_DescriptiveStatistic1_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic1_Handedness.Items.Count; listboxIndex
+                                                                                                                ++)
             {
                 listBox_DescriptiveStatistic1_Handedness.SetSelected(listboxIndex, true);
             }
@@ -721,10 +701,8 @@ namespace ManipAnalysis_v2
 
                 if (szenarioIntersect.Any())
                 {
-                    for (int i = 1;
-                        i < groups.Length;
-                        i
-                            ++)
+                    for (int i = 1; i < groups.Length; i
+                                                           ++)
                     {
                         szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
                     }
@@ -748,10 +726,8 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_DescriptiveStatistic2_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
 
-            for (int i = 0;
-                i < groups.Length;
-                i
-                    ++)
+            for (int i = 0; i < groups.Length; i
+                                                   ++)
             {
                 IEnumerable<SubjectContainer> tempSubjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (tempSubjects.Any())
@@ -775,10 +751,8 @@ namespace ManipAnalysis_v2
             SubjectContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int j = 0;
-                j < subjects.Length;
-                j
-                    ++)
+            for (int j = 0; j < subjects.Length; j
+                                                     ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -941,26 +915,20 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic2_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_DescriptiveStatistic2_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_TrialType.Items.Count; listboxIndex
+                                                                                                               ++)
             {
                 listBox_DescriptiveStatistic2_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_ForceField.Items.Count; listboxIndex
+                                                                                                                ++)
             {
                 listBox_DescriptiveStatistic2_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_DescriptiveStatistic2_Handedness.Items.Count; listboxIndex
+                                                                                                                ++)
             {
                 listBox_DescriptiveStatistic2_Handedness.SetSelected(listboxIndex, true);
             }
@@ -1151,10 +1119,8 @@ namespace ManipAnalysis_v2
                 var logFileWriter = new StreamWriter(logFileStream);
 
                 string[] logText = GetLogBoxText();
-                for (int i = 0;
-                    i < logText.Length;
-                    i
-                        ++)
+                for (int i = 0; i < logText.Length; i
+                                                        ++)
                 {
                     logFileWriter.WriteLine(logText[i]);
                 }
@@ -1178,26 +1144,20 @@ namespace ManipAnalysis_v2
             listBox_TrajectoryVelocity_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_TrajectoryVelocity_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_TrialType.Items.Count; listboxIndex
+                                                                                                            ++)
             {
                 listBox_TrajectoryVelocity_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_TrajectoryVelocity_ForceField.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_ForceField.Items.Count; listboxIndex
+                                                                                                             ++)
             {
                 listBox_TrajectoryVelocity_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_TrajectoryVelocity_Handedness.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_TrajectoryVelocity_Handedness.Items.Count; listboxIndex
+                                                                                                             ++)
             {
                 listBox_TrajectoryVelocity_Handedness.SetSelected(listboxIndex, true);
             }
@@ -1260,10 +1220,8 @@ namespace ManipAnalysis_v2
                 IEnumerable<string> szenarioIntersect = _manipAnalysisFunctions.GetSzenarios(study, groups[0]);
                 if (szenarioIntersect.Any())
                 {
-                    for (int i = 1;
-                        i < groups.Length;
-                        i
-                            ++)
+                    for (int i = 1; i < groups.Length; i
+                                                           ++)
                     {
                         szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
                     }
@@ -1288,10 +1246,8 @@ namespace ManipAnalysis_v2
             string[] groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
 
-            for (int i = 0;
-                i < groups.Length;
-                i
-                    ++)
+            for (int i = 0; i < groups.Length; i
+                                                   ++)
             {
                 IEnumerable<SubjectContainer> subjects = _manipAnalysisFunctions.GetSubjects(study, groups[i], szenario);
                 if (subjects != null)
@@ -1317,10 +1273,8 @@ namespace ManipAnalysis_v2
 
             string[] turnIntersect = null;
 
-            for (int j = 0;
-                j < subjects.Length;
-                j
-                    ++)
+            for (int j = 0; j < subjects.Length; j
+                                                     ++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -1531,26 +1485,17 @@ namespace ManipAnalysis_v2
                 var forceFields = new List<Trial.ForceFieldTypeEnum>();
                 var handedness = new List<Trial.HandednessEnum>();
 
-                foreach (string
-                    item
-                    in
-                    listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
                 {
                     trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                 }
 
-                foreach (string
-                    item
-                    in
-                    listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
                 {
                     forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                 }
 
-                foreach (string
-                    item
-                    in
-                    listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
                 {
                     handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                 }
@@ -1573,26 +1518,17 @@ namespace ManipAnalysis_v2
             listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
             listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_OtherStatistics_TrialType.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_TrialType.Items.Count; listboxIndex++)
             {
                 listBox_OtherStatistics_TrialType.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_OtherStatistics_ForceField.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_ForceField.Items.Count; listboxIndex++)
             {
                 listBox_OtherStatistics_ForceField.SetSelected(listboxIndex, true);
             }
 
-            for (int listboxIndex = 0;
-                listboxIndex < listBox_OtherStatistics_Handedness.Items.Count;
-                listboxIndex
-                    ++)
+            for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Handedness.Items.Count; listboxIndex++)
             {
                 listBox_OtherStatistics_Handedness.SetSelected(listboxIndex, true);
             }
@@ -2260,10 +2196,8 @@ namespace ManipAnalysis_v2
             {
                 listBox_OtherStatistics_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
 
-                for (int listboxIndex = 0;
-                    listboxIndex < listBox_OtherStatistics_Targets.Items.Count;
-                    listboxIndex
-                        ++)
+                for (int listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Targets.Items.Count; listboxIndex
+                                                                                                           ++)
                 {
                     listBox_OtherStatistics_Targets.SetSelected(listboxIndex, true);
                 }

@@ -44,28 +44,46 @@ namespace ManipAnalysis_v2
 
         public IList<string> Labels
         {
-            get { return _pointsLabels.AsReadOnly(); }
+            get
+            {
+                return _pointsLabels.AsReadOnly();
+            }
         }
 
         public int CurrentFrame
         {
-            get { return _currentFrame; }
+            get
+            {
+                return _currentFrame;
+            }
         }
 
         public int FramesCount
         {
-            get { return _header.LastSampleNumber; }
+            get
+            {
+                return _header.LastSampleNumber;
+            }
         }
 
         public Int16 PointsCount
         {
-            get { return _header.NumberOfPoints; }
-            set { _header.NumberOfPoints = value; }
+            get
+            {
+                return _header.NumberOfPoints;
+            }
+            set
+            {
+                _header.NumberOfPoints = value;
+            }
         }
 
         public C3dHeader Header
         {
-            get { return _header; }
+            get
+            {
+                return _header;
+            }
         }
 
         #endregion Properties
@@ -293,10 +311,8 @@ namespace ManipAnalysis_v2
         {
             _header.LastSampleNumber
                 ++;
-            for (int i = 0;
-                i < data.Length;
-                i
-                    ++)
+            for (int i = 0; i < data.Length; i
+                                                 ++)
             {
                 _writer.Write(data[i].X);
                 _writer.Write(data[i].Y);
@@ -313,10 +329,8 @@ namespace ManipAnalysis_v2
         {
             _header.LastSampleNumber
                 ++;
-            for (int i = 0;
-                i < data.Length;
-                i
-                    ++)
+            for (int i = 0; i < data.Length; i
+                                                 ++)
             {
                 _writer.Write((Int16) data[i].X);
                 _writer.Write((Int16) data[i].Y);
@@ -334,10 +348,8 @@ namespace ManipAnalysis_v2
                 throw new ApplicationException("Number of channels in data has to be the same as it is declared in header and parameters' section");
             }
 
-            for (int i = 0;
-                i < data_channels.Length;
-                i
-                    ++)
+            for (int i = 0; i < data_channels.Length; i
+                                                          ++)
             {
                 _writer.Write(data_channels[i]);
             }
@@ -350,10 +362,8 @@ namespace ManipAnalysis_v2
                 throw new ApplicationException("Number of channels in data has to be the same as it is declared in header and parameters' section");
             }
 
-            for (int i = 0;
-                i < data_channels.Length;
-                i
-                    ++)
+            for (int i = 0; i < data_channels.Length; i
+                                                          ++)
             {
                 _writer.Write(data_channels[i]);
             }

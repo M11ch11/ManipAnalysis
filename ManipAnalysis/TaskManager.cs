@@ -20,10 +20,8 @@ namespace ManipAnalysis_v2
         {
             int retVal = -1;
 
-            for (int i = 0;
-                i < RunningTasks.Count;
-                i
-                    ++)
+            for (int i = 0; i < RunningTasks.Count; i
+                                                        ++)
             {
                 if (taskID == RunningTasks[i].Id)
                 {
@@ -35,10 +33,8 @@ namespace ManipAnalysis_v2
 
         public static void Remove(int? taskID)
         {
-            for (int i = 0;
-                i < RunningTasks.Count;
-                i
-                    ++)
+            for (int i = 0; i < RunningTasks.Count; i
+                                                        ++)
             {
                 if (taskID == RunningTasks[i].Id)
                 {

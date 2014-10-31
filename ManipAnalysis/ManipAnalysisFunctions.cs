@@ -56,10 +56,6 @@ namespace ManipAnalysis_v2
                     tcp.EndConnect(ar);
                     serverAvailable = true;
                 }
-                catch (Exception
-                    ex)
-                {
-                }
                 finally
                 {
                     wh.Close();
@@ -149,7 +145,6 @@ namespace ManipAnalysis_v2
         ///     Gets all turns from database of a given study, szenario and subject
         /// </summary>
         /// <param name="study"></param>
-        /// <param name="group"></param>
         /// <param name="szenario"></param>
         /// <param name="subject"></param>
         /// <returns></returns>
@@ -157,10 +152,7 @@ namespace ManipAnalysis_v2
         {
             var turnList = new List<string>();
             int turns = _myDatabaseWrapper.GetTurns(study, szenario, subject).Count();
-            for (int turn = 1;
-                turn <= turns;
-                turn
-                    ++)
+            for (int turn = 1; turn <= turns; turn++)
             {
                 turnList.Add("Turn " + turn);
             }
@@ -179,10 +171,7 @@ namespace ManipAnalysis_v2
         {
             var turnList = new List<string>();
             int turns = _myDatabaseWrapper.GetTurns(study, group, szenario, subject).Count();
-            for (int turn = 1;
-                turn <= turns;
-                turn
-                    ++)
+            for (int turn = 1; turn <= turns; turn++)
             {
                 turnList.Add("Turn " + turn);
             }
@@ -267,10 +256,7 @@ namespace ManipAnalysis_v2
 
                 _myMatlabWrapper.CreateMeanTimeFigure();
 
-                for (int szenarioMeanTimeCounter = 0;
-                    szenarioMeanTimeCounter < szenarioMeanTimes.Length & !TaskManager.Cancel;
-                    szenarioMeanTimeCounter
-                        ++)
+                for (int szenarioMeanTimeCounter = 0; szenarioMeanTimeCounter < szenarioMeanTimes.Length & !TaskManager.Cancel; szenarioMeanTimeCounter++)
                 {
                     _myMatlabWrapper.SetWorkspaceData("target", szenarioMeanTimes[szenarioMeanTimeCounter].Target.Number);
                     _myMatlabWrapper.SetWorkspaceData("meanTime", szenarioMeanTimes[szenarioMeanTimeCounter].MeanTime.TotalSeconds);
@@ -484,10 +470,7 @@ namespace ManipAnalysis_v2
                 baselineFields.Include(t => t.ZippedPosition);
                 Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
 
-                for (int baselineCounter = 0;
-                    baselineCounter < baselines.Length & !TaskManager.Cancel;
-                    baselineCounter
-                        ++)
+                for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].Position = Gzip<List<PositionContainer>>.DeCompress(baselines[baselineCounter].ZippedPosition).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("X", baselines[baselineCounter].Position.Select(u => u.X).ToArray());
@@ -533,10 +516,7 @@ namespace ManipAnalysis_v2
                         {
                             int meanCount = 0;
                             var statisticData = new double[trialList.Count, selectedTrialsList.Count()];
-                            for (meanCount = 0;
-                                meanCount < selectedTrialsList.Count() & !TaskManager.Cancel;
-                                meanCount
-                                    ++)
+                            for (meanCount = 0; meanCount < selectedTrialsList.Count() & !TaskManager.Cancel; meanCount++)
                             {
                                 StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCount);
 
@@ -544,13 +524,9 @@ namespace ManipAnalysis_v2
 
                                 Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempStatisticPlotContainer.Study, tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario, tempStatisticPlotContainer.Subject, turnDateTime, trialList, fields).ToArray();
 
-                                for (int trialsArrayCounter = 0;
-                                    trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
-                                    trialsArrayCounter
-                                        ++)
+                                for (int trialsArrayCounter = 0; trialsArrayCounter < trialList.Count & !TaskManager.Cancel; trialsArrayCounter++)
                                 {
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount
-                                        ++);
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                     trialsArray[trialsArrayCounter].Statistics = Gzip<StatisticContainer>.DeCompress(trialsArray[trialsArrayCounter].ZippedStatistics);
 
@@ -673,8 +649,7 @@ namespace ManipAnalysis_v2
                                 }
                             }
 
-                            if (fileName == null)
-                                // Plot or export?
+                            if (fileName == null) // Plot or export?
                             {
                                 switch (statisticType)
                                 {
@@ -769,10 +744,7 @@ namespace ManipAnalysis_v2
                                 }
 
 
-                                for (int i = 0;
-                                    i < selectedTrialsList.Count() & !TaskManager.Cancel;
-                                    i
-                                        ++)
+                                for (int i = 0; i < selectedTrialsList.Count() & !TaskManager.Cancel; i++)
                                 {
                                     StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(i);
 
@@ -788,17 +760,11 @@ namespace ManipAnalysis_v2
 
                                 cache.Add("Trial;" + personNames + ";Mean;Std");
 
-                                for (int trialListCounter = 0;
-                                    trialListCounter < trialList.Count & !TaskManager.Cancel;
-                                    trialListCounter
-                                        ++)
+                                for (int trialListCounter = 0; trialListCounter < trialList.Count & !TaskManager.Cancel; trialListCounter++)
                                 {
                                     string tempLine = trialList.ElementAt(trialListCounter) + ";";
 
-                                    for (int meanCounter = 0;
-                                        meanCounter < meanCount;
-                                        meanCounter
-                                            ++)
+                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
                                         tempLine += DoubleConverter.ToExactString(statisticData[trialListCounter, meanCounter]) + ";";
                                     }
@@ -814,10 +780,7 @@ namespace ManipAnalysis_v2
                                     cache.Add(tempLine);
                                 }
 
-                                for (int i = 0;
-                                    i < cache.Count() & !TaskManager.Cancel;
-                                    i
-                                        ++)
+                                for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
                                 {
                                     meanDataFileWriter.WriteLine(cache[i]);
                                 }
@@ -865,10 +828,7 @@ namespace ManipAnalysis_v2
                         var statisticData = new double[selectedTrialsList.Count(), trialList.Count];
 
                         int subjectCounter = 0;
-                        for (subjectCounter = 0;
-                            subjectCounter < selectedTrialsList.Count & !TaskManager.Cancel;
-                            subjectCounter
-                                ++)
+                        for (subjectCounter = 0; subjectCounter < selectedTrialsList.Count & !TaskManager.Cancel; subjectCounter++)
                         {
                             StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(subjectCounter);
 
@@ -876,10 +836,7 @@ namespace ManipAnalysis_v2
 
                             Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempStatisticPlotContainer.Study, tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario, tempStatisticPlotContainer.Subject, turnDateTime, trialList, fields).ToArray();
 
-                            for (int trialsArrayCounter = 0;
-                                trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
-                                trialsArrayCounter
-                                    ++)
+                            for (int trialsArrayCounter = 0; trialsArrayCounter < trialList.Count & !TaskManager.Cancel; trialsArrayCounter++)
                             {
                                 _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count)*subjectCounter);
 
@@ -1023,10 +980,7 @@ namespace ManipAnalysis_v2
                         cache.Add("Study;Group;Szenario;Subject;Turn;Trials;Mean;Std");
 
 
-                        for (int i = 0;
-                            i < selectedTrialsList.Count & !TaskManager.Cancel;
-                            i
-                                ++)
+                        for (int i = 0; i < selectedTrialsList.Count & !TaskManager.Cancel; i++)
                         {
                             StatisticPlotContainer tempStatisticPlotContainer = selectedTrialsList.ElementAt(i);
                             string meanValue = DoubleConverter.ToExactString(dataMean[i, 0]);
@@ -1035,10 +989,7 @@ namespace ManipAnalysis_v2
                             cache.Add(tempStatisticPlotContainer.Study + ";" + tempStatisticPlotContainer.Group + ";" + tempStatisticPlotContainer.Szenario + ";" + tempStatisticPlotContainer.Subject + ";" + tempStatisticPlotContainer.Turn + ";" + tempStatisticPlotContainer.GetTrialsString() + ";" + meanValue + ";" + stdValue);
                         }
 
-                        for (int i = 0;
-                            i < cache.Count() & !TaskManager.Cancel;
-                            i
-                                ++)
+                        for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
                         {
                             meanDataFileWriter.WriteLine(cache[i]);
                         }
@@ -1093,18 +1044,12 @@ namespace ManipAnalysis_v2
 
                 int cpuCount = Environment.ProcessorCount;
                 var taskMatlabWrappers = new List<MatlabWrapper>();
-                for (int i = 0;
-                    i < cpuCount;
-                    i
-                        ++)
+                for (int i = 0; i < cpuCount; i++)
                 {
                     taskMatlabWrappers.Add(new MatlabWrapper(_myManipAnalysisGui, MatlabWrapper.MatlabInstanceType.Single));
                 }
 
-                for (int files = 0;
-                    files < measureFilesList.Count & !TaskManager.Cancel;
-                    files
-                        ++)
+                for (int files = 0; files < measureFilesList.Count & !TaskManager.Cancel; files++)
                 {
                     try
                     {
@@ -1135,10 +1080,7 @@ namespace ManipAnalysis_v2
 
                                 if (trialsContainer.Count > cpuCount)
                                 {
-                                    for (int cpuCounter = 0;
-                                        cpuCounter < cpuCount;
-                                        cpuCounter
-                                            ++)
+                                    for (int cpuCounter = 0; cpuCounter < cpuCount; cpuCounter++)
                                     {
                                         taskTrialListParts.Add(new List<Trial>());
                                     }
@@ -1168,10 +1110,7 @@ namespace ManipAnalysis_v2
 
                                 var calculatingTasks = new List<Task>();
 
-                                for (int i = 0;
-                                    i < threadCount;
-                                    i
-                                        ++)
+                                for (int i = 0; i < threadCount; i++)
                                 {
                                     List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
                                     MatlabWrapper tempMatlabWrapper = taskMatlabWrappers.ElementAt(i);
@@ -1212,8 +1151,7 @@ namespace ManipAnalysis_v2
                                     _myDatabaseWrapper.Insert(trialsContainer);
                                     _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
                                 }
-                                catch (Exception
-                                    ex)
+                                catch (Exception ex)
                                 {
                                     _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
                                     throw ex;
@@ -1229,8 +1167,7 @@ namespace ManipAnalysis_v2
                             _myManipAnalysisGui.WriteToLogBox("File already imported: " + measureFilesList.ElementAt(files));
                         }
                     }
-                    catch (Exception
-                        ex)
+                    catch (Exception ex)
                     {
                         _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex + "\nSkipped file.");
                     }
@@ -1256,10 +1193,7 @@ namespace ManipAnalysis_v2
             myMatlabWrapper.Execute("[bPosition,aPosition] = butter(filterOrder,(cutoffFreqPosition/(samplesPerSecond/2)));");
             myMatlabWrapper.Execute("[bForce,aForce] = butter(filterOrder,(cutoffFreqForce/(samplesPerSecond/2)));");
 
-            for (int trialCounter = 0;
-                trialCounter < trialsContainer.Count;
-                trialCounter
-                    ++)
+            for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
                 myMatlabWrapper.SetWorkspaceData("force_actual_x", trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
                 myMatlabWrapper.SetWorkspaceData("force_actual_y", trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Y).ToArray());
@@ -1329,10 +1263,7 @@ namespace ManipAnalysis_v2
                 trialsContainer[trialCounter].MomentForcesFiltered = new List<ForceContainer>();
                 trialsContainer[trialCounter].PositionFiltered = new List<PositionContainer>();
 
-                for (int frameCount = 0;
-                    frameCount < trialsContainer[trialCounter].PositionRaw.Count;
-                    frameCount
-                        ++)
+                for (int frameCount = 0; frameCount < trialsContainer[trialCounter].PositionRaw.Count; frameCount++)
                 {
                     var measuredForcesFiltered = new ForceContainer();
                     ForceContainer nominalForcesFiltered = null;
@@ -1404,10 +1335,7 @@ namespace ManipAnalysis_v2
 
         private void VelocityCalculation(MatlabWrapper myMatlabWrapper, List<Trial> trialsContainer, double samplesPerSecond)
         {
-            for (int trialCounter = 0;
-                trialCounter < trialsContainer.Count;
-                trialCounter
-                    ++)
+            for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
                 myMatlabWrapper.SetWorkspaceData("position_cartesian_x", trialsContainer[trialCounter].PositionFiltered.Select(t => t.X).ToArray());
                 myMatlabWrapper.SetWorkspaceData("position_cartesian_y", trialsContainer[trialCounter].PositionFiltered.Select(t => t.Y).ToArray());
@@ -1425,10 +1353,7 @@ namespace ManipAnalysis_v2
 
                 trialsContainer[trialCounter].VelocityFiltered = new List<VelocityContainer>();
 
-                for (int frameCount = 0;
-                    frameCount < trialsContainer[trialCounter].PositionFiltered.Count;
-                    frameCount
-                        ++)
+                for (int frameCount = 0; frameCount < trialsContainer[trialCounter].PositionFiltered.Count; frameCount++)
                 {
                     var velocityFiltered = new VelocityContainer();
                     velocityFiltered.PositionStatus = trialsContainer[trialCounter].PositionFiltered[frameCount].PositionStatus;
@@ -1447,10 +1372,7 @@ namespace ManipAnalysis_v2
 
         private void TimeNormalization(MatlabWrapper myMatlabWrapper, List<Trial> trialsContainer, int timeNormalizationSamples, double percentPeakVelocity)
         {
-            for (int trialCounter = 0;
-                trialCounter < trialsContainer.Count;
-                trialCounter
-                    ++)
+            for (int trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
                 myMatlabWrapper.SetWorkspaceData("newSampleRate", Convert.ToDouble(timeNormalizationSamples));
 
@@ -1458,8 +1380,8 @@ namespace ManipAnalysis_v2
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial = (trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1).Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))/100.0)*percentPeakVelocity;
 
-                var startTime = new DateTime(0);
-                var stopTime = new DateTime(0);
+                DateTime startTime;
+                DateTime stopTime;
                 try
                 {
                     // First element with PositionStatus == 0 and a velocity higher than the threshold
@@ -1552,10 +1474,7 @@ namespace ManipAnalysis_v2
                 myMatlabWrapper.Execute("[errorvar16, positionStatus, newMeasureTime] = timeNorm(positionStatus, measure_data_time, newSampleRate);");
 
 
-                for (int errorVarCounterCounter = 1;
-                    errorVarCounterCounter <= 16;
-                    errorVarCounterCounter
-                        ++)
+                for (int errorVarCounterCounter = 1; errorVarCounterCounter <= 16; errorVarCounterCounter++)
                 {
                     if (nominalForcesFilteredCut == null && errorVarCounterCounter >= 4 && errorVarCounterCounter <= 6)
                     {
@@ -1612,10 +1531,7 @@ namespace ManipAnalysis_v2
                 trialsContainer[trialCounter].PositionNormalized = new List<PositionContainer>();
                 trialsContainer[trialCounter].VelocityNormalized = new List<VelocityContainer>();
 
-                for (int frameCount = 0;
-                    frameCount < measureDataTime.Length;
-                    frameCount
-                        ++)
+                for (int frameCount = 0; frameCount < measureDataTime.Length; frameCount++)
                 {
                     int newPositionStatus = Convert.ToInt32(positionStatus[frameCount, 0]);
                     var newTimeStamp = new DateTime(Convert.ToInt64(measureDataTime[frameCount, 0]));
@@ -1683,16 +1599,10 @@ namespace ManipAnalysis_v2
         {
             var szenarioMeanTimes = new List<SzenarioMeanTime>();
 
-            foreach (string
-                szenario
-                in
-                trialsContainer.Select(t => t.Szenario).Distinct())
+            foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
             {
                 IEnumerable<Trial> szenarioTrialsContainer = trialsContainer.Where(t => t.Szenario == szenario);
-                foreach (int
-                    targetCounter
-                    in
-                    szenarioTrialsContainer.Select(t => t.Target.Number).Distinct())
+                foreach (int targetCounter in szenarioTrialsContainer.Select(t => t.Target.Number).Distinct())
                 {
                     var tempSzenarioMeanTime = new SzenarioMeanTime();
                     var targetContainer = new TargetContainer {Number = targetCounter};
@@ -1997,7 +1907,8 @@ namespace ManipAnalysis_v2
                                     List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 211 && t.TrialNumberInSzenario <= 216).ToList();
                                     nullFieldBaselineRightHand.AddRange(base2a.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
-                                    if (forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) && forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) && errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) && nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    if (forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) && forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) && errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
+                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
                                     {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2056,7 +1967,8 @@ namespace ManipAnalysis_v2
                                     List<Trial> nullFieldBaselineRightHand = base1.Where(t => t.TrialNumberInSzenario >= 157 && t.TrialNumberInSzenario <= 162).ToList();
                                     nullFieldBaselineRightHand.AddRange(base2b.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
 
-                                    if (forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) && forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) && errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) && nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    if (forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) && forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) && errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
+                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
                                     {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2180,25 +2092,16 @@ namespace ManipAnalysis_v2
                 var tempVelocityZ = new double[frameCount];
 
                 var baselineTimeStamps = new DateTime[frameCount];
-                for (int timeSample = 0;
-                    timeSample < frameCount;
-                    timeSample
-                        ++)
+                for (int timeSample = 0; timeSample < frameCount; timeSample++)
                 {
                     baselineTimeStamps[timeSample] = DateTime.Now;
                     //baselineTrials[0].MeasureFile.CreationTime;
                     baselineTimeStamps[timeSample] = baselineTimeStamps[timeSample].AddSeconds((1.0/Convert.ToDouble(baselineTrials[0].NormalizedDataSampleRate))*Convert.ToDouble(timeSample));
                 }
 
-                for (int trialCounter = 0;
-                    trialCounter < baselineTrialCount;
-                    trialCounter
-                        ++)
+                for (int trialCounter = 0; trialCounter < baselineTrialCount; trialCounter++)
                 {
-                    for (int frameCounter = 0;
-                        frameCounter < frameCount;
-                        frameCounter
-                            ++)
+                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                     {
                         tempMeasuredForcesX[frameCounter] += measuredForcesX[trialCounter][frameCounter];
                         tempMeasuredForcesY[frameCounter] += measuredForcesY[trialCounter][frameCounter];
@@ -2225,10 +2128,7 @@ namespace ManipAnalysis_v2
                     }
                 }
 
-                for (int frameCounter = 0;
-                    frameCounter < frameCount;
-                    frameCounter
-                        ++)
+                for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                 {
                     tempMeasuredForcesX[frameCounter] /= baselineTrialCount;
                     tempMeasuredForcesY[frameCounter] /= baselineTrialCount;
@@ -2339,10 +2239,7 @@ namespace ManipAnalysis_v2
 
                         if (trialList.Count > cpuCount)
                         {
-                            for (int cpuCounter = 0;
-                                cpuCounter < cpuCount;
-                                cpuCounter
-                                    ++)
+                            for (int cpuCounter = 0; cpuCounter < cpuCount; cpuCounter++)
                             {
                                 taskTrialListParts.Add(new List<Trial>());
                             }
@@ -2372,10 +2269,7 @@ namespace ManipAnalysis_v2
 
                         var calculatingTasks = new List<Task>();
 
-                        for (int i = 0;
-                            i < threadCount;
-                            i
-                                ++)
+                        for (int i = 0; i < threadCount; i++)
                         {
                             List<Trial> tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
 
@@ -2498,10 +2392,7 @@ namespace ManipAnalysis_v2
                                             double[,] absolutePerpendicularDisplacement = taskMatlabWrapper.GetWorkspaceData("distanceAbs");
                                             double[,] signedPerpendicularDisplacement = taskMatlabWrapper.GetWorkspaceData("distanceSign");
 
-                                            for (int perpendicularDisplacementCounter = 0;
-                                                perpendicularDisplacementCounter < trial.PositionNormalized.Select(t => t.TimeStamp).Count();
-                                                perpendicularDisplacementCounter
-                                                    ++)
+                                            for (int perpendicularDisplacementCounter = 0; perpendicularDisplacementCounter < trial.PositionNormalized.Select(t => t.TimeStamp).Count(); perpendicularDisplacementCounter++)
                                             {
                                                 var absolute = new PerpendicularDisplacementContainer();
                                                 var signed = new PerpendicularDisplacementContainer();
@@ -2549,7 +2440,7 @@ namespace ManipAnalysis_v2
 
                                                 perpendicularForcesForcefieldCompenstionFactor.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
                                                 perpendicularForcesRawForcefieldCompenstionFactor.Add(taskMatlabWrapper.GetWorkspaceData("forcePD"));
-                                                
+
                                                 if (vMaxCorridor.Contains(trial.PositionNormalized[dataPoint - 2].TimeStamp))
                                                 {
                                                     perpendicularForcesMidMovementForce.Add(taskMatlabWrapper.GetWorkspaceData("forcePD") - taskMatlabWrapper.GetWorkspaceData("baselineForcePD"));
@@ -2567,17 +2458,11 @@ namespace ManipAnalysis_v2
                                             // Calculate ForcefieldCompenstionFactor
                                             taskMatlabWrapper.SetWorkspaceData("forcePDArray", perpendicularForcesForcefieldCompenstionFactor.ToArray());
                                             taskMatlabWrapper.SetWorkspaceData("forcePDRawArray", perpendicularForcesRawForcefieldCompenstionFactor.ToArray());
-                                            taskMatlabWrapper.Execute("forceCompFactor = forceCompensationFactor(forcePDArray', [velocityX' velocityY']);");
-                                            taskMatlabWrapper.Execute("forceCompFactorRaw = forceCompensationFactor(forcePDRawArray', [velocityX' velocityY']);");
+                                            taskMatlabWrapper.Execute("forceCompFactor = forceCompensationFactor(forcePDArray, velocityX, velocityY);");
+                                            taskMatlabWrapper.Execute("forceCompFactorRaw = forceCompensationFactor(forcePDRawArray, velocityX, velocityY);");
 
-                                            double[,] forceCompFactor = taskMatlabWrapper.GetWorkspaceData("forceCompFactor");
-                                            double[,] forceCompFactorRaw = taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
-
-                                            for (int forceCompFactorCounter = 0; forceCompFactorCounter < perpendicularForcesForcefieldCompenstionFactor.Count; forceCompFactorCounter++)
-                                            {
-                                                statisticContainer.ForcefieldCompenstionFactor.Add(forceCompFactor[0, forceCompFactorCounter]);
-                                                statisticContainer.ForcefieldCompenstionFactorRaw.Add(forceCompFactorRaw[0, forceCompFactorCounter]);
-                                            }
+                                            statisticContainer.ForcefieldCompenstionFactor = taskMatlabWrapper.GetWorkspaceData("forceCompFactor");
+                                            statisticContainer.ForcefieldCompenstionFactorRaw = taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
 
                                             // Set Metadata and upload to Database
                                             trial.Statistics = statisticContainer;
@@ -2586,8 +2471,7 @@ namespace ManipAnalysis_v2
                                             CompressTrialData(new List<Trial> {trial});
                                             _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
 
-                                            _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count)*++
-                                                counter);
+                                            _myManipAnalysisGui.SetProgressBarValue((100.0/trialList.Count)*++counter);
                                         }
                                         else
                                         {
@@ -2647,8 +2531,9 @@ namespace ManipAnalysis_v2
                     double processedTrialsCount = 0;
 
                     var fields = new FieldsBuilder<Trial>();
-                    fields.Include(t => t.TargetTrialNumberInSzenario);
                     // Neccessary for sorting!
+                    fields.Include(t => t.TargetTrialNumberInSzenario);
+
                     if (trajectoryVelocityForce == "Velocity - Normalized")
                     {
                         fields.Include(t1 => t1.ZippedVelocityNormalized);
@@ -2733,18 +2618,14 @@ namespace ManipAnalysis_v2
 
                             Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
-                            for (int trialsArrayCounter = 0;
-                                trialsArrayCounter < trialsArray.Length;
-                                trialsArrayCounter
-                                    ++)
+                            for (int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                             {
                                 if (TaskManager.Cancel)
                                 {
                                     break;
                                 }
 
-                                _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount
-                                    ++);
+                                _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                 if (trialsArray != null)
                                 {
@@ -2772,10 +2653,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2;
-                                                i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause;
-                                                i
-                                                    ++)
+                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2807,10 +2685,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesFiltered = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2;
-                                                i < trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause;
-                                                i
-                                                    ++)
+                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionFiltered.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionFiltered.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2842,10 +2717,7 @@ namespace ManipAnalysis_v2
                                         if (showForceVectors || showPdForceVectors)
                                         {
                                             trialsArray[trialsArrayCounter].MeasuredForcesRaw = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
-                                            for (int i = 2;
-                                                i < trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause;
-                                                i
-                                                    ++)
+                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionRaw.Count & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionRaw.Select(t => t.Y).ElementAt(i - 2)});
 
@@ -2906,10 +2778,7 @@ namespace ManipAnalysis_v2
                         {
                             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
 
-                            for (int targetCounter = 0;
-                                targetCounter < targetArray.Length & !TaskManager.Cancel;
-                                targetCounter
-                                    ++)
+                            for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                             {
                                 var positionData = new List<List<PositionContainer>>();
                                 var velocityData = new List<List<VelocityContainer>>();
@@ -2929,18 +2798,14 @@ namespace ManipAnalysis_v2
 
                                     Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
-                                    for (int trialsArrayCounter = 0;
-                                        trialsArrayCounter < trialsArray.Length;
-                                        trialsArrayCounter
-                                            ++)
+                                    for (int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                                     {
                                         if (TaskManager.Cancel)
                                         {
                                             break;
                                         }
 
-                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount
-                                            ++);
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                         if (trialsArray != null)
                                         {
@@ -2988,23 +2853,15 @@ namespace ManipAnalysis_v2
                                 {
                                     var xData = new double[frameCount];
                                     var yData = new double[frameCount];
-                                    var zData = new double[frameCount];
 
-                                    for (int meanCounter = 0;
-                                        meanCounter < meanCount;
-                                        meanCounter
-                                            ++)
+                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
-                                        for (int frameCounter = 0;
-                                            frameCounter < frameCount;
-                                            frameCounter
-                                                ++)
+                                        for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                         {
                                             if (trajectoryVelocityForce == "Trajectory - Normalized")
                                             {
                                                 xData[frameCounter] += positionData[meanCounter][frameCounter].X;
                                                 yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                                zData[frameCounter] += positionData[meanCounter][frameCounter].Z;
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
@@ -3018,16 +2875,12 @@ namespace ManipAnalysis_v2
                                         }
                                     }
 
-                                    for (int frameCounter = 0;
-                                        frameCounter < frameCount;
-                                        frameCounter
-                                            ++)
+                                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                     {
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
                                             xData[frameCounter] /= positionData.Count;
                                             yData[frameCounter] /= positionData.Count;
-                                            zData[frameCounter] /= positionData.Count;
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
@@ -3045,6 +2898,30 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.SetWorkspaceData("positionDataX", xData);
                                         _myMatlabWrapper.SetWorkspaceData("positionDataY", yData);
                                         _myMatlabWrapper.Plot("positionDataX", "positionDataY", "black", 2);
+                                        /*
+                                        if (showForceVectors || showPdForceVectors)
+                                        {
+                                            trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
+                                            for (int i = 2; i < trialsArray[trialsArrayCounter].PositionNormalized.Count & !TaskManager.Pause; i++)
+                                            {
+                                                _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 2) });
+
+                                                _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.X).ElementAt(i - 1), trialsArray[trialsArrayCounter].PositionNormalized.Select(t => t.Y).ElementAt(i - 1) });
+
+                                                _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2) / 100.0, trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2) / 100.0 });
+
+                                                if (showForceVectors)
+                                                {
+                                                    _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),vforce(1),vforce(2),'Color','red');");
+                                                }
+                                                if (showPdForceVectors)
+                                                {
+                                                    _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                                    _myMatlabWrapper.Execute("quiver(vpos2(1),vpos2(2),fPD(1),fPD(2),'Color','blue');");
+                                                }
+                                            }
+                                        }
+                                         */
                                     }
                                     else if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
@@ -3201,28 +3078,21 @@ namespace ManipAnalysis_v2
 
                         Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
-                        for (int trialsArrayCounter = 0;
-                            trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel;
-                            trialsArrayCounter
-                                ++)
+                        for (int trialsArrayCounter = 0; trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel; trialsArrayCounter++)
                         {
                             if (TaskManager.Cancel)
                             {
                                 break;
                             }
 
-                            _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount
-                                ++);
+                            _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                             if (trialsArray != null)
                             {
                                 if (trajectoryVelocityForce == "Velocity - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].VelocityNormalized.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].VelocityNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].VelocityNormalized[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].VelocityNormalized[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].VelocityNormalized[i].Y)));
                                     }
@@ -3230,10 +3100,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Velocity - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].VelocityFiltered = Gzip<List<VelocityContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedVelocityFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].VelocityFiltered.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].VelocityFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].VelocityFiltered[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].VelocityFiltered[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].VelocityFiltered[i].Y)));
                                     }
@@ -3241,10 +3108,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].PositionNormalized.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].PositionNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].PositionNormalized[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionNormalized[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionNormalized[i].Y)));
                                     }
@@ -3252,10 +3116,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].PositionFiltered = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].PositionFiltered.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].PositionFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].PositionFiltered[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionFiltered[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionFiltered[i].Y)));
                                     }
@@ -3263,10 +3124,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Trajectory - Raw")
                                 {
                                     trialsArray[trialsArrayCounter].PositionRaw = Gzip<List<PositionContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedPositionRaw).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].PositionRaw.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].PositionRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].PositionRaw[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionRaw[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].PositionRaw[i].Y)));
                                     }
@@ -3274,10 +3132,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Normalized")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesNormalized).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].MeasuredForcesNormalized[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesNormalized[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesNormalized[i].Y)));
                                     }
@@ -3285,10 +3140,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Filtered")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesFiltered = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesFiltered).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].MeasuredForcesFiltered[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesFiltered[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesFiltered[i].Y)));
                                     }
@@ -3296,10 +3148,7 @@ namespace ManipAnalysis_v2
                                 else if (trajectoryVelocityForce == "Force - Raw")
                                 {
                                     trialsArray[trialsArrayCounter].MeasuredForcesRaw = Gzip<List<ForceContainer>>.DeCompress(trialsArray[trialsArrayCounter].ZippedMeasuredForcesRaw).OrderBy(t => t.TimeStamp).ToList();
-                                    for (int i = 0;
-                                        i < trialsArray[trialsArrayCounter].MeasuredForcesRaw.Count;
-                                        i
-                                            ++)
+                                    for (int i = 0; i < trialsArray[trialsArrayCounter].MeasuredForcesRaw.Count; i++)
                                     {
                                         dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + trialsArray[trialsArrayCounter].TargetTrialNumberInSzenario + ";" + trialsArray[trialsArrayCounter].MeasuredForcesRaw[i].TimeStamp.ToString("dd.MM.yyyy HH:mm:ss.fffffff") + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesRaw[i].X)) + ";" + DoubleConverter.ToExactString(Convert.ToDouble(trialsArray[trialsArrayCounter].MeasuredForcesRaw[i].Y)));
                                     }
@@ -3318,10 +3167,7 @@ namespace ManipAnalysis_v2
                     {
                         int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
 
-                        for (int targetCounter = 0;
-                            targetCounter < targetArray.Length & !TaskManager.Cancel;
-                            targetCounter
-                                ++)
+                        for (int targetCounter = 0; targetCounter < targetArray.Length & !TaskManager.Cancel; targetCounter++)
                         {
                             var positionData = new List<List<PositionContainer>>();
                             var velocityData = new List<List<VelocityContainer>>();
@@ -3341,18 +3187,14 @@ namespace ManipAnalysis_v2
 
                                 Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Trials, fields).ToArray();
 
-                                for (int trialsArrayCounter = 0;
-                                    trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel;
-                                    trialsArrayCounter
-                                        ++)
+                                for (int trialsArrayCounter = 0; trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel; trialsArrayCounter++)
                                 {
                                     if (TaskManager.Cancel)
                                     {
                                         break;
                                     }
 
-                                    _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount
-                                        ++);
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0/sumOfAllTrials)*processedTrialsCount++);
 
                                     if (trialsArray != null)
                                     {
@@ -3400,27 +3242,18 @@ namespace ManipAnalysis_v2
                                 {
                                     var xData = new double[frameCount];
                                     var yData = new double[frameCount];
-                                    var zData = new double[frameCount];
 
-                                    for (int meanCounter = 0;
-                                        meanCounter < meanCount;
-                                        meanCounter
-                                            ++)
+                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                     {
-                                        for (int frameCounter = 0;
-                                            frameCounter < frameCount;
-                                            frameCounter
-                                                ++)
+                                        for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                         {
                                             if (trajectoryVelocityForce == "Trajectory - Normalized")
                                             {
                                                 xData[frameCounter] += positionData[meanCounter][frameCounter].X;
                                                 yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                                //zData[frameCounter] += positionData[meanCounter][frameCounter].Z;
                                             }
                                             else if (trajectoryVelocityForce == "Velocity - Normalized")
                                             {
-                                                //xData[frameCounter] += Math.Sqrt(Math.Pow(velocityData[meanCounter][frameCounter].X, 2) + Math.Pow(velocityData[meanCounter][frameCounter].Y, 2));
                                                 xData[frameCounter] += velocityData[meanCounter][frameCounter].X;
                                                 yData[frameCounter] += velocityData[meanCounter][frameCounter].Y;
                                             }
@@ -3432,16 +3265,12 @@ namespace ManipAnalysis_v2
                                         }
                                     }
 
-                                    for (int frameCounter = 0;
-                                        frameCounter < frameCount;
-                                        frameCounter
-                                            ++)
+                                    for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                     {
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
                                             xData[frameCounter] /= meanCount;
                                             yData[frameCounter] /= meanCount;
-                                            //zData[frameCounter] /= meanCount;
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
@@ -3457,30 +3286,21 @@ namespace ManipAnalysis_v2
 
                                     if (trajectoryVelocityForce == "Trajectory - Normalized")
                                     {
-                                        for (int i = 0;
-                                            i < xData.Length;
-                                            i
-                                                ++)
+                                        for (int i = 0; i < xData.Length; i++)
                                         {
                                             dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
                                         }
                                     }
                                     else if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
-                                        for (int i = 0;
-                                            i < xData.Length;
-                                            i
-                                                ++)
+                                        for (int i = 0; i < xData.Length; i++)
                                         {
                                             dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
                                         }
                                     }
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
-                                        for (int i = 0;
-                                            i < xData.Length;
-                                            i
-                                                ++)
+                                        for (int i = 0; i < xData.Length; i++)
                                         {
                                             dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
                                         }
@@ -4030,10 +3850,7 @@ namespace ManipAnalysis_v2
                 baselineFields.Include(t => t.ZippedVelocity);
                 Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
 
-                for (int baselineCounter = 0;
-                    baselineCounter < baselines.Length & !TaskManager.Cancel;
-                    baselineCounter
-                        ++)
+                for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].Velocity = Gzip<List<VelocityContainer>>.DeCompress(baselines[baselineCounter].ZippedVelocity).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("XY", baselines[baselineCounter].Velocity.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());
@@ -4055,10 +3872,7 @@ namespace ManipAnalysis_v2
                 baselineFields.Include(t => t.ZippedMeasuredForces);
                 Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
 
-                for (int baselineCounter = 0;
-                    baselineCounter < baselines.Length & !TaskManager.Cancel;
-                    baselineCounter
-                        ++)
+                for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
                     baselines[baselineCounter].MeasuredForces = Gzip<List<ForceContainer>>.DeCompress(baselines[baselineCounter].ZippedMeasuredForces).OrderBy(t => t.TimeStamp).ToList();
                     _myMatlabWrapper.SetWorkspaceData("Fabs", baselines[baselineCounter].MeasuredForces.Select(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))).ToArray());

@@ -71,58 +71,94 @@ namespace ManipAnalysis_v2
 
         public IList<string> Labels
         {
-            get { return _pointsLabels.AsReadOnly(); }
+            get
+            {
+                return _pointsLabels.AsReadOnly();
+            }
         }
 
         public IList<string> AnalogLabels
         {
-            get { return _analogLabels.AsReadOnly(); }
+            get
+            {
+                return _analogLabels.AsReadOnly();
+            }
         }
 
         public int CurrentFrame
         {
-            get { return _currentFrame; }
+            get
+            {
+                return _currentFrame;
+            }
         }
 
         public AnalogDataArray AnalogData
         {
-            get { return _analogData; }
+            get
+            {
+                return _analogData;
+            }
         }
 
         public int AnalogChannels
         {
-            get { return (int) (_analogRate/_pointRate); }
+            get
+            {
+                return (int) (_analogRate/_pointRate);
+            }
         }
 
         public Vector3[] Points
         {
-            get { return _points; }
+            get
+            {
+                return _points;
+            }
         }
 
         public int FramesCount
         {
-            get { return _pointFrames; }
+            get
+            {
+                return _pointFrames;
+            }
         }
 
         public int NumberOfPointsInFrame
         {
-            get { return _pointsNumber; }
-            set { _pointsNumber = value; }
+            get
+            {
+                return _pointsNumber;
+            }
+            set
+            {
+                _pointsNumber = value;
+            }
         }
 
         public C3dHeader Header
         {
-            get { return _header; }
+            get
+            {
+                return _header;
+            }
         }
 
         public bool IsInterger
         {
-            get { return _pointScale >= 0; }
+            get
+            {
+                return _pointScale >= 0;
+            }
         }
 
         public bool IsFloat
         {
-            get { return _pointScale < 0; }
+            get
+            {
+                return _pointScale < 0;
+            }
         }
 
         #endregion
@@ -197,10 +233,8 @@ namespace ManipAnalysis_v2
         private void ParseRequiredParameters()
         {
             var labels = GetParameter<string[]>("POINT:LABELS");
-            for (int i = 0;
-                i < labels.Length;
-                i
-                    ++)
+            for (int i = 0; i < labels.Length; i
+                                                   ++)
             {
                 string label = labels[i].TrimEnd(' ');
                 _pointsLabelsToId.Add(label, i);
@@ -224,10 +258,8 @@ namespace ManipAnalysis_v2
             _analogZeroOffset = GetParameter<Int16[]>("ANALOG:OFFSET");
 
             var analogLabels = GetParameter<string[]>("ANALOG:LABELS");
-            for (int i = 0;
-                i < analogLabels.Length;
-                i
-                    ++)
+            for (int i = 0; i < analogLabels.Length; i
+                                                         ++)
             {
                 string label = analogLabels[i].TrimEnd(' ').TrimEnd('\0');
                 _analogLabelsToId.Add(label, i);
@@ -260,8 +292,7 @@ namespace ManipAnalysis_v2
 
                 ParameterModel param = null;
                 int parameterDataSize = 0;
-                if (id > 0)
-                    //if id > 0 then it is parameter, otherwise it is group
+                if (id > 0) //if id > 0 then it is parameter, otherwise it is group
                 {
                     param = new Parameter(_reader);
                     parameterDataSize = (param as Parameter).C3DParameterSize;
@@ -293,8 +324,7 @@ namespace ManipAnalysis_v2
                 // if next item is more far read unknown data
                 // I assume that there will be no more than 512 bytes of unknown data
 
-                if (nextItem > (descLen + 3 + parameterDataSize))
-                    // If the C3D file is correct this will never happen, but real life is far from perfect
+                if (nextItem > (descLen + 3 + parameterDataSize)) // If the C3D file is correct this will never happen, but real life is far from perfect
                 {
                     int toRead = nextItem - (descLen + 1);
                     _reader.Read(parameters, 0, toRead);
@@ -325,7 +355,9 @@ namespace ManipAnalysis_v2
             }
 
             if (!_nameToGroups.ContainsKey(elements[0]))
+            {
                 throw new ApplicationException("Group " + elements[0] + " deasn't exist.");
+            }
 
             ParameterGroup grp = _nameToGroups[elements[0]];
 
@@ -335,7 +367,9 @@ namespace ManipAnalysis_v2
                 grp.Parameters)
             {
                 if (p.Name == elements[1])
+                {
                     return p.GetData<T>();
+                }
             }
             throw new ApplicationException("Parameter " + elements[1] + " deasn't exist.");
         }
@@ -366,13 +400,13 @@ namespace ManipAnalysis_v2
         private Vector3[] ReadFloatData()
         {
             if (!IsFloat)
+            {
                 throw new ApplicationException("Data stored in C3D file are in Inetger format. You are trying to read it as a Floating-point format.");
+            }
 
             _points = new Vector3[_pointsNumber];
-            for (int i = 0;
-                i < _pointsNumber;
-                i
-                    ++)
+            for (int i = 0; i < _pointsNumber; i
+                                                   ++)
             {
                 _points[i] = new Vector3( /* float x = */
                     _reader.ReadSingle(), /* float y = */
@@ -386,15 +420,11 @@ namespace ManipAnalysis_v2
             var samplesPerFrame = (int) (_analogRate/_pointRate);
 
             var allData = new float[_analogUsed, samplesPerFrame];
-            for (int rate = 0;
-                rate < samplesPerFrame;
-                rate
-                    ++)
+            for (int rate = 0; rate < samplesPerFrame; rate
+                                                           ++)
             {
-                for (int variable = 0;
-                    variable < _analogUsed;
-                    variable
-                        ++)
+                for (int variable = 0; variable < _analogUsed; variable
+                                                                   ++)
                 {
                     float data = _reader.ReadSingle();
                     //real world value = (data value - zero offset) * channel scale * general scale
@@ -409,13 +439,13 @@ namespace ManipAnalysis_v2
         private Vector3[] ReadIntData()
         {
             if (!IsInterger)
+            {
                 throw new ApplicationException("Data stored in C3D file are in Floating-point format. You are trying to read it as a Integer format.");
+            }
 
             _points = new Vector3[_pointsNumber];
-            for (int i = 0;
-                i < _pointsNumber;
-                i
-                    ++)
+            for (int i = 0; i < _pointsNumber; i
+                                                   ++)
             {
                 _points[i] = new Vector3( /* float x = */
                     _reader.ReadInt16()*_pointScale, /* float y = */
@@ -427,15 +457,11 @@ namespace ManipAnalysis_v2
             // reading of analog data
             var samplesPerFrame = (int) (_analogRate/_pointRate);
             var allData = new float[_analogUsed, samplesPerFrame];
-            for (int rate = 0;
-                rate < samplesPerFrame;
-                rate
-                    ++)
+            for (int rate = 0; rate < samplesPerFrame; rate
+                                                           ++)
             {
-                for (int variable = 0;
-                    variable < _analogUsed;
-                    variable
-                        ++)
+                for (int variable = 0; variable < _analogUsed; variable
+                                                                   ++)
                 {
                     float data = _reader.ReadInt16();
                     // real world value = (data value - zero offset) * channel scale * general scale
@@ -473,12 +499,18 @@ namespace ManipAnalysis_v2
 
         public float[,] Data
         {
-            get { return _analogData; }
+            get
+            {
+                return _analogData;
+            }
         }
 
         public IList<string> Labels
         {
-            get { return _analogLabels.AsReadOnly(); }
+            get
+            {
+                return _analogLabels.AsReadOnly();
+            }
         }
 
         public float this[int key, int channel]

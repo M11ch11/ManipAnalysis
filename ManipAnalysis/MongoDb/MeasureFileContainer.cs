@@ -15,8 +15,14 @@ namespace ManipAnalysis_v2.MongoDb
         /// </summary>
         public DateTime CreationTime
         {
-            get { return _creationTime.ToLocalTime(); }
-            set { _creationTime = value.ToUniversalTime(); }
+            get
+            {
+                return _creationTime.ToLocalTime();
+            }
+            set
+            {
+                _creationTime = value.ToUniversalTime();
+            }
         }
     }
 }

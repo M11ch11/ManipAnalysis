@@ -44,37 +44,58 @@ namespace ManipAnalysis_v2.Container
 
         public List<int> Trials
         {
-            get { return _trials; }
+            get
+            {
+                return _trials;
+            }
         }
 
         public string Study
         {
-            get { return _study; }
+            get
+            {
+                return _study;
+            }
         }
 
         public string Group
         {
-            get { return _group; }
+            get
+            {
+                return _group;
+            }
         }
 
         public string Szenario
         {
-            get { return _szenario; }
+            get
+            {
+                return _szenario;
+            }
         }
 
         public SubjectContainer Subject
         {
-            get { return _subject; }
+            get
+            {
+                return _subject;
+            }
         }
 
         public int Turn
         {
-            get { return _turn; }
+            get
+            {
+                return _turn;
+            }
         }
 
         public int Target
         {
-            get { return _target; }
+            get
+            {
+                return _target;
+            }
         }
 
         public bool UpdateTrajectoryVelocityPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn, string target, IEnumerable<string> trials)
@@ -107,10 +128,8 @@ namespace ManipAnalysis_v2.Container
 
             retVal += _trials[0];
             int tempCounter = 0;
-            for (int i = 1;
-                i < _trials.Count();
-                i
-                    ++)
+            for (int i = 1; i < _trials.Count(); i
+                                                     ++)
             {
                 if (_trials[i - 1] != _trials[i] - 1)
                 {
@@ -136,10 +155,8 @@ namespace ManipAnalysis_v2.Container
             string retVal = _trials[0].ToString(CultureInfo.InvariantCulture);
 
             int tempCounter = 0;
-            for (int i = 1;
-                i < _trials.Count();
-                i
-                    ++)
+            for (int i = 1; i < _trials.Count(); i
+                                                     ++)
             {
                 if (_trials[i - 1] != _trials[i] - 1)
                 {

@@ -79,10 +79,8 @@ namespace ManipAnalysis_v2
             // by 5 and dividing by 10.
             if (exponent < 0)
             {
-                for (int i = 0;
-                    i < -exponent;
-                    i
-                        ++)
+                for (int i = 0; i < -exponent; i
+                                                   ++)
                 {
                     ad.MultiplyBy(5);
                 }
@@ -91,10 +89,8 @@ namespace ManipAnalysis_v2
                 // Otherwise, we need to repeatedly multiply by 2
             else
             {
-                for (int i = 0;
-                    i < exponent;
-                    i
-                        ++)
+                for (int i = 0; i < exponent; i
+                                                  ++)
                 {
                     ad.MultiplyBy(2);
                 }
@@ -127,10 +123,8 @@ namespace ManipAnalysis_v2
             {
                 string tmp = x.ToString(CultureInfo.InvariantCulture);
                 _digits = new byte[tmp.Length];
-                for (int i = 0;
-                    i < tmp.Length;
-                    i
-                        ++)
+                for (int i = 0; i < tmp.Length; i
+                                                    ++)
                 {
                     _digits[i] = (byte) (tmp[i] - '0');
                 }
@@ -144,10 +138,8 @@ namespace ManipAnalysis_v2
             internal void MultiplyBy(int amount)
             {
                 var result = new byte[_digits.Length + 1];
-                for (int i = _digits.Length - 1;
-                    i >= 0;
-                    i
-                        --)
+                for (int i = _digits.Length - 1; i >= 0; i
+                                                             --)
                 {
                     int resultDigit = _digits[i]*amount + result[i + 1];
                     result[i] = (byte) (resultDigit/10);
@@ -181,10 +173,8 @@ namespace ManipAnalysis_v2
             private void Normalize()
             {
                 int first;
-                for (first = 0;
-                    first < _digits.Length;
-                    first
-                        ++)
+                for (first = 0; first < _digits.Length; first
+                                                            ++)
                 {
                     if (_digits[first] != 0)
                     {
@@ -192,10 +182,8 @@ namespace ManipAnalysis_v2
                     }
                 }
                 int last;
-                for (last = _digits.Length - 1;
-                    last >= 0;
-                    last
-                        --)
+                for (last = _digits.Length - 1; last >= 0; last
+                                                               --)
                 {
                     if (_digits[last] != 0)
                     {
@@ -209,10 +197,8 @@ namespace ManipAnalysis_v2
                 }
 
                 var tmp = new byte[last - first + 1];
-                for (int i = 0;
-                    i < tmp.Length;
-                    i
-                        ++)
+                for (int i = 0; i < tmp.Length; i
+                                                    ++)
                 {
                     tmp[i] = _digits[i + first];
                 }
@@ -227,10 +213,8 @@ namespace ManipAnalysis_v2
             public override String ToString()
             {
                 var digitString = new char[_digits.Length];
-                for (int i = 0;
-                    i < _digits.Length;
-                    i
-                        ++)
+                for (int i = 0; i < _digits.Length; i
+                                                        ++)
                 {
                     digitString[i] = (char) (_digits[i] + '0');
                 }

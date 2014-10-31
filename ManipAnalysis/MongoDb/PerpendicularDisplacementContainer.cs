@@ -13,8 +13,14 @@ namespace ManipAnalysis_v2.MongoDb
         /// </summary>
         public DateTime TimeStamp
         {
-            get { return _timeStamp.ToLocalTime(); }
-            set { _timeStamp = value.ToUniversalTime(); }
+            get
+            {
+                return _timeStamp.ToLocalTime();
+            }
+            set
+            {
+                _timeStamp = value.ToUniversalTime();
+            }
         }
     }
 }

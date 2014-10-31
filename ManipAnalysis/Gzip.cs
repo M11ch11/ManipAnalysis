@@ -30,15 +30,17 @@ namespace ManipAnalysis_v2
         public static T DeCompress(byte[] data)
         {
             using (var compressedStream = new MemoryStream(data))
-            using (var uncompressedStream = new MemoryStream())
             {
-                using (var gZipDecompressor = new GZipStream(compressedStream, CompressionMode.Decompress))
+                using (var uncompressedStream = new MemoryStream())
                 {
-                    gZipDecompressor.CopyTo(uncompressedStream);
+                    using (var gZipDecompressor = new GZipStream(compressedStream, CompressionMode.Decompress))
+                    {
+                        gZipDecompressor.CopyTo(uncompressedStream);
+                    }
+                    uncompressedStream.Position = 0;
+                    var xml = new XmlSerializer(typeof (T));
+                    return (T) xml.Deserialize(uncompressedStream);
                 }
-                uncompressedStream.Position = 0;
-                var xml = new XmlSerializer(typeof (T));
-                return (T) xml.Deserialize(uncompressedStream);
             }
         }
     }

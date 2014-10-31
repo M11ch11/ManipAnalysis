@@ -40,7 +40,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
         public List<Trial> TrialsContainer
         {
-            get { return _trialsContainer; }
+            get
+            {
+                return _trialsContainer;
+            }
         }
 
         public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions, string filePath)
@@ -126,8 +129,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         in
                         Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))
-                            //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)) //&& _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;

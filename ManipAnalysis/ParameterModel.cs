@@ -55,13 +55,20 @@ namespace ManipAnalysis_v2
 
         internal long OffsetInFile
         {
-            get { return _offsetInFile; }
+            get
+            {
+                return _offsetInFile;
+            }
             set
             {
                 if (_offsetInFile == -1)
+                {
                     _offsetInFile = value;
+                }
                 else
+                {
                     throw new ApplicationException("FileOffset has been set already for parameter " + Name);
+                }
             }
         }
 
@@ -77,11 +84,9 @@ namespace ManipAnalysis_v2
             //  string name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
 
             // compute offset of the next item
-            var nextItem = (Int16) (isLast
-                ? 0
-                : (Description.Length + 2 // next item number 
-                   + 1 // desc length number
-                   + GetContentLength()));
+            var nextItem = (Int16) (isLast ? 0 : (Description.Length + 2 // next item number 
+                                                  + 1 // desc length number
+                                                  + GetContentLength()));
 
 
             writer.Write(nextItem);
@@ -146,7 +151,10 @@ namespace ManipAnalysis_v2
 
         public HashSet<Parameter> Parameters
         {
-            get { return _parameters; }
+            get
+            {
+                return _parameters;
+            }
         }
 
         public bool HasParameter(string name)
@@ -238,22 +246,26 @@ namespace ManipAnalysis_v2
 
         public int C3DParameterSize
         {
-            get { return _C3DParameterSize; }
+            get
+            {
+                return _C3DParameterSize;
+            }
         }
 
         public int Length
         {
-            get { return _length; }
+            get
+            {
+                return _length;
+            }
         }
 
         private void ReadMatrix(BinaryReader reader, Type t, int dimensions)
         {
             _length = 1;
             _dimensions = new int[dimensions];
-            for (int i = 0;
-                i < dimensions;
-                i
-                    ++)
+            for (int i = 0; i < dimensions; i
+                                                ++)
             {
                 _dimensions[i] = reader.ReadByte();
                 _length *= _dimensions[i];
@@ -327,10 +339,8 @@ namespace ManipAnalysis_v2
         {
             writer.Write(_paramType);
             writer.Write((byte) _dimensions.Length);
-            for (int i = 0;
-                i < _dimensions.Length;
-                i
-                    ++)
+            for (int i = 0; i < _dimensions.Length; i
+                                                        ++)
             {
                 writer.Write((byte) _dimensions[i]);
             }
@@ -408,19 +418,17 @@ namespace ManipAnalysis_v2
                 // in C# there is really no other method for initialising arrays to a non-default value (without creating temporary objects)
                 // this is fastest way, see this -> http://www.dotnetperls.com/initialize-array
                 // but yes, it's ugly, indeed
-                for (int i = 0;
-                    i < _vectorData.Length;
-                    i
-                        ++)
+                for (int i = 0; i < _vectorData.Length; i
+                                                            ++)
+                {
                     _vectorData[i] = 32;
+                }
 
 
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
-                for (int i = 0;
-                    i < count;
-                    i
-                        ++)
+                for (int i = 0; i < count; i
+                                               ++)
                 {
                     string s = ((string[]) (object) data)[i];
                     Encoding.ASCII.GetBytes(s, 0, s.Length, _vectorData, i*maxLen);
@@ -436,10 +444,8 @@ namespace ManipAnalysis_v2
 
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
-                for (int i = 0;
-                    i < count;
-                    i
-                        ++)
+                for (int i = 0; i < count; i
+                                               ++)
                 {
                     float f = ((float[]) (object) data)[i];
                     Array.Copy(BitConverter.GetBytes(f), 0, _vectorData, i*GetSize(_paramType), GetSize(_paramType));
@@ -454,10 +460,8 @@ namespace ManipAnalysis_v2
                 _vectorData = new byte[count*GetSize(2)];
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
-                for (int i = 0;
-                    i < count;
-                    i
-                        ++)
+                for (int i = 0; i < count; i
+                                               ++)
                 {
                     Int16 n = ((Int16[]) (object) data)[i];
 
@@ -579,17 +583,15 @@ namespace ManipAnalysis_v2
         private T[,] Get2DArray<T>()
         {
             if (_dimensions.Length != 2)
-                throw new ApplicationException("Parameter " + Name + " is not 2D array.");
-            var array = new T[_dimensions[0], _dimensions[1]];
-            for (int x = 0;
-                x < _dimensions[0];
-                x
-                    ++)
             {
-                for (int y = 0;
-                    y < _dimensions[1];
-                    y
-                        ++)
+                throw new ApplicationException("Parameter " + Name + " is not 2D array.");
+            }
+            var array = new T[_dimensions[0], _dimensions[1]];
+            for (int x = 0; x < _dimensions[0]; x
+                                                    ++)
+            {
+                for (int y = 0; y < _dimensions[1]; y
+                                                        ++)
                 {
                     // TODO: still need to test following line
                     array[x, y] = GetData<T>(x + y*x);
@@ -602,12 +604,12 @@ namespace ManipAnalysis_v2
         private T[] Get1DArray<T>()
         {
             if (_dimensions.Length != 1)
+            {
                 throw new ApplicationException("Parameter " + Name + " is not 1D array.");
+            }
             var array = new T[_dimensions[0]];
-            for (int i = 0;
-                i < _dimensions[0];
-                i
-                    ++)
+            for (int i = 0; i < _dimensions[0]; i
+                                                    ++)
             {
                 array[i] = GetData<T>(i);
             }
@@ -618,7 +620,9 @@ namespace ManipAnalysis_v2
         private string DataToString()
         {
             if (_dimensions.Length != 1 || _paramType != -1)
+            {
                 throw new ApplicationException("Parameter " + Name + " is not string type.");
+            }
             return Encoding.UTF8.GetString(_vectorData, 0, _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
         }
 
@@ -626,14 +630,14 @@ namespace ManipAnalysis_v2
         {
             string[] retArray;
             if (_dimensions.Length != 2 || _paramType != -1)
+            {
                 throw new ApplicationException("Parameter " + Name + " is not string array type.");
+            }
 
             retArray = new string[_dimensions[1]];
 
-            for (int i = 0;
-                i < _dimensions[1];
-                i
-                    ++)
+            for (int i = 0; i < _dimensions[1]; i
+                                                    ++)
             {
                 retArray[i] = Encoding.UTF8.GetString(_vectorData, i*_dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
             }

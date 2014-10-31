@@ -60,10 +60,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 currentTrial.TrialVersion = "KINARM_1.0";
                 currentTrial.PositionOffset.Y = -0.14;
 
-                for (int frame = 0;
-                    frame < c3DReader.FramesCount;
-                    frame
-                        ++)
+                for (int frame = 0; frame < c3DReader.FramesCount; frame
+                                                                       ++)
                 {
                     var measuredForcesRaw = new ForceContainer();
                     var momentForcesRaw = new ForceContainer();
@@ -136,10 +134,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
                     {
                         IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
-                        for (int i = 0;
-                            i < tempList.Count();
-                            i
-                                ++)
+                        for (int i = 0; i < tempList.Count(); i
+                                                                  ++)
                         {
                             tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
                         }
