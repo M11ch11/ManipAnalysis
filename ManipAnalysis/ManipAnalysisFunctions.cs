@@ -2780,10 +2780,10 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesNormalized.Select(t => t.Y).ElementAt(i - 2) });
                                             
                                             _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
 
                                             _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
                                             _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
                                         }
 
@@ -2808,10 +2808,10 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesFiltered.Select(t => t.Y).ElementAt(i - 2) });
 
                                             _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
 
                                             _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
                                             _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
                                         }
 
@@ -2836,10 +2836,10 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.SetWorkspaceData("vforce", new[] { trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.X).ElementAt(i - 2), trialsArray[trialsArrayCounter].MeasuredForcesRaw.Select(t => t.Y).ElementAt(i - 2) });
 
                                             _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
 
                                             _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
                                             _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
                                         }
 
@@ -3049,10 +3049,10 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.SetWorkspaceData("vforce", new[] { forceVectorDataX[i - 2], forceVectorDataY[i - 2] });
 
                                             _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                            _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
 
                                             _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
                                             _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
                                         }
 
@@ -4013,10 +4013,10 @@ namespace ManipAnalysis_v2
                         _myMatlabWrapper.SetWorkspaceData("vforce", new[] { baselines[baselineCounter].MeasuredForces.Select(t => t.X).ElementAt(i - 2), baselines[baselineCounter].MeasuredForces.Select(t => t.Y).ElementAt(i - 2) });
 
                         _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                        _myMatlabWrapper.Execute("fPara = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                        _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
 
                         _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                        _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2);");
+                        _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
                         _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
                     }
 
