@@ -38,7 +38,7 @@ namespace ManipAnalysis_v2
         public MongoDbWrapper(ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
-            _mongoDbDatabaseString = "local";
+            _mongoDbDatabaseString = "admin";
             _mongoDbPasswordString = "!sport12";
             _mongoDbServerString = "localhost";
             _mongoDbUsernameString = "DataAccess";
