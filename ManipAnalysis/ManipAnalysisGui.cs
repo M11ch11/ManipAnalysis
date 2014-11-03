@@ -1831,298 +1831,7 @@ namespace ManipAnalysis_v2
             _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, targets, trialTypes, forceFields, handedness);
         }
 
-        private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
-        {
-            comboBox_BaselineRecalculation_Study.Items.Clear();
-            comboBox_BaselineRecalculation_Group.Items.Clear();
-            comboBox_BaselineRecalculation_Szenario.Items.Clear();
-            comboBox_BaselineRecalculation_Subject.Items.Clear();
-            listBox_BaselineRecalculation_Targets.Items.Clear();
-            listBox_BaselineRecalculation_Trials.Items.Clear();
-
-            IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames != null)
-            {
-                comboBox_BaselineRecalculation_Study.Items.AddRange(studyNames.ToArray());
-                if (comboBox_BaselineRecalculation_Study.Items.Count > 0)
-                {
-                    comboBox_BaselineRecalculation_Study.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_BaselineRecalculation_Study_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_BaselineRecalculation_Group.Items.Clear();
-            comboBox_BaselineRecalculation_Szenario.Items.Clear();
-            comboBox_BaselineRecalculation_Subject.Items.Clear();
-            listBox_BaselineRecalculation_Targets.Items.Clear();
-            listBox_BaselineRecalculation_Trials.Items.Clear();
-
-            IEnumerable<string> groupNames = _manipAnalysisFunctions.GetGroups(comboBox_BaselineRecalculation_Study.SelectedItem.ToString());
-
-            if (groupNames != null)
-            {
-                comboBox_BaselineRecalculation_Group.Items.AddRange(groupNames.ToArray());
-                if (comboBox_BaselineRecalculation_Group.Items.Count > 0)
-                {
-                    comboBox_BaselineRecalculation_Group.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_BaselineRecalculation_Group_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_BaselineRecalculation_Szenario.Items.Clear();
-            comboBox_BaselineRecalculation_Subject.Items.Clear();
-            listBox_BaselineRecalculation_Targets.Items.Clear();
-            listBox_BaselineRecalculation_Trials.Items.Clear();
-
-            string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
-            string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
-
-            IEnumerable<string> szenarioNames = _manipAnalysisFunctions.GetSzenarios(study, group);
-            if (szenarioNames != null)
-            {
-                comboBox_BaselineRecalculation_Szenario.Items.AddRange(szenarioNames.ToArray());
-                if (comboBox_BaselineRecalculation_Szenario.Items.Count > 0)
-                {
-                    comboBox_BaselineRecalculation_Szenario.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_BaselineRecalculation_Szenario_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_BaselineRecalculation_Subject.Items.Clear();
-            listBox_BaselineRecalculation_Targets.Items.Clear();
-            listBox_BaselineRecalculation_Trials.Items.Clear();
-
-            string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
-            string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
-            string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-
-            IEnumerable<SubjectContainer> subjectNames = _manipAnalysisFunctions.GetSubjects(study, group, szenario);
-            if (subjectNames != null)
-            {
-                comboBox_BaselineRecalculation_Subject.Items.AddRange(subjectNames.ToArray());
-                if (comboBox_BaselineRecalculation_Subject.Items.Count > 0)
-                {
-                    comboBox_BaselineRecalculation_Subject.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_BaselineRecalculation_Subject_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            listBox_BaselineRecalculation_Targets.Items.Clear();
-            listBox_BaselineRecalculation_Trials.Items.Clear();
-
-            string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
-            string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-
-            IEnumerable<string> targets = _manipAnalysisFunctions.GetTargets(study, szenario);
-            IEnumerable<string> trials = _manipAnalysisFunctions.GetTrials(study, szenario);
-
-            if (targets != null)
-            {
-                listBox_BaselineRecalculation_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
-                if (listBox_BaselineRecalculation_Targets.Items.Count > 0)
-                {
-                    listBox_BaselineRecalculation_Targets.SelectedIndex = 0;
-                }
-            }
-
-            if (trials != null)
-            {
-                listBox_BaselineRecalculation_Trials.Items.AddRange(trials.OrderBy(t => t).ToArray());
-                if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
-                {
-                    listBox_BaselineRecalculation_Trials.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void button_BaselineRecalculation_AddSelected_Click(object sender, EventArgs e)
-        {
-            if (comboBox_BaselineRecalculation_Study.SelectedItem != null)
-            {
-                const string turn = "Turn 1";
-
-                string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
-                string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
-                string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
-                string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
-                string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
-
-                foreach (string
-                    target
-                    in
-                    targets)
-                {
-                    if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
-                    {
-                        if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
-                        {
-                            bool canBeUpdated = false;
-                            foreach (TrajectoryVelocityPlotContainer
-                                temp
-                                in
-                                listBox_BaselineRecalculation_SelectedTrials.Items)
-                            {
-                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
-                                {
-                                    typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_BaselineRecalculation_SelectedTrials, new object[] {});
-                                    canBeUpdated = true;
-                                }
-                            }
-
-                            if (!canBeUpdated)
-                            {
-                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
-                            }
-                        }
-                        else
-                        {
-                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
-                        }
-                    }
-                }
-            }
-        }
-
-        private void button_BaselineRecalculation_AddAll_Click(object sender, EventArgs e)
-        {
-            if (comboBox_BaselineRecalculation_Study.SelectedItem != null)
-            {
-                const string turn = "Turn 1";
-
-                string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
-                string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
-                string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
-                string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
-                string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
-
-                foreach (string
-                    target
-                    in
-                    targets)
-                {
-                    if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
-                    {
-                        if (listBox_BaselineRecalculation_Trials.Items.Count > 0)
-                        {
-                            bool canBeUpdated = false;
-                            foreach (TrajectoryVelocityPlotContainer
-                                temp
-                                in
-                                listBox_BaselineRecalculation_SelectedTrials.Items)
-                            {
-                                if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
-                                {
-                                    typeof (ListBox).InvokeMember("RefreshItems", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod, null, listBox_BaselineRecalculation_SelectedTrials, new object[] {});
-                                    canBeUpdated = true;
-                                }
-                            }
-
-                            if (!canBeUpdated)
-                            {
-                                listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
-                            }
-                        }
-                        else
-                        {
-                            listBox_BaselineRecalculation_SelectedTrials.Items.Add(new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials));
-                        }
-                    }
-                }
-            }
-        }
-
-        private void button_BaselineRecalculation_ClearSelected_Click(object sender, EventArgs e)
-        {
-            while (listBox_BaselineRecalculation_SelectedTrials.SelectedItems.Count > 0)
-            {
-                listBox_BaselineRecalculation_SelectedTrials.Items.Remove(listBox_BaselineRecalculation_SelectedTrials.SelectedItem);
-            }
-        }
-
-        private void button_BaselineRecalculation_ClearAll_Click(object sender, EventArgs e)
-        {
-            listBox_BaselineRecalculation_SelectedTrials.Items.Clear();
-        }
-
-        private void button_BaselineRecalculation_RecalculateBaseline_Click(object sender, EventArgs e)
-        {
-            if (listBox_BaselineRecalculation_SelectedTrials.Items.Count == listBox_BaselineRecalculation_Targets.Items.Count)
-            {
-                if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Study).Distinct().Count() == 1)
-                {
-                    if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Group).Distinct().Count() == 1)
-                    {
-                        if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Subject).Distinct().Count() == 1)
-                        {
-                            if (listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>().Select(t => t.Szenario).Distinct().Count() == 1)
-                            {
-                                _manipAnalysisFunctions.RecalculateBaselines(listBox_BaselineRecalculation_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>());
-                            }
-                            else
-                            {
-                                WriteToLogBox("Please add only one Szenario!");
-                            }
-                        }
-                        else
-                        {
-                            WriteToLogBox("Please add only one Subject!");
-                        }
-                    }
-                    else
-                    {
-                        WriteToLogBox("Please add only one Group!");
-                    }
-                }
-                else
-                {
-                    WriteToLogBox("Please add only one Study!");
-                }
-            }
-            else
-            {
-                WriteToLogBox("Please add data for all Targets!");
-            }
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
-        }
-
-        private void checkBox_DescriptiveStatistic1_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(null, null);
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowNormalTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowCatchTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
-        }
-
-        private void checkBox_DescriptiveStatistic2_ShowErrorclampTrials_CheckedChanged(object sender, EventArgs e)
-        {
-            listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(null, null);
-        }
+       
 
         private void button_DataManipulation_EnsureIndexes_Click(object sender, EventArgs e)
         {
@@ -2215,5 +1924,52 @@ namespace ManipAnalysis_v2
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
+        {
+            listBox_BaselineRecalculation_TrialType.Items.Clear();
+            listBox_BaselineRecalculation_ForceField.Items.Clear();
+            listBox_BaselineRecalculation_Handedness.Items.Clear();
+
+            listBox_BaselineRecalculation_TrialType.Items.AddRange(Enum.GetNames(typeof(Trial.TrialTypeEnum)));
+            listBox_BaselineRecalculation_ForceField.Items.AddRange(Enum.GetNames(typeof(Trial.ForceFieldTypeEnum)));
+            listBox_BaselineRecalculation_Handedness.Items.AddRange(Enum.GetNames(typeof(Trial.HandednessEnum)));
+
+            for (int listboxIndex = 0; listboxIndex < listBox_BaselineRecalculation_TrialType.Items.Count; listboxIndex
+                                                                                                            ++)
+            {
+                listBox_BaselineRecalculation_TrialType.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_BaselineRecalculation_ForceField.Items.Count; listboxIndex
+                                                                                                             ++)
+            {
+                listBox_BaselineRecalculation_ForceField.SetSelected(listboxIndex, true);
+            }
+
+            for (int listboxIndex = 0; listboxIndex < listBox_BaselineRecalculation_Handedness.Items.Count; listboxIndex
+                                                                                                             ++)
+            {
+                listBox_BaselineRecalculation_Handedness.SetSelected(listboxIndex, true);
+            }
+
+            comboBox_BaselineRecalculation_Study.Items.Clear();
+            comboBox_BaselineRecalculation_Group.Items.Clear();
+            comboBox_BaselineRecalculation_Subject.Items.Clear();
+            comboBox_BaselineRecalculation_Szenario.Items.Clear();
+            comboBox_BaselineRecalculation_Turn.Items.Clear();
+            listBox_BaselineRecalculation_Targets.Items.Clear();
+            listBox_BaselineRecalculation_Trials.Items.Clear();
+            
+            IEnumerable<string> studyNames = _manipAnalysisFunctions.GetStudys();
+            if (studyNames.Any())
+            {
+                comboBox_BaselineRecalculation_Study.Items.AddRange(studyNames.ToArray());
+                if (comboBox_BaselineRecalculation_Study.Items.Count > 0)
+                {
+                    comboBox_BaselineRecalculation_Study.SelectedIndex = 0;
+                }
+            }
+        }
     }
 }
