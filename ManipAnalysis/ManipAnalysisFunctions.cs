@@ -134,6 +134,17 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
+        ///     Gets all szenarios from database of a given study, group and subject
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetSzenarios(string study, string group, SubjectContainer subject)
+        {
+            return _myDatabaseWrapper.GetSzenarios(study, group, subject);
+        }
+
+        /// <summary>
         ///     Gets all subjects from database of a given study, group and szenario
         /// </summary>
         /// <param name="study"></param>
@@ -143,6 +154,18 @@ namespace ManipAnalysis_v2
         public IEnumerable<SubjectContainer> GetSubjects(string study, string group, string szenario)
         {
             return _myDatabaseWrapper.GetSubjects(study, group, szenario);
+        }
+
+        /// <summary>
+        ///     Gets all subjects from database of a given study and group
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <returns></returns>
+        public IEnumerable<SubjectContainer> GetSubjects(string study, string group)
+        {
+            return _myDatabaseWrapper.GetSubjects(study, group);
         }
 
         /// <summary>

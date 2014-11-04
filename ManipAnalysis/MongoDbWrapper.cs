@@ -386,11 +386,39 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public IEnumerable<string> GetSzenarios(string studyName, string groupName, SubjectContainer subject)
+        {
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Subject == subject).Select(t => t.Szenario).Distinct();
+            }
+            catch (Exception
+                ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarios: " + ex);
+                return new List<string>();
+            }
+        }
+
         public IEnumerable<SubjectContainer> GetSubjects(string studyName, string groupName, string szenarioName)
         {
             try
             {
                 return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName).Select(t => t.Subject).Distinct();
+            }
+            catch (Exception
+                ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSubjects: " + ex);
+                return new List<SubjectContainer>();
+            }
+        }
+
+        public IEnumerable<SubjectContainer> GetSubjects(string studyName, string groupName)
+        {
+            try
+            {
+                return _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Group == groupName).Select(t => t.Subject).Distinct();
             }
             catch (Exception
                 ex)
