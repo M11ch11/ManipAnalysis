@@ -1893,19 +1893,13 @@ namespace ManipAnalysis_v2
                     var baselinesContainer = new List<Baseline>();
                     IEnumerable<string> studys = _myDatabaseWrapper.GetStudys();
 
-                    foreach (string
-                        study
-                        in
-                        studys)
+                    foreach (string study in studys)
                     {
                         if (study == "Study 7")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
 
-                            foreach (string
-                                group
-                                in
-                                groups)
+                            foreach (string group in groups)
                             {
                                 var baselineFields = new FieldsBuilder<Trial>();
                                 baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
@@ -1913,10 +1907,7 @@ namespace ManipAnalysis_v2
                                 IEnumerable<SubjectContainer> subjectsLR = _myDatabaseWrapper.GetSubjects(study, group, "LR_Base1");
                                 IEnumerable<SubjectContainer> subjectsRL = _myDatabaseWrapper.GetSubjects(study, group, "RL_Base1");
 
-                                foreach (SubjectContainer
-                                    subject
-                                    in
-                                    subjectsLR)
+                                foreach (SubjectContainer subject in subjectsLR)
                                 {
                                     DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "LR_Base1", subject).ElementAt(0);
                                     DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "LR_Base2a", subject).ElementAt(0);
@@ -2059,10 +2050,7 @@ namespace ManipAnalysis_v2
         {
             var baselines = new List<Baseline>();
 
-            foreach (int
-                targetCounter
-                in
-                inputTrials.Select(t => t.Target.Number).Distinct())
+            foreach (int targetCounter in inputTrials.Select(t => t.Target.Number).Distinct())
             {
                 List<Trial> baselineTrials = inputTrials.Where(t => t.Target.Number == targetCounter).ToList();
 
@@ -2666,7 +2654,7 @@ namespace ManipAnalysis_v2
 
                             DateTime turnDateTime = _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
-                            Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
+                            Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
                             for (int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                             {
@@ -2900,7 +2888,7 @@ namespace ManipAnalysis_v2
 
                                     DateTime turnDateTime = _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
 
-                                    Trial[] trialsArray = _myDatabaseWrapper.GetTrial(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
+                                    Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
                                     for (int trialsArrayCounter = 0; trialsArrayCounter < trialsArray.Length; trialsArrayCounter++)
                                     {
@@ -4056,179 +4044,51 @@ namespace ManipAnalysis_v2
 
         public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceFieldType, Trial.HandednessEnum handedness)
         {
+            _myManipAnalysisGui.WriteProgressInfo("Recalculating baselines...");
+
             foreach (TrajectoryVelocityPlotContainer targetData in selectedTrials)
             {
                 var baselineFields = new FieldsBuilder<Baseline>();
                 baselineFields.Include(t => t.Id);
-                Baseline baseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group, targetData.Subject, targetData.Target, trialType, forceFieldType, handedness, baselineFields);
 
+                Baseline originalBaseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group, targetData.Subject, targetData.Target, trialType, forceFieldType, handedness, baselineFields);
 
-            }
-            
-            /*
-            List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
-            int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
-            SubjectContainer subject = selectedTrialsList.Select(t => t.Subject).ElementAt(0);
+                DateTime turnDateTime = GetTurnDateTime(targetData.Study, targetData.Group, targetData.Szenario, targetData.Subject, targetData.Turn);
+               
+                var fields = new FieldsBuilder<Trial>();
+                fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
 
-            int counter = 0;
+                List<Trial> trials = _myDatabaseWrapper.GetTrials(targetData.Study, targetData.Group, targetData.Szenario, targetData.Subject, turnDateTime, targetData.Target, targetData.Trials, fields).ToList();
 
-            _myManipAnalysisGui.WriteProgressInfo("Recalculating baselines...");
+                trials.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                trials.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                trials.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                trials.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-            for (int targetCounter = 0; targetCounter < targetArray.Length; targetCounter++)
-            {
-                int targetCounterVar = targetCounter;
-                int meanCounter = 0;
-                var measureDataNormalizedDataX = new List<double>();
-                var measureDataNormalizedDataY = new List<double>();
-                var measureDataNormalizedDataZ = new List<double>();
-                var velocityDataNormalizedDataX = new List<double>();
-                var velocityDataNormalizedDataY = new List<double>();
-                var velocityDataNormalizedDataZ = new List<double>();
+                List<Baseline> baselines = doBaselineCalculation(trials).ToList();
 
-                TrajectoryVelocityPlotContainer tempContainer =
-                    selectedTrialsList.Where(t => t.Target == targetArray[targetCounterVar]).ElementAt(0);
-
-                int baselineID = _myDatabaseWrapper.GetBaselineID(tempContainer.Study,
-                    tempContainer.Group,
-                    tempContainer.Szenario,
-                    tempContainer.Subject,
-                    tempContainer.Target);
-
-
-                _myManipAnalysisGui.SetProgressBarValue((100.0/selectedTrialsList.Count())*
-                                                        counter);
-                counter++;
-                DateTime turnDateTime = _myDatabaseWrapper.GetTurnDateTime(tempContainer.Study,
-                    tempContainer.Group,
-                    tempContainer.Szenario,
-                    tempContainer.Subject,
-                    tempContainer.Turn);
-
-
-                foreach (int trial in tempContainer.Trials)
+                if (baselines.Count == 1)
                 {
-                    int trialID = _myDatabaseWrapper.GetTrailID(tempContainer.Study,
-                        tempContainer.Group,
-                        tempContainer.Szenario,
-                        tempContainer.Subject,
-                        turnDateTime,
-                        tempContainer.Target,
-                        trial);
+                    baselines[0].Id = originalBaseline.Id;
+                    baselines[0].TrialType = trialType;
+                    baselines[0].ForceFieldType = forceFieldType;
+                    baselines[0].Handedness = handedness;
 
-                    DataSet measureDataNormalizedDataSet = _myDatabaseWrapper.GetMeasureDataNormalizedDataSet(trialID);
-                    DataSet velocityDataNormalizedDataSet = _myDatabaseWrapper.GetVelocityDataNormalizedDataSet(trialID);
+                    CompressBaselineData(baselines);
 
-                    for (int i = 0; i < measureDataNormalizedDataSet.Tables[0].Rows.Count; i++)
-                    {
-                        DataRow row = measureDataNormalizedDataSet.Tables[0].Rows[i];
+                    _myDatabaseWrapper.UpdateBaseline(baselines[0]);
 
-                        if (measureDataNormalizedDataX.Count <= i)
-                        {
-                            measureDataNormalizedDataX.Add(Convert.ToDouble(row["position_cartesian_x"]));
-                        }
-                        else
-                        {
-                            measureDataNormalizedDataX[i] += Convert.ToDouble(row["position_cartesian_x"]);
-                        }
-
-                        if (measureDataNormalizedDataY.Count <= i)
-                        {
-                            measureDataNormalizedDataY.Add(Convert.ToDouble(row["position_cartesian_y"]));
-                        }
-                        else
-                        {
-                            measureDataNormalizedDataY[i] += Convert.ToDouble(row["position_cartesian_y"]);
-                        }
-
-                        if (measureDataNormalizedDataZ.Count <= i)
-                        {
-                            measureDataNormalizedDataZ.Add(Convert.ToDouble(row["position_cartesian_z"]));
-                        }
-                        else
-                        {
-                            measureDataNormalizedDataZ[i] += Convert.ToDouble(row["position_cartesian_z"]);
-                        }
-                    }
-
-                    for (int i = 0; i < velocityDataNormalizedDataSet.Tables[0].Rows.Count; i++)
-                    {
-                        DataRow row = velocityDataNormalizedDataSet.Tables[0].Rows[i];
-
-                        if (velocityDataNormalizedDataX.Count <= i)
-                        {
-                            velocityDataNormalizedDataX.Add(Convert.ToDouble(row["velocity_x"]));
-                        }
-                        else
-                        {
-                            velocityDataNormalizedDataX[i] += Convert.ToDouble(row["velocity_x"]);
-                        }
-
-                        if (velocityDataNormalizedDataY.Count <= i)
-                        {
-                            velocityDataNormalizedDataY.Add(Convert.ToDouble(row["velocity_y"]));
-                        }
-                        else
-                        {
-                            velocityDataNormalizedDataY[i] += Convert.ToDouble(row["velocity_y"]);
-                        }
-
-                        if (velocityDataNormalizedDataZ.Count <= i)
-                        {
-                            velocityDataNormalizedDataZ.Add(Convert.ToDouble(row["velocity_z"]));
-                        }
-                        else
-                        {
-                            velocityDataNormalizedDataZ[i] += Convert.ToDouble(row["velocity_z"]);
-                        }
-                    }
-
-                    meanCounter++;
-                }
-
-                for (int i = 0; i < measureDataNormalizedDataX.Count; i++)
-                {
-                    measureDataNormalizedDataX[i] /= meanCounter;
-                    measureDataNormalizedDataY[i] /= meanCounter;
-                    measureDataNormalizedDataZ[i] /= meanCounter;
-                }
-
-                for (int i = 0; i < velocityDataNormalizedDataX.Count; i++)
-                {
-                    velocityDataNormalizedDataX[i] /= meanCounter;
-                    velocityDataNormalizedDataY[i] /= meanCounter;
-                    velocityDataNormalizedDataZ[i] /= meanCounter;
-                }
-
-                if (measureDataNormalizedDataX.Count() == velocityDataNormalizedDataX.Count())
-                {
-                    _myDatabaseWrapper.DeleteBaselineData(baselineID);
-                    _myManipAnalysisGui.WriteToLogBox("Deleted old baseline of Target " + tempContainer.Target +
-                                                      ", uploading new one...");
-
-                    for (int i = 0; i < measureDataNormalizedDataX.Count(); i++)
-                    {
-                        _myDatabaseWrapper.InsertBaselineData(baselineID,
-                            turnDateTime.AddMilliseconds(i*5),
-                            measureDataNormalizedDataX[i],
-                            measureDataNormalizedDataY[i],
-                            measureDataNormalizedDataZ[i],
-                            velocityDataNormalizedDataX[i],
-                            velocityDataNormalizedDataY[i],
-                            velocityDataNormalizedDataZ[i]);
-                    }
+                    _myDatabaseWrapper.DropStatistics(originalBaseline);
                 }
                 else
                 {
-                    _myManipAnalysisGui.WriteToLogBox("Trajectory- and Velocity-Baseline are of unequal length!");
+                    _myManipAnalysisGui.WriteToLogBox("Error recalculating baselines.");
+                    break;
                 }
             }
-            _myDatabaseWrapper.DeleteSubjectStatistics(subject);
-            _myManipAnalysisGui.WriteToLogBox("Deleted subjects (" + subject + ") statistics...");
-
 
             _myManipAnalysisGui.WriteProgressInfo("Ready.");
             _myManipAnalysisGui.SetProgressBarValue(0);
-            */
         }
 
         public void FixIndexes()

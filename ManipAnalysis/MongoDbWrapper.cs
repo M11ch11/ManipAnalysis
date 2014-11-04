@@ -501,12 +501,27 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrial(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness, FieldsBuilder<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))).SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
+            }
+            catch (Exception)
+            {
+                retVal = null;
+            }
+
+            return retVal;
+        }
+
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, FieldsBuilder<Trial> fields)
+        {
+            IEnumerable<Trial> retVal;
+            try
+            {
+                retVal = _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && targetTrials.Contains(t.TargetTrialNumberInSzenario))).SetFields(fields).OrderBy(t => t.TargetTrialNumberInSzenario);
             }
             catch (Exception)
             {
