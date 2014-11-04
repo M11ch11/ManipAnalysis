@@ -564,6 +564,13 @@ namespace ManipAnalysis_v2
             return _trialCollection.Update(query, update);
         }
 
+        public WriteConcernResult UpdateBaseline(Baseline baseline)
+        {
+            IMongoQuery query = Query<Baseline>.EQ(t => t.Id, baseline.Id);
+            UpdateBuilder<Baseline> update = Update<Baseline>.Set(t => t.ZippedMeasuredForces, baseline.ZippedMeasuredForces).Set(t => t.ZippedMomentForces, baseline.ZippedMomentForces).Set(t => t.ZippedNominalForces, baseline.ZippedNominalForces).Set(t => t.ZippedPosition, baseline.ZippedPosition).Set(t => t.ZippedVelocity, baseline.ZippedVelocity);
+            return _baselineCollection.Update(query, update);
+        }
+
         public IEnumerable<Trial> GetTrialsWithoutStatistics(FieldsBuilder<Trial> statisticFields)
         {
             return _trialCollection.FindAs<Trial>(Query<Trial>.Where(t => t.ZippedStatistics == null)).SetFields(statisticFields);
@@ -667,6 +674,13 @@ namespace ManipAnalysis_v2
         public void DropStatistics()
         {
             IMongoQuery query = Query<Trial>.NE(t => t.ZippedStatistics, null);
+            UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.ZippedStatistics, null);
+            _trialCollection.Update(query, update, UpdateFlags.Multi);
+        }
+
+        public void DropStatistics(Baseline baseline)
+        {
+            IMongoQuery query = Query<Trial>.EQ(t => t.BaselineObjectId, baseline.Id);
             UpdateBuilder<Trial> update = Update<Trial>.Set(t => t.ZippedStatistics, null);
             _trialCollection.Update(query, update, UpdateFlags.Multi);
         }

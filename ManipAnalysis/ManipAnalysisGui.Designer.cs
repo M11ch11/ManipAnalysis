@@ -205,6 +205,7 @@ namespace ManipAnalysis_v2
             this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
             this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
             this.tabPage_Debug_BaselineRecalculation = new System.Windows.Forms.TabPage();
+            this.comboBox_BaselineRecalculation_Target = new System.Windows.Forms.ComboBox();
             this.button_BaselineRecalculation_RecalculateBaselines = new System.Windows.Forms.Button();
             this.comboBox_BaselineRecalculation_Turn = new System.Windows.Forms.ComboBox();
             this.comboBox_BaselineRecalculation_Group = new System.Windows.Forms.ComboBox();
@@ -216,7 +217,6 @@ namespace ManipAnalysis_v2
             this.listBox_BaselineRecalculation_ForceField = new System.Windows.Forms.ListBox();
             this.listBox_BaselineRecalculation_TrialType = new System.Windows.Forms.ListBox();
             this.label_BaselineRecalculation_Targets = new System.Windows.Forms.Label();
-            this.listBox_BaselineRecalculation_Targets = new System.Windows.Forms.ListBox();
             this.label_BaselineRecalculation_Turn = new System.Windows.Forms.Label();
             this.button_BaselineRecalculation_AddAll = new System.Windows.Forms.Button();
             this.button_BaselineRecalculation_ClearAll = new System.Windows.Forms.Button();
@@ -2154,6 +2154,7 @@ namespace ManipAnalysis_v2
             // 
             // tabPage_Debug_BaselineRecalculation
             // 
+            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Target);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_RecalculateBaselines);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Turn);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Group);
@@ -2165,7 +2166,6 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_ForceField);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_TrialType);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Targets);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_Targets);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Turn);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_AddAll);
             this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_ClearAll);
@@ -2188,14 +2188,25 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug_BaselineRecalculation.UseVisualStyleBackColor = true;
             this.tabPage_Debug_BaselineRecalculation.Enter += new System.EventHandler(this.tabPage_Debug_BaselineRecalculation_Enter);
             // 
+            // comboBox_BaselineRecalculation_Target
+            // 
+            this.comboBox_BaselineRecalculation_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_BaselineRecalculation_Target.FormattingEnabled = true;
+            this.comboBox_BaselineRecalculation_Target.Location = new System.Drawing.Point(68, 146);
+            this.comboBox_BaselineRecalculation_Target.Name = "comboBox_BaselineRecalculation_Target";
+            this.comboBox_BaselineRecalculation_Target.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_BaselineRecalculation_Target.Sorted = true;
+            this.comboBox_BaselineRecalculation_Target.TabIndex = 94;
+            // 
             // button_BaselineRecalculation_RecalculateBaselines
             // 
-            this.button_BaselineRecalculation_RecalculateBaselines.Location = new System.Drawing.Point(406, 544);
+            this.button_BaselineRecalculation_RecalculateBaselines.Location = new System.Drawing.Point(406, 541);
             this.button_BaselineRecalculation_RecalculateBaselines.Name = "button_BaselineRecalculation_RecalculateBaselines";
-            this.button_BaselineRecalculation_RecalculateBaselines.Size = new System.Drawing.Size(140, 52);
+            this.button_BaselineRecalculation_RecalculateBaselines.Size = new System.Drawing.Size(304, 52);
             this.button_BaselineRecalculation_RecalculateBaselines.TabIndex = 93;
             this.button_BaselineRecalculation_RecalculateBaselines.Text = "Recalculate baselines";
             this.button_BaselineRecalculation_RecalculateBaselines.UseVisualStyleBackColor = true;
+            this.button_BaselineRecalculation_RecalculateBaselines.Click += new System.EventHandler(this.button_BaselineRecalculation_RecalculateBaselines_Click);
             // 
             // comboBox_BaselineRecalculation_Turn
             // 
@@ -2233,7 +2244,7 @@ namespace ManipAnalysis_v2
             // label_BaselineRecalculation_Handedness
             // 
             this.label_BaselineRecalculation_Handedness.AutoSize = true;
-            this.label_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(549, 451);
+            this.label_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(549, 448);
             this.label_BaselineRecalculation_Handedness.Name = "label_BaselineRecalculation_Handedness";
             this.label_BaselineRecalculation_Handedness.Size = new System.Drawing.Size(70, 13);
             this.label_BaselineRecalculation_Handedness.TabIndex = 89;
@@ -2242,7 +2253,7 @@ namespace ManipAnalysis_v2
             // label_BaselineRecalculation_ForceField
             // 
             this.label_BaselineRecalculation_ForceField.AutoSize = true;
-            this.label_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(385, 451);
+            this.label_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(385, 448);
             this.label_BaselineRecalculation_ForceField.Name = "label_BaselineRecalculation_ForceField";
             this.label_BaselineRecalculation_ForceField.Size = new System.Drawing.Size(59, 13);
             this.label_BaselineRecalculation_ForceField.TabIndex = 88;
@@ -2251,7 +2262,7 @@ namespace ManipAnalysis_v2
             // label_BaselineRecalculation_TrialType
             // 
             this.label_BaselineRecalculation_TrialType.AutoSize = true;
-            this.label_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 451);
+            this.label_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 448);
             this.label_BaselineRecalculation_TrialType.Name = "label_BaselineRecalculation_TrialType";
             this.label_BaselineRecalculation_TrialType.Size = new System.Drawing.Size(53, 13);
             this.label_BaselineRecalculation_TrialType.TabIndex = 87;
@@ -2260,7 +2271,7 @@ namespace ManipAnalysis_v2
             // listBox_BaselineRecalculation_Handedness
             // 
             this.listBox_BaselineRecalculation_Handedness.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(552, 469);
+            this.listBox_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(552, 466);
             this.listBox_BaselineRecalculation_Handedness.Name = "listBox_BaselineRecalculation_Handedness";
             this.listBox_BaselineRecalculation_Handedness.Size = new System.Drawing.Size(158, 69);
             this.listBox_BaselineRecalculation_Handedness.TabIndex = 86;
@@ -2268,7 +2279,7 @@ namespace ManipAnalysis_v2
             // listBox_BaselineRecalculation_ForceField
             // 
             this.listBox_BaselineRecalculation_ForceField.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(388, 469);
+            this.listBox_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(388, 466);
             this.listBox_BaselineRecalculation_ForceField.Name = "listBox_BaselineRecalculation_ForceField";
             this.listBox_BaselineRecalculation_ForceField.Size = new System.Drawing.Size(158, 69);
             this.listBox_BaselineRecalculation_ForceField.TabIndex = 85;
@@ -2276,7 +2287,7 @@ namespace ManipAnalysis_v2
             // listBox_BaselineRecalculation_TrialType
             // 
             this.listBox_BaselineRecalculation_TrialType.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 469);
+            this.listBox_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 466);
             this.listBox_BaselineRecalculation_TrialType.Name = "listBox_BaselineRecalculation_TrialType";
             this.listBox_BaselineRecalculation_TrialType.Size = new System.Drawing.Size(158, 69);
             this.listBox_BaselineRecalculation_TrialType.TabIndex = 84;
@@ -2284,22 +2295,11 @@ namespace ManipAnalysis_v2
             // label_BaselineRecalculation_Targets
             // 
             this.label_BaselineRecalculation_Targets.AutoSize = true;
-            this.label_BaselineRecalculation_Targets.Location = new System.Drawing.Point(10, 216);
+            this.label_BaselineRecalculation_Targets.Location = new System.Drawing.Point(21, 149);
             this.label_BaselineRecalculation_Targets.Name = "label_BaselineRecalculation_Targets";
-            this.label_BaselineRecalculation_Targets.Size = new System.Drawing.Size(52, 13);
+            this.label_BaselineRecalculation_Targets.Size = new System.Drawing.Size(41, 13);
             this.label_BaselineRecalculation_Targets.TabIndex = 83;
-            this.label_BaselineRecalculation_Targets.Text = "Target(s):";
-            // 
-            // listBox_BaselineRecalculation_Targets
-            // 
-            this.listBox_BaselineRecalculation_Targets.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_Targets.Location = new System.Drawing.Point(68, 146);
-            this.listBox_BaselineRecalculation_Targets.Name = "listBox_BaselineRecalculation_Targets";
-            this.listBox_BaselineRecalculation_Targets.ScrollAlwaysVisible = true;
-            this.listBox_BaselineRecalculation_Targets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_BaselineRecalculation_Targets.Size = new System.Drawing.Size(150, 147);
-            this.listBox_BaselineRecalculation_Targets.Sorted = true;
-            this.listBox_BaselineRecalculation_Targets.TabIndex = 82;
+            this.label_BaselineRecalculation_Targets.Text = "Target:";
             // 
             // label_BaselineRecalculation_Turn
             // 
@@ -2312,7 +2312,7 @@ namespace ManipAnalysis_v2
             // 
             // button_BaselineRecalculation_AddAll
             // 
-            this.button_BaselineRecalculation_AddAll.Location = new System.Drawing.Point(224, 573);
+            this.button_BaselineRecalculation_AddAll.Location = new System.Drawing.Point(224, 570);
             this.button_BaselineRecalculation_AddAll.Name = "button_BaselineRecalculation_AddAll";
             this.button_BaselineRecalculation_AddAll.Size = new System.Drawing.Size(85, 23);
             this.button_BaselineRecalculation_AddAll.TabIndex = 79;
@@ -2322,7 +2322,7 @@ namespace ManipAnalysis_v2
             // 
             // button_BaselineRecalculation_ClearAll
             // 
-            this.button_BaselineRecalculation_ClearAll.Location = new System.Drawing.Point(315, 573);
+            this.button_BaselineRecalculation_ClearAll.Location = new System.Drawing.Point(315, 570);
             this.button_BaselineRecalculation_ClearAll.Name = "button_BaselineRecalculation_ClearAll";
             this.button_BaselineRecalculation_ClearAll.Size = new System.Drawing.Size(85, 23);
             this.button_BaselineRecalculation_ClearAll.TabIndex = 78;
@@ -2332,7 +2332,7 @@ namespace ManipAnalysis_v2
             // 
             // button_BaselineRecalculation_ClearSelected
             // 
-            this.button_BaselineRecalculation_ClearSelected.Location = new System.Drawing.Point(315, 544);
+            this.button_BaselineRecalculation_ClearSelected.Location = new System.Drawing.Point(315, 541);
             this.button_BaselineRecalculation_ClearSelected.Name = "button_BaselineRecalculation_ClearSelected";
             this.button_BaselineRecalculation_ClearSelected.Size = new System.Drawing.Size(85, 23);
             this.button_BaselineRecalculation_ClearSelected.TabIndex = 77;
@@ -2352,7 +2352,7 @@ namespace ManipAnalysis_v2
             // 
             // button_BaselineRecalculation_AddSelected
             // 
-            this.button_BaselineRecalculation_AddSelected.Location = new System.Drawing.Point(224, 544);
+            this.button_BaselineRecalculation_AddSelected.Location = new System.Drawing.Point(224, 541);
             this.button_BaselineRecalculation_AddSelected.Name = "button_BaselineRecalculation_AddSelected";
             this.button_BaselineRecalculation_AddSelected.Size = new System.Drawing.Size(85, 23);
             this.button_BaselineRecalculation_AddSelected.TabIndex = 75;
@@ -2363,7 +2363,7 @@ namespace ManipAnalysis_v2
             // label_BaselineRecalculation_Trials
             // 
             this.label_BaselineRecalculation_Trials.AutoSize = true;
-            this.label_BaselineRecalculation_Trials.Location = new System.Drawing.Point(21, 373);
+            this.label_BaselineRecalculation_Trials.Location = new System.Drawing.Point(21, 381);
             this.label_BaselineRecalculation_Trials.Name = "label_BaselineRecalculation_Trials";
             this.label_BaselineRecalculation_Trials.Size = new System.Drawing.Size(41, 13);
             this.label_BaselineRecalculation_Trials.TabIndex = 74;
@@ -2408,11 +2408,11 @@ namespace ManipAnalysis_v2
             // listBox_BaselineRecalculation_Trials
             // 
             this.listBox_BaselineRecalculation_Trials.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_Trials.Location = new System.Drawing.Point(68, 299);
+            this.listBox_BaselineRecalculation_Trials.Location = new System.Drawing.Point(68, 173);
             this.listBox_BaselineRecalculation_Trials.Name = "listBox_BaselineRecalculation_Trials";
             this.listBox_BaselineRecalculation_Trials.ScrollAlwaysVisible = true;
             this.listBox_BaselineRecalculation_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_BaselineRecalculation_Trials.Size = new System.Drawing.Size(150, 147);
+            this.listBox_BaselineRecalculation_Trials.Size = new System.Drawing.Size(150, 420);
             this.listBox_BaselineRecalculation_Trials.Sorted = true;
             this.listBox_BaselineRecalculation_Trials.TabIndex = 69;
             // 
@@ -2814,7 +2814,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ListBox listBox_BaselineRecalculation_ForceField;
         private System.Windows.Forms.ListBox listBox_BaselineRecalculation_TrialType;
         private System.Windows.Forms.Label label_BaselineRecalculation_Targets;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Targets;
         private System.Windows.Forms.Label label_BaselineRecalculation_Turn;
         private System.Windows.Forms.Button button_BaselineRecalculation_AddAll;
         private System.Windows.Forms.Button button_BaselineRecalculation_ClearAll;
@@ -2830,6 +2829,7 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Szenario;
         private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Study;
         private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaselines;
+        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Target;
     }
 }
 

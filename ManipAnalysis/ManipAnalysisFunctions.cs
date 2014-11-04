@@ -4054,8 +4054,17 @@ namespace ManipAnalysis_v2
             }));
         }
 
-        public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials)
+        public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials, Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceFieldType, Trial.HandednessEnum handedness)
         {
+            foreach (TrajectoryVelocityPlotContainer targetData in selectedTrials)
+            {
+                var baselineFields = new FieldsBuilder<Baseline>();
+                baselineFields.Include(t => t.Id);
+                Baseline baseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group, targetData.Subject, targetData.Target, trialType, forceFieldType, handedness, baselineFields);
+
+
+            }
+            
             /*
             List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
             int[] targetArray = selectedTrialsList.Select(t => t.Target).Distinct().ToArray();
