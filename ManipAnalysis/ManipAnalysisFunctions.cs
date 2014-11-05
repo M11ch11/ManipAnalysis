@@ -3211,8 +3211,8 @@ namespace ManipAnalysis_v2
                         }
 
                         DateTime turnDateTime = _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
-
-                        Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
+                        
+                        Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
                         for (int trialsArrayCounter = 0; trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel; trialsArrayCounter++)
                         {
