@@ -1653,26 +1653,17 @@ namespace ManipAnalysis_v2
                     var forceFields = new List<Trial.ForceFieldTypeEnum>();
                     var handedness = new List<Trial.HandednessEnum>();
 
-                    foreach (string
-                        item
-                        in
-                        listBox_TrajectoryVelocity_TrialType.SelectedItems)
+                    foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
                     {
                         trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
                     }
 
-                    foreach (string
-                        item
-                        in
-                        listBox_TrajectoryVelocity_ForceField.SelectedItems)
+                    foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
                     {
                         forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
                     }
 
-                    foreach (string
-                        item
-                        in
-                        listBox_TrajectoryVelocity_Handedness.SelectedItems)
+                    foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
                     {
                         handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
                     }
