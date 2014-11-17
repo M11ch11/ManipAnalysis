@@ -7,22 +7,20 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   07.11.2013                                                          %
+%   17.11.2014                                                          %
 %=======================================================================%
 
-%   fisherZVectorCorrelationTransform.m for ManipAnalysis
+%   fisherZTransform.m for ManipAnalysis
 %   
 %   Description                                                     
-%   This function transforms Fisher-Z-Values to vector correlation coeffcient
-%	r-Values using backward Fisher Z-transformation.
+%   This function transforms values using Fisher Z-transform (necessarry for further analytical steps).
 %
 %   Arguments
 %   - Input:
-%       fisherZ = Fisher Z-transformed velocity vector correlation
-%       coefficient (z-values)
+%       rvalues = (r-values)
 %   - Output:
-%       corr = velocity vector correlation coefficient (r-values)
+%       fisherZ = Fisher Z-transformed values (z-values)
 
-function [corr] = fisherZVectorCorrelationTransform(fisherZ)
+function [fisherZ] = fisherZTransform(rvalues)
 
-corr = (exp(2*fisherZ) - 1) ./ (exp(2*fisherZ) + 1); % Backward transformation of Fisher Z-transform to r-values
+fisherZ = 0.5 * log((1+rvalues) ./ (1-rvalues));     % Fisher Z-transform of correlation coefficient

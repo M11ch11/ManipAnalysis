@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.71" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.72" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5422.30915" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5434.25244" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="681984">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5422.30915" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="684544">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5434.25244" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>iTju1Mt1XTlBB13Y2QKz9J76UEf5fcIsxp5fnhL/iLM=</dsig:DigestValue>
+        <dsig:DigestValue>o3ueJXG30FZdcMdqus07iFtO1sUPFvV2lo3095gRmLg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -123,13 +123,22 @@
       <dsig:DigestValue>+952dKDqjx+ZRNlFv6HKnlVUR4z3kXvleJKqhWM10aE=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\fisherZVectorCorrelationTransform.m" size="1488">
+  <file name="MatlabFiles\fisherZtoRTransform.m" size="1352">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>hE38ZhrmLadXifP5UMC0cFjdHIkX5CJRc8q1zID2eQ8=</dsig:DigestValue>
+      <dsig:DigestValue>VHeE12EmIdGnCRlENlIs6yqpuHxO1i35giaRtqYevi4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="MatlabFiles\fisherZTransform.m" size="1340">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>PZ2Js8nCAxy/eaZ3XSt1rOTJ++Kyw3x6Z/KJemWeSro=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\forceCompensationFactor.m" size="3710">
@@ -211,15 +220,6 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>Y4pETb1KA6ikiH/d5La+y9h9t4CMtVXCfrqbYf42YcY=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="MatlabFiles\vectorCorrelationFisherZTransform.m" size="1482">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>uFl5e1KeuIjW06uOfTIlU++pw+BiT3DPX+13T5FXT/c=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
