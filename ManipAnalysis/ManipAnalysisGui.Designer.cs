@@ -917,13 +917,16 @@ namespace ManipAnalysis_v2
             // comboBox_DescriptiveStatistic1_DataTypeSelect
             // 
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_DescriptiveStatistic1_DataTypeSelect.DropDownWidth = 260;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
             "ForcefieldCompenstionFactor",
+            "ForcefieldCompenstionFactor fisher-z",
+            "ForcefieldCompenstionFactor fisher-z to r-values",
             "ForcefieldCompenstionFactor Raw",
-            "MidMovementForce - Abs",
-            "MidMovementForce - Para",
+            "ForcefieldCompenstionFactor Raw fisher-z",
+            "ForcefieldCompenstionFactor Raw fisher-z to r-values",
             "MidMovementForce - PD",
             "MidMovementForce - PD Raw",
             "PD - Abs",
@@ -936,7 +939,6 @@ namespace ManipAnalysis_v2
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
-            "Vector correlation",
             "Vector correlation fisher-z",
             "Vector correlation fisher-z to r-values"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
@@ -1230,13 +1232,16 @@ namespace ManipAnalysis_v2
             // comboBox_DescriptiveStatistic2_DataTypeSelect
             // 
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_DescriptiveStatistic2_DataTypeSelect.DropDownWidth = 260;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
             "ForcefieldCompenstionFactor",
+            "ForcefieldCompenstionFactor fisher-z",
+            "ForcefieldCompenstionFactor fisher-z to r-values",
             "ForcefieldCompenstionFactor Raw",
-            "MidMovementForce - Abs",
-            "MidMovementForce - Para",
+            "ForcefieldCompenstionFactor Raw fisher-z",
+            "ForcefieldCompenstionFactor Raw fisher-z to r-values",
             "MidMovementForce - PD",
             "MidMovementForce - PD Raw",
             "PD - Abs",
@@ -1249,7 +1254,6 @@ namespace ManipAnalysis_v2
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
-            "Vector correlation",
             "Vector correlation fisher-z",
             "Vector correlation fisher-z to r-values"});
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
