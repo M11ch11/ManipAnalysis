@@ -60,8 +60,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 currentTrial.TrialVersion = "KINARM_1.0";
                 currentTrial.PositionOffset.Y = -0.14;
 
-                for (int frame = 0; frame < c3DReader.FramesCount; frame
-                                                                       ++)
+                for (int frame = 0; frame < c3DReader.FramesCount; frame++)
                 {
                     var measuredForcesRaw = new ForceContainer();
                     var momentForcesRaw = new ForceContainer();
