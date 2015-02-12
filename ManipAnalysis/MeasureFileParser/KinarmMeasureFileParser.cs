@@ -162,7 +162,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 _trialsContainer = new List<Trial>();
             }
-            catch (Exception ex)
+            catch (Exception
+                ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("ParseFileInfo-Error: " + ex);
                 c3DReader.Close();
