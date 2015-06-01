@@ -2686,9 +2686,9 @@ namespace ManipAnalysis
                     }
                     else if (percentPeakVelocity == -2)
                     {
-                       tempVelocityDataEnumCropped =
-                                tempVelocityDataEnum.Where(t => t.PositionStatus == 1)
-                                    .ToList();
+                        tempVelocityDataEnumCropped =
+                                 tempVelocityDataEnum.Where(t => t.PositionStatus == 1)
+                                     .ToList();
 
                         tempVelocityDataEnum =
                             tempVelocityDataEnumCropped.OrderBy(t => t.TimeStamp)
@@ -4465,10 +4465,16 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
+                _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<TrajectoryVelocityPlotContainer> selectedTrailsList = selectedTrials.ToList();
                 if (meanIndividual == "Individual")
                 {
                     int counter = 0;
+                    var cache = new List<string>
+                    {
+                        "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianZ"
+                    };
+
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrailsList)
                     {
                         if (TaskManager.Cancel)
@@ -4482,6 +4488,7 @@ namespace ManipAnalysis
                             tempContainer.Szenario,
                             tempContainer.Subject,
                             tempContainer.Turn);
+
                         foreach (int trial in tempContainer.Trials)
                         {
                             if (TaskManager.Cancel)
@@ -4494,10 +4501,7 @@ namespace ManipAnalysis
                                 tempContainer.Target, trial);
                             DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialID);
 
-                            var cache = new List<string>
-                            {
-                                "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianZ"
-                            };
+
 
                             TrajectoryVelocityPlotContainer container = tempContainer;
                             int trialVar = trial;
@@ -4595,19 +4599,18 @@ namespace ManipAnalysis
                                     }
                                 }
                             }
-
-                            var dataFileStream = new FileStream(fileName, FileMode.Create,
-                                FileAccess.Write);
-                            var dataFileWriter = new StreamWriter(dataFileStream);
-
-                            for (int i = 0; i < cache.Count(); i++)
-                            {
-                                dataFileWriter.WriteLine(cache[i]);
-                            }
-
-                            dataFileWriter.Close();
                         }
                     }
+                    var dataFileStream = new FileStream(fileName, FileMode.Create,
+                                FileAccess.Write);
+                    var dataFileWriter = new StreamWriter(dataFileStream);
+
+                    for (int i = 0; i < cache.Count(); i++)
+                    {
+                        dataFileWriter.WriteLine(cache[i]);
+                    }
+
+                    dataFileWriter.Close();
                 }
 
                 else if (meanIndividual == "Mean")
@@ -4881,7 +4884,8 @@ namespace ManipAnalysis
                         }
                     }
                 }
-
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
@@ -4893,10 +4897,15 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
+                _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<TrajectoryVelocityPlotContainer> selectedTrailsList = selectedTrials.ToList();
                 if (meanIndividual == "Individual")
                 {
                     int counter = 0;
+                    var cache = new List<string>
+                            {
+                                "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityXZ"
+                            };
                     foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrailsList)
                     {
                         if (TaskManager.Cancel)
@@ -4921,11 +4930,6 @@ namespace ManipAnalysis
                                 tempContainer.Subject, turnDateTime,
                                 tempContainer.Target, trial);
                             DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialID);
-
-                            var cache = new List<string>
-                            {
-                                "Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityXZ"
-                            };
 
                             TrajectoryVelocityPlotContainer container = tempContainer;
                             int trialVar = trial;
@@ -5029,19 +5033,18 @@ namespace ManipAnalysis
                                     }
                                 }
                             }
-
-                            var dataFileStream = new FileStream(fileName, FileMode.Create,
-                                FileAccess.Write);
-                            var dataFileWriter = new StreamWriter(dataFileStream);
-
-                            for (int i = 0; i < cache.Count(); i++)
-                            {
-                                dataFileWriter.WriteLine(cache[i]);
-                            }
-
-                            dataFileWriter.Close();
                         }
                     }
+                    var dataFileStream = new FileStream(fileName, FileMode.Create,
+                                FileAccess.Write);
+                    var dataFileWriter = new StreamWriter(dataFileStream);
+
+                    for (int i = 0; i < cache.Count(); i++)
+                    {
+                        dataFileWriter.WriteLine(cache[i]);
+                    }
+
+                    dataFileWriter.Close();
                 }
 
                 else if (meanIndividual == "Mean")
@@ -5292,7 +5295,8 @@ namespace ManipAnalysis
                         }
                     }
                 }
-
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                _myManipAnalysisGui.WriteProgressInfo("Ready");
                 _myMatlabWrapper.ClearWorkspace();
                 TaskManager.Remove(Task.CurrentId);
             }));
