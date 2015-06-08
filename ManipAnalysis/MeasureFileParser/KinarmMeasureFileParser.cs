@@ -32,10 +32,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
         private List<Trial> _trialsContainer;
 
+        private Vector3 _offset;
+
 
         public KinarmMeasureFileParser(ManipAnalysisGui myManipAnalysisGui)
         {
             _myManipAnalysisGui = myManipAnalysisGui;
+            _offset = new Vector3();
         }
 
         public List<Trial> TrialsContainer
@@ -121,6 +124,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                 _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
+                _offset.X = c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0];
+                _offset.Y = c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0];
 
                 try
                 {
@@ -179,7 +184,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
             try
             {
                 var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
-                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName));
+                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName, _offset));
             }
             catch (Exception
                 ex)

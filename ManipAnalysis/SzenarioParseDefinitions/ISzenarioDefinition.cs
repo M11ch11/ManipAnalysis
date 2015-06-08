@@ -13,7 +13,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const string SzenarioName = "Unknown";
 
-        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName)
+        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName, Vector3 offset)
         {
             var trialsContainer = new List<Trial>();
 
@@ -58,7 +58,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
                 currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                 currentTrial.TrialVersion = "KINARM_1.0";
-                currentTrial.PositionOffset.Y = -0.14;
+                currentTrial.PositionOffset.X = offset.X;
+                currentTrial.PositionOffset.Y = offset.Y;
 
                 for (int frame = 0; frame < c3DReader.FramesCount; frame
                                                                        ++)
