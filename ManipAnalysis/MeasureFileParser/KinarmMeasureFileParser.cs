@@ -124,8 +124,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                 _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
-                _offset.X = c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0];
-                _offset.Y = c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0];
+                _offset.X = (c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0]) / 100.0f;
+                _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
 
                 try
                 {
