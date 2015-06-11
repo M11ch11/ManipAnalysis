@@ -253,6 +253,10 @@ namespace ManipAnalysis
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
+            this.button_Others_ExportSetDurationTimes = new System.Windows.Forms.Button();
+            this.button_Others_PlotSetDurationTimes = new System.Windows.Forms.Button();
+            this.button_Others_ExportTrialSwitchReactionTimes = new System.Windows.Forms.Button();
+            this.button_Others_PlotTrialSwitchReactionTimes = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1346,6 +1350,10 @@ namespace ManipAnalysis
             // 
             // tabPage_Others
             // 
+            this.tabPage_Others.Controls.Add(this.button_Others_ExportTrialSwitchReactionTimes);
+            this.tabPage_Others.Controls.Add(this.button_Others_PlotTrialSwitchReactionTimes);
+            this.tabPage_Others.Controls.Add(this.button_Others_ExportSetDurationTimes);
+            this.tabPage_Others.Controls.Add(this.button_Others_PlotSetDurationTimes);
             this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_At);
             this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_Ms);
             this.tabPage_Others.Controls.Add(this.textBox_Others_PlotErrorclampForces_MsIndex);
@@ -1408,7 +1416,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotForcefieldCompensationFactor.Location = new System.Drawing.Point(15, 263);
             this.button_Others_PlotForcefieldCompensationFactor.Name = "button_Others_PlotForcefieldCompensationFactor";
-            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(171, 23);
+            this.button_Others_PlotForcefieldCompensationFactor.Size = new System.Drawing.Size(170, 23);
             this.button_Others_PlotForcefieldCompensationFactor.TabIndex = 53;
             this.button_Others_PlotForcefieldCompensationFactor.Text = "Forcefield compensation factor";
             this.button_Others_PlotForcefieldCompensationFactor.UseVisualStyleBackColor = true;
@@ -1417,7 +1425,7 @@ namespace ManipAnalysis
             // checkBox_Others_GroupAverage
             // 
             this.checkBox_Others_GroupAverage.AutoSize = true;
-            this.checkBox_Others_GroupAverage.Location = new System.Drawing.Point(326, 238);
+            this.checkBox_Others_GroupAverage.Location = new System.Drawing.Point(367, 238);
             this.checkBox_Others_GroupAverage.Name = "checkBox_Others_GroupAverage";
             this.checkBox_Others_GroupAverage.Size = new System.Drawing.Size(97, 17);
             this.checkBox_Others_GroupAverage.TabIndex = 52;
@@ -1426,9 +1434,9 @@ namespace ManipAnalysis
             // 
             // button_Others_ExportGroupLi
             // 
-            this.button_Others_ExportGroupLi.Location = new System.Drawing.Point(170, 234);
+            this.button_Others_ExportGroupLi.Location = new System.Drawing.Point(191, 234);
             this.button_Others_ExportGroupLi.Name = "button_Others_ExportGroupLi";
-            this.button_Others_ExportGroupLi.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_ExportGroupLi.Size = new System.Drawing.Size(170, 23);
             this.button_Others_ExportGroupLi.TabIndex = 47;
             this.button_Others_ExportGroupLi.Text = "Export learning index";
             this.button_Others_ExportGroupLi.UseVisualStyleBackColor = true;
@@ -1438,7 +1446,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotGroupLi.Location = new System.Drawing.Point(15, 234);
             this.button_Others_PlotGroupLi.Name = "button_Others_PlotGroupLi";
-            this.button_Others_PlotGroupLi.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotGroupLi.Size = new System.Drawing.Size(170, 23);
             this.button_Others_PlotGroupLi.TabIndex = 46;
             this.button_Others_PlotGroupLi.Text = "Plot learning index";
             this.button_Others_PlotGroupLi.UseVisualStyleBackColor = true;
@@ -1446,9 +1454,9 @@ namespace ManipAnalysis
             // 
             // button_Others_ExportVelocityBaseline
             // 
-            this.button_Others_ExportVelocityBaseline.Location = new System.Drawing.Point(170, 176);
+            this.button_Others_ExportVelocityBaseline.Location = new System.Drawing.Point(191, 176);
             this.button_Others_ExportVelocityBaseline.Name = "button_Others_ExportVelocityBaseline";
-            this.button_Others_ExportVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_ExportVelocityBaseline.Size = new System.Drawing.Size(170, 23);
             this.button_Others_ExportVelocityBaseline.TabIndex = 45;
             this.button_Others_ExportVelocityBaseline.Text = "Export velocity baselines";
             this.button_Others_ExportVelocityBaseline.UseVisualStyleBackColor = true;
@@ -1458,7 +1466,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotVelocityBaseline.Location = new System.Drawing.Point(15, 176);
             this.button_Others_PlotVelocityBaseline.Name = "button_Others_PlotVelocityBaseline";
-            this.button_Others_PlotVelocityBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotVelocityBaseline.Size = new System.Drawing.Size(170, 23);
             this.button_Others_PlotVelocityBaseline.TabIndex = 44;
             this.button_Others_PlotVelocityBaseline.Text = "Plot velocity baselines";
             this.button_Others_PlotVelocityBaseline.UseVisualStyleBackColor = true;
@@ -1466,9 +1474,9 @@ namespace ManipAnalysis
             // 
             // button_Others_ExportTrajectoryBaseline
             // 
-            this.button_Others_ExportTrajectoryBaseline.Location = new System.Drawing.Point(170, 147);
+            this.button_Others_ExportTrajectoryBaseline.Location = new System.Drawing.Point(191, 147);
             this.button_Others_ExportTrajectoryBaseline.Name = "button_Others_ExportTrajectoryBaseline";
-            this.button_Others_ExportTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_ExportTrajectoryBaseline.Size = new System.Drawing.Size(170, 23);
             this.button_Others_ExportTrajectoryBaseline.TabIndex = 43;
             this.button_Others_ExportTrajectoryBaseline.Text = "Export trajectory baselines";
             this.button_Others_ExportTrajectoryBaseline.UseVisualStyleBackColor = true;
@@ -1476,9 +1484,9 @@ namespace ManipAnalysis
             // 
             // button_Others_ExportSzenarioMeanTimes
             // 
-            this.button_Others_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(170, 205);
+            this.button_Others_ExportSzenarioMeanTimes.Location = new System.Drawing.Point(191, 205);
             this.button_Others_ExportSzenarioMeanTimes.Name = "button_Others_ExportSzenarioMeanTimes";
-            this.button_Others_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_ExportSzenarioMeanTimes.Size = new System.Drawing.Size(170, 23);
             this.button_Others_ExportSzenarioMeanTimes.TabIndex = 42;
             this.button_Others_ExportSzenarioMeanTimes.Text = "Export mean times";
             this.button_Others_ExportSzenarioMeanTimes.UseVisualStyleBackColor = true;
@@ -1499,7 +1507,7 @@ namespace ManipAnalysis
             this.comboBox_Others_Turn.FormattingEnabled = true;
             this.comboBox_Others_Turn.Location = new System.Drawing.Point(66, 120);
             this.comboBox_Others_Turn.Name = "comboBox_Others_Turn";
-            this.comboBox_Others_Turn.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_Others_Turn.Size = new System.Drawing.Size(295, 21);
             this.comboBox_Others_Turn.Sorted = true;
             this.comboBox_Others_Turn.TabIndex = 40;
             // 
@@ -1518,7 +1526,7 @@ namespace ManipAnalysis
             this.comboBox_Others_Group.FormattingEnabled = true;
             this.comboBox_Others_Group.Location = new System.Drawing.Point(66, 39);
             this.comboBox_Others_Group.Name = "comboBox_Others_Group";
-            this.comboBox_Others_Group.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_Others_Group.Size = new System.Drawing.Size(295, 21);
             this.comboBox_Others_Group.Sorted = true;
             this.comboBox_Others_Group.TabIndex = 38;
             this.comboBox_Others_Group.SelectedIndexChanged += new System.EventHandler(this.comboBox_Others_Group_SelectedIndexChanged);
@@ -1556,7 +1564,7 @@ namespace ManipAnalysis
             this.comboBox_Others_Subject.FormattingEnabled = true;
             this.comboBox_Others_Subject.Location = new System.Drawing.Point(66, 93);
             this.comboBox_Others_Subject.Name = "comboBox_Others_Subject";
-            this.comboBox_Others_Subject.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_Others_Subject.Size = new System.Drawing.Size(295, 21);
             this.comboBox_Others_Subject.Sorted = true;
             this.comboBox_Others_Subject.TabIndex = 34;
             this.comboBox_Others_Subject.SelectedIndexChanged += new System.EventHandler(this.comboBox_Others_Subject_SelectedIndexChanged);
@@ -1567,7 +1575,7 @@ namespace ManipAnalysis
             this.comboBox_Others_Study.FormattingEnabled = true;
             this.comboBox_Others_Study.Location = new System.Drawing.Point(66, 12);
             this.comboBox_Others_Study.Name = "comboBox_Others_Study";
-            this.comboBox_Others_Study.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_Others_Study.Size = new System.Drawing.Size(295, 21);
             this.comboBox_Others_Study.Sorted = true;
             this.comboBox_Others_Study.TabIndex = 33;
             this.comboBox_Others_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_Others_Study_SelectedIndexChanged);
@@ -1578,7 +1586,7 @@ namespace ManipAnalysis
             this.comboBox_Others_Szenario.FormattingEnabled = true;
             this.comboBox_Others_Szenario.Location = new System.Drawing.Point(66, 66);
             this.comboBox_Others_Szenario.Name = "comboBox_Others_Szenario";
-            this.comboBox_Others_Szenario.Size = new System.Drawing.Size(247, 21);
+            this.comboBox_Others_Szenario.Size = new System.Drawing.Size(295, 21);
             this.comboBox_Others_Szenario.Sorted = true;
             this.comboBox_Others_Szenario.TabIndex = 32;
             this.comboBox_Others_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_Others_Szenario_SelectedIndexChanged);
@@ -1587,7 +1595,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotTrajectoryBaseline.Location = new System.Drawing.Point(15, 147);
             this.button_Others_PlotTrajectoryBaseline.Name = "button_Others_PlotTrajectoryBaseline";
-            this.button_Others_PlotTrajectoryBaseline.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotTrajectoryBaseline.Size = new System.Drawing.Size(170, 23);
             this.button_Others_PlotTrajectoryBaseline.TabIndex = 31;
             this.button_Others_PlotTrajectoryBaseline.Text = "Plot trajectory baselines";
             this.button_Others_PlotTrajectoryBaseline.UseVisualStyleBackColor = true;
@@ -1597,7 +1605,7 @@ namespace ManipAnalysis
             // 
             this.button_Others_PlotSzenarioMeanTimes.Location = new System.Drawing.Point(15, 205);
             this.button_Others_PlotSzenarioMeanTimes.Name = "button_Others_PlotSzenarioMeanTimes";
-            this.button_Others_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(150, 23);
+            this.button_Others_PlotSzenarioMeanTimes.Size = new System.Drawing.Size(170, 23);
             this.button_Others_PlotSzenarioMeanTimes.TabIndex = 22;
             this.button_Others_PlotSzenarioMeanTimes.Text = "Plot mean times";
             this.button_Others_PlotSzenarioMeanTimes.UseVisualStyleBackColor = true;
@@ -2635,6 +2643,46 @@ namespace ManipAnalysis
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
+            // button_Others_ExportSetDurationTimes
+            // 
+            this.button_Others_ExportSetDurationTimes.Location = new System.Drawing.Point(191, 292);
+            this.button_Others_ExportSetDurationTimes.Name = "button_Others_ExportSetDurationTimes";
+            this.button_Others_ExportSetDurationTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_ExportSetDurationTimes.TabIndex = 58;
+            this.button_Others_ExportSetDurationTimes.Text = "Export set duration times";
+            this.button_Others_ExportSetDurationTimes.UseVisualStyleBackColor = true;
+            this.button_Others_ExportSetDurationTimes.Click += new System.EventHandler(this.button_Others_ExportSetDurationTimes_Click);
+            // 
+            // button_Others_PlotSetDurationTimes
+            // 
+            this.button_Others_PlotSetDurationTimes.Location = new System.Drawing.Point(15, 292);
+            this.button_Others_PlotSetDurationTimes.Name = "button_Others_PlotSetDurationTimes";
+            this.button_Others_PlotSetDurationTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_PlotSetDurationTimes.TabIndex = 57;
+            this.button_Others_PlotSetDurationTimes.Text = "Plot set duration times";
+            this.button_Others_PlotSetDurationTimes.UseVisualStyleBackColor = true;
+            this.button_Others_PlotSetDurationTimes.Click += new System.EventHandler(this.button_Others_PlotSetDurationTimes_Click);
+            // 
+            // button_Others_ExportTrialSwitchReactionTimes
+            // 
+            this.button_Others_ExportTrialSwitchReactionTimes.Location = new System.Drawing.Point(191, 321);
+            this.button_Others_ExportTrialSwitchReactionTimes.Name = "button_Others_ExportTrialSwitchReactionTimes";
+            this.button_Others_ExportTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_ExportTrialSwitchReactionTimes.TabIndex = 60;
+            this.button_Others_ExportTrialSwitchReactionTimes.Text = "Export trial switch reaction times";
+            this.button_Others_ExportTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
+            this.button_Others_ExportTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_ExportTrialSwitchReactionTimes_Click);
+            // 
+            // button_Others_PlotTrialSwitchReactionTimes
+            // 
+            this.button_Others_PlotTrialSwitchReactionTimes.Location = new System.Drawing.Point(15, 321);
+            this.button_Others_PlotTrialSwitchReactionTimes.Name = "button_Others_PlotTrialSwitchReactionTimes";
+            this.button_Others_PlotTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_PlotTrialSwitchReactionTimes.TabIndex = 59;
+            this.button_Others_PlotTrialSwitchReactionTimes.Text = "Plot trial switch reaction times";
+            this.button_Others_PlotTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
+            this.button_Others_PlotTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_PlotTrialSwitchReactionTimes_Click);
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2928,6 +2976,10 @@ namespace ManipAnalysis
         private System.Windows.Forms.TextBox textBox_Others_PlotErrorclampForces_MsIndex;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
         private System.Windows.Forms.CheckBox checkBox_Cancel;
+        private System.Windows.Forms.Button button_Others_ExportTrialSwitchReactionTimes;
+        private System.Windows.Forms.Button button_Others_PlotTrialSwitchReactionTimes;
+        private System.Windows.Forms.Button button_Others_ExportSetDurationTimes;
+        private System.Windows.Forms.Button button_Others_PlotSetDurationTimes;
     }
 }
 

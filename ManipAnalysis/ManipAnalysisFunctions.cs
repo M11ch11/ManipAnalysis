@@ -5862,6 +5862,60 @@ namespace ManipAnalysis
             }));
         }
 
+        public void PlotSetDurationTimes(string study, string group, string szenario,
+            SubjectInformationContainer subject, int turn)
+        {
+            TaskManager.PushBack(Task.Factory.StartNew(() =>
+            {
+                string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false);
+                // List of all trials in the szenario
+                int setCount = szenarioTrials.Length / 16; // The number of sets in the szenario
+                var setTimeData = new TimeSpan[setCount]; // Array of Lists, size is equal to the number of sets
+
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Calculating set times...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                    // Gets the trial-data for the subject
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+
+                List<int> trialNumbers = szenarioTrials.Select(t => Convert.ToInt32(t.Substring(6, 3))).ToList();
+                trialNumbers.Sort();
+
+
+                    // Loops over all sets in the szenario
+                for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
+                {
+                    _myManipAnalysisGui.SetProgressBarValue((100.0 / setCount) * setCounter);
+
+                    // Loops over all trials in the sets
+                    //for (int trialCounter = (setCounter*16); trialCounter < ((setCounter + 1)*16) & !TaskManager.Cancel; trialCounter++)
+                    //{
+                    int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, trialNumbers[(setCounter * 16)]);
+                    int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, trialNumbers[(((setCounter + 1) * 16) - 1)]);
+
+                    DataSet fistTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(firstTrialId);
+                    DataSet lastTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(lastTrialId);
+
+
+                    DateTime startTime = Convert.ToDateTime(fistTrialDataSet.Tables[0].Rows[0]["time_stamp"]);
+                    DateTime endTime = Convert.ToDateTime(lastTrialDataSet.Tables[0].Rows[lastTrialDataSet.Tables[0].Rows.Count - 1]["time_stamp"]);
+
+                    setTimeData[setCounter] = new TimeSpan(endTime.Ticks - startTime.Ticks);
+                }
+
+                //}
+
+                _myMatlabWrapper.CreateSetTimesFigure(setCount);
+                _myMatlabWrapper.SetWorkspaceData("setTimes", setTimeData.Select(t => t.TotalSeconds).ToArray());
+                _myMatlabWrapper.Plot("setTimes", 1);
+
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
+        }
+
         public void ForcefieldCompensationFactor(string study, string group, string szenario,
             SubjectInformationContainer subject, int turn, int msIndex)
         {

@@ -2300,5 +2300,32 @@ namespace ManipAnalysis
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void button_Others_PlotSetDurationTimes_Click(object sender, EventArgs e)
+        {
+            _manipAnalysisFunctions.PlotSetDurationTimes(comboBox_Others_Study.SelectedItem.ToString(),
+                comboBox_Others_Group.SelectedItem.ToString(),
+                comboBox_Others_Szenario.SelectedItem.ToString(),
+                (SubjectInformationContainer)
+                    comboBox_Others_Subject.SelectedItem,
+                Convert.ToInt32(
+                    comboBox_Others_Turn.SelectedItem.ToString()
+                        .Substring("Turn".Length)));
+        }
+
+        private void button_Others_PlotTrialSwitchReactionTimes_Click(object sender, EventArgs e)
+        {
+            WriteToLogBox("Not Implemented: PlotTrialSwitchReactionTimes");
+        }
+
+        private void button_Others_ExportSetDurationTimes_Click(object sender, EventArgs e)
+        {
+            WriteToLogBox("Not Implemented: ExportSetDurationTimes");
+        }
+
+        private void button_Others_ExportTrialSwitchReactionTimes_Click(object sender, EventArgs e)
+        {
+            WriteToLogBox("Not Implemented: ExportTrialSwitchReactionTimes");
+        }
     }
 }
