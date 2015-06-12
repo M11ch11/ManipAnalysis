@@ -491,7 +491,14 @@ namespace ManipAnalysis_v2
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
-                _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
+                if (study == "Study 6")
+                {
+                    _myMatlabWrapper.DrawTargetsStudy06(0.003, 0.1, 0, 0);
+                }
+                else if (study == "Study 7")
+                {
+                    _myMatlabWrapper.DrawTargetsStudy07(0.003, 0.1, 0, 0);
+                }
 
                 var baselineFields = new FieldsBuilder<Baseline>();
                 baselineFields.Include(t => t.ZippedPosition);
@@ -1967,7 +1974,40 @@ namespace ManipAnalysis_v2
 
                     foreach (string study in studys)
                     {
-                        if (study == "Study 7")
+                        if (study == "Study 6")
+                        {
+                            IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
+
+                            foreach (string group in groups)
+                            {
+                                var baselineFields = new FieldsBuilder<Trial>();
+                                baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
+
+                                IEnumerable<SubjectContainer> subjects = _myDatabaseWrapper.GetSubjects(study, group, "Szenario42");
+
+                                foreach (SubjectContainer subject in subjects)
+                                {
+                                    DateTime turnDateTime = _myDatabaseWrapper.GetTurns(study, group, "Szenario42", subject).ElementAt(0);
+
+                                    List<Trial> baselineTrials = _myDatabaseWrapper.GetTrials(study, group, "LR_Base1", subject, turnDateTime, Enumerable.Range(1, 216), baselineFields).ToList();
+
+                                    baselineTrials.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrials.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrials.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrials.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    if (baselineTrials.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrials));
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);
+                                    }
+                                }
+                            }
+                        }
+                        else if (study == "Study 7")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
 
@@ -2639,6 +2679,7 @@ namespace ManipAnalysis_v2
                     List<TrajectoryVelocityPlotContainer> selectedTrialsList = selectedTrials.ToList();
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
+                    string study = selectedTrialsList.Select(t => t.Study).Distinct().First();
 
                     var fields = new FieldsBuilder<Trial>();
                     // Neccessary for sorting!
@@ -2666,7 +2707,14 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
-                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
+                        if (study == "Study 6")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy06(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 7")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy07(0.003, 0.1, 0, 0);
+                        }
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
@@ -2680,7 +2728,14 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionFiltered);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
-                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
+                        if (study == "Study 6")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy06(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 7")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy07(0.003, 0.1, 0, 0);
+                        }
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
@@ -2694,7 +2749,14 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionRaw);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
-                        _myMatlabWrapper.DrawTargets(0.003, 0.1, 0, 0);
+                        if (study == "Study 6")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy06(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 7")
+                        {
+                            _myMatlabWrapper.DrawTargetsStudy07(0.003, 0.1, 0, 0);
+                        }
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {

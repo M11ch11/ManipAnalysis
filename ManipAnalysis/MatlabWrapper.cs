@@ -320,34 +320,42 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void DrawTargets(double diameter, double radius, double centerX, double centerY)
+        public void DrawTargetsStudy07(double diameter, double radius, double centerX, double centerY)
         {
             string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
             string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
 
             try
             {
-                /*
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString +
-                        ", sin(degtorad(0)) * " + radiusString + ");");
-                */
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString + ", sin(degtorad(45)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString + ", sin(degtorad(90)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString + ", sin(degtorad(135)) * " + radiusString + ");");
-                /*
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString +
-                        ", sin(degtorad(180)) * " + radiusString + ");");                
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString +
-                        ", sin(degtorad(225)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString +
-                        ", sin(degtorad(270)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
-                        ", sin(degtorad(315)) * " + radiusString + ");");
-                 */
                 Execute("drawCircle(" + diameterString + ", " + centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " + centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+        public void DrawTargetsStudy06(double diameter, double radius, double centerX, double centerY)
+        {
+            string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+
+            try
+            {
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString + ", sin(degtorad(0)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString + ", sin(degtorad(45)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString + ", sin(degtorad(90)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString + ", sin(degtorad(135)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString + ", sin(degtorad(180)) * " + radiusString + ");");                
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString + ", sin(degtorad(225)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString + ", sin(degtorad(270)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString + ", sin(degtorad(315)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", " + centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " + centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
+            }
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }

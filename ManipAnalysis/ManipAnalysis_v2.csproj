@@ -219,6 +219,7 @@
     </Compile>
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="SzenarioParseDefinitions\ISzenarioDefinition.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study06\Szenario42.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\RLd_02_Training_Transfer.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\LRd_02_Training_Transfer.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\RLc_03_ConsoTransfer.cs" />
