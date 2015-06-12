@@ -5867,7 +5867,7 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                string[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false);
+                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
                 // List of all trials in the szenario
                 int setCount = szenarioTrials.Length / 16; // The number of sets in the szenario
                 var setTimeData = new TimeSpan[setCount]; // Array of Lists, size is equal to the number of sets
@@ -5879,11 +5879,7 @@ namespace ManipAnalysis
                     // Gets the trial-data for the subject
                 DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
-                List<int> trialNumbers = szenarioTrials.Select(t => Convert.ToInt32(t.Substring(6, 3))).ToList();
-                trialNumbers.Sort();
-
-
-                    // Loops over all sets in the szenario
+                // Loops over all sets in the szenario
                 for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
                 {
                     _myManipAnalysisGui.SetProgressBarValue((100.0 / setCount) * setCounter);
@@ -5891,8 +5887,8 @@ namespace ManipAnalysis
                     // Loops over all trials in the sets
                     //for (int trialCounter = (setCounter*16); trialCounter < ((setCounter + 1)*16) & !TaskManager.Cancel; trialCounter++)
                     //{
-                    int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, trialNumbers[(setCounter * 16)]);
-                    int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, trialNumbers[(((setCounter + 1) * 16) - 1)]);
+                    int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(setCounter * 16)]);
+                    int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(((setCounter + 1) * 16) - 1)]);
 
                     DataSet fistTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(firstTrialId);
                     DataSet lastTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(lastTrialId);
@@ -5909,6 +5905,159 @@ namespace ManipAnalysis
                 _myMatlabWrapper.CreateSetTimesFigure(setCount);
                 _myMatlabWrapper.SetWorkspaceData("setTimes", setTimeData.Select(t => t.TotalSeconds).ToArray());
                 _myMatlabWrapper.Plot("setTimes", 1);
+
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
+        }
+
+        public void ExportSetDurationTimes(string fileName, string study, string group, string szenario,
+            IEnumerable<SubjectInformationContainer> subjects, int turn)
+        {
+            TaskManager.PushBack(Task.Factory.StartNew(() =>
+            {
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Calculating set times...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                var cache = new List<string>();
+                cache.Add("Study;Group;Szenario;Subject;Turn;Set;DurationMs");
+
+                // List of all trials in the szenario
+                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
+                
+                // The number of sets in the szenario
+                int setCount = szenarioTrials.Length / 16;
+
+                int totalSets = setCount*subjects.Count();
+                int processedSets = 0;
+
+                // Loops over all subjects. Can also be only one.
+                for (int subjectCounter = 0; subjectCounter < subjects.Count() & !TaskManager.Cancel; subjectCounter++)
+                {
+                    SubjectInformationContainer subject = subjects.ElementAt(subjectCounter);
+
+                    // Gets the trial-data for the subject
+                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+
+                    // Loops over all sets in the szenario
+                    for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
+                    {
+                        _myManipAnalysisGui.SetProgressBarValue((100.0 / totalSets) * processedSets);
+                        processedSets++;
+
+                        int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(setCounter*16)]);
+                        int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(((setCounter + 1)*16) - 1)]);
+
+                        DataSet fistTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(firstTrialId);
+                        DataSet lastTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(lastTrialId);
+
+                        DateTime startTime = Convert.ToDateTime(fistTrialDataSet.Tables[0].Rows[0]["time_stamp"]);
+                        DateTime endTime = Convert.ToDateTime(lastTrialDataSet.Tables[0].Rows[lastTrialDataSet.Tables[0].Rows.Count - 1]["time_stamp"]);
+
+                        cache.Add(study + ";" +
+                            group + ";" +
+                            szenario + ";" +
+                            subject + ";" +
+                            turn + ";" +
+                            (setCounter+1) + ";" +
+                            Convert.ToInt32(new TimeSpan(endTime.Ticks - startTime.Ticks).TotalMilliseconds));
+                    }
+                }
+
+                 var meanDataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                    var meanDataFileWriter = new StreamWriter(meanDataFileStream);
+                    for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
+                    {
+                        meanDataFileWriter.WriteLine(cache[i]);
+                    }
+
+                    meanDataFileWriter.Close();
+
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
+        }
+
+        public void PlotTrialSwitchReactionTimes(string study, string group, string szenario,
+            SubjectInformationContainer subject, int turn)
+        {
+            TaskManager.PushBack(Task.Factory.StartNew(() =>
+            {
+                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
+                var reactionTimeData = new TimeSpan[szenarioTrials.Length]; // Array of Lists, size is equal to the number of sets
+
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Calculating trial switch reaction times...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                // Gets the trial-data for the subject
+                DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+
+                // Loops over all trials in the szenario
+                for (int trialCounter = 0; trialCounter < szenarioTrials.Length & !TaskManager.Cancel; trialCounter++)
+                {
+                    _myManipAnalysisGui.SetProgressBarValue((100.0 / szenarioTrials.Length) * trialCounter);
+
+                    reactionTimeData[trialCounter] = TimeSpan.FromMilliseconds(_mySqlWrapper.GetTrialSwitchReactionTimeMs(study, group, szenario, subject, turnDateTime, szenarioTrials[trialCounter]));
+                }
+
+                _myMatlabWrapper.CreateReactionTimesFigure(szenarioTrials.Length);
+                _myMatlabWrapper.SetWorkspaceData("reactionTimes", reactionTimeData.Select(t => t.TotalMilliseconds).ToArray());
+                _myMatlabWrapper.Plot("reactionTimes", 1);
+
+                _myManipAnalysisGui.WriteProgressInfo("Ready.");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+                TaskManager.Remove(Task.CurrentId);
+            }));
+        }
+
+        public void ExportTrialSwitchReactionTimes(string fileName, string study, string group, string szenario,
+            IEnumerable<SubjectInformationContainer> subjects, int turn)
+        {
+            TaskManager.PushBack(Task.Factory.StartNew(() =>
+            {
+                // Info output
+                _myManipAnalysisGui.WriteProgressInfo("Calculating trial switch reaction times...");
+                _myManipAnalysisGui.SetProgressBarValue(0);
+
+                var cache = new List<string>();
+                cache.Add("Study;Group;Szenario;Subject;Turn;Trial;ReactionTimeMs");
+
+                // List of all trials in the szenario
+                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
+
+                int totaltrials = szenarioTrials.Length * subjects.Count();
+                int processedTrials = 0;
+
+                // Loops over all subjects. Can also be only one.
+                for (int subjectCounter = 0; subjectCounter < subjects.Count() & !TaskManager.Cancel; subjectCounter++)
+                {
+                    SubjectInformationContainer subject = subjects.ElementAt(subjectCounter);
+
+                    // Gets the trial-data for the subject
+                    DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
+
+                    // Loops over all trials in the szenario
+                    for (int trialCounter = 0; trialCounter < szenarioTrials.Length & !TaskManager.Cancel; trialCounter++)
+                    {
+                        _myManipAnalysisGui.SetProgressBarValue((100.0 / totaltrials) * processedTrials);
+                        processedTrials++;
+
+                        cache.Add(study + ";" + group + ";" + szenario + ";" + subject + ";" + turn + ";" + szenarioTrials[trialCounter] + ";" + _mySqlWrapper.GetTrialSwitchReactionTimeMs(study, group, szenario, subject, turnDateTime, szenarioTrials[trialCounter]));
+                    }
+                }
+
+                var meanDataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                var meanDataFileWriter = new StreamWriter(meanDataFileStream);
+                for (int i = 0; i < cache.Count() & !TaskManager.Cancel; i++)
+                {
+                    meanDataFileWriter.WriteLine(cache[i]);
+                }
+
+                meanDataFileWriter.Close();
 
                 _myManipAnalysisGui.WriteProgressInfo("Ready.");
                 _myManipAnalysisGui.SetProgressBarValue(0);

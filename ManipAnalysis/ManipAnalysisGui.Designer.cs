@@ -126,11 +126,15 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_Others = new System.Windows.Forms.TabPage();
+            this.button_Others_ExportTrialSwitchReactionTimes = new System.Windows.Forms.Button();
+            this.button_Others_PlotTrialSwitchReactionTimes = new System.Windows.Forms.Button();
+            this.button_Others_ExportSetDurationTimes = new System.Windows.Forms.Button();
+            this.button_Others_PlotSetDurationTimes = new System.Windows.Forms.Button();
             this.label_Others_PlotErrorclampForces_At = new System.Windows.Forms.Label();
             this.label_Others_PlotErrorclampForces_Ms = new System.Windows.Forms.Label();
             this.textBox_Others_PlotErrorclampForces_MsIndex = new System.Windows.Forms.TextBox();
             this.button_Others_PlotForcefieldCompensationFactor = new System.Windows.Forms.Button();
-            this.checkBox_Others_GroupAverage = new System.Windows.Forms.CheckBox();
+            this.checkBox_Others_LiGroupAverage = new System.Windows.Forms.CheckBox();
             this.button_Others_ExportGroupLi = new System.Windows.Forms.Button();
             this.button_Others_PlotGroupLi = new System.Windows.Forms.Button();
             this.button_Others_ExportVelocityBaseline = new System.Windows.Forms.Button();
@@ -253,10 +257,8 @@ namespace ManipAnalysis
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.button_Others_ExportSetDurationTimes = new System.Windows.Forms.Button();
-            this.button_Others_PlotSetDurationTimes = new System.Windows.Forms.Button();
-            this.button_Others_ExportTrialSwitchReactionTimes = new System.Windows.Forms.Button();
-            this.button_Others_PlotTrialSwitchReactionTimes = new System.Windows.Forms.Button();
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup = new System.Windows.Forms.CheckBox();
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -1350,6 +1352,8 @@ namespace ManipAnalysis
             // 
             // tabPage_Others
             // 
+            this.tabPage_Others.Controls.Add(this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup);
+            this.tabPage_Others.Controls.Add(this.checkBox_Others_ExportSetDurationTimesWholeGroup);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportTrialSwitchReactionTimes);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotTrialSwitchReactionTimes);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportSetDurationTimes);
@@ -1358,7 +1362,7 @@ namespace ManipAnalysis
             this.tabPage_Others.Controls.Add(this.label_Others_PlotErrorclampForces_Ms);
             this.tabPage_Others.Controls.Add(this.textBox_Others_PlotErrorclampForces_MsIndex);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotForcefieldCompensationFactor);
-            this.tabPage_Others.Controls.Add(this.checkBox_Others_GroupAverage);
+            this.tabPage_Others.Controls.Add(this.checkBox_Others_LiGroupAverage);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportGroupLi);
             this.tabPage_Others.Controls.Add(this.button_Others_PlotGroupLi);
             this.tabPage_Others.Controls.Add(this.button_Others_ExportVelocityBaseline);
@@ -1385,6 +1389,46 @@ namespace ManipAnalysis
             this.tabPage_Others.Text = "Others";
             this.tabPage_Others.UseVisualStyleBackColor = true;
             this.tabPage_Others.Enter += new System.EventHandler(this.tabPage_Others_Enter);
+            // 
+            // button_Others_ExportTrialSwitchReactionTimes
+            // 
+            this.button_Others_ExportTrialSwitchReactionTimes.Location = new System.Drawing.Point(191, 321);
+            this.button_Others_ExportTrialSwitchReactionTimes.Name = "button_Others_ExportTrialSwitchReactionTimes";
+            this.button_Others_ExportTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_ExportTrialSwitchReactionTimes.TabIndex = 60;
+            this.button_Others_ExportTrialSwitchReactionTimes.Text = "Export trial switch reaction times";
+            this.button_Others_ExportTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
+            this.button_Others_ExportTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_ExportTrialSwitchReactionTimes_Click);
+            // 
+            // button_Others_PlotTrialSwitchReactionTimes
+            // 
+            this.button_Others_PlotTrialSwitchReactionTimes.Location = new System.Drawing.Point(15, 321);
+            this.button_Others_PlotTrialSwitchReactionTimes.Name = "button_Others_PlotTrialSwitchReactionTimes";
+            this.button_Others_PlotTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_PlotTrialSwitchReactionTimes.TabIndex = 59;
+            this.button_Others_PlotTrialSwitchReactionTimes.Text = "Plot trial switch reaction times";
+            this.button_Others_PlotTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
+            this.button_Others_PlotTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_PlotTrialSwitchReactionTimes_Click);
+            // 
+            // button_Others_ExportSetDurationTimes
+            // 
+            this.button_Others_ExportSetDurationTimes.Location = new System.Drawing.Point(191, 292);
+            this.button_Others_ExportSetDurationTimes.Name = "button_Others_ExportSetDurationTimes";
+            this.button_Others_ExportSetDurationTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_ExportSetDurationTimes.TabIndex = 58;
+            this.button_Others_ExportSetDurationTimes.Text = "Export set duration times";
+            this.button_Others_ExportSetDurationTimes.UseVisualStyleBackColor = true;
+            this.button_Others_ExportSetDurationTimes.Click += new System.EventHandler(this.button_Others_ExportSetDurationTimes_Click);
+            // 
+            // button_Others_PlotSetDurationTimes
+            // 
+            this.button_Others_PlotSetDurationTimes.Location = new System.Drawing.Point(15, 292);
+            this.button_Others_PlotSetDurationTimes.Name = "button_Others_PlotSetDurationTimes";
+            this.button_Others_PlotSetDurationTimes.Size = new System.Drawing.Size(170, 23);
+            this.button_Others_PlotSetDurationTimes.TabIndex = 57;
+            this.button_Others_PlotSetDurationTimes.Text = "Plot set duration times";
+            this.button_Others_PlotSetDurationTimes.UseVisualStyleBackColor = true;
+            this.button_Others_PlotSetDurationTimes.Click += new System.EventHandler(this.button_Others_PlotSetDurationTimes_Click);
             // 
             // label_Others_PlotErrorclampForces_At
             // 
@@ -1422,15 +1466,15 @@ namespace ManipAnalysis
             this.button_Others_PlotForcefieldCompensationFactor.UseVisualStyleBackColor = true;
             this.button_Others_PlotForcefieldCompensationFactor.Click += new System.EventHandler(this.button_Others_ForcefieldCompensationFactor_Click);
             // 
-            // checkBox_Others_GroupAverage
+            // checkBox_Others_LiGroupAverage
             // 
-            this.checkBox_Others_GroupAverage.AutoSize = true;
-            this.checkBox_Others_GroupAverage.Location = new System.Drawing.Point(367, 238);
-            this.checkBox_Others_GroupAverage.Name = "checkBox_Others_GroupAverage";
-            this.checkBox_Others_GroupAverage.Size = new System.Drawing.Size(97, 17);
-            this.checkBox_Others_GroupAverage.TabIndex = 52;
-            this.checkBox_Others_GroupAverage.Text = "Group average";
-            this.checkBox_Others_GroupAverage.UseVisualStyleBackColor = true;
+            this.checkBox_Others_LiGroupAverage.AutoSize = true;
+            this.checkBox_Others_LiGroupAverage.Location = new System.Drawing.Point(367, 238);
+            this.checkBox_Others_LiGroupAverage.Name = "checkBox_Others_LiGroupAverage";
+            this.checkBox_Others_LiGroupAverage.Size = new System.Drawing.Size(97, 17);
+            this.checkBox_Others_LiGroupAverage.TabIndex = 52;
+            this.checkBox_Others_LiGroupAverage.Text = "Group average";
+            this.checkBox_Others_LiGroupAverage.UseVisualStyleBackColor = true;
             // 
             // button_Others_ExportGroupLi
             // 
@@ -2643,45 +2687,25 @@ namespace ManipAnalysis
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
-            // button_Others_ExportSetDurationTimes
+            // checkBox_Others_ExportSetDurationTimesWholeGroup
             // 
-            this.button_Others_ExportSetDurationTimes.Location = new System.Drawing.Point(191, 292);
-            this.button_Others_ExportSetDurationTimes.Name = "button_Others_ExportSetDurationTimes";
-            this.button_Others_ExportSetDurationTimes.Size = new System.Drawing.Size(170, 23);
-            this.button_Others_ExportSetDurationTimes.TabIndex = 58;
-            this.button_Others_ExportSetDurationTimes.Text = "Export set duration times";
-            this.button_Others_ExportSetDurationTimes.UseVisualStyleBackColor = true;
-            this.button_Others_ExportSetDurationTimes.Click += new System.EventHandler(this.button_Others_ExportSetDurationTimes_Click);
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.AutoSize = true;
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Location = new System.Drawing.Point(367, 296);
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Name = "checkBox_Others_ExportSetDurationTimesWholeGroup";
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.TabIndex = 61;
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Text = "Whole group";
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.UseVisualStyleBackColor = true;
             // 
-            // button_Others_PlotSetDurationTimes
+            // checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup
             // 
-            this.button_Others_PlotSetDurationTimes.Location = new System.Drawing.Point(15, 292);
-            this.button_Others_PlotSetDurationTimes.Name = "button_Others_PlotSetDurationTimes";
-            this.button_Others_PlotSetDurationTimes.Size = new System.Drawing.Size(170, 23);
-            this.button_Others_PlotSetDurationTimes.TabIndex = 57;
-            this.button_Others_PlotSetDurationTimes.Text = "Plot set duration times";
-            this.button_Others_PlotSetDurationTimes.UseVisualStyleBackColor = true;
-            this.button_Others_PlotSetDurationTimes.Click += new System.EventHandler(this.button_Others_PlotSetDurationTimes_Click);
-            // 
-            // button_Others_ExportTrialSwitchReactionTimes
-            // 
-            this.button_Others_ExportTrialSwitchReactionTimes.Location = new System.Drawing.Point(191, 321);
-            this.button_Others_ExportTrialSwitchReactionTimes.Name = "button_Others_ExportTrialSwitchReactionTimes";
-            this.button_Others_ExportTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
-            this.button_Others_ExportTrialSwitchReactionTimes.TabIndex = 60;
-            this.button_Others_ExportTrialSwitchReactionTimes.Text = "Export trial switch reaction times";
-            this.button_Others_ExportTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
-            this.button_Others_ExportTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_ExportTrialSwitchReactionTimes_Click);
-            // 
-            // button_Others_PlotTrialSwitchReactionTimes
-            // 
-            this.button_Others_PlotTrialSwitchReactionTimes.Location = new System.Drawing.Point(15, 321);
-            this.button_Others_PlotTrialSwitchReactionTimes.Name = "button_Others_PlotTrialSwitchReactionTimes";
-            this.button_Others_PlotTrialSwitchReactionTimes.Size = new System.Drawing.Size(170, 23);
-            this.button_Others_PlotTrialSwitchReactionTimes.TabIndex = 59;
-            this.button_Others_PlotTrialSwitchReactionTimes.Text = "Plot trial switch reaction times";
-            this.button_Others_PlotTrialSwitchReactionTimes.UseVisualStyleBackColor = true;
-            this.button_Others_PlotTrialSwitchReactionTimes.Click += new System.EventHandler(this.button_Others_PlotTrialSwitchReactionTimes_Click);
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.AutoSize = true;
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Location = new System.Drawing.Point(367, 325);
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Name = "checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup";
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.TabIndex = 62;
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Text = "Whole group";
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.UseVisualStyleBackColor = true;
             // 
             // ManipAnalysisGui
             // 
@@ -2954,7 +2978,7 @@ namespace ManipAnalysis
         private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaseline;
         private System.Windows.Forms.Button button_Others_ExportGroupLi;
         private System.Windows.Forms.Button button_Others_PlotGroupLi;
-        private System.Windows.Forms.CheckBox checkBox_Others_GroupAverage;
+        private System.Windows.Forms.CheckBox checkBox_Others_LiGroupAverage;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowErrorclampTrialsExclusivly;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic2_ShowErrorclampTrials;
         private System.Windows.Forms.CheckBox checkBox_DescriptiveStatistic1_ShowErrorclampTrialsExclusivly;
@@ -2980,6 +3004,8 @@ namespace ManipAnalysis
         private System.Windows.Forms.Button button_Others_PlotTrialSwitchReactionTimes;
         private System.Windows.Forms.Button button_Others_ExportSetDurationTimes;
         private System.Windows.Forms.Button button_Others_PlotSetDurationTimes;
+        private System.Windows.Forms.CheckBox checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup;
+        private System.Windows.Forms.CheckBox checkBox_Others_ExportSetDurationTimesWholeGroup;
     }
 }
 

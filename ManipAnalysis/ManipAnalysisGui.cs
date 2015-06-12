@@ -272,7 +272,7 @@ namespace ManipAnalysis
             if (tabControl.InvokeRequired)
             {
                 TabControlCallback enableTabPages = EnableTabPages;
-                tabControl.Invoke(enableTabPages, new object[] {enable});
+                tabControl.Invoke(enableTabPages, new object[] { enable });
             }
             else
             {
@@ -285,7 +285,7 @@ namespace ManipAnalysis
             if (progressBar.InvokeRequired)
             {
                 ProgressBarCallback setProgressBarValue = SetProgressBarValue;
-                progressBar.Invoke(setProgressBarValue, new object[] {value});
+                progressBar.Invoke(setProgressBarValue, new object[] { value });
             }
             else
             {
@@ -302,7 +302,7 @@ namespace ManipAnalysis
             if (label_ProgressInfo.InvokeRequired)
             {
                 ProgressLabelCallback writeProgressInfo = WriteProgressInfo;
-                label_ProgressInfo.Invoke(writeProgressInfo, new object[] {text});
+                label_ProgressInfo.Invoke(writeProgressInfo, new object[] { text });
             }
             else
             {
@@ -477,12 +477,12 @@ namespace ManipAnalysis
                                         if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
                                             trials))
                                         {
-                                            typeof (ListBox).InvokeMember("RefreshItems",
+                                            typeof(ListBox).InvokeMember("RefreshItems",
                                                 BindingFlags.NonPublic | BindingFlags.Instance |
                                                 BindingFlags.InvokeMethod,
                                                 null,
                                                 listBox_DescriptiveStatistic1_SelectedTrials,
-                                                new object[] {});
+                                                new object[] { });
                                             canBeUpdated = true;
                                         }
                                     }
@@ -522,7 +522,7 @@ namespace ManipAnalysis
         private void button_StatisticPlots_PlotMeanStd_Click(object sender, EventArgs e)
         {
             int pdTime = -1;
-            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" || 
+            if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Abs" ||
                 comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance ?ms - Sign")
             {
                 var inputForm = new PerpendicularDisplacementTimeInputForm();
@@ -572,12 +572,12 @@ namespace ManipAnalysis
                                         if (temp.UpdateStatisticPlotContainer(study, group, szenario, subject, turn,
                                             trials))
                                         {
-                                            typeof (ListBox).InvokeMember("RefreshItems",
+                                            typeof(ListBox).InvokeMember("RefreshItems",
                                                 BindingFlags.NonPublic | BindingFlags.Instance |
                                                 BindingFlags.InvokeMethod,
                                                 null,
                                                 listBox_DescriptiveStatistic1_SelectedTrials,
-                                                new object[] {});
+                                                new object[] { });
                                             canBeUpdated = true;
                                         }
                                     }
@@ -1324,13 +1324,13 @@ namespace ManipAnalysis
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                                 subject, turn, target, trials))
                                             {
-                                                typeof (ListBox).InvokeMember("RefreshItems",
+                                                typeof(ListBox).InvokeMember("RefreshItems",
                                                     BindingFlags.NonPublic |
                                                     BindingFlags.Instance |
                                                     BindingFlags.InvokeMethod,
                                                     null,
                                                     listBox_TrajectoryVelocity_SelectedTrials,
-                                                    new object[] {});
+                                                    new object[] { });
                                                 canBeUpdated = true;
                                             }
                                         }
@@ -1389,13 +1389,13 @@ namespace ManipAnalysis
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                                 subject, turn, target, trials))
                                             {
-                                                typeof (ListBox).InvokeMember("RefreshItems",
+                                                typeof(ListBox).InvokeMember("RefreshItems",
                                                     BindingFlags.NonPublic |
                                                     BindingFlags.Instance |
                                                     BindingFlags.InvokeMethod,
                                                     null,
                                                     listBox_TrajectoryVelocity_SelectedTrials,
-                                                    new object[] {});
+                                                    new object[] { });
                                                 canBeUpdated = true;
                                             }
                                         }
@@ -1544,7 +1544,7 @@ namespace ManipAnalysis
             string study = comboBox_Others_Study.SelectedItem.ToString();
             string group = comboBox_Others_Group.SelectedItem.ToString();
             string szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-            var subject = (SubjectInformationContainer) comboBox_Others_Subject.SelectedItem;
+            var subject = (SubjectInformationContainer)comboBox_Others_Subject.SelectedItem;
 
             IEnumerable<string> turnNames = _manipAnalysisFunctions.GetTurns(study, group, szenario, subject);
             if (turnNames != null)
@@ -1939,7 +1939,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
@@ -1957,13 +1957,13 @@ namespace ManipAnalysis
                                 if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                     subject, turn, target, trials))
                                 {
-                                    typeof (ListBox).InvokeMember("RefreshItems",
+                                    typeof(ListBox).InvokeMember("RefreshItems",
                                         BindingFlags.NonPublic |
                                         BindingFlags.Instance |
                                         BindingFlags.InvokeMethod,
                                         null,
                                         listBox_BaselineRecalculation_SelectedTrials,
-                                        new object[] {});
+                                        new object[] { });
                                     canBeUpdated = true;
                                 }
                             }
@@ -1995,7 +1995,7 @@ namespace ManipAnalysis
                 string study = comboBox_BaselineRecalculation_Study.SelectedItem.ToString();
                 string group = comboBox_BaselineRecalculation_Group.SelectedItem.ToString();
                 string szenario = comboBox_BaselineRecalculation_Szenario.SelectedItem.ToString();
-                var subject = (SubjectInformationContainer) comboBox_BaselineRecalculation_Subject.SelectedItem;
+                var subject = (SubjectInformationContainer)comboBox_BaselineRecalculation_Subject.SelectedItem;
                 string[] targets = listBox_BaselineRecalculation_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
@@ -2013,13 +2013,13 @@ namespace ManipAnalysis
                                 if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
                                     subject, turn, target, trials))
                                 {
-                                    typeof (ListBox).InvokeMember("RefreshItems",
+                                    typeof(ListBox).InvokeMember("RefreshItems",
                                         BindingFlags.NonPublic |
                                         BindingFlags.Instance |
                                         BindingFlags.InvokeMethod,
                                         null,
                                         listBox_BaselineRecalculation_SelectedTrials,
-                                        new object[] {});
+                                        new object[] { });
                                     canBeUpdated = true;
                                 }
                             }
@@ -2117,7 +2117,7 @@ namespace ManipAnalysis
         {
             IEnumerable<SubjectInformationContainer> subjects;
 
-            if (checkBox_Others_GroupAverage.Checked)
+            if (checkBox_Others_LiGroupAverage.Checked)
             {
                 subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
             }
@@ -2162,13 +2162,15 @@ namespace ManipAnalysis
                                       + comboBox_Others_Group.SelectedItem
                                       + "-"
                                       + comboBox_Others_Szenario.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Turn.SelectedItem.ToString()
                                       + "-LearningIndex";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 IEnumerable<SubjectInformationContainer> subjects;
 
-                if (checkBox_Others_GroupAverage.Checked)
+                if (checkBox_Others_LiGroupAverage.Checked)
                 {
                     subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
                 }
@@ -2315,17 +2317,114 @@ namespace ManipAnalysis
 
         private void button_Others_PlotTrialSwitchReactionTimes_Click(object sender, EventArgs e)
         {
-            WriteToLogBox("Not Implemented: PlotTrialSwitchReactionTimes");
+            _manipAnalysisFunctions.PlotTrialSwitchReactionTimes(comboBox_Others_Study.SelectedItem.ToString(),
+    comboBox_Others_Group.SelectedItem.ToString(),
+    comboBox_Others_Szenario.SelectedItem.ToString(),
+    (SubjectInformationContainer)
+        comboBox_Others_Subject.SelectedItem,
+    Convert.ToInt32(
+        comboBox_Others_Turn.SelectedItem.ToString()
+            .Substring("Turn".Length)));
         }
 
         private void button_Others_ExportSetDurationTimes_Click(object sender, EventArgs e)
         {
-            WriteToLogBox("Not Implemented: ExportSetDurationTimes");
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Reset();
+            saveFileDialog.Title = @"Save set duration times file";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_Others_Study.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Group.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Szenario.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Turn.SelectedItem.ToString()
+                                      + "-SetDurationTimes";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                IEnumerable<SubjectInformationContainer> subjects;
+
+                if (checkBox_Others_ExportSetDurationTimesWholeGroup.Checked)
+                {
+                    subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
+                }
+                else
+                {
+                    subjects = new List<SubjectInformationContainer> {(SubjectInformationContainer) comboBox_Others_Subject.SelectedItem};
+                }
+
+                _manipAnalysisFunctions.ExportSetDurationTimes(saveFileDialog.FileName,
+                    comboBox_Others_Study.SelectedItem.ToString(),
+                    comboBox_Others_Group.SelectedItem.ToString(),
+                    comboBox_Others_Szenario.SelectedItem.ToString(),
+                    subjects,
+                    Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)));
+            }
         }
 
         private void button_Others_ExportTrialSwitchReactionTimes_Click(object sender, EventArgs e)
         {
-            WriteToLogBox("Not Implemented: ExportTrialSwitchReactionTimes");
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Reset();
+            saveFileDialog.Title = @"Save trial switch reaction times file";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".csv";
+            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000")
+                                      + "."
+                                      + DateTime.Now.Month.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Day.ToString("00")
+                                      + "-"
+                                      + DateTime.Now.Hour.ToString("00")
+                                      + "."
+                                      + DateTime.Now.Minute.ToString("00")
+                                      + "-"
+                                      + comboBox_Others_Study.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Group.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Szenario.SelectedItem
+                                      + "-"
+                                      + comboBox_Others_Turn.SelectedItem.ToString()
+                                      + "-TrialSwitchReactionTimes";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                IEnumerable<SubjectInformationContainer> subjects;
+
+                if (checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Checked)
+                {
+                    subjects = comboBox_Others_Subject.Items.Cast<SubjectInformationContainer>();
+                }
+                else
+                {
+                    subjects = new List<SubjectInformationContainer> { (SubjectInformationContainer)comboBox_Others_Subject.SelectedItem };
+                }
+
+                _manipAnalysisFunctions.ExportTrialSwitchReactionTimes(saveFileDialog.FileName,
+                    comboBox_Others_Study.SelectedItem.ToString(),
+                    comboBox_Others_Group.SelectedItem.ToString(),
+                    comboBox_Others_Szenario.SelectedItem.ToString(),
+                    subjects,
+                    Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)));
+            }
         }
     }
 }

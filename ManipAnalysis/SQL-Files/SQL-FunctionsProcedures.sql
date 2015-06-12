@@ -370,6 +370,50 @@ BEGIN
 				szenario_trial_number = @szenarioTrialNumber;
 END
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE procedure [dbo].[getTrialSwitchReactionTime]
+	@studyName varchar(max),
+	@groupName varchar(max),
+	@szenarioName varchar(max),
+	@subjectID int,
+	@turnDateTime datetime2,
+	@szenarioTrialNumber int,
+	@trialSwitchTimeMs int OUTPUT
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @trialId INT;
+	DECLARE @startTime datetime2;
+	DECLARE @endTime datetime2;
+
+	SELECT @trialId = _trial.id FROM ( _trial
+				INNER JOIN _measure_file on _measure_file.id = _trial.measure_file_id
+				INNER JOIN _study on _study.id = _trial.study_id
+				INNER JOIN _group on _group.id = _trial.group_id
+				INNER JOIN _szenario on _szenario.id = _trial.szenario_id
+				INNER JOIN _szenario_trial_number on _szenario_trial_number.id = _trial.szenario_trial_number_id)
+				WHERE study_name = @studyName AND
+				group_name = @groupName AND
+				subject_id = @subjectID AND
+				szenario_name = @szenarioName AND
+				creation_time = @turnDateTime AND
+				szenario_trial_number = @szenarioTrialNumber;
+
+	SELECT TOP 1 @startTime = _measure_data_filtered.time_stamp FROM _measure_data_filtered
+				WHERE _measure_data_filtered.trial_id = @trialId AND _measure_data_filtered.position_status = 0
+				ORDER BY _measure_data_filtered.time_stamp;
+	SELECT TOP 1 @endTime = _measure_data_filtered.time_stamp FROM _measure_data_filtered
+				WHERE _measure_data_filtered.trial_id = @trialId AND _measure_data_filtered.position_status = 1
+				ORDER BY _measure_data_filtered.time_stamp;
+
+	SELECT @trialSwitchTimeMs = DATEDIFF("MS",@startTime,@endTime);
+END
 
 
 GO

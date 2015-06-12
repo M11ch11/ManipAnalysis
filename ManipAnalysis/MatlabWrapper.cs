@@ -146,6 +146,26 @@ namespace ManipAnalysis
             }
         }
 
+        public void CreateReactionTimesFigure(int trialCount)
+        {
+            try
+            {
+                Execute("figure");
+                Execute("set(gcf,'Name','Trial switch reaction time plot','NumberTitle','off');");
+                Execute("grid on");
+                Execute("hold all");
+                Execute("xlabel('[Trial]');");
+                Execute("ylabel('Time [ms]');");
+                Execute("axis([1 " + trialCount + " 0 1000]);");
+                Execute("axis manual;");
+                Execute("set(gca,'YGrid','on','YTick',0:100:1000,'XTick',1:1:" + trialCount + ");");
+            }
+            catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
         public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
             string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit,
             double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
