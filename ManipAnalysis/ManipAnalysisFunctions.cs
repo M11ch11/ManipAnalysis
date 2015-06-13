@@ -5867,43 +5867,17 @@ namespace ManipAnalysis
         {
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
-                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
-                // List of all trials in the szenario
-                int setCount = szenarioTrials.Length / 16; // The number of sets in the szenario
-                var setTimeData = new TimeSpan[setCount]; // Array of Lists, size is equal to the number of sets
-
                 // Info output
                 _myManipAnalysisGui.WriteProgressInfo("Calculating set times...");
                 _myManipAnalysisGui.SetProgressBarValue(0);
 
-                    // Gets the trial-data for the subject
                 DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
-                // Loops over all sets in the szenario
-                for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                {
-                    _myManipAnalysisGui.SetProgressBarValue((100.0 / setCount) * setCounter);
+                List<Tuple<int, int>> setDurationTimes = _mySqlWrapper.GetSetDurationTimesMs(study, group, szenario, subject, turnDateTime);
+                setDurationTimes = setDurationTimes.OrderBy(t => t.Item1).ToList();
 
-                    // Loops over all trials in the sets
-                    //for (int trialCounter = (setCounter*16); trialCounter < ((setCounter + 1)*16) & !TaskManager.Cancel; trialCounter++)
-                    //{
-                    int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(setCounter * 16)]);
-                    int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(((setCounter + 1) * 16) - 1)]);
-
-                    DataSet fistTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(firstTrialId);
-                    DataSet lastTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(lastTrialId);
-
-
-                    DateTime startTime = Convert.ToDateTime(fistTrialDataSet.Tables[0].Rows[0]["time_stamp"]);
-                    DateTime endTime = Convert.ToDateTime(lastTrialDataSet.Tables[0].Rows[lastTrialDataSet.Tables[0].Rows.Count - 1]["time_stamp"]);
-
-                    setTimeData[setCounter] = new TimeSpan(endTime.Ticks - startTime.Ticks);
-                }
-
-                //}
-
-                _myMatlabWrapper.CreateSetTimesFigure(setCount);
-                _myMatlabWrapper.SetWorkspaceData("setTimes", setTimeData.Select(t => t.TotalSeconds).ToArray());
+                _myMatlabWrapper.CreateSetTimesFigure(setDurationTimes.Count);
+                _myMatlabWrapper.SetWorkspaceData("setTimes", setDurationTimes.Select(t => t.Item2/1000).ToArray());
                 _myMatlabWrapper.Plot("setTimes", 1);
 
                 _myManipAnalysisGui.WriteProgressInfo("Ready.");
@@ -5924,43 +5898,30 @@ namespace ManipAnalysis
                 var cache = new List<string>();
                 cache.Add("Study;Group;Szenario;Subject;Turn;Set;DurationMs");
 
-                // List of all trials in the szenario
-                int[] szenarioTrials = _mySqlWrapper.GetSzenarioTrials(study, szenario, true, false, true, false).Select(t => Convert.ToInt32(t.Substring(6, 3))).OrderBy(t => t).ToArray();
-                
-                // The number of sets in the szenario
-                int setCount = szenarioTrials.Length / 16;
-
-                int totalSets = setCount*subjects.Count();
-                int processedSets = 0;
+                int totalSubjects = subjects.Count();
+                int processedSubjects = 0;
 
                 // Loops over all subjects. Can also be only one.
                 foreach(SubjectInformationContainer subject in subjects)
                 {
+                    _myManipAnalysisGui.SetProgressBarValue((100.0 / totalSubjects) * processedSubjects);
+                    processedSubjects++;
+
                     // Gets the trial-data for the subject
                     DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
-                    // Loops over all sets in the szenario
-                    for (int setCounter = 0; setCounter < setCount & !TaskManager.Cancel; setCounter++)
-                    {
-                        _myManipAnalysisGui.SetProgressBarValue((100.0 / totalSets) * processedSets);
-                        processedSets++;
+                    List<Tuple<int, int>> setDurationTimes = _mySqlWrapper.GetSetDurationTimesMs(study, group, szenario, subject, turnDateTime);
+                    setDurationTimes = setDurationTimes.OrderBy(t => t.Item1).ToList();
 
-                        int firstTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(setCounter*16)]);
-                        int lastTrialId = _mySqlWrapper.GetTrailID(study, group, szenario, subject, turnDateTime, szenarioTrials[(((setCounter + 1)*16) - 1)]);
-
-                        DataSet fistTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(firstTrialId);
-                        DataSet lastTrialDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(lastTrialId);
-
-                        DateTime startTime = Convert.ToDateTime(fistTrialDataSet.Tables[0].Rows[0]["time_stamp"]);
-                        DateTime endTime = Convert.ToDateTime(lastTrialDataSet.Tables[0].Rows[lastTrialDataSet.Tables[0].Rows.Count - 1]["time_stamp"]);
-
+                    for (int setCounter = 0; setCounter < setDurationTimes.Count & !TaskManager.Cancel; setCounter++)
+                    { 
                         cache.Add(study + ";" +
                             group + ";" +
                             szenario + ";" +
                             subject + ";" +
                             turn + ";" +
-                            (setCounter+1) + ";" +
-                            Convert.ToInt32(new TimeSpan(endTime.Ticks - startTime.Ticks).TotalMilliseconds));
+                            setDurationTimes[setCounter].Item1 + ";" +
+                            setDurationTimes[setCounter].Item2);
                     }
                 }
 

@@ -1149,6 +1149,71 @@ namespace ManipAnalysis
             return retVal;
         }
 
+        public List<Tuple<int,int>> GetSetDurationTimesMs(string study, string group, string szenario, SubjectInformationContainer subject,
+            DateTime turnDateTime)
+        {
+            List<Tuple<int, int>> retVal = new List<Tuple<int, int>>();
+
+            _sqlCmd.Parameters.Clear();
+
+            _sqlCmd.CommandType = CommandType.StoredProcedure;
+
+            _sqlCmd.CommandText = "getSetDurationTimes";
+
+            _sqlCmd.Parameters.Add(new SqlParameter("@studyName", study));
+            _sqlCmd.Parameters.Add(new SqlParameter("@groupName", group));
+            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
+            _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
+            _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
+
+            int executeTryCounter = 5;
+            while (executeTryCounter > 0)
+            {
+                try
+                {
+                    OpenSqlConnection();
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
+
+                    if (sqlRdr.HasRows)
+                    {
+                        while (sqlRdr.Read())
+                        {
+                            if (!sqlRdr.IsDBNull(0) && !sqlRdr.IsDBNull(1))
+                            {
+                                retVal.Add(new Tuple<int, int>(sqlRdr.GetInt32(0), sqlRdr.GetInt32(1)));
+                            }
+                        }
+                        sqlRdr.Close();
+                    }
+                    else
+                    {
+                        sqlRdr.Close();
+                    }
+                    executeTryCounter = 0;
+                }
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                    executeTryCounter--;
+                    if (executeTryCounter == 0)
+                    {
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+
+                        DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
+                            @"Try again?", buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            executeTryCounter = 5;
+                        }
+                    }
+                }
+            }
+
+            return retVal;
+        }
+
         public int GetBaselineID(string study, string group, string szenario, SubjectInformationContainer subject,
             int target)
         {
