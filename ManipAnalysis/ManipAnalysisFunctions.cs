@@ -5934,10 +5934,8 @@ namespace ManipAnalysis
                 int processedSets = 0;
 
                 // Loops over all subjects. Can also be only one.
-                for (int subjectCounter = 0; subjectCounter < subjects.Count() & !TaskManager.Cancel; subjectCounter++)
+                foreach(SubjectInformationContainer subject in subjects)
                 {
-                    SubjectInformationContainer subject = subjects.ElementAt(subjectCounter);
-
                     // Gets the trial-data for the subject
                     DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
@@ -6033,10 +6031,8 @@ namespace ManipAnalysis
                 int processedTrials = 0;
 
                 // Loops over all subjects. Can also be only one.
-                for (int subjectCounter = 0; subjectCounter < subjects.Count() & !TaskManager.Cancel; subjectCounter++)
+                foreach (SubjectInformationContainer subject in subjects)
                 {
-                    SubjectInformationContainer subject = subjects.ElementAt(subjectCounter);
-
                     // Gets the trial-data for the subject
                     DateTime turnDateTime = _mySqlWrapper.GetTurnDateTime(study, group, szenario, subject, turn);
 
