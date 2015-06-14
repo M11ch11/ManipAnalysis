@@ -47,7 +47,7 @@ namespace ManipAnalysis
 
             _sqlCon.InfoMessage += OnSqlConInfoMessage;
 
-            _sqlCmd = new SqlCommand {Connection = _sqlCon, CommandTimeout = 600};
+            _sqlCmd = new SqlCommand {Connection = _sqlCon, CommandTimeout = 3600};
         }
 
         private void OnSqlConInfoMessage(object sender, SqlInfoMessageEventArgs e)
