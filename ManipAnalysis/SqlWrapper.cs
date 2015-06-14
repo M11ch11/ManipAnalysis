@@ -1096,10 +1096,10 @@ namespace ManipAnalysis
             return retVal;
         }
 
-        public int GetTrialSwitchReactionTimeMs(string study, string group, string szenario, SubjectInformationContainer subject,
-            DateTime turnDateTime, int szenarioTrialNumber)
+        public List<Tuple<int, int>> GetTrialSwitchReactionTimeMs(string study, string group, string szenario, SubjectInformationContainer subject,
+            DateTime turnDateTime)
         {
-            int retVal = -1;
+            List<Tuple<int, int>> retVal = new List<Tuple<int, int>>();
 
             _sqlCmd.Parameters.Clear();
 
@@ -1112,10 +1112,6 @@ namespace ManipAnalysis
             _sqlCmd.Parameters.Add(new SqlParameter("@szenarioName", szenario));
             _sqlCmd.Parameters.Add(new SqlParameter("@subjectID", subject.ID));
             _sqlCmd.Parameters.Add(new SqlParameter("@turnDateTime", turnDateTime));
-            _sqlCmd.Parameters.Add(new SqlParameter("@szenarioTrialNumber", szenarioTrialNumber));
-            _sqlCmd.Parameters.Add("@trialSwitchTimeMs", SqlDbType.Int);
-
-            _sqlCmd.Parameters["@trialSwitchTimeMs"].Direction = ParameterDirection.Output;
 
             int executeTryCounter = 5;
             while (executeTryCounter > 0)
@@ -1123,8 +1119,23 @@ namespace ManipAnalysis
                 try
                 {
                     OpenSqlConnection();
-                    _sqlCmd.ExecuteNonQuery();
-                    retVal = Convert.ToInt32(_sqlCmd.Parameters["@trialSwitchTimeMs"].Value);
+                    SqlDataReader sqlRdr = _sqlCmd.ExecuteReader();
+
+                    if (sqlRdr.HasRows)
+                    {
+                        while (sqlRdr.Read())
+                        {
+                            if (!sqlRdr.IsDBNull(0) && !sqlRdr.IsDBNull(1))
+                            {
+                                retVal.Add(new Tuple<int, int>(sqlRdr.GetInt32(0), sqlRdr.GetInt32(1)));
+                            }
+                        }
+                        sqlRdr.Close();
+                    }
+                    else
+                    {
+                        sqlRdr.Close();
+                    }
                     executeTryCounter = 0;
                 }
                 catch (Exception ex)
@@ -1134,6 +1145,7 @@ namespace ManipAnalysis
                     if (executeTryCounter == 0)
                     {
                         const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
 
                         DialogResult result = MessageBox.Show(@"Tried to execute SQL command 5 times, try another 5?",
                             @"Try again?", buttons);
