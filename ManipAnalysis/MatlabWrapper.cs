@@ -320,7 +320,7 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void DrawTargetsStudy07(double diameter, double radius, double centerX, double centerY)
+        public void DrawTargetsCenterOut3(double diameter, double radius, double centerX, double centerY)
         {
             string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
             string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
@@ -338,7 +338,7 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void DrawTargetsStudy06(double diameter, double radius, double centerX, double centerY)
+        public void DrawTargetsCenterOut8(double diameter, double radius, double centerX, double centerY)
         {
             string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
             string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');

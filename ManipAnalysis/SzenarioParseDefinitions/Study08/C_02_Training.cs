@@ -3,11 +3,11 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class Szenario42 : ISzenarioDefinition
+    internal class C_02_Training : ISzenarioDefinition
     {
-        public const string StudyName = "Study06";
+        public const string StudyName = "Study08";
 
-        public const string SzenarioName = "Szenario42";
+        public const string SzenarioName = "C_02_Training";
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
@@ -96,7 +96,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 trial.Handedness = Trial.HandednessEnum.RightHand;
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 96)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 240)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -108,7 +108,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 96;
+            return trialCount == 240;
         }
     }
 }

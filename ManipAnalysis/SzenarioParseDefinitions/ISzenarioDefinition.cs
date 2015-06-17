@@ -9,10 +9,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal abstract class ISzenarioDefinition
     {
-        public const string StudyName = "Unknown";
-
-        public const string SzenarioName = "Unknown";
-
         public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName, Vector3 offset)
         {
             var trialsContainer = new List<Trial>();
