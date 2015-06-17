@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class LRc_02_Training_NoFFTransfer : ISzenarioDefinition
     {
-        public const string StudyName = "Study07";
+        public const string StudyName = "Study 7";
 
         public const string SzenarioName = "LR_02_LRc_Training&NoFFTransfer";
 

@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class RLd_02_Training_Transfer : ISzenarioDefinition
     {
-        public const string StudyName = "Study07";
+        public const string StudyName = "Study 7";
 
         public const string SzenarioName = "RL_02_RLd_Training&Transfer";
 

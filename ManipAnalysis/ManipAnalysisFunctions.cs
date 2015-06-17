@@ -1989,16 +1989,24 @@ namespace ManipAnalysis_v2
                                 {
                                     DateTime turnDateTime = _myDatabaseWrapper.GetTurns(study, group, "C_02_Training", subject).ElementAt(0);
 
-                                    List<Trial> baselineTrials = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(1, 16), baselineFields).ToList();
+                                    List<Trial> baselineTrialsNull = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(1, 16), baselineFields).ToList();
+                                    List<Trial> baselineTrialsForceChannel = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(17, 32), baselineFields).ToList();
 
-                                    baselineTrials.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                    baselineTrials.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                    baselineTrials.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
-                                    baselineTrials.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
 
-                                    if (baselineTrials.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    baselineTrialsForceChannel.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsForceChannel.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsForceChannel.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsForceChannel.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    if ((baselineTrialsNull.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand)) &&
+                                        (baselineTrialsForceChannel.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW && t.Handedness == Trial.HandednessEnum.RightHand)))
                                     {
-                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrials));
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsNull));
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsForceChannel));
                                     }
                                     else
                                     {

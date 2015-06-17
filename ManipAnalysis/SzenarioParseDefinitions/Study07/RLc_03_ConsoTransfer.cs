@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class RLc_03_ConsoTransfer : ISzenarioDefinition
     {
-        public const string StudyName = "Study07";
+        public const string StudyName = "Study 7";
 
         public const string SzenarioName = "RL_03_RLc_ConsoTransfer";
 
