@@ -114,7 +114,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 trial.Handedness = Trial.HandednessEnum.RightHand;
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 176)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 96)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -126,7 +126,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 176;
+            return trialCount == 96;
         }
     }
 }
