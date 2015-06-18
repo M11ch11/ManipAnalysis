@@ -2486,6 +2486,39 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
+                                        else if (trial.Study == "Study 8")
+                                        {
+                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                         else
                                         {
                                             baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
