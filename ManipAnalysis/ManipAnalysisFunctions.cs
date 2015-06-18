@@ -1990,7 +1990,7 @@ namespace ManipAnalysis_v2
                                     DateTime turnDateTime = _myDatabaseWrapper.GetTurns(study, group, "C_02_Training", subject).ElementAt(0);
 
                                     List<Trial> baselineTrialsNull = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(1, 16), baselineFields).ToList();
-                                    List<Trial> baselineTrialsForceChannel = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(17, 32), baselineFields).ToList();
+                                    List<Trial> baselineTrialsForceChannel = _myDatabaseWrapper.GetTrials(study, group, "C_02_Training", subject, turnDateTime, Enumerable.Range(17, 16), baselineFields).ToList();
 
                                     baselineTrialsNull.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
                                     baselineTrialsNull.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
@@ -2438,10 +2438,7 @@ namespace ManipAnalysis_v2
 
                                 try
                                 {
-                                    foreach (Trial
-                                        trial
-                                        in
-                                        taskTrialList)
+                                    foreach (Trial trial in taskTrialList)
                                     {
                                         if (TaskManager.Cancel)
                                         {
@@ -2464,9 +2461,12 @@ namespace ManipAnalysis_v2
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
-                                                    lock (baselineBuffer)
+                                                    if (baseline != null)
                                                     {
-                                                        baselineBuffer.Add(baseline);
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2476,9 +2476,12 @@ namespace ManipAnalysis_v2
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
-                                                    lock (baselineBuffer)
+                                                    if (baseline != null)
                                                     {
-                                                        baselineBuffer.Add(baseline);
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2489,9 +2492,12 @@ namespace ManipAnalysis_v2
                                             if (baseline == null)
                                             {
                                                 baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
-                                                lock (baselineBuffer)
+                                                if (baseline != null)
                                                 {
-                                                    baselineBuffer.Add(baseline);
+                                                    lock (baselineBuffer)
+                                                    {
+                                                        baselineBuffer.Add(baseline);
+                                                    }
                                                 }
                                             }
                                         }
