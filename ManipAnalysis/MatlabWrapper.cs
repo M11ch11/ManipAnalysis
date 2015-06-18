@@ -249,10 +249,10 @@ namespace ManipAnalysis_v2
                 Execute("axis manual;");
                 Execute("xlabel('Displacement [m]');");
                 Execute("ylabel('Displacement [m]');");
-                //Execute("set(gca,'YDir','rev'); ");
+                //Execute("set(gca,'YDir','rev'); "); // Old BioMotionBot Bug
+                Execute("set(gca, 'XTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(gca, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(gca, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+                Execute("set(gca, 'YTickLabel', {'-0.1', '-0.05', '0', '0.05', '0.1'});");
                 Execute("set(gca,'PlotBoxAspectRatio',[1 1 1]);");
             }
             catch (Exception
@@ -270,10 +270,10 @@ namespace ManipAnalysis_v2
                 Execute("set(gcf,'Name','" + figureName + "','NumberTitle','off');");
                 Execute("axis1 = gca;");
                 Execute("set(axis1,'XColor','k','YColor','k')");
-                //Execute("set(axis1,'YDir','rev'); ");
+                //Execute("set(axis1,'YDir','rev'); "); // Old BioMotionBot Bug
+                Execute("set(axis1, 'XTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis1, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(axis1, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(axis1, 'YTickLabel', {'0.1', '0.05', '0', '-0.05', '-0.1'});");
+                Execute("set(axis1, 'YTickLabel', {'-0.1', '-0.05', '0', '0.05', '0.1'});");
                 Execute("set(axis1,'PlotBoxAspectRatio',[1 1 1]);");
                 Execute("axis([-0.13 0.13 -0.13 0.13]);");
                 Execute("axis manual;");
@@ -281,8 +281,8 @@ namespace ManipAnalysis_v2
                 Execute("ylabel('Displacement [m]');");
                 Execute("grid on");
                 Execute("axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
+                Execute("set(axis2, 'XTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(axis2, 'ZTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'XTickLabel', {'', '', '', '', ''});");
                 Execute("set(axis2, 'YTickLabel', {'', '', '', '', ''});");
                 Execute("set(axis2,'PlotBoxAspectRatio',[1 1 1]);");
