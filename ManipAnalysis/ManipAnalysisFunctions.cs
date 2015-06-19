@@ -3577,6 +3577,14 @@ namespace ManipAnalysis_v2
                             var velocityData = new List<List<VelocityContainer>>();
                             var forceData = new List<List<ForceContainer>>();
 
+                            string studys = String.Join(",",selectedTrialsList.Select(t => t.Study).Distinct().ToArray());
+                            string groups = String.Join(",",selectedTrialsList.Select(t => t.Group).Distinct().ToArray());
+                            string szenarios = String.Join(",",selectedTrialsList.Select(t => t.Szenario).Distinct().ToArray());
+                            string subjectPIds = String.Join(",",selectedTrialsList.Select(t => t.Subject.PId).Distinct().ToArray());
+                            string turns = String.Join(",",selectedTrialsList.Select(t => t.Turn).Distinct().ToArray());
+                            string trials = String.Join(",",selectedTrialsList.Select(t => t.Trials.ToString()).Distinct().ToArray());
+                            
+
                             foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
                             {
                                 if (TaskManager.Cancel)
@@ -3585,9 +3593,9 @@ namespace ManipAnalysis_v2
                                 }
 
                                 DateTime turnDateTime = _myDatabaseWrapper.GetTurns(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject).OrderBy(t => t).ElementAt(tempContainer.Turn - 1);
-                                
+
                                 Trial[] trialsArray = _myDatabaseWrapper.GetTrials(tempContainer.Study, tempContainer.Group, tempContainer.Szenario, tempContainer.Subject, turnDateTime, tempContainer.Target, tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
-                                
+
                                 for (int trialsArrayCounter = 0; trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel; trialsArrayCounter++)
                                 {
                                     if (TaskManager.Cancel)
@@ -3622,125 +3630,125 @@ namespace ManipAnalysis_v2
                                         }
                                     }
                                 }
+                            }
 
-                                int frameCount = 0;
-                                int meanCount = 0;
-                                if (trajectoryVelocityForce == "Trajectory - Normalized")
-                                {
-                                    frameCount = positionData[0].Count;
-                                    meanCount = positionData.Count;
-                                }
-                                else if (trajectoryVelocityForce == "Velocity - Normalized")
-                                {
-                                    frameCount = velocityData[0].Count;
-                                    meanCount = velocityData.Count;
-                                }
-                                else if (trajectoryVelocityForce == "Force - Normalized")
-                                {
-                                    frameCount = forceData[0].Count;
-                                    meanCount = forceData.Count;
-                                }
+                            int frameCount = 0;
+                            int meanCount = 0;
+                            if (trajectoryVelocityForce == "Trajectory - Normalized")
+                            {
+                                frameCount = positionData[0].Count;
+                                meanCount = positionData.Count;
+                            }
+                            else if (trajectoryVelocityForce == "Velocity - Normalized")
+                            {
+                                frameCount = velocityData[0].Count;
+                                meanCount = velocityData.Count;
+                            }
+                            else if (trajectoryVelocityForce == "Force - Normalized")
+                            {
+                                frameCount = forceData[0].Count;
+                                meanCount = forceData.Count;
+                            }
 
-                                if (frameCount > 0)
+                            if (frameCount > 0)
+                            {
+                                var xData = new double[frameCount];
+                                var yData = new double[frameCount];
+                                var forceVectorDataX = new double[frameCount];
+                                var forceVectorDataY = new double[frameCount];
+
+                                for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
                                 {
-                                    var xData = new double[frameCount];
-                                    var yData = new double[frameCount];
-                                    var forceVectorDataX = new double[frameCount];
-                                    var forceVectorDataY = new double[frameCount];
-
-                                    for (int meanCounter = 0; meanCounter < meanCount; meanCounter++)
-                                    {
-                                        for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
-                                        {
-                                            if (trajectoryVelocityForce == "Trajectory - Normalized")
-                                            {
-                                                xData[frameCounter] += positionData[meanCounter][frameCounter].X;
-                                                yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                            }
-                                            else if (trajectoryVelocityForce == "Velocity - Normalized")
-                                            {
-                                                xData[frameCounter] += velocityData[meanCounter][frameCounter].X;
-                                                yData[frameCounter] += velocityData[meanCounter][frameCounter].Y;
-                                            }
-                                            else if (trajectoryVelocityForce == "Force - Normalized")
-                                            {
-                                                xData[frameCounter] += positionData[meanCounter][frameCounter].X;
-                                                yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
-                                                forceVectorDataX[frameCounter] += forceData[meanCounter][frameCounter].X;
-                                                forceVectorDataY[frameCounter] += forceData[meanCounter][frameCounter].Y;
-                                            }
-                                        }
-                                    }
-
                                     for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
                                     {
                                         if (trajectoryVelocityForce == "Trajectory - Normalized")
                                         {
-                                            xData[frameCounter] /= meanCount;
-                                            yData[frameCounter] /= meanCount;
+                                            xData[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                            yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
                                         }
                                         else if (trajectoryVelocityForce == "Velocity - Normalized")
                                         {
-                                            xData[frameCounter] /= meanCount;
-                                            yData[frameCounter] /= meanCount;
+                                            xData[frameCounter] += velocityData[meanCounter][frameCounter].X;
+                                            yData[frameCounter] += velocityData[meanCounter][frameCounter].Y;
                                         }
                                         else if (trajectoryVelocityForce == "Force - Normalized")
                                         {
-                                            xData[frameCounter] /= meanCount;
-                                            yData[frameCounter] /= meanCount;
-                                            forceVectorDataX[frameCounter] /= meanCount;
-                                            forceVectorDataY[frameCounter] /= meanCount;
+                                            xData[frameCounter] += positionData[meanCounter][frameCounter].X;
+                                            yData[frameCounter] += positionData[meanCounter][frameCounter].Y;
+                                            forceVectorDataX[frameCounter] += forceData[meanCounter][frameCounter].X;
+                                            forceVectorDataY[frameCounter] += forceData[meanCounter][frameCounter].Y;
                                         }
                                     }
+                                }
 
+                                for (int frameCounter = 0; frameCounter < frameCount; frameCounter++)
+                                {
                                     if (trajectoryVelocityForce == "Trajectory - Normalized")
                                     {
-                                        for (int i = 0; i < xData.Length; i++)
-                                        {
-                                            dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
-                                        }
+                                        xData[frameCounter] /= meanCount;
+                                        yData[frameCounter] /= meanCount;
                                     }
                                     else if (trajectoryVelocityForce == "Velocity - Normalized")
                                     {
-                                        for (int i = 0; i < xData.Length; i++)
-                                        {
-                                            dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
-                                        }
+                                        xData[frameCounter] /= meanCount;
+                                        yData[frameCounter] /= meanCount;
                                     }
                                     else if (trajectoryVelocityForce == "Force - Normalized")
                                     {
-                                        _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (xData.Length - 1) + ");");
-                                        _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (xData.Length - 1) + ");");
-                                        _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (xData.Length - 1) + ");");
+                                        xData[frameCounter] /= meanCount;
+                                        yData[frameCounter] /= meanCount;
+                                        forceVectorDataX[frameCounter] /= meanCount;
+                                        forceVectorDataY[frameCounter] /= meanCount;
+                                    }
+                                }
 
-                                        for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
+                                if (trajectoryVelocityForce == "Trajectory - Normalized")
+                                {
+                                    for (int i = 0; i < xData.Length; i++)
+                                    {
+                                        dataFileWriter.WriteLine(studys + ";" + groups + ";" + szenarios + ";" + subjectPIds + ";" + turns + ";" + targetArray[targetCounter] + ";" + trials + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
+                                    }
+                                }
+                                else if (trajectoryVelocityForce == "Velocity - Normalized")
+                                {
+                                    for (int i = 0; i < xData.Length; i++)
+                                    {
+                                        dataFileWriter.WriteLine(studys + ";" + groups + ";" + szenarios + ";" + subjectPIds + ";" + turns + ";" + targetArray[targetCounter] + ";" + trials + ";" + i + ";" + DoubleConverter.ToExactString(xData[i]) + ";" + DoubleConverter.ToExactString(yData[i]));
+                                    }
+                                }
+                                else if (trajectoryVelocityForce == "Force - Normalized")
+                                {
+                                    _myMatlabWrapper.Execute("forcePDVector = zeros(1, " + (xData.Length - 1) + ");");
+                                    _myMatlabWrapper.Execute("forceParaVector = zeros(1, " + (xData.Length - 1) + ");");
+                                    _myMatlabWrapper.Execute("forceAbsVector = zeros(1, " + (xData.Length - 1) + ");");
+
+                                    for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
+                                    {
+                                        _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {xData[i - 2], yData[i - 2]});
+                                        _myMatlabWrapper.SetWorkspaceData("vpos2", new[] {xData[i - 1], yData[i - 1]});
+                                        _myMatlabWrapper.SetWorkspaceData("vforce", new[] {forceVectorDataX[i - 2], forceVectorDataY[i - 2]});
+
+                                        _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+                                        _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
+
+                                        _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
+                                        _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
+                                        _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                    }
+
+                                    double[,] forcePD = _myMatlabWrapper.GetWorkspaceData("forcePDVector");
+                                    double[,] forcePara = _myMatlabWrapper.GetWorkspaceData("forceParaVector");
+                                    double[,] forceAbs = _myMatlabWrapper.GetWorkspaceData("forceAbsVector");
+
+                                    for (int i = 0; i < xData.Length; i++)
+                                    {
+                                        if (i < forcePD.Length)
                                         {
-                                            _myMatlabWrapper.SetWorkspaceData("vpos1", new[] { xData[i - 2], yData[i - 2] });
-                                            _myMatlabWrapper.SetWorkspaceData("vpos2", new[] { xData[i - 1], yData[i - 1] });
-                                            _myMatlabWrapper.SetWorkspaceData("vforce", new[] { forceVectorDataX[i - 2], forceVectorDataY[i - 2] });
-
-                                            _myMatlabWrapper.Execute("[fPD, fPDsign] = pdForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-                                            _myMatlabWrapper.Execute("[fPara, fParasign] = paraForceLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)]);");
-
-                                            _myMatlabWrapper.Execute("forcePDVector(" + (i - 1) + ") = sqrt(fPD(1)^2 + fPD(2)^2) * fPDsign;");
-                                            _myMatlabWrapper.Execute("forceParaVector(" + (i - 1) + ") = sqrt(fPara(1)^2 + fPara(2)^2) * fParasign;");
-                                            _myMatlabWrapper.Execute("forceAbsVector(" + (i - 1) + ") = sqrt(vforce(1,1)^2 + vforce(1,2)^2);");
+                                            dataFileWriter.WriteLine(studys + ";" + groups + ";" + szenarios + ";" + subjectPIds + ";" + turns + ";" + targetArray[targetCounter] + ";" + trials + ";" + i + ";" + DoubleConverter.ToExactString(forceVectorDataX[i]) + ";" + DoubleConverter.ToExactString(forceVectorDataY[i]) + ";" + DoubleConverter.ToExactString(forcePD[0, i]) + ";" + DoubleConverter.ToExactString(forcePara[0, i]) + ";" + DoubleConverter.ToExactString(forceAbs[0, i]));
                                         }
-
-                                        double[,] forcePD = _myMatlabWrapper.GetWorkspaceData("forcePDVector");
-                                        double[,] forcePara = _myMatlabWrapper.GetWorkspaceData("forceParaVector");
-                                        double[,] forceAbs = _myMatlabWrapper.GetWorkspaceData("forceAbsVector");
-
-                                        for (int i = 0; i < xData.Length; i++)
+                                        else
                                         {
-                                            if (i < forcePD.Length)
-                                            {
-                                                dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(forceVectorDataX[i]) + ";" + DoubleConverter.ToExactString(forceVectorDataY[i]) + ";" + DoubleConverter.ToExactString(forcePD[0, i]) + ";" + DoubleConverter.ToExactString(forcePara[0, i]) + ";" + DoubleConverter.ToExactString(forceAbs[0, i]));
-                                            }
-                                            else
-                                            {
-                                                dataFileWriter.WriteLine(tempContainer.Study + ";" + tempContainer.Group + ";" + tempContainer.Szenario + ";" + tempContainer.Subject.PId + ";" + tempContainer.Turn + ";" + tempContainer.Target + ";" + tempContainer.GetTrialsString() + ";" + i + ";" + DoubleConverter.ToExactString(forceVectorDataX[i]) + ";" + DoubleConverter.ToExactString(forceVectorDataY[i]) + ";;;");
-                                            }
+                                            dataFileWriter.WriteLine(studys + ";" + groups + ";" + szenarios + ";" + subjectPIds + ";" + turns + ";" + targetArray[targetCounter] + ";" + trials + ";" + i + ";" + DoubleConverter.ToExactString(forceVectorDataX[i]) + ";" + DoubleConverter.ToExactString(forceVectorDataY[i]) + ";;;");
                                         }
                                     }
                                 }
