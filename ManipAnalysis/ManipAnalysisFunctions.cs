@@ -2488,7 +2488,7 @@ namespace ManipAnalysis_v2
                                         }
                                         else if (trial.Study == "Study 8")
                                         {
-                                            if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
+                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
                                             {
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
