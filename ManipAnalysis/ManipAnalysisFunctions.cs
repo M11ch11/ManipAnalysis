@@ -3582,7 +3582,7 @@ namespace ManipAnalysis_v2
                             string szenarios = String.Join(",",selectedTrialsList.Select(t => t.Szenario).Distinct().ToArray());
                             string subjectPIds = String.Join(",",selectedTrialsList.Select(t => t.Subject.PId).Distinct().ToArray());
                             string turns = String.Join(",",selectedTrialsList.Select(t => t.Turn).Distinct().ToArray());
-                            string trials = String.Join(",",selectedTrialsList.Select(t => t.Trials.ToString()).Distinct().ToArray());
+                            string trials = String.Join(",", selectedTrialsList.Select(t => t.GetTrialsString()).Distinct().ToArray());
                             
 
                             foreach (TrajectoryVelocityPlotContainer tempContainer in selectedTrialsList.Where(t => t.Target == targetArray[targetCounter]))
@@ -3724,6 +3724,7 @@ namespace ManipAnalysis_v2
 
                                     for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                     {
+                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / xData.Length) * i);
                                         _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {xData[i - 2], yData[i - 2]});
                                         _myMatlabWrapper.SetWorkspaceData("vpos2", new[] {xData[i - 1], yData[i - 1]});
                                         _myMatlabWrapper.SetWorkspaceData("vforce", new[] {forceVectorDataX[i - 2], forceVectorDataY[i - 2]});
