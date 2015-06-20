@@ -3724,7 +3724,6 @@ namespace ManipAnalysis_v2
 
                                     for (int i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                     {
-                                        _myManipAnalysisGui.SetProgressBarValue((100.0 / xData.Length) * i);
                                         _myMatlabWrapper.SetWorkspaceData("vpos1", new[] {xData[i - 2], yData[i - 2]});
                                         _myMatlabWrapper.SetWorkspaceData("vpos2", new[] {xData[i - 1], yData[i - 1]});
                                         _myMatlabWrapper.SetWorkspaceData("vforce", new[] {forceVectorDataX[i - 2], forceVectorDataY[i - 2]});
