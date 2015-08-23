@@ -138,7 +138,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 trial.Handedness = Trial.HandednessEnum.RightHand;
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 176)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 288)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
