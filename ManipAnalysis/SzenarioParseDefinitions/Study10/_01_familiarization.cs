@@ -11,7 +11,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
-            if (trial.Target.Number == 17) // Target 17 == StartTrial
+            if (trial.Target.Number == 10 || trial.TrialNumberInSzenario == 0) // Target 10 == StartTrial & Workaround for bug in Szenario protokoll
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                 trial = null;
@@ -24,7 +24,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if (trial.Target.Number >= 9 && trial.Target.Number <= 16) // Null, Position control
+                else if (trial.Target.Number >= 11 && trial.Target.Number <= 28) // Null, Position control
                 {
                     trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
@@ -56,7 +56,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause + Position control
                 {
-                    trial.Target.Number = trial.Target.Number - 52;
+                    trial.Target.Number = trial.Target.Number - 50;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                 }
@@ -128,12 +128,17 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.ZPos = 0;
                     trial.Target.Radius = 0.25;
                 }
-                else if (trial.Target.Number >= 9 && trial.Target.Number <= 16)
+                else if (trial.Target.Number >= 11 && trial.Target.Number <= 18)
                 {
                     trial.Target.XPos = 0;
                     trial.Target.YPos = 0;
                     trial.Target.ZPos = 0;
                     trial.Target.Radius = 0.25;
+                }
+                else
+                {
+                    myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                    trial = null;
                 }
 
                 trial.Handedness = Trial.HandednessEnum.RightHand;
