@@ -1974,7 +1974,40 @@ namespace ManipAnalysis_v2
 
                     foreach (string study in studys)
                     {
-                        if (study == "Study 8")
+                        if (study == "Study 10")
+                        {
+                            IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
+
+                            foreach (string group in groups)
+                            {
+                                var baselineFields = new FieldsBuilder<Trial>();
+                                baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
+
+                                IEnumerable<SubjectContainer> subjects = _myDatabaseWrapper.GetSubjects(study, group, "02_baseline");
+
+                                foreach (SubjectContainer subject in subjects)
+                                {
+                                    DateTime turnDateTime = _myDatabaseWrapper.GetTurns(study, group, "02_baseline", subject).ElementAt(0);
+
+                                    List<Trial> baselineTrialsNull = _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime, Enumerable.Range(1, 40), baselineFields).ToList();
+
+                                    baselineTrialsNull.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    if (baselineTrialsNull.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsNull));
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);
+                                    }
+                                }
+                            }
+                        }
+                        else if (study == "Study 8")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
 
@@ -2489,6 +2522,39 @@ namespace ManipAnalysis_v2
                                         else if (trial.Study == "Study 8")
                                         {
                                             if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (trial.Study == "Study 10")
+                                        {
+                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW || trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
                                             {
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
