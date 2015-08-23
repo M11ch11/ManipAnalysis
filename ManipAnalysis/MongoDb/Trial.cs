@@ -30,7 +30,9 @@ namespace ManipAnalysis_v2.MongoDb
 
             ErrorClampTrial = 1,
 
-            CatchTrial = 2
+            CatchTrial = 2,
+
+            PositionControlTrial = 3
         };
 
         public List<ForceContainer> MeasuredForcesFiltered;
