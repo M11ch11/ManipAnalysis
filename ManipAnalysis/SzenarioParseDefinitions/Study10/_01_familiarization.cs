@@ -12,6 +12,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = StudyName;
+            trial.Szenario = SzenarioName;
 
             if (trial.Target.Number == 10 || trial.TrialNumberInSzenario == 0) // Target 10 == StartTrial & Workaround for bug in Szenario protokoll
             {
