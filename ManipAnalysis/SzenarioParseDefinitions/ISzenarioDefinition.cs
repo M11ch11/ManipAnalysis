@@ -21,8 +21,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             {
                 try
                 {
-
-
                     var c3DReader = new C3dReader();
                     c3DReader.Open(c3DFiles[filesCounter]);
 
@@ -115,6 +113,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial = setTrialMetadata(myManipAnalysisGui, currentTrial);
                     if (currentTrial != null)
                     {
+                        if (currentTrial.MeasuredForcesRaw.Count == 0)
+                        {
+                            throw new Exception("No data frames found in szenario trial " + currentTrial.TrialNumberInSzenario);
+                        }
                         lock (trialsContainer)
                         {
                             trialsContainer.Add(currentTrial);

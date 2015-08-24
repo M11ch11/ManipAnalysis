@@ -11,6 +11,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
+            trial.Study = StudyName;
+            trial.Szenario = SzenarioName;
+
             if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30) // Target 10/20/30 == StartTrial
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);

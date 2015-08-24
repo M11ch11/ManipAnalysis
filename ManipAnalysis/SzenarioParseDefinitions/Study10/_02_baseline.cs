@@ -11,6 +11,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
+            trial.Study = StudyName;
+
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
@@ -81,63 +83,63 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         trial.Target.XPos = 0;
                         trial.Target.YPos = 0.15;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 2)
                     {
                         trial.Target.XPos = 0.07071;
                         trial.Target.YPos = 0.12071;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 3)
                     {
                         trial.Target.XPos = 0.1;
                         trial.Target.YPos = 0.05;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 4)
                     {
                         trial.Target.XPos = 0.07071;
                         trial.Target.YPos = -0.02071;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 5)
                     {
                         trial.Target.XPos = 0;
                         trial.Target.YPos = -0.05;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 6)
                     {
                         trial.Target.XPos = -0.07071;
                         trial.Target.YPos = -0.02071;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 7)
                     {
                         trial.Target.XPos = -0.1;
                         trial.Target.YPos = 0.05;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number == 8)
                     {
                         trial.Target.XPos = -0.07071;
                         trial.Target.YPos = 0.12071;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else if (trial.Target.Number >= 11 && trial.Target.Number <= 18)
                     {
                         trial.Target.XPos = 0;
                         trial.Target.YPos = 0;
                         trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.25;
+                        trial.Target.Radius = 0.0025;
                     }
                     else
                     {

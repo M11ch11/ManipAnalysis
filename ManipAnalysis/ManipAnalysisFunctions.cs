@@ -499,6 +499,10 @@ namespace ManipAnalysis_v2
                 {
                     _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                 }
+                else if (study == "Study 10")
+                {
+                    _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                }
 
                 var baselineFields = new FieldsBuilder<Baseline>();
                 baselineFields.Include(t => t.ZippedPosition);
@@ -1299,12 +1303,14 @@ namespace ManipAnalysis_v2
                     catch (Exception ex)
                     {
                         _myManipAnalysisGui.WriteToLogBox("Error in \"" + measureFilesList.ElementAt(files) + "\":\n" + ex + "\nSkipped file.");
+                        taskMatlabWrappers.ForEach(t => t.Dispose());
                     }
                     finally
                     {
                         taskMatlabWrappers.ForEach(t => t.Dispose());
                     }
                 }
+                taskMatlabWrappers.ForEach(t => t.Dispose());
                 _myManipAnalysisGui.SetProgressBarValue(0);
                 _myManipAnalysisGui.WriteProgressInfo("Ready");
                 _myManipAnalysisGui.EnableTabPages(true);
@@ -2828,6 +2834,10 @@ namespace ManipAnalysis_v2
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
+                        else if (study == "Study 10")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                        }
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
@@ -2841,6 +2851,7 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionFiltered);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
+
                         if (study == "Study 8")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
@@ -2848,6 +2859,10 @@ namespace ManipAnalysis_v2
                         else if (study == "Study 7")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 10")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                         }
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
@@ -2862,6 +2877,7 @@ namespace ManipAnalysis_v2
                             fields.Include(t1 => t1.ZippedPositionRaw);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
+
                         if (study == "Study 8")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
@@ -2869,6 +2885,10 @@ namespace ManipAnalysis_v2
                         else if (study == "Study 7")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 10")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                         }
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
