@@ -126,6 +126,8 @@ namespace ManipAnalysis
             this.comboBox_DescriptiveStatistic2_Study = new System.Windows.Forms.ComboBox();
             this.listBox_DescriptiveStatistic2_Groups = new System.Windows.Forms.ListBox();
             this.tabPage_Others = new System.Windows.Forms.TabPage();
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup = new System.Windows.Forms.CheckBox();
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup = new System.Windows.Forms.CheckBox();
             this.button_Others_ExportTrialSwitchReactionTimes = new System.Windows.Forms.Button();
             this.button_Others_PlotTrialSwitchReactionTimes = new System.Windows.Forms.Button();
             this.button_Others_ExportSetDurationTimes = new System.Windows.Forms.Button();
@@ -257,8 +259,6 @@ namespace ManipAnalysis
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup = new System.Windows.Forms.CheckBox();
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -901,6 +901,8 @@ namespace ManipAnalysis
             "Perpendicular distance ?ms - Sign",
             "Perpendicular distance 300ms - Abs",
             "Perpendicular distance 300ms - Sign",
+            "Perpendicular distance vMax - Abs",
+            "Perpendicular distance vMax - Sign",
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
@@ -1389,6 +1391,26 @@ namespace ManipAnalysis
             this.tabPage_Others.Text = "Others";
             this.tabPage_Others.UseVisualStyleBackColor = true;
             this.tabPage_Others.Enter += new System.EventHandler(this.tabPage_Others_Enter);
+            // 
+            // checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup
+            // 
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.AutoSize = true;
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Location = new System.Drawing.Point(367, 325);
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Name = "checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup";
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.TabIndex = 62;
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Text = "Whole group";
+            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_Others_ExportSetDurationTimesWholeGroup
+            // 
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.AutoSize = true;
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Location = new System.Drawing.Point(367, 296);
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Name = "checkBox_Others_ExportSetDurationTimesWholeGroup";
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.TabIndex = 61;
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Text = "Whole group";
+            this.checkBox_Others_ExportSetDurationTimesWholeGroup.UseVisualStyleBackColor = true;
             // 
             // button_Others_ExportTrialSwitchReactionTimes
             // 
@@ -2686,26 +2708,6 @@ namespace ManipAnalysis
             this.checkBox_Cancel.Text = "Cancel";
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
-            // 
-            // checkBox_Others_ExportSetDurationTimesWholeGroup
-            // 
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.AutoSize = true;
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Location = new System.Drawing.Point(367, 296);
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Name = "checkBox_Others_ExportSetDurationTimesWholeGroup";
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.TabIndex = 61;
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.Text = "Whole group";
-            this.checkBox_Others_ExportSetDurationTimesWholeGroup.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup
-            // 
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.AutoSize = true;
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Location = new System.Drawing.Point(367, 325);
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Name = "checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup";
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Size = new System.Drawing.Size(87, 17);
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.TabIndex = 62;
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.Text = "Whole group";
-            this.checkBox_Others_ExportTrialSwitchReactionTimesWholeGroup.UseVisualStyleBackColor = true;
             // 
             // ManipAnalysisGui
             // 

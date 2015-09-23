@@ -532,6 +532,11 @@ namespace ManipAnalysis
                     inputForm.Dispose();
                 }
             }
+            else if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign")
+            {
+                pdTime = -2;
+            }
 
             _manipAnalysisFunctions.PlotDescriptiveStatistic1(
                 listBox_DescriptiveStatistic1_SelectedTrials.Items.Cast<StatisticPlotContainer>(),
@@ -950,8 +955,13 @@ namespace ManipAnalysis
                     inputForm.Dispose();
                 }
             }
+            else if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Abs" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign")
+            {
+                pdTime = -2;
+            }
 
-            WriteProgressInfo("Getting data...");
+                WriteProgressInfo("Getting data...");
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Reset();
             saveFileDialog.Title = @"Save mean data file";

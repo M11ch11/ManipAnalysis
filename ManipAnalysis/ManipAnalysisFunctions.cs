@@ -375,6 +375,7 @@ namespace ManipAnalysis
                     {
                         int meanCounter;
                         var data = new double[trialList.Count, selectedTrialsList.Count()];
+                        var vMaxData = new double[trialList.Count, selectedTrialsList.Count()];
 
                         for (meanCounter = 0;
                             meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel;
@@ -391,7 +392,7 @@ namespace ManipAnalysis
                                     tempStatisticPlotContainer.Turn.Substring(
                                         "Turn".Length)));
 
-                            if (pdTime == -1)
+                            if (pdTime == -1) // Normal
                             {
 
                                 DataSet statisticDataSet =
@@ -490,7 +491,79 @@ namespace ManipAnalysis
                                     }
                                 }
                             }
-                            else
+                            else if (pdTime == -2) // PD vMax
+                            {
+                                for (int trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
+                                {
+                                    _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count) * trialCounter);
+
+                                    int szenarioTrialNumber = trialList.ElementAt(trialCounter);
+                                    int trialId = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
+                                        tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
+                                        tempStatisticPlotContainer.Subject, turnDateTime, szenarioTrialNumber);
+
+                                    DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialId);
+                                    DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialId);
+                                    int targetNumber = _mySqlWrapper.GetTargetNumber(trialId);
+                                    if (measureDataSet.Tables[0].Rows.Count > 0 &&
+                                       velocityDataSet.Tables[0].Rows.Count > 0)
+                                    {
+                                        int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                                        var measureData = new double[sampleCount, 3];
+                                        var absVelocityData = new double[sampleCount];
+
+                                        var timeStamp = new double[sampleCount];
+
+                                        for (int i = 0; i < sampleCount; i++)
+                                        {
+                                            timeStamp[i] =
+                                                Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+
+                                            measureData[i, 0] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
+                                            measureData[i, 1] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
+                                            measureData[i, 2] =
+                                                Convert.ToDouble(
+                                                    measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+
+                                            absVelocityData[i] = Math.Sqrt(Math.Pow(Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]),2) + Math.Pow(Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]),2));
+                                        }
+
+                                        int timeMsIndex = absVelocityData.ToList().IndexOf(absVelocityData.Max());
+
+                                        _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
+                                        _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
+                                        _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
+                                        _myMatlabWrapper.SetWorkspaceData("velocityData", absVelocityData);
+
+                                        _myMatlabWrapper.Execute(
+                                            "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute(
+                                            "distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                        _myMatlabWrapper.Execute("distanceMsAbs = distanceAbs(timeMsIndex);");
+                                        _myMatlabWrapper.Execute("distanceMsSign = distanceSign(timeMsIndex);");
+
+                                        vMaxData[trialCounter, meanCounter] = absVelocityData.Max();
+                                        switch (statisticType)
+                                        {
+                                            case "Perpendicular distance vMax - Abs":
+                                                data[trialCounter, meanCounter] =
+                                                    _myMatlabWrapper.GetWorkspaceData("distanceMsAbs");
+                                                break;
+
+                                            case "Perpendicular distance vMax - Sign":
+                                                data[trialCounter, meanCounter] =
+                                                    _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
+                                                break;
+
+                                        }
+                                    }
+                                }
+                            }
+                            else // PD ? ms
                             {
                                 DataSet baselineDataSet = null;
 
@@ -565,7 +638,7 @@ namespace ManipAnalysis
                                                     t =>
                                                         new double[]
                                                         {
-                                                            t.BaselinePositionCartesianX, 
+                                                            t.BaselinePositionCartesianX,
                                                             t.BaselinePositionCartesianY,
                                                             t.BaselinePositionCartesianZ
                                                         }).ToArray();
@@ -631,6 +704,7 @@ namespace ManipAnalysis
                         }
 
                         _myMatlabWrapper.SetWorkspaceData("data", data);
+                        _myMatlabWrapper.SetWorkspaceData("vMaxData", vMaxData);
 
                         if (meanCounter > 1)
                         {
@@ -645,6 +719,8 @@ namespace ManipAnalysis
                             {
                                 _myMatlabWrapper.Execute("dataPlot = mean(transpose(data));");
                                 _myMatlabWrapper.Execute("dataStdPlot = std(transpose(data));");
+                                _myMatlabWrapper.Execute("vMaxDataPlot = mean(transpose(vMaxData));");
+                                _myMatlabWrapper.Execute("vMaxDataStdPlot = std(transpose(vMaxData));");
                             }
                         }
                         else
@@ -656,10 +732,12 @@ namespace ManipAnalysis
                             else
                             {
                                 _myMatlabWrapper.Execute("dataPlot = data;");
+                                _myMatlabWrapper.Execute("vMaxDataPlot = vMaxData;");
                             }
                         }
 
                         double[,] dataPlot = null;
+                        double[,] vMaxDataPlot = null;
                         if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("dataPlot").GetType(),
                             typeof(double[,])))
                         {
@@ -670,6 +748,18 @@ namespace ManipAnalysis
                         {
                             dataPlot = new double[1, 1];
                             dataPlot[0, 0] = _myMatlabWrapper.GetWorkspaceData("dataPlot");
+                        }
+
+                        if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("vMaxDataPlot").GetType(),
+                            typeof(double[,])))
+                        {
+                            vMaxDataPlot = _myMatlabWrapper.GetWorkspaceData("vMaxDataPlot");
+                        }
+                        else if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("vMaxDataPlot").GetType(),
+                            typeof(double)))
+                        {
+                            vMaxDataPlot = new double[1, 1];
+                            vMaxDataPlot[0, 0] = _myMatlabWrapper.GetWorkspaceData("vMaxDataPlot");
                         }
                         if (dataPlot != null)
                         {
@@ -732,6 +822,24 @@ namespace ManipAnalysis
                                         plotErrorbars);
                                     break;
 
+                                case "Perpendicular distance vMax - Abs":
+                                    _myMatlabWrapper.CreateStatisticFigure("PD vMax abs plot", "dataPlot",
+                                        "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                        fitEquation + "')",
+                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                        dataPlot.Length, 0, 0.05,
+                                        plotFit,
+                                        plotErrorbars);
+
+                                    _myMatlabWrapper.CreateStatisticFigure("Trial maximum velocity plot", "vMaxDataPlot",
+                                        "fit(transpose([1:1:length(vMaxDataPlot)]),transpose(vMaxDataPlot),'" +
+                                        fitEquation + "')",
+                                        "vMaxDataStdPlot", "[Trial]", "Velocity [m/s]", 1,
+                                        vMaxDataPlot.Length, 0, 0.5,
+                                        plotFit,
+                                        plotErrorbars);
+                                    break;
+
                                 case "Mean perpendicular distance - Abs":
                                     _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "dataPlot",
                                         "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
@@ -768,6 +876,24 @@ namespace ManipAnalysis
                                         fitEquation + "')",
                                         "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
                                         dataPlot.Length, -0.05, 0.05,
+                                        plotFit,
+                                        plotErrorbars);
+                                    break;
+
+                                case "Perpendicular distance vMax - Sign":
+                                    _myMatlabWrapper.CreateStatisticFigure("PD vMax sign plot", "dataPlot",
+                                        "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
+                                        fitEquation + "')",
+                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                        dataPlot.Length, -0.05, 0.05,
+                                        plotFit,
+                                        plotErrorbars);
+
+                                    _myMatlabWrapper.CreateStatisticFigure("Trial maximum velocity plot", "vMaxDataPlot",
+                                        "fit(transpose([1:1:length(vMaxDataPlot)]),transpose(vMaxDataPlot),'" +
+                                        fitEquation + "')",
+                                        "vMaxDataStdPlot", "[Trial]", "Velocity [m/s]", 1,
+                                        vMaxDataPlot.Length, 0, 0.5,
                                         plotFit,
                                         plotErrorbars);
                                     break;
@@ -962,7 +1088,78 @@ namespace ManipAnalysis
                                 }
                             }
                         }
-                        else
+                        else if (pdTime == -2) // PD vMax
+                        {
+                            for (trialCounter = 0; trialCounter < trialList.Count; trialCounter++)
+                            {
+                                _myManipAnalysisGui.SetProgressBarValue((100.0 / trialList.Count) * trialCounter);
+
+                                int szenarioTrialNumber = trialList.ElementAt(trialCounter);
+                                int trialId = _mySqlWrapper.GetTrailID(tempStatisticPlotContainer.Study,
+                                    tempStatisticPlotContainer.Group, tempStatisticPlotContainer.Szenario,
+                                    tempStatisticPlotContainer.Subject, turnDateTime, szenarioTrialNumber);
+
+                                DataSet measureDataSet = _mySqlWrapper.GetMeasureDataNormalizedDataSet(trialId);
+                                DataSet velocityDataSet = _mySqlWrapper.GetVelocityDataNormalizedDataSet(trialId);
+                                int targetNumber = _mySqlWrapper.GetTargetNumber(trialId);
+                                if (measureDataSet.Tables[0].Rows.Count > 0 &&
+                                   velocityDataSet.Tables[0].Rows.Count > 0)
+                                {
+                                    int sampleCount = measureDataSet.Tables[0].Rows.Count;
+                                    var measureData = new double[sampleCount, 3];
+                                    var absVelocityData = new double[sampleCount];
+
+                                    var timeStamp = new double[sampleCount];
+
+                                    for (int i = 0; i < sampleCount; i++)
+                                    {
+                                        timeStamp[i] =
+                                            Convert.ToDateTime(measureDataSet.Tables[0].Rows[i]["time_stamp"]).Ticks;
+
+                                        measureData[i, 0] =
+                                            Convert.ToDouble(
+                                                measureDataSet.Tables[0].Rows[i]["position_cartesian_x"]);
+                                        measureData[i, 1] =
+                                            Convert.ToDouble(
+                                                measureDataSet.Tables[0].Rows[i]["position_cartesian_y"]);
+                                        measureData[i, 2] =
+                                            Convert.ToDouble(
+                                                measureDataSet.Tables[0].Rows[i]["position_cartesian_z"]);
+
+                                        absVelocityData[i] = Math.Sqrt(Math.Pow(Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_x"]), 2) + Math.Pow(Convert.ToDouble(velocityDataSet.Tables[0].Rows[i]["velocity_z"]), 2));
+                                    }
+
+                                    int timeMsIndex = absVelocityData.ToList().IndexOf(absVelocityData.Max());
+
+                                    _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
+                                    _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
+                                    _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
+                                    _myMatlabWrapper.SetWorkspaceData("velocityData", absVelocityData);
+
+                                    _myMatlabWrapper.Execute(
+                                        "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    _myMatlabWrapper.Execute(
+                                        "distanceSign = distance2curveSign([measureData(:,1),measureData(:,3)],targetNumber);");
+                                    _myMatlabWrapper.Execute("distanceMsAbs = distanceAbs(timeMsIndex);");
+                                    _myMatlabWrapper.Execute("distanceMsSign = distanceSign(timeMsIndex);");
+
+                                    switch (statisticType)
+                                    {
+                                        case "Perpendicular distance vMax - Abs":
+                                            data[trialCounter, meanCounter] =
+                                                _myMatlabWrapper.GetWorkspaceData("distanceMsAbs");
+                                            break;
+
+                                        case "Perpendicular distance vMax - Sign":
+                                            data[trialCounter, meanCounter] =
+                                                _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
+                                            break;
+
+                                    }
+                                }
+                            }
+                        }
+                        else // PD ? ms
                         {
                             DataSet baselineDataSet = null;
 
