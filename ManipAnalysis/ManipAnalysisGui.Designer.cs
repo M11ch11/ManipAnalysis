@@ -908,7 +908,8 @@ namespace ManipAnalysis
             "Trajectory length ratio",
             "Vector correlation",
             "Vector correlation fisher-z",
-            "Vector correlation fisher-z to r-values"});
+            "Vector correlation fisher-z to r-values",
+            "vMax"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(471, 544);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);

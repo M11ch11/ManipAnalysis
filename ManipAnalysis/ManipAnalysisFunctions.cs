@@ -375,7 +375,6 @@ namespace ManipAnalysis
                     {
                         int meanCounter;
                         var data = new double[trialList.Count, selectedTrialsList.Count()];
-                        var vMaxData = new double[trialList.Count, selectedTrialsList.Count()];
 
                         for (meanCounter = 0;
                             meanCounter < selectedTrialsList.Count() & !TaskManager.Cancel;
@@ -537,7 +536,6 @@ namespace ManipAnalysis
                                         _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
                                         _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
                                         _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
-                                        _myMatlabWrapper.SetWorkspaceData("velocityData", absVelocityData);
 
                                         _myMatlabWrapper.Execute(
                                             "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
@@ -546,7 +544,6 @@ namespace ManipAnalysis
                                         _myMatlabWrapper.Execute("distanceMsAbs = distanceAbs(timeMsIndex);");
                                         _myMatlabWrapper.Execute("distanceMsSign = distanceSign(timeMsIndex);");
 
-                                        vMaxData[trialCounter, meanCounter] = absVelocityData.Max();
                                         switch (statisticType)
                                         {
                                             case "Perpendicular distance vMax - Abs":
@@ -559,6 +556,9 @@ namespace ManipAnalysis
                                                     _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
                                                 break;
 
+                                            case "vMax":
+                                                data[trialCounter, meanCounter] = absVelocityData.Max();
+                                                break;
                                         }
                                     }
                                 }
@@ -704,7 +704,6 @@ namespace ManipAnalysis
                         }
 
                         _myMatlabWrapper.SetWorkspaceData("data", data);
-                        _myMatlabWrapper.SetWorkspaceData("vMaxData", vMaxData);
 
                         if (meanCounter > 1)
                         {
@@ -719,8 +718,6 @@ namespace ManipAnalysis
                             {
                                 _myMatlabWrapper.Execute("dataPlot = mean(transpose(data));");
                                 _myMatlabWrapper.Execute("dataStdPlot = std(transpose(data));");
-                                _myMatlabWrapper.Execute("vMaxDataPlot = mean(transpose(vMaxData));");
-                                _myMatlabWrapper.Execute("vMaxDataStdPlot = std(transpose(vMaxData));");
                             }
                         }
                         else
@@ -732,12 +729,10 @@ namespace ManipAnalysis
                             else
                             {
                                 _myMatlabWrapper.Execute("dataPlot = data;");
-                                _myMatlabWrapper.Execute("vMaxDataPlot = vMaxData;");
                             }
                         }
 
                         double[,] dataPlot = null;
-                        double[,] vMaxDataPlot = null;
                         if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("dataPlot").GetType(),
                             typeof(double[,])))
                         {
@@ -750,17 +745,6 @@ namespace ManipAnalysis
                             dataPlot[0, 0] = _myMatlabWrapper.GetWorkspaceData("dataPlot");
                         }
 
-                        if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("vMaxDataPlot").GetType(),
-                            typeof(double[,])))
-                        {
-                            vMaxDataPlot = _myMatlabWrapper.GetWorkspaceData("vMaxDataPlot");
-                        }
-                        else if (Object.ReferenceEquals(_myMatlabWrapper.GetWorkspaceData("vMaxDataPlot").GetType(),
-                            typeof(double)))
-                        {
-                            vMaxDataPlot = new double[1, 1];
-                            vMaxDataPlot[0, 0] = _myMatlabWrapper.GetWorkspaceData("vMaxDataPlot");
-                        }
                         if (dataPlot != null)
                         {
                             switch (statisticType)
@@ -826,16 +810,8 @@ namespace ManipAnalysis
                                     _myMatlabWrapper.CreateStatisticFigure("PD vMax abs plot", "dataPlot",
                                         "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
                                         fitEquation + "')",
-                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                        "dataStdPlot", "[Trial]", "PD vMax [m]", 1,
                                         dataPlot.Length, 0, 0.05,
-                                        plotFit,
-                                        plotErrorbars);
-
-                                    _myMatlabWrapper.CreateStatisticFigure("Trial maximum velocity plot", "vMaxDataPlot",
-                                        "fit(transpose([1:1:length(vMaxDataPlot)]),transpose(vMaxDataPlot),'" +
-                                        fitEquation + "')",
-                                        "vMaxDataStdPlot", "[Trial]", "Velocity [m/s]", 1,
-                                        vMaxDataPlot.Length, 0, 0.5,
                                         plotFit,
                                         plotErrorbars);
                                     break;
@@ -884,16 +860,18 @@ namespace ManipAnalysis
                                     _myMatlabWrapper.CreateStatisticFigure("PD vMax sign plot", "dataPlot",
                                         "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
                                         fitEquation + "')",
-                                        "dataStdPlot", "[Trial]", "PD" + pdTime + " [m]", 1,
+                                        "dataStdPlot", "[Trial]", "PD vMax [m]", 1,
                                         dataPlot.Length, -0.05, 0.05,
                                         plotFit,
                                         plotErrorbars);
+                                    break;
 
-                                    _myMatlabWrapper.CreateStatisticFigure("Trial maximum velocity plot", "vMaxDataPlot",
-                                        "fit(transpose([1:1:length(vMaxDataPlot)]),transpose(vMaxDataPlot),'" +
+                                case "vMax":
+                                    _myMatlabWrapper.CreateStatisticFigure("Trial maximum velocity plot", "dataPlot",
+                                        "fit(transpose([1:1:length(dataPlot)]),transpose(dataPlot),'" +
                                         fitEquation + "')",
-                                        "vMaxDataStdPlot", "[Trial]", "Velocity [m/s]", 1,
-                                        vMaxDataPlot.Length, 0, 0.5,
+                                        "dataStdPlot", "[Trial]", "Velocity [m/s]", 1,
+                                        dataPlot.Length, 0, 0.5,
                                         plotFit,
                                         plotErrorbars);
                                     break;
@@ -1134,7 +1112,6 @@ namespace ManipAnalysis
                                     _myMatlabWrapper.SetWorkspaceData("targetNumber", targetNumber);
                                     _myMatlabWrapper.SetWorkspaceData("timeMsIndex", timeMsIndex);
                                     _myMatlabWrapper.SetWorkspaceData("measureData", measureData);
-                                    _myMatlabWrapper.SetWorkspaceData("velocityData", absVelocityData);
 
                                     _myMatlabWrapper.Execute(
                                         "distanceAbs = distance2curveAbs([measureData(:,1),measureData(:,3)],targetNumber);");
@@ -1155,6 +1132,9 @@ namespace ManipAnalysis
                                                 _myMatlabWrapper.GetWorkspaceData("distanceMsSign");
                                             break;
 
+                                        case "vMax":
+                                            data[trialCounter, meanCounter] = absVelocityData.Max();
+                                            break;
                                     }
                                 }
                             }

@@ -533,7 +533,8 @@ namespace ManipAnalysis
                 }
             }
             else if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign")
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "vMax")
             {
                 pdTime = -2;
             }
@@ -956,7 +957,8 @@ namespace ManipAnalysis
                 }
             }
             else if (comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Abs" ||
-                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign")
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "Perpendicular distance vMax - Sign" ||
+                comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedItem.ToString() == "vMax")
             {
                 pdTime = -2;
             }
