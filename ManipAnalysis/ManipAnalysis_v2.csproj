@@ -228,11 +228,18 @@
     </Compile>
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="SzenarioParseDefinitions\ISzenarioDefinition.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study08\C_05_Test_dII.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study08\C_04_Test_dI.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study08\C_03_Washout.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study08\C_01_Familiarization.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study08\C_02_Training.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\C0_ccw_02_RetA_RetA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\C0_cw_02_RetA_RetA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T2_ccw_02_InterB_RetA_RetB.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T1_ccw_02_InterA_RetA_RetA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T2_cw_02_InterB_RetA_RetB.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T1_cw_02_InterA_RetA_RetA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T2_ccw_01_Fam_Base_TrainA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T2_cw_01_Fam_Base_TrainA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T1_ccw_01_Fam_Base_TrainA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\C0_ccw_01_Fam_Base_TrainA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\T1_cw_01_Fam_Base_TrainA.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study08\C0_cw_01_Fam_Base_TrainA.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\RLd_02_Training_Transfer.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\LRd_02_Training_Transfer.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\RLc_03_ConsoTransfer.cs" />
