@@ -152,17 +152,17 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 158)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 156)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
-                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 79)
+                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 78)
                 {
                     trial.Szenario = "Retention";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 80 && trial.TrialNumberInSzenario <= 158)
+                else if (trial.TrialNumberInSzenario >= 79 && trial.TrialNumberInSzenario <= 156)
                 {
                     trial.Szenario = "Retention";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
@@ -174,7 +174,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 158;
+            return trialCount == 156;
         }
     }
 }

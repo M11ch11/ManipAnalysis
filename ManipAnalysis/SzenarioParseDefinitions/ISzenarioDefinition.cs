@@ -133,6 +133,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
             });
 
+            // Set TargetTrialNumberInSzenario Field
             if (checkTrialCount(trialsContainer.Count))
             {
                 foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())

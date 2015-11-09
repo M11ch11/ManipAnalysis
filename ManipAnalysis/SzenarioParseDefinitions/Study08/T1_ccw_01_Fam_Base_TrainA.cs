@@ -14,13 +14,29 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             trial.Study = StudyName;
             trial.Szenario = SzenarioName;
 
-            if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30) // Target 10/20/30 == StartTrial
+            if (trial.TrialNumberInSzenario >= 129 && trial.TrialNumberInSzenario <= 131 ||
+               trial.TrialNumberInSzenario >= 176 && trial.TrialNumberInSzenario <= 179)
+            {
+                myManipAnalysisGui.WriteToLogBox("Skipping invalidated trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                trial = null;
+            }
+            else if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30) // Target 10/20/30 == StartTrial
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                 trial = null;
             }
             else
             {
+                // Correcting TrialNumberInSzenario count
+                if (trial.TrialNumberInSzenario > 131 && trial.TrialNumberInSzenario < 177)
+                {
+                    trial.TrialNumberInSzenario -= 3;
+                }
+                else if (trial.TrialNumberInSzenario > 179)
+                {
+                    trial.TrialNumberInSzenario -= 7;
+                }
+
                 if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
                 {
                     trial.Target.Number = trial.Target.Number;
@@ -152,7 +168,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 444)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 436)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -167,47 +183,47 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "Familiarization";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 85 && trial.TrialNumberInSzenario <= 132)
+                else if (trial.TrialNumberInSzenario >= 85 && trial.TrialNumberInSzenario <= 128)
                 {
                     trial.Szenario = "Base1";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 84;
                 }
-                else if (trial.TrialNumberInSzenario >= 133 && trial.TrialNumberInSzenario <= 180)
+                else if (trial.TrialNumberInSzenario >= 129 && trial.TrialNumberInSzenario <= 172)
                 {
                     trial.Szenario = "Base1";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 84;
                 }
-                else if (trial.TrialNumberInSzenario >= 181 && trial.TrialNumberInSzenario <= 228)
+                else if (trial.TrialNumberInSzenario >= 173 && trial.TrialNumberInSzenario <= 220)
                 {
                     trial.Szenario = "Base1";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 84;
                 }
-                else if (trial.TrialNumberInSzenario >= 229 && trial.TrialNumberInSzenario <= 276)
+                else if (trial.TrialNumberInSzenario >= 221 && trial.TrialNumberInSzenario <= 268)
                 {
                     trial.Szenario = "Base1";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 84;
                 }
-                else if (trial.TrialNumberInSzenario >= 277 && trial.TrialNumberInSzenario <= 288)
+                else if (trial.TrialNumberInSzenario >= 269 && trial.TrialNumberInSzenario <= 280)
                 {
                     trial.Szenario = "Base2";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 276;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 268;
                 }
-                else if (trial.TrialNumberInSzenario >= 289 && trial.TrialNumberInSzenario <= 300)
+                else if (trial.TrialNumberInSzenario >= 281 && trial.TrialNumberInSzenario <= 292)
                 {
                     trial.Szenario = "Base2";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 276;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 268;
                 }
-                else if (trial.TrialNumberInSzenario >= 301 && trial.TrialNumberInSzenario <= 444)
+                else if (trial.TrialNumberInSzenario >= 293 && trial.TrialNumberInSzenario <= 436)
                 {
                     trial.Szenario = "Training";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
-                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 300;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 292;
                 }
             }
 
@@ -216,7 +232,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 444;
+            return trialCount == 436;
         }
     }
 }
