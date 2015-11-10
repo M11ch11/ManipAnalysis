@@ -493,7 +493,7 @@ namespace ManipAnalysis_v2
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
                 if (study == "Study 8")
                 {
-                    _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                    _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                 }
                 else if (study == "Study 7")
                 {
@@ -2058,8 +2058,12 @@ namespace ManipAnalysis_v2
                                     List<Trial> nullFieldBaselineLeftHand = baselineTrialsBase1.Where(t => t.TrialNumberInSzenario >= 179 && t.TrialNumberInSzenario <= 184).ToList();
                                     nullFieldBaselineLeftHand.AddRange(baselineTrialsBase2.Where(t => t.TrialNumberInSzenario >= 1 && t.TrialNumberInSzenario <= 6));
                                                                         
-                                    if (forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) && forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) && errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
-                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    if ((forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.LeftHand) || forceFieldCatchTrialBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW && t.Handedness == Trial.HandednessEnum.LeftHand)) && 
+                                        (forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand) || forceFieldCatchTrialBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW && t.Handedness == Trial.HandednessEnum.RightHand)) && 
+                                        errorClampBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && 
+                                        errorClampBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
+                                        nullFieldBaselineLeftHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.LeftHand) && 
+                                        nullFieldBaselineRightHand.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand))
                                     {
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineLeftHand));
                                         baselinesContainer.AddRange(doBaselineCalculation(forceFieldCatchTrialBaselineRightHand));
@@ -2546,39 +2550,39 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
-                                        else if (trial.Study == "Study 8")
-                                        {
-                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
-                                            {
-                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
-                                                if (baseline == null)
-                                                {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
-                                                    if (baseline != null)
-                                                    {
-                                                        lock (baselineBuffer)
-                                                        {
-                                                            baselineBuffer.Add(baseline);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
-                                                if (baseline == null)
-                                                {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
-                                                    if (baseline != null)
-                                                    {
-                                                        lock (baselineBuffer)
-                                                        {
-                                                            baselineBuffer.Add(baseline);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        //else if (trial.Study == "Study 8")
+                                        //{
+                                        //    if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
+                                        //    {
+                                        //        baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                        //        if (baseline == null)
+                                        //        {
+                                        //            baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                        //            if (baseline != null)
+                                        //            {
+                                        //                lock (baselineBuffer)
+                                        //                {
+                                        //                    baselineBuffer.Add(baseline);
+                                        //                }
+                                        //            }
+                                        //        }
+                                        //    }
+                                        //    else
+                                        //    {
+                                        //        baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                        //        if (baseline == null)
+                                        //        {
+                                        //            baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                        //            if (baseline != null)
+                                        //            {
+                                        //                lock (baselineBuffer)
+                                        //                {
+                                        //                    baselineBuffer.Add(baseline);
+                                        //                }
+                                        //            }
+                                        //        }
+                                        //    }
+                                        //}
                                         else if (trial.Study == "Study 10")
                                         {
                                             if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW || trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
@@ -2849,7 +2853,7 @@ namespace ManipAnalysis_v2
                         }
                         if (study == "Study 8")
                         {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 7")
                         {
@@ -2875,7 +2879,7 @@ namespace ManipAnalysis_v2
 
                         if (study == "Study 8")
                         {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 7")
                         {
@@ -2901,7 +2905,7 @@ namespace ManipAnalysis_v2
 
                         if (study == "Study 8")
                         {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
+                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 7")
                         {
