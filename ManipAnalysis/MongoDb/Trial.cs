@@ -121,6 +121,8 @@ namespace ManipAnalysis_v2.MongoDb
 
         public ForceFieldTypeEnum ForceFieldType { get; set; }
 
+        public double[,] ForceFieldMatrix = new double[2, 2];
+
         public HandednessEnum Handedness { get; set; }
 
         public int PositionDataFilterCutoffFrequency { get; set; }

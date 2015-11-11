@@ -72,7 +72,8 @@ R = [0,0;0,0];      % allocation for rotation matrix
 %targetDefinition = 'Study1-6_BioMotionBot';
 %targetDefinition = 'Study1-6_KINARM';
 %targetDefinition = 'Study7_KINARM';
-targetDefinition = 'Study10_KINARM';
+targetDefinition = 'Study8_KINARM';
+%targetDefinition = 'Study10_KINARM';
 
 
 if(strcmp(targetDefinition, 'Study1-6_BioMotionBot'))
@@ -146,6 +147,21 @@ elseif(strcmp(targetDefinition, 'Study1-6_KINARM'))
     end
     
 elseif(strcmp(targetDefinition, 'Study7_KINARM'))
+    if(targetNumber == 3 || targetNumber == 13)
+        % alpha = 7*pi/4;
+        R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
+
+    elseif (targetNumber == 2 || targetNumber == 12)
+        % alpha = 6*pi/4;
+        R = [0, 1; -1, 0];
+
+    elseif(targetNumber == 1 || targetNumber == 11)
+        % alpha = 5*pi/4;
+        R = [cos(5*pi/4), -sin(5*pi/4); sin(5*pi/4), cos(5*pi/4)];
+
+    end
+
+elseif(strcmp(targetDefinition, 'Study8_KINARM'))
     if(targetNumber == 3 || targetNumber == 13)
         % alpha = 7*pi/4;
         R = [cos(7*pi/4), -sin(7*pi/4); sin(7*pi/4), cos(7*pi/4)];
