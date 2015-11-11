@@ -2557,7 +2557,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
