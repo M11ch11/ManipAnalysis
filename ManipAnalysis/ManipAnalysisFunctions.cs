@@ -2448,7 +2448,7 @@ namespace ManipAnalysis_v2
                 try
                 {
                     var statisticFields = new FieldsBuilder<Trial>();
-                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness);
+                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness, t13 => t13.ForceFieldMatrix);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     var baselineBuffer = new List<Baseline>();
@@ -2471,10 +2471,8 @@ namespace ManipAnalysis_v2
                             while (trialCounter < trialList.Count)
                             {
                                 taskTrialListParts[listCounter].Add(trialList[trialCounter]);
-                                trialCounter
-                                    ++;
-                                listCounter
-                                    ++;
+                                trialCounter++;
+                                listCounter++;
                                 if (listCounter >= cpuCount)
                                 {
                                     listCounter = 0;
@@ -2644,6 +2642,7 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.ClearWorkspace();
 
                                             taskMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
+                                            taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix", trial.ForceFieldMatrix);
                                             taskMatlabWrapper.SetWorkspaceData("positionX", trial.PositionNormalized.Select(t => t.X).ToArray());
                                             taskMatlabWrapper.SetWorkspaceData("positionY", trial.PositionNormalized.Select(t => t.Y).ToArray());
                                             taskMatlabWrapper.SetWorkspaceData("velocityX", trial.VelocityNormalized.Select(t => t.X).ToArray());
@@ -2752,8 +2751,8 @@ namespace ManipAnalysis_v2
                                             // Calculate ForcefieldCompenstionFactor
                                             taskMatlabWrapper.SetWorkspaceData("forcePDArray", perpendicularForcesForcefieldCompenstionFactor.ToArray());
                                             taskMatlabWrapper.SetWorkspaceData("forcePDRawArray", perpendicularForcesRawForcefieldCompenstionFactor.ToArray());
-                                            taskMatlabWrapper.Execute("forceCompFactor = forceCompensationFactor(forcePDArray, velocityX, velocityY);");
-                                            taskMatlabWrapper.Execute("forceCompFactorRaw = forceCompensationFactor(forcePDRawArray, velocityX, velocityY);");
+                                            taskMatlabWrapper.Execute("forceCompFactor = forceCompensationFactor(forcePDArray, velocityX, velocityY, forceFieldMatrix);");
+                                            taskMatlabWrapper.Execute("forceCompFactorRaw = forceCompensationFactor(forcePDRawArray, velocityX, velocityY, forceFieldMatrix);");
 
                                             statisticContainer.ForcefieldCompenstionFactor = taskMatlabWrapper.GetWorkspaceData("forceCompFactor");
                                             statisticContainer.ForcefieldCompenstionFactorRaw = taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");

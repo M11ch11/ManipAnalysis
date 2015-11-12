@@ -26,13 +26,15 @@
 %           velocities of data points in x and y direction (typically 1x101)
 %       forcePD
 %           measured perpendicular force of data points (typically 1x100)
+%		forceFieldMatrix
+%           a 2x2 matrix containing the forceField of the trial
 %   - Output:
 %       fcp = force compensation factor calculated through linear
 %       regression between force ideal and force measured
 %
 %========================================================================%
 
-function fcp = forceCompensationFactor(forcePD, velocityX, velocityY)
+function fcp = forceCompensationFactor(forcePD, velocityX, velocityY, forceFieldMatrix)
 
 velocity = [velocityX; velocityY];
 
@@ -68,8 +70,6 @@ if (pTraj == 1)
 end
 
 %-------------------------------------------------------------------------%
-% Enter Force Matrix; generate velocity Array and Force Array
-forceFieldMatrix = [0 15; -15 0];
 
 forceIdealArray = forceFieldMatrix * velocity;
 
