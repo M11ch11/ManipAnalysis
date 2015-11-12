@@ -39,9 +39,9 @@ function fcp = forceCompensationFactor(forcePD, velocityX, velocityY, forceField
 velocity = [velocityX; velocityY];
 
 % Check for errors: number of input arguments
-if (nargin < 3)
-    error('forceCompensationFactor: ERROR - invalid input arguments - at least 2 input arguments needed!')
-elseif (nargin > 3)
+if (nargin < 4)
+    error('forceCompensationFactor: ERROR - invalid input arguments - at least 4 input arguments needed!')
+elseif (nargin > 4)
     error('forceCompensationFactor: ERROR - invalid input arguments - too many input arguments.')
 end
 
