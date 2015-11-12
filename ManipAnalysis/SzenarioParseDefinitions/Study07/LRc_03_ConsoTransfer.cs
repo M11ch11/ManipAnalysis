@@ -32,6 +32,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 3;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 21 && trial.Target.Number <= 23) || (trial.Target.Number >= 31 && trial.Target.Number <= 33)) // ErrorClampTrial
                 {
@@ -44,12 +48,20 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 23;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 41 && trial.Target.Number <= 43) // 30s Pause
                 {
                     trial.Target.Number = trial.Target.Number - 30;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 53) // 30s Pause + Wechsel R=>L
                 {
@@ -68,12 +80,20 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 50;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 64 && trial.Target.Number <= 66) // 30s Pause + Wechsel L=>R + CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 53;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 71 && trial.Target.Number <= 73) // 30s Pause + Wechsel R=>L + ErrorClampTrial
                 {
