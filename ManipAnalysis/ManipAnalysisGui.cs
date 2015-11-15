@@ -459,8 +459,6 @@ namespace ManipAnalysis_v2
                     }
                 }
             
-            //IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, groups, szenario, subjects, trialTypes, forceFields, handedness);
-            
             if (szenarioTrialNamesIntersect.Any())
             {
                 listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNamesIntersect);
