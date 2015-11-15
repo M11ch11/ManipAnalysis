@@ -526,9 +526,9 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
         }
 
-        public IEnumerable<string> GetTrialsOfSzenario(string studyName, IEnumerable<string> groupNames, string szenarioName, IEnumerable<SubjectContainer> subjects, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        public IEnumerable<string> GetTrialsOfSzenario(string studyName, string szenarioName, SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
         {
-            return _myDatabaseWrapper.GetSzenarioTrials(studyName, groupNames, szenarioName, subjects, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetSzenarioTrials(studyName, szenarioName, subject, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
         }
 
         public void PlotExportDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType, string fitEquation, int pdTime, bool plotFit, bool plotErrorbars, string fileName)

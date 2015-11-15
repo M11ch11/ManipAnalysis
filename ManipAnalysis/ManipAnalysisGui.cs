@@ -384,8 +384,7 @@ namespace ManipAnalysis_v2
             SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
 
             string[] turnIntersect = null;
-            for (int j = 0; j < subjects.Length; j
-                                                     ++)
+            for (int j = 0; j < subjects.Length; j++)
             {
                 IEnumerable<string> tempTurnString = _manipAnalysisFunctions.GetTurns(study, szenario, subjects[j]);
 
@@ -442,13 +441,30 @@ namespace ManipAnalysis_v2
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            //IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
-
-            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, groups, szenario, subjects, trialTypes, forceFields, handedness);
+            string[] szenarioTrialNamesIntersect = null;
             
-            if (szenarioTrialNames.Any())
+                for (int i = 0; i < subjects.Length; i++)
+                {
+                    IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, subjects[i], trialTypes, forceFields, handedness);
+
+                    if (szenarioTrialNames != null)
+                    {
+                        if (szenarioTrialNamesIntersect == null)
+                        {
+                            szenarioTrialNamesIntersect = szenarioTrialNames.ToArray();
+                        }
+                        else
+                        {
+                            szenarioTrialNamesIntersect = szenarioTrialNamesIntersect.Intersect(szenarioTrialNamesIntersect).ToArray();
+                        }
+                    }
+                }
+            
+            //IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, groups, szenario, subjects, trialTypes, forceFields, handedness);
+            
+            if (szenarioTrialNamesIntersect.Any())
             {
-                listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames.ToArray());
+                listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNamesIntersect);
                 if (listBox_DescriptiveStatistic1_Trials.Items.Count > 0)
                 {
                     listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;

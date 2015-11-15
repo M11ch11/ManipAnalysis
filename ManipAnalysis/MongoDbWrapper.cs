@@ -501,12 +501,12 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<int> GetSzenarioTrials(string studyName, IEnumerable<string> groupNames, string szenarioName, IEnumerable<SubjectContainer> subjects, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        public IEnumerable<int> GetSzenarioTrials(string studyName,string szenarioName, SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
         {
             IEnumerable<int> retVal;
             try
-            {
-                retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && groupNames.Contains(t.Group) && t.Szenario == szenarioName && subjects.Contains(t.Subject) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)).Select(t => t.TrialNumberInSzenario).Distinct();
+            {   
+                retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && t.Szenario == szenarioName && t.Subject == subject && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)).Select(t => t.TrialNumberInSzenario).Distinct();
             }
             catch (Exception ex)
             {
