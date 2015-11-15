@@ -122,7 +122,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(true);
                 options.SetName("GetTrial");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetStudys
@@ -133,7 +133,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetStudys");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetGroups
@@ -145,7 +145,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetGroups");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetSzenarios
@@ -158,7 +158,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetSzenarios");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetSubjects
@@ -172,7 +172,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetSubjects");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetTurns
@@ -187,7 +187,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetTurns");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 /*
                  * GetSzenario-/Target/TargetTrials/CatchTrial/ErrorClampTrial
@@ -204,7 +204,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetSzenario-/Target/TargetTrials/CatchTrial/ErrorClampTrial");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 // MeasureFileHash
                 trialCollectionKeys = new IndexKeysBuilder<Trial>();
@@ -213,7 +213,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(false);
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
-                _trialCollection.EnsureIndex(trialCollectionKeys, options);
+                _trialCollection.CreateIndex(trialCollectionKeys, options);
 
                 #endregion
 
@@ -231,7 +231,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetBaseline");
-                _baselineCollection.EnsureIndex(baselineCollectionKeys, options);
+                _baselineCollection.CreateIndex(baselineCollectionKeys, options);
 
                 // MeasureFileHash
                 baselineCollectionKeys = new IndexKeysBuilder<Baseline>();
@@ -240,7 +240,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(false);
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
-                _baselineCollection.EnsureIndex(trialCollectionKeys, options);
+                _baselineCollection.CreateIndex(trialCollectionKeys, options);
 
                 #endregion
 
@@ -259,7 +259,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(true);
                 options.SetUnique(false);
                 options.SetName("GetSzenarioMeanTime");
-                _szenarioMeanTimeCollection.EnsureIndex(szenarioMeanTimeCollectionKeys, options);
+                _szenarioMeanTimeCollection.CreateIndex(szenarioMeanTimeCollectionKeys, options);
 
                 // MeasureFileHash
                 szenarioMeanTimeCollectionKeys = new IndexKeysBuilder<SzenarioMeanTime>();
@@ -268,7 +268,7 @@ namespace ManipAnalysis_v2
                 options.SetSparse(false);
                 options.SetUnique(false);
                 options.SetName("MeasureFileHash");
-                _szenarioMeanTimeCollection.EnsureIndex(trialCollectionKeys, options);
+                _szenarioMeanTimeCollection.CreateIndex(trialCollectionKeys, options);
 
                 #endregion
             }
@@ -493,6 +493,22 @@ namespace ManipAnalysis_v2
             }
             catch (Exception
                 ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarioTrials: " + ex);
+                return new List<int>();
+            }
+
+            return retVal;
+        }
+
+        public IEnumerable<int> GetSzenarioTrials(string studyName, IEnumerable<string> groupNames, string szenarioName, IEnumerable<SubjectContainer> subjects, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        {
+            IEnumerable<int> retVal;
+            try
+            {
+                retVal = _trialCollection.AsQueryable().Where(t => t.Study == studyName && groupNames.Contains(t.Group) && t.Szenario == szenarioName && subjects.Contains(t.Subject) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness)).Select(t => t.TrialNumberInSzenario).Distinct();
+            }
+            catch (Exception ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarioTrials: " + ex);
                 return new List<int>();

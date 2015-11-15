@@ -418,38 +418,34 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
+            string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
+            SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
 
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic1_TrialType.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic1_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic1_ForceField.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic1_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic1_Handedness.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic1_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
 
-            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
+            //IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
 
+            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, groups, szenario, subjects, trialTypes, forceFields, handedness);
+            
             if (szenarioTrialNames.Any())
             {
                 listBox_DescriptiveStatistic1_Trials.Items.AddRange(szenarioTrialNames.ToArray());
@@ -701,8 +697,7 @@ namespace ManipAnalysis_v2
 
                 if (szenarioIntersect.Any())
                 {
-                    for (int i = 1; i < groups.Length; i
-                                                           ++)
+                    for (int i = 1; i < groups.Length; i++)
                     {
                         szenarioIntersect = szenarioIntersect.Intersect(_manipAnalysisFunctions.GetSzenarios(study, groups[i]));
                     }
