@@ -455,7 +455,7 @@ namespace ManipAnalysis_v2
                         }
                         else
                         {
-                            szenarioTrialNamesIntersect = szenarioTrialNamesIntersect.Intersect(szenarioTrialNamesIntersect).ToArray();
+                            szenarioTrialNamesIntersect = szenarioTrialNamesIntersect.Intersect(szenarioTrialNames).ToArray();
                         }
                     }
                 }
