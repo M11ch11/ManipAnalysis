@@ -417,7 +417,6 @@ namespace ManipAnalysis_v2
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
-            string[] groups = listBox_DescriptiveStatistic1_Groups.SelectedItems.Cast<string>().ToArray();
             string szenario = comboBox_DescriptiveStatistic1_Szenario.SelectedItem.ToString();
             SubjectContainer[] subjects = listBox_DescriptiveStatistic1_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
             string[] turns = listBox_DescriptiveStatistic1_Turns.SelectedItems.Cast<string>().ToArray();
@@ -796,40 +795,50 @@ namespace ManipAnalysis_v2
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
             string szenario = comboBox_DescriptiveStatistic2_Szenario.SelectedItem.ToString();
+            SubjectContainer[] subjects = listBox_DescriptiveStatistic2_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
 
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic2_TrialType.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic2_TrialType.SelectedItems)
             {
-                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
+                trialTypes.Add((Trial.TrialTypeEnum)Enum.Parse(typeof(Trial.TrialTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic2_ForceField.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic2_ForceField.SelectedItems)
             {
-                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
+                forceFields.Add((Trial.ForceFieldTypeEnum)Enum.Parse(typeof(Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_DescriptiveStatistic2_Handedness.SelectedItems)
+            foreach (string item in listBox_DescriptiveStatistic2_Handedness.SelectedItems)
             {
-                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
+                handedness.Add((Trial.HandednessEnum)Enum.Parse(typeof(Trial.HandednessEnum), item));
             }
 
-            IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, trialTypes, forceFields, handedness);
+            string[] szenarioTrialNamesIntersect = null;
 
-            if (szenarioTrialNames.Any())
+            for (int i = 0; i < subjects.Length; i++)
             {
-                listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNames.ToArray());
+                IEnumerable<string> szenarioTrialNames = _manipAnalysisFunctions.GetTrialsOfSzenario(study, szenario, subjects[i], trialTypes, forceFields, handedness);
+
+                if (szenarioTrialNames != null)
+                {
+                    if (szenarioTrialNamesIntersect == null)
+                    {
+                        szenarioTrialNamesIntersect = szenarioTrialNames.ToArray();
+                    }
+                    else
+                    {
+                        szenarioTrialNamesIntersect = szenarioTrialNamesIntersect.Intersect(szenarioTrialNames).ToArray();
+                    }
+                }
+            }
+
+            if (szenarioTrialNamesIntersect.Any())
+            {
+                listBox_DescriptiveStatistic2_Trials.Items.AddRange(szenarioTrialNamesIntersect);
                 if (listBox_DescriptiveStatistic2_Trials.Items.Count > 0)
                 {
                     listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
@@ -1354,35 +1363,20 @@ namespace ManipAnalysis_v2
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string
-                    group
-                    in
-                    groups)
+                foreach (string group in groups)
                 {
-                    foreach (SubjectContainer
-                        subject
-                        in
-                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string
-                            turn
-                            in
-                            turns)
+                        foreach (string turn in turns)
                         {
-                            foreach (string
-                                target
-                                in
-                                targets)
+                            foreach (string target in targets)
                             {
                                 if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (TrajectoryVelocityPlotContainer
-                                            temp
-                                            in
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (TrajectoryVelocityPlotContainer temp in listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                             {
@@ -1420,35 +1414,20 @@ namespace ManipAnalysis_v2
                 string[] targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_TrajectoryVelocity_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string
-                    group
-                    in
-                    groups)
+                foreach (string group in groups)
                 {
-                    foreach (SubjectContainer
-                        subject
-                        in
-                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string
-                            turn
-                            in
-                            turns)
+                        foreach (string turn in turns)
                         {
-                            foreach (string
-                                target
-                                in
-                                targets)
+                            foreach (string target in targets)
                             {
                                 if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                                 {
                                     if (listBox_TrajectoryVelocity_SelectedTrials.Items.Count > 0)
                                     {
                                         bool canBeUpdated = false;
-                                        foreach (TrajectoryVelocityPlotContainer
-                                            temp
-                                            in
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items)
+                                        foreach (TrajectoryVelocityPlotContainer temp in listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario, subject, turn, target, trials))
                                             {
