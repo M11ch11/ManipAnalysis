@@ -21,13 +21,15 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
             else
             {
-                if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
+                if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || 
+                    (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
                 {
                     trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
-                else if ((trial.Target.Number >= 4 && trial.Target.Number <= 6) || (trial.Target.Number >= 14 && trial.Target.Number <= 16)) // CCW ForceField
+                else if ((trial.Target.Number >= 4 && trial.Target.Number <= 6) || 
+                         (trial.Target.Number >= 14 && trial.Target.Number <= 16)) // CCW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 3;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
@@ -37,7 +39,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 0] = 15;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
-                else if ((trial.Target.Number >= 7 && trial.Target.Number <= 9) || (trial.Target.Number >= 17 && trial.Target.Number <= 19)) // CW ForceField
+                else if ((trial.Target.Number >= 7 && trial.Target.Number <= 9) || 
+                         (trial.Target.Number >= 17 && trial.Target.Number <= 19)) // CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 6;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
@@ -47,13 +50,15 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 0] = -15;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
-                else if ((trial.Target.Number >= 21 && trial.Target.Number <= 23) || (trial.Target.Number >= 31 && trial.Target.Number <= 33)) // ErrorClampTrial
+                else if ((trial.Target.Number >= 21 && trial.Target.Number <= 23) || 
+                         (trial.Target.Number >= 31 && trial.Target.Number <= 33)) // ErrorClampTrial
                 {
                     trial.Target.Number = trial.Target.Number - 20;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
-                else if ((trial.Target.Number >= 24 && trial.Target.Number <= 26) || (trial.Target.Number >= 34 && trial.Target.Number <= 36)) // ErrorClampTrial + CCW ForceField
+                else if ((trial.Target.Number >= 24 && trial.Target.Number <= 26) || 
+                         (trial.Target.Number >= 34 && trial.Target.Number <= 36)) // ErrorClampTrial + CCW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 23;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
@@ -63,7 +68,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 0] = 15;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
-                else if ((trial.Target.Number >= 27 && trial.Target.Number <= 29) || (trial.Target.Number >= 37 && trial.Target.Number <= 39)) // ErrorClampTrial + CW ForceField
+                else if ((trial.Target.Number >= 27 && trial.Target.Number <= 29) || 
+                         (trial.Target.Number >= 37 && trial.Target.Number <= 39)) // ErrorClampTrial + CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 26;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
