@@ -2148,10 +2148,7 @@ namespace ManipAnalysis_v2
                                     }
                                 }
 
-                                foreach (SubjectContainer
-                                    subject
-                                    in
-                                    subjectsRL)
+                                foreach (SubjectContainer subject in subjectsRL)
                                 {
                                     DateTime turnBase1 = _myDatabaseWrapper.GetTurns(study, group, "RL_Base1", subject).ElementAt(0);
                                     DateTime turnBase2a = _myDatabaseWrapper.GetTurns(study, group, "RL_Base2a", subject).ElementAt(0);
@@ -2772,8 +2769,7 @@ namespace ManipAnalysis_v2
                                         }
                                     }
                                 }
-                                catch (Exception
-                                    ex)
+                                catch (Exception ex)
                                 {
                                     _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                                     taskMatlabWrapper.Dispose();
