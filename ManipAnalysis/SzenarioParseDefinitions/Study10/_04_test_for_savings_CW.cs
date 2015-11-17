@@ -39,24 +39,40 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 20;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 31 && trial.Target.Number <= 38) // CW medium
                 {
                     trial.Target.Number = trial.Target.Number - 30;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 41 && trial.Target.Number <= 48) // CW strong
                 {
                     trial.Target.Number = trial.Target.Number - 40;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 58) // CW strong, error clamp
                 {
                     trial.Target.Number = trial.Target.Number - 50;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause + Position control, skip
                 {
@@ -70,6 +86,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 70;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    // This is intentional! Same ForceFieldMatrix for CCW as for CW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else
                 {

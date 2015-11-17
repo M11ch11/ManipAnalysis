@@ -1980,6 +1980,8 @@ namespace ManipAnalysis_v2
 
                 try
                 {
+                    var baselineFields = new FieldsBuilder<Trial>();
+                    baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
                     var baselinesContainer = new List<Baseline>();
                     IEnumerable<string> studys = _myDatabaseWrapper.GetStudys();
 
@@ -1991,9 +1993,6 @@ namespace ManipAnalysis_v2
 
                             foreach (string group in groups)
                             {
-                                var baselineFields = new FieldsBuilder<Trial>();
-                                baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
-
                                 IEnumerable<SubjectContainer> subjects = _myDatabaseWrapper.GetSubjects(study, group, "02_baseline");
 
                                 foreach (SubjectContainer subject in subjects)
@@ -2023,10 +2022,7 @@ namespace ManipAnalysis_v2
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
 
                             foreach (string group in groups)
-                            {
-                                var baselineFields = new FieldsBuilder<Trial>();
-                                baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
-
+                            {                               
                                 IEnumerable<SubjectContainer> subjects = _myDatabaseWrapper.GetSubjects(study, group, "Base1");
 
                                 foreach (SubjectContainer subject in subjects)
@@ -2090,9 +2086,6 @@ namespace ManipAnalysis_v2
 
                             foreach (string group in groups)
                             {
-                                var baselineFields = new FieldsBuilder<Trial>();
-                                baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
-
                                 IEnumerable<SubjectContainer> subjectsLR = _myDatabaseWrapper.GetSubjects(study, group, "LR_Base1");
                                 IEnumerable<SubjectContainer> subjectsRL = _myDatabaseWrapper.GetSubjects(study, group, "RL_Base1");
 
