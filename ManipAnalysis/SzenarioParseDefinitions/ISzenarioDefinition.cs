@@ -136,12 +136,15 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             });
 
             // Check for valid TrialNumberInSzenario Sequence
-            if (!IsValidTrialNumberInSzenarioSequence(trialsContainer.Select(t => t.TrialNumberInSzenario)))
+            foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
             {
-                myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in file " + measureFilePath + "\nSkipping File.");
-                trialsContainer.Clear();
+                IEnumerable<int> trialNumberList = trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
+                if (!IsValidTrialNumberInSzenarioSequence(trialNumberList))
+                {
+                    myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" + szenario + "\" in file " + measureFilePath + "\nSkipping File.");
+                    trialsContainer.Clear();
+                }
             }
-
             // Set TargetTrialNumberInSzenario Field
             if (checkTrialCount(trialsContainer.Count))
             {
@@ -177,9 +180,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
             bool isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
             bool isValidStart = orderedTrialNumbersInSzenario.First() == 1;
-            bool isValidEnd = orderedTrialNumbersInSzenario.Last() == TrialCount;
 
-            return isConsecutive && isValidStart && isValidEnd;
+            return isConsecutive && isValidStart;
         }
 
         public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
