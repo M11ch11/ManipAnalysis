@@ -13,6 +13,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const string SzenarioName = "Unknown";
 
+        public const int TrialCount = 0;
+
         public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName, Vector3 offset)
         {
             var trialsContainer = new List<Trial>();
@@ -133,6 +135,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
             });
 
+            // Check for valid TrialNumberInSzenario Sequence
+            if (!IsValidTrialNumberInSzenarioSequence(trialsContainer.Select(t => t.TrialNumberInSzenario)))
+            {
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in file " + measureFilePath + "\nSkipping File.");
+                trialsContainer.Clear();
+            }
+
             // Set TargetTrialNumberInSzenario Field
             if (checkTrialCount(trialsContainer.Count))
             {
@@ -152,7 +161,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             {
                 myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");
                 trialsContainer.Clear();
-            }
+            }           
 
             return trialsContainer;
         }
@@ -162,8 +171,20 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return Math.PI * angle / 180.0;
         }
 
+        protected bool IsValidTrialNumberInSzenarioSequence(IEnumerable<int> trialNumbersInSzenario)
+        {
+            List<int> orderedTrialNumbersInSzenario = trialNumbersInSzenario.OrderBy(t => t).ToList();
+
+            bool isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
+            bool isValidStart = orderedTrialNumbersInSzenario.First() == 1;
+            bool isValidEnd = orderedTrialNumbersInSzenario.Last() == TrialCount;
+
+            return isConsecutive && isValidStart && isValidEnd;
+        }
+
         public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
 
         public abstract bool checkTrialCount(int trialCount);
+
     }
 }

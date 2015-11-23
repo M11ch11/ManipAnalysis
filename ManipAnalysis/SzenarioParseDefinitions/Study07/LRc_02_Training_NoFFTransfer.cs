@@ -9,6 +9,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const string SzenarioName = "LR_02_LRc_Training&NoFFTransfer";
 
+        public const int TrialCount = 186;
+
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = StudyName;
@@ -142,7 +144,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 186)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > TrialCount)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -158,7 +160,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 12;
                 }
-                else if (trial.TrialNumberInSzenario >= 181 && trial.TrialNumberInSzenario <= 186)
+                else if (trial.TrialNumberInSzenario >= 181 && trial.TrialNumberInSzenario <= TrialCount)
                 {
                     trial.Szenario = "LR_Direct-EC-Transfer";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
@@ -171,7 +173,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 186;
+            return trialCount == TrialCount;
         }
     }
 }

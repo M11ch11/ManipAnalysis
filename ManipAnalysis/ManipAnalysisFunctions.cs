@@ -2610,7 +2610,7 @@ namespace ManipAnalysis_v2
                                             }
                                         }
                                         else
-                                        {
+                                        {  
                                             baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
                                             if (baseline == null)
                                             {

@@ -9,6 +9,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const string SzenarioName = "T1_ccw_01_Fam_Base_TrainA";
 
+        public const int TrialCount = 436;
+
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = StudyName;
@@ -30,10 +32,12 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 // Correcting TrialNumberInSzenario count
                 if (trial.TrialNumberInSzenario > 131 && trial.TrialNumberInSzenario < 177)
                 {
+                    myManipAnalysisGui.WriteToLogBox("Correcting TrialNumberInSzenario: " + trial.TrialNumberInSzenario + " => " + (trial.TrialNumberInSzenario - 3) + ", Target " + trial.Target.Number);
                     trial.TrialNumberInSzenario -= 3;
                 }
                 else if (trial.TrialNumberInSzenario > 179)
                 {
+                    myManipAnalysisGui.WriteToLogBox("Correcting TrialNumberInSzenario: " + trial.TrialNumberInSzenario + " => " + (trial.TrialNumberInSzenario - 7) + ", Target " + trial.Target.Number);
                     trial.TrialNumberInSzenario -= 7;
                 }
 
@@ -208,7 +212,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 436)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > TrialCount)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -259,7 +263,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 268;
                 }
-                else if (trial.TrialNumberInSzenario >= 293 && trial.TrialNumberInSzenario <= 436)
+                else if (trial.TrialNumberInSzenario >= 293 && trial.TrialNumberInSzenario <= TrialCount)
                 {
                     trial.Szenario = "Training";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
@@ -272,7 +276,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 436;
+            return trialCount == TrialCount;
         }
     }
 }

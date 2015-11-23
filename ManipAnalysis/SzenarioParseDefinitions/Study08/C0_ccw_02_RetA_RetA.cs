@@ -9,6 +9,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const string SzenarioName = "C0_ccw_02_RetA_RetA";
 
+        public const int TrialCount = 156;
+
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = StudyName;
@@ -20,7 +22,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 trial = null;
             }
             else
-            {
+            {                
                 if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
                 {
                     trial.Target.Number = trial.Target.Number;
@@ -192,19 +194,29 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 156)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > TrialCount)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
-                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 78)
+                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 6)
                 {
-                    trial.Szenario = "Retention";
+                    trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
-                else if (trial.TrialNumberInSzenario >= 79 && trial.TrialNumberInSzenario <= 156)
+                else if (trial.TrialNumberInSzenario >= 7 && trial.TrialNumberInSzenario <= 78)
                 {
-                    trial.Szenario = "Retention";
+                    trial.Szenario = "Retention Savings";
+                    trial.Handedness = Trial.HandednessEnum.RightHand;
+                }
+                else if (trial.TrialNumberInSzenario >= 79 && trial.TrialNumberInSzenario <= 84)
+                {
+                    trial.Szenario = "Retention Bias";
+                    trial.Handedness = Trial.HandednessEnum.LeftHand;
+                }
+                else if (trial.TrialNumberInSzenario >= 85 && trial.TrialNumberInSzenario <= TrialCount)
+                {
+                    trial.Szenario = "Retention Savings";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                 }
             }
@@ -214,7 +226,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            return trialCount == 156;
+            return trialCount == TrialCount;
         }
     }
 }
