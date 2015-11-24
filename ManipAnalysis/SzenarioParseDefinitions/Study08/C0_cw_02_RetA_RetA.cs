@@ -214,16 +214,19 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Szenario = "Retention Savings";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 6;
                 }
                 else if (trial.TrialNumberInSzenario >= 79 && trial.TrialNumberInSzenario <= 84)
                 {
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 72;
                 }
                 else if (trial.TrialNumberInSzenario >= 85 && trial.TrialNumberInSzenario <= TrialCount)
                 {
                     trial.Szenario = "Retention Savings";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 12;
                 }
             }
 

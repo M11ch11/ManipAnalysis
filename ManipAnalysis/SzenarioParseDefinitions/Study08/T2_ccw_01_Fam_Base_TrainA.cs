@@ -32,12 +32,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 // Correcting TrialNumberInSzenario count
                 if (trial.TrialNumberInSzenario > 132 && trial.TrialNumberInSzenario < 177)
                 {
-                    myManipAnalysisGui.WriteToLogBox("Correcting TrialNumberInSzenario: " + trial.TrialNumberInSzenario + " => " + (trial.TrialNumberInSzenario - 4) + ", Target " + trial.Target.Number);
                     trial.TrialNumberInSzenario -= 4;
                 }
                 else if (trial.TrialNumberInSzenario > 180)
                 {
-                    myManipAnalysisGui.WriteToLogBox("Correcting TrialNumberInSzenario: " + trial.TrialNumberInSzenario + " => " + (trial.TrialNumberInSzenario - 8) + ", Target " + trial.Target.Number);
                     trial.TrialNumberInSzenario -= 8;
                 }
 

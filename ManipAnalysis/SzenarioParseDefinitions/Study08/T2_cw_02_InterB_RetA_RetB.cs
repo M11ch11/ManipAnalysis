@@ -201,7 +201,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Radius = 0.175;
                 }
 
-                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > TrialCount)
+                if (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 306)
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
@@ -215,26 +215,31 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Szenario = "Interference Savings";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 6;
                 }
                 else if (trial.TrialNumberInSzenario >= 151 && trial.TrialNumberInSzenario <= 156)
                 {
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 150;
                 }
                 else if (trial.TrialNumberInSzenario >= 157 && trial.TrialNumberInSzenario <= 228)
                 {
                     trial.Szenario = "Retention Savings";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 156;
                 }
                 else if (trial.TrialNumberInSzenario >= 229 && trial.TrialNumberInSzenario <= 234)
                 {
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 222;
                 }
-                else if (trial.TrialNumberInSzenario >= 235 && trial.TrialNumberInSzenario <= TrialCount)
+                else if (trial.TrialNumberInSzenario >= 235 && trial.TrialNumberInSzenario <= 306)
                 {
                     trial.Szenario = "Retention Savings";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 162;
                 }
             }
 

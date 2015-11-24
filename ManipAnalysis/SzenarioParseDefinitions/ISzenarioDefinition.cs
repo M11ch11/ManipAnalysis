@@ -135,19 +135,30 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
             });
 
-            // Check for valid TrialNumberInSzenario Sequence
-            foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+            if (!checkTrialCount(trialsContainer.Count))
             {
-                IEnumerable<int> trialNumberList = trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
-                if (!IsValidTrialNumberInSzenarioSequence(trialNumberList))
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");
+                trialsContainer.Clear();
+            }
+
+            // Check for valid TrialNumberInSzenario Sequence
+            if (trialsContainer.Any())
+            {
+                foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" + szenario + "\" in file " + measureFilePath + "\nSkipping File.");
-                    trialsContainer.Clear();
+                    IEnumerable<int> trialNumberList = trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
+                    if (!IsValidTrialNumberInSzenarioSequence(trialNumberList))
+                    {
+                        myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" + szenario + "\" in file " + measureFilePath + "\nSkipping File.");
+                        trialsContainer.Clear();
+                        break;
+                    }
                 }
             }
-            // Set TargetTrialNumberInSzenario Field
-            if (checkTrialCount(trialsContainer.Count))
-            {
+
+            // Set TargetTrialNumberInSzenario Field 
+            if (trialsContainer.Any())
+            {                           
                 foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
                     foreach (int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
@@ -159,12 +170,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         }
                     }
                 }
-            }
-            else
-            {
-                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");
-                trialsContainer.Clear();
-            }           
+            }         
 
             return trialsContainer;
         }
@@ -174,7 +180,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return Math.PI * angle / 180.0;
         }
 
-        protected bool IsValidTrialNumberInSzenarioSequence(IEnumerable<int> trialNumbersInSzenario)
+        private bool IsValidTrialNumberInSzenarioSequence(IEnumerable<int> trialNumbersInSzenario)
         {
             List<int> orderedTrialNumbersInSzenario = trialNumbersInSzenario.OrderBy(t => t).ToList();
 
