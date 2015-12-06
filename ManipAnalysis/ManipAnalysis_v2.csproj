@@ -284,6 +284,9 @@
     <Content Include="MatlabFiles\paraForceLineSegment.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MatlabFiles\pdForceDirectionLineSegment.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\pdForceLineSegment.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
