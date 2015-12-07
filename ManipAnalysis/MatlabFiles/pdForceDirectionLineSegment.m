@@ -26,7 +26,7 @@
 %   - Output:
 %       pd_force = Orthogonal force vector for the line segment
 
-function [ pd_force, sign_pd ] = pdForceDirectionLineSegment(force_vector, v_pos_1, v_pos_2, forceFieldMatrix)
+function [ pd_force, sign_pd, sign_ff ] = pdForceDirectionLineSegment(force_vector, v_pos_1, v_pos_2, forceFieldMatrix)
 
 if norm(forceFieldMatrix) == 0 % Null force field
 	forceFieldMatrix = [0 -1; 1 0];
@@ -37,7 +37,19 @@ pd_position_vector = forceFieldMatrix * transpose(position_vector);
 
 pd_force = ( dot(force_vector, pd_position_vector) ./ norm(pd_position_vector) ) * ( pd_position_vector ./ norm(pd_position_vector) );
 
-cross_product = cross([transpose(pd_position_vector) 0], [force_vector 0]);
+
+cross_product = cross([position_vector 0], [force_vector 0]);
 sign_pd = sign(cross_product(3));
+
+
+sign_ff = 0;
+
+ffAngle = rad2deg(atan2(norm(cross([force_vector 0],[transpose(pd_position_vector) 0])),dot(force_vector, pd_position_vector)));
+
+if (ffAngle > 180)
+	sign_ff = -1;
+else
+	sign_ff = 1;
+end
 
 end
