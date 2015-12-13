@@ -1745,14 +1745,14 @@ namespace ManipAnalysis_v2
                 foreach (int targetCounter in szenarioTrialsContainer.Select(t => t.Target.Number).Distinct())
                 {
                     var tempSzenarioMeanTime = new SzenarioMeanTime();
-                    var targetContainer = new TargetContainer {Number = targetCounter};
-
+                    
                     tempSzenarioMeanTime.Group = szenarioTrialsContainer.ElementAt(0).Group;
                     tempSzenarioMeanTime.MeasureFile = szenarioTrialsContainer.ElementAt(0).MeasureFile;
                     tempSzenarioMeanTime.Study = szenarioTrialsContainer.ElementAt(0).Study;
                     tempSzenarioMeanTime.Subject = szenarioTrialsContainer.ElementAt(0).Subject;
                     tempSzenarioMeanTime.Szenario = szenarioTrialsContainer.ElementAt(0).Szenario;
-                    tempSzenarioMeanTime.Target = targetContainer;
+                    tempSzenarioMeanTime.Target = szenarioTrialsContainer.ElementAt(0).Target;
+                    tempSzenarioMeanTime.Origin = szenarioTrialsContainer.ElementAt(0).Origin;
 
                     long[] targetDurationTimes = null;
                     lock (trialsContainer)
@@ -2267,6 +2267,7 @@ namespace ManipAnalysis_v2
                 tempBaseline.Subject = baselineTrials[0].Subject;
                 tempBaseline.Szenario = baselineTrials[0].Szenario;
                 tempBaseline.Target = baselineTrials[0].Target;
+                tempBaseline.Origin = baselineTrials[0].Origin;
                 tempBaseline.TrialType = baselineTrials[0].TrialType;
                 tempBaseline.ForceFieldType = baselineTrials[0].ForceFieldType;
                 tempBaseline.Handedness = baselineTrials[0].Handedness;
@@ -2507,7 +2508,7 @@ namespace ManipAnalysis_v2
                                         }
 
                                         var baselineFields = new FieldsBuilder<Baseline>();
-                                        baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Target, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.ZippedVelocity, t9 => t9.ZippedPosition, t10 => t10.ZippedMeasuredForces);
+                                        baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Origin, t5 => t5.Target, t6 => t6.TrialType, t7 => t7.ForceFieldType, t8 => t8.Handedness, t9 => t9.ZippedVelocity, t10 => t10.ZippedPosition, t11 => t11.ZippedMeasuredForces);
                                         Baseline baseline = null;
 
                                         if (trial.Study == "Study 7")
@@ -2636,7 +2637,8 @@ namespace ManipAnalysis_v2
 
                                             taskMatlabWrapper.ClearWorkspace();
 
-                                            taskMatlabWrapper.SetWorkspaceData("targetNumber", trial.Target.Number);
+                                            taskMatlabWrapper.SetWorkspaceData("startPoint", new double[1,2]{{trial.Origin.XPos, trial.Origin.YPos}});
+                                            taskMatlabWrapper.SetWorkspaceData("endPoint", new double[1, 2] { { trial.Target.XPos, trial.Target.YPos } });
                                             taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix", trial.ForceFieldMatrix);
                                             taskMatlabWrapper.SetWorkspaceData("positionX", trial.PositionNormalized.Select(t => t.X).ToArray());
                                             taskMatlabWrapper.SetWorkspaceData("positionY", trial.PositionNormalized.Select(t => t.Y).ToArray());
@@ -2657,8 +2659,8 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.Execute("enclosed_area = enclosedArea(positionX, positionY);");
                                             taskMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
                                             taskMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
-                                            taskMatlabWrapper.Execute("distanceAbs = distance2curveAbs([positionX' positionY'], targetNumber);");
-                                            taskMatlabWrapper.Execute("distanceSign = distance2curveSign([positionX' positionY'], targetNumber);");
+                                            taskMatlabWrapper.Execute("[distanceAbs, distance_sign_pd, distance_sign_ff] = distanceToCurve([positionX' positionY'], startPoint, endPoint, forceFieldMatrix);");
+                                            taskMatlabWrapper.Execute("distanceSign = distanceAbs * distance_sign_ff;");
                                             taskMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
                                             taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                             taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");

@@ -30,6 +30,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     var measureFileContainer = new MeasureFileContainer();
                     var subjectContainer = new SubjectContainer();
                     var targetContainer = new TargetContainer();
+                    var originContainer = new TargetContainer();
 
                     string startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
                     var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
@@ -58,6 +59,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial.Subject = subjectContainer;
                     currentTrial.Szenario = szenarioName;
                     currentTrial.Target = targetContainer;
+                    currentTrial.Origin = originContainer;
                     currentTrial.TargetTrialNumberInSzenario = targetTrialNumber;
                     currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
                     currentTrial.TrialNumberInSzenario = szenarioTrialNumber;

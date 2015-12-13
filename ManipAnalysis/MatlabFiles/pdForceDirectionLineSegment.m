@@ -7,7 +7,7 @@
 %   Matthias Pöschl                                                     %
 %   Christian Stockinger, christian.stockinger@kit.edu                  %
 %                                                                       %
-%   09.10.2014                                                          %
+%   11.12.2015                                                          %
 %=======================================================================%
 
 %   pdForceLineSegment.m for ManipAnalysis
@@ -22,34 +22,63 @@
 %       v_pos_1 = 2d position vector of the beginning of the line segment
 %       v_pos_2 = 2d position vector of the end of the line segment
 %       force_vector = 2d force vector for the given line segment
+%       forceFieldMatrix = 2x2 matrix describing the forceField for this trial.
+%						   If the forceField is zero, a CCW forceField is assumed.
 %
 %   - Output:
 %       pd_force = Orthogonal force vector for the line segment
+%
+%		sign_pd = [1] when pd_force is directed anti clockwise to the movement direction,
+%				  [-1] when pd_force is directed clockwise
+%
+%		sign_ff = [1] when pd_force is pointing in the direction of the forcefield,
+%				  [-1] when pd_force is pointing in the opposite direction
+%
 
 function [ pd_force, sign_pd, sign_ff ] = pdForceDirectionLineSegment(force_vector, v_pos_1, v_pos_2, forceFieldMatrix)
 
-if norm(forceFieldMatrix) == 0 % Null force field
-	forceFieldMatrix = [0 -1; 1 0];
+%-------------------------------------------------------------------------%
+% Identify and check dimension of forceField argument
+[nTraj, pTraj] = size(forceField);  % in general: nTraj=2, pTraj=2
+
+if (pTraj ~= 2)
+    error('distanceToCurve: ERROR - forceField must be a 2x2 matrix.')
 end
 
+if (nTraj ~= 2)
+    error('distanceToCurve: ERROR - forceField must be a 2x2 matrix.')
+end
+%-------------------------------------------------------------------------%
+if norm(forceFieldMatrix) == 0 % Null force field
+	forceFieldMatrix = [0 -1; 1 0]; % Dummy CCW force field
+end
+%-------------------------------------------------------------------------%
 position_vector = v_pos_2 - v_pos_1;
-pd_position_vector = forceFieldMatrix * transpose(position_vector);
+ff_position_vector = forceFieldMatrix * transpose(position_vector);
 
-pd_force = ( dot(force_vector, pd_position_vector) ./ norm(pd_position_vector) ) * ( pd_position_vector ./ norm(pd_position_vector) );
+pd_force = ( dot(force_vector, ff_position_vector) ./ norm(ff_position_vector) ) * ( ff_position_vector ./ norm(ff_position_vector) );
+%-------------------------------------------------------------------------%
+sign_pd = 0;
+pd_matrix = [0 -1; 1 0]; % CCW
+pd_position_vector = pd_matrix * transpose(position_vector);
 
+pd_angle = rad2deg(atan2(norm(cross([force_vector 0],[transpose(pd_position_vector) 0])),dot(force_vector, pd_position_vector)));
 
-cross_product = cross([position_vector 0], [force_vector 0]);
-sign_pd = sign(cross_product(3));
-
-
+if (pd_angle > 90)
+	sign_pd = -1;
+else
+	sign_pd = 1;
+end
+%-------------------------------------------------------------------------%
 sign_ff = 0;
 
-ffAngle = rad2deg(atan2(norm(cross([force_vector 0],[transpose(pd_position_vector) 0])),dot(force_vector, pd_position_vector)));
+ff_angle = rad2deg(atan2(norm(cross([force_vector 0],[transpose(ff_position_vector) 0])),dot(force_vector, ff_position_vector)));
 
-if (ffAngle > 180)
+if (ff_angle > 90)
 	sign_ff = -1;
 else
 	sign_ff = 1;
 end
+%-------------------------------------------------------------------------%
 
 end

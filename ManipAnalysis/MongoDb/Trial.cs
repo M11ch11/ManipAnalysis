@@ -111,6 +111,8 @@ namespace ManipAnalysis_v2.MongoDb
 
         public TargetContainer Target { get; set; }
 
+        public TargetContainer Origin { get; set; }
+
         public MeasureFileContainer MeasureFile { get; set; }
 
         public int TrialNumberInSzenario { get; set; }

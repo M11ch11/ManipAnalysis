@@ -266,6 +266,9 @@
     <Content Include="MatlabFiles\distance2curveSign.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MatlabFiles\distanceToCurve.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\drawCircle.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
