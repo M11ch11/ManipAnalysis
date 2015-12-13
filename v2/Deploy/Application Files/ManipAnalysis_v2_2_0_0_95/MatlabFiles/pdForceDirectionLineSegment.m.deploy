@@ -22,8 +22,8 @@
 %       v_pos_1 = 2d position vector of the beginning of the line segment
 %       v_pos_2 = 2d position vector of the end of the line segment
 %       force_vector = 2d force vector for the given line segment
-%       forceFieldMatrix = 2x2 matrix describing the forceField for this trial.
-%						   If the forceField is zero, a CCW forceField is assumed.
+%       forceFieldMatrix = 2x2 matrix describing the forceFieldMatrix for this trial.
+%						   If the forceFieldMatrix is zero, a CCW forceFieldMatrix is assumed.
 %
 %   - Output:
 %       pd_force = Orthogonal force vector for the line segment
@@ -31,22 +31,22 @@
 %		sign_pd = [1] when pd_force is directed anti clockwise to the movement direction,
 %				  [-1] when pd_force is directed clockwise
 %
-%		sign_ff = [1] when pd_force is pointing in the direction of the forcefield,
+%		sign_ff = [1] when pd_force is pointing in the direction of the forceFieldMatrix,
 %				  [-1] when pd_force is pointing in the opposite direction
 %
 
 function [ pd_force, sign_pd, sign_ff ] = pdForceDirectionLineSegment(force_vector, v_pos_1, v_pos_2, forceFieldMatrix)
 
 %-------------------------------------------------------------------------%
-% Identify and check dimension of forceField argument
-[nTraj, pTraj] = size(forceField);  % in general: nTraj=2, pTraj=2
+% Identify and check dimension of forceFieldMatrix argument
+[nTraj, pTraj] = size(forceFieldMatrix);  % in general: nTraj=2, pTraj=2
 
 if (pTraj ~= 2)
-    error('distanceToCurve: ERROR - forceField must be a 2x2 matrix.')
+    error('distanceToCurve: ERROR - forceFieldMatrix must be a 2x2 matrix.')
 end
 
 if (nTraj ~= 2)
-    error('distanceToCurve: ERROR - forceField must be a 2x2 matrix.')
+    error('distanceToCurve: ERROR - forceFieldMatrix must be a 2x2 matrix.')
 end
 %-------------------------------------------------------------------------%
 if norm(forceFieldMatrix) == 0 % Null force field
