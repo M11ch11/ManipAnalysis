@@ -2444,7 +2444,7 @@ namespace ManipAnalysis_v2
                 try
                 {
                     var statisticFields = new FieldsBuilder<Trial>();
-                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Target, t9 => t9.TrialNumberInSzenario, t10 => t10.TrialType, t11 => t11.ForceFieldType, t12 => t12.Handedness, t13 => t13.ForceFieldMatrix);
+                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Origin, t9 => t9.Target, t10 => t10.TrialNumberInSzenario, t11 => t11.TrialType, t12 => t12.ForceFieldType, t13 => t13.Handedness, t14 => t14.ForceFieldMatrix);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     var baselineBuffer = new List<Baseline>();
@@ -2660,7 +2660,7 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.Execute("length_abs = trajectLength(positionX', positionY');");
                                             taskMatlabWrapper.Execute("length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
                                             taskMatlabWrapper.Execute("[distanceAbs, distance_sign_pd, distance_sign_ff] = distanceToCurve([positionX' positionY'], startPoint, endPoint, forceFieldMatrix);");
-                                            taskMatlabWrapper.Execute("distanceSign = distanceAbs * distance_sign_ff;");
+                                            taskMatlabWrapper.Execute("distanceSign = distanceAbs .* distance_sign_ff;");
                                             taskMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
                                             taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                             taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
