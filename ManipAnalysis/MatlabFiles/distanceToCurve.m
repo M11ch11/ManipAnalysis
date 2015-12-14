@@ -114,13 +114,16 @@ sign_ff = zeros(nTraj,1);
 for i=1:nTraj
     absDistanceToStartPoint = abs(pdist2(trajectory(i,:), startPoint, 'euclidean'));
     absDistanceToEndPoint = abs(pdist2(trajectory(i,:), endPoint, 'euclidean'));
-    
-    if (absDistanceToStartPoint > ( 2.0 * absDistanceToEndPoint)) 
-        % The current datapoint is behind the endPoint
-        dist(i) = absDistanceToEndPoint;    
-    elseif (absDistanceToEndPoint > ( 2.0 * absDistanceToStartPoint))
-        % The current datapoint is behind the startPoint
-        dist(i) = absDistanceToStartPoint;
+	absDistanceStartToEndPoint = abs(pdist2(startPoint, endPoint, 'euclidean'));
+	
+	% Checking if current datapoint is behind the startPoint, endPoint or inbetween.
+	% For this, the Pythagorean theorem for obtuse triangles is used.
+	if((absDistanceStartToEndPoint^2 + absDistanceToStartPoint^2) < absDistanceToEndPoint^2)   
+		% The current datapoint is behind the startPoint
+		dist(i) = absDistanceToStartPoint;	
+	elseif ((absDistanceStartToEndPoint^2 + absDistanceToEndPoint^2) < absDistanceToStartPoint^2) 
+		% The current datapoint is behind the endPoint
+		dist(i) = absDistanceToEndPoint;
     else
         % The current datapoint is between the startPoint and endPoint
         startPoint3D = [startPoint 0];
