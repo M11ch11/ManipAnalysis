@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.95" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="2.0.0.96" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5825.41372" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5826.26680" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -44,13 +44,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="782848">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5825.41372" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5826.26680" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>E3WeQrTGW+8WSFY1+cPcoLI5pnqXs/0qGe7fAPzs904=</dsig:DigestValue>
+        <dsig:DigestValue>SKG/kJVMAJp9OA19611H8RDBEANUVyHH9i/aBzfTKLM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -129,13 +129,13 @@
       <dsig:DigestValue>74mYyyhNCBYq9VM11Aw6uLM9JTp+UXOj8rMtuh3AUEQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\distanceToCurve.m" size="7112">
+  <file name="MatlabFiles\distanceToCurve.m" size="7349">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>ahwcSDDfbGg2e2i83MlTdEqDCKII8ob7+Rfr+2Vjf/E=</dsig:DigestValue>
+      <dsig:DigestValue>B3i3rulxWxyLrDMZ3UrK8GIlyXgitYmHzJN49eCw8xk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\drawCircle.m" size="1410">
