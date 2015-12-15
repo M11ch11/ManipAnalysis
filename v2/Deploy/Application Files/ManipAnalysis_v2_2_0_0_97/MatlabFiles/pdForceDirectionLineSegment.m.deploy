@@ -10,7 +10,7 @@
 %   11.12.2015                                                          %
 %=======================================================================%
 
-%   pdForceLineSegment.m for ManipAnalysis
+%   pdForceDirectionLineSegment.m for ManipAnalysis
 %   
 %   Description                                                     
 %   This function receives a force vector of movement at a certain point.
