@@ -28,6 +28,11 @@
             Gets or sets the size of a batch when using a cursor.
             </summary>
     </member>
+    <member name="P:MongoDB.Driver.AggregateArgs.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
+    </member>
     <member name="P:MongoDB.Driver.AggregateArgs.MaxTime">
       <summary>
             Gets or sets the max time the server should spend on the aggregation command.
@@ -87,6 +92,11 @@
             Represents a fluent builder for a bulk operation.
             </summary>
       <typeparam name="TDocument">The type of the document.</typeparam>
+    </member>
+    <member name="P:MongoDB.Driver.BulkWriteOperation`1.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
     </member>
     <member name="M:MongoDB.Driver.BulkWriteOperation`1.Execute">
       <summary>
@@ -873,6 +883,11 @@
           </include>
         </markup>
       </summary>
+    </member>
+    <member name="P:MongoDB.Driver.FindAndModifyArgs.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
     </member>
     <member name="P:MongoDB.Driver.FindAndModifyArgs.Fields">
       <summary>
@@ -2348,6 +2363,11 @@
         </markup>
       </summary>
     </member>
+    <member name="P:MongoDB.Driver.MapReduceArgs.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
+    </member>
     <member name="P:MongoDB.Driver.MapReduceArgs.FinalizeFunction">
       <summary>
             Gets or sets the finalize function.
@@ -3574,6 +3594,16 @@
             to the server until you begin enumerating the results.
             </summary>
     </member>
+    <member name="M:MongoDB.Driver.MongoCursor.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadConcern,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
+      <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.MongoCursor" /> class.
+            </summary>
+      <param name="collection">The collection.</param>
+      <param name="query">The query.</param>
+      <param name="readConcern">The read concern.</param>
+      <param name="readPreference">The read preference.</param>
+      <param name="serializer">The serializer.</param>
+    </member>
     <member name="M:MongoDB.Driver.MongoCursor.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
       <summary>
             Creates a new MongoCursor. It is very unlikely that you will call this constructor. Instead, see all the Find methods in MongoCollection.
@@ -3633,6 +3663,20 @@
             </summary>
       <returns>The number of documents that match the query.</returns>
     </member>
+    <member name="M:MongoDB.Driver.MongoCursor.Create(System.Type,MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadConcern,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
+      <summary>
+            Creates a cursor.
+            </summary>
+      <param name="documentType">Type of the document.</param>
+      <param name="collection">The collection.</param>
+      <param name="query">The query.</param>
+      <param name="readConcern">The read concern.</param>
+      <param name="readPreference">The read preference.</param>
+      <param name="serializer">The serializer.</param>
+      <returns>
+            A cursor.
+            </returns>
+    </member>
     <member name="M:MongoDB.Driver.MongoCursor.Create(System.Type,MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
       <summary>
             Creates a cursor.
@@ -3690,6 +3734,11 @@
             Gets or sets the limit on the number of documents to be returned.
             </summary>
     </member>
+    <member name="P:MongoDB.Driver.MongoCursor.MaxAwaitTime">
+      <summary>
+            Gets or sets the maximum await time for TailableAwait cursors.
+            </summary>
+    </member>
     <member name="P:MongoDB.Driver.MongoCursor.Options">
       <summary>
             Gets or sets the cursor options. See also the individual Set{Option} methods, which are easier to use.
@@ -3698,6 +3747,11 @@
     <member name="P:MongoDB.Driver.MongoCursor.Query">
       <summary>
             Gets the query that will be sent to the server.
+            </summary>
+    </member>
+    <member name="P:MongoDB.Driver.MongoCursor.ReadConcern">
+      <summary>
+            Gets the read concern.
             </summary>
     </member>
     <member name="P:MongoDB.Driver.MongoCursor.ReadPreference">
@@ -3770,6 +3824,13 @@
             Often combined with SetHint (if SetHint is not used the server will attempt to determine the matching index automatically).
             </summary>
       <param name="max">The max value.</param>
+      <returns>The cursor (so you can chain method calls to it).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.MongoCursor.SetMaxAwaitTime(System.Nullable{System.TimeSpan})">
+      <summary>
+            Sets the maximum await time for tailable await cursors.
+            </summary>
+      <param name="value">The value.</param>
       <returns>The cursor (so you can chain method calls to it).</returns>
     </member>
     <member name="M:MongoDB.Driver.MongoCursor.SetMaxScan(System.Int32)">
@@ -3874,6 +3935,16 @@
             </summary>
       <typeparam name="TDocument">The type of the documents returned.</typeparam>
     </member>
+    <member name="M:MongoDB.Driver.MongoCursor`1.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadConcern,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
+      <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.MongoCursor`1" /> class.
+            </summary>
+      <param name="collection">The collection.</param>
+      <param name="query">The query.</param>
+      <param name="readConcern">The read concern.</param>
+      <param name="readPreference">The read preference.</param>
+      <param name="serializer">The serializer.</param>
+    </member>
     <member name="M:MongoDB.Driver.MongoCursor`1.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer)">
       <summary>
             Creates a new MongoCursor. It is very unlikely that you will call this constructor. Instead, see all the Find methods in MongoCollection.
@@ -3956,6 +4027,13 @@
             Often combined with SetHint (if SetHint is not used the server will attempt to determine the matching index automatically).
             </summary>
       <param name="max">The max value.</param>
+      <returns>The cursor (so you can chain method calls to it).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.MongoCursor`1.SetMaxAwaitTime(System.Nullable{System.TimeSpan})">
+      <summary>
+            Sets the maximum await time for tailable await cursors.
+            </summary>
+      <param name="value">The value.</param>
       <returns>The cursor (so you can chain method calls to it).</returns>
     </member>
     <member name="M:MongoDB.Driver.MongoCursor`1.SetMaxScan(System.Int32)">
@@ -4458,6 +4536,11 @@
             Initializes a new instance of the MongoInsertOptions class.
             </summary>
       <param name="collection">The collection from which to get default settings for the options.</param>
+    </member>
+    <member name="P:MongoDB.Driver.MongoInsertOptions.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
     </member>
     <member name="P:MongoDB.Driver.MongoInsertOptions.Flags">
       <summary>
@@ -5003,6 +5086,11 @@
             Gets or sets the operation timeout.
             </summary>
     </member>
+    <member name="P:MongoDB.Driver.MongoServerSettings.ReadConcern">
+      <summary>
+            Gets or sets the read concern.
+            </summary>
+    </member>
     <member name="P:MongoDB.Driver.MongoServerSettings.ReadEncoding">
       <summary>
             Gets or sets the Read Encoding.
@@ -5027,6 +5115,12 @@
       <summary>
             Gets or sets the list of server addresses (see also Server if using only one address).
             </summary>
+    </member>
+    <member name="P:MongoDB.Driver.MongoServerSettings.ServerSelectionTimeout">
+      <summary>
+            Gets or sets the server selection timeout.
+            </summary>
+      <exception cref="T:System.InvalidOperationException">MongoServerSettings is frozen.</exception>
     </member>
     <member name="P:MongoDB.Driver.MongoServerSettings.SocketTimeout">
       <summary>
@@ -5119,6 +5213,11 @@
             Initializes a new instance of the MongoUpdateOptions class.
             </summary>
       <param name="collection">The collection from which to get default settings for the options.</param>
+    </member>
+    <member name="P:MongoDB.Driver.MongoUpdateOptions.BypassDocumentValidation">
+      <summary>
+            Gets or sets a value indicating whether to bypass document validation.
+            </summary>
     </member>
     <member name="P:MongoDB.Driver.MongoUpdateOptions.Flags">
       <summary>
@@ -6249,6 +6348,13 @@
       <param name="value">Whether the collection is capped.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptions.SetIndexOptionDefaults(MongoDB.Driver.IndexOptionDefaults)">
+      <summary>
+            Sets the index options defaults.
+            </summary>
+      <param name="value">The value.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.CollectionOptions.SetMaxDocuments(System.Int64)">
       <summary>
             Sets the max number of documents in a capped collection.
@@ -6268,6 +6374,27 @@
             Sets the storage engine options.
             </summary>
       <param name="value">The value.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptions.SetValidationAction(MongoDB.Driver.DocumentValidationAction)">
+      <summary>
+            Sets the validation action.
+            </summary>
+      <param name="validationAction">The validation action.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptions.SetValidationLevel(MongoDB.Driver.DocumentValidationLevel)">
+      <summary>
+            Sets the validation level.
+            </summary>
+      <param name="validationLevel">The validation level.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptions.SetValidator(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the validator.
+            </summary>
+      <param name="validator">The validator.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
     <member name="T:MongoDB.Driver.Builders.CollectionOptionsBuilder">
@@ -6294,6 +6421,13 @@
       <param name="value">Whether the collection is capped.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.SetIndexOptionDefaults(MongoDB.Driver.IndexOptionDefaults)">
+      <summary>
+            Sets the index options defaults.
+            </summary>
+      <param name="value">The index options defaults.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.SetMaxDocuments(System.Int64)">
       <summary>
             Sets the max number of documents in a capped collection.
@@ -6313,6 +6447,27 @@
             Sets the storage engine options.
             </summary>
       <param name="value">The value.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.SetValidationAction(MongoDB.Driver.DocumentValidationAction)">
+      <summary>
+            Sets the validation action.
+            </summary>
+      <param name="validationAction">The validation action.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.SetValidationLevel(MongoDB.Driver.DocumentValidationLevel)">
+      <summary>
+            Sets the validation level.
+            </summary>
+      <param name="validationLevel">The validation level.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.SetValidator(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the validator.
+            </summary>
+      <param name="validator">The validator.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.CollectionOptionsBuilder.ToBsonDocument">
@@ -7267,6 +7422,13 @@
       <param name="value">The name of the index.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.IndexOptions.SetPartialFilterExpression(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the partial filter expression.
+            </summary>
+      <param name="value">The value.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.IndexOptions.SetSparse(System.Boolean)">
       <summary>
             Sets whether the index is a sparse index.
@@ -7371,6 +7533,13 @@
             Sets the name of the index.
             </summary>
       <param name="value">The name of the index.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.IndexOptions`1.SetPartialFilterExpression(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the partial filter expression.
+            </summary>
+      <param name="value">The value.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.IndexOptions`1.SetSparse(System.Boolean)">
@@ -7479,6 +7648,13 @@
             Sets the name of the index.
             </summary>
       <param name="value">The name of the index.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.IndexOptionsBuilder.SetPartialFilterExpression(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the partial filter expression.
+            </summary>
+      <param name="value">The value.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.IndexOptionsBuilder.SetSparse(System.Boolean)">
@@ -7591,6 +7767,13 @@
             Sets the name of the index.
             </summary>
       <param name="value">The name of the index.</param>
+      <returns>The builder (so method calls can be chained).</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.IndexOptionsBuilder`1.SetPartialFilterExpression(MongoDB.Driver.IMongoQuery)">
+      <summary>
+            Sets the partial filter expression.
+            </summary>
+      <param name="value">The value.</param>
       <returns>The builder (so method calls can be chained).</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.IndexOptionsBuilder`1.SetSparse(System.Boolean)">
@@ -7750,6 +7933,38 @@
             Tests that all the queries are true (see $and in newer versions of the server).
             </summary>
       <param name="queries">A list of subqueries.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query.BitsAllClear(System.String,System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits clear.
+            </summary>
+      <param name="name">The name.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query.BitsAllSet(System.String,System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits set.
+            </summary>
+      <param name="name">The name.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query.BitsAnyClear(System.String,System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits clear.
+            </summary>
+      <param name="name">The name.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query.BitsAnySet(System.String,System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits set.
+            </summary>
+      <param name="name">The name.</param>
+      <param name="bitmask">The bitmask.</param>
       <returns>An IMongoQuery.</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.Query.Create(MongoDB.Bson.BsonDocument)">
@@ -8017,6 +8232,15 @@
       <param name="searchString">The search string.</param>
       <returns>An IMongoQuery that represents the text search.</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.Query.Text(System.String,MongoDB.Driver.TextSearchOptions)">
+      <summary>
+            Generate a text search query that tests whether the given search string is present using the specified language's rules. 
+            Specifies use of language appropriate stop words, stemming rules etc.
+            </summary>
+      <param name="searchString">The search string.</param>
+      <param name="options">The text search options.</param>
+      <returns>An IMongoQuery that represents the text search for the particular language.</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.Query.Text(System.String,System.String)">
       <summary>
             Generate a text search query that tests whether the given search string is present using the specified language's rules. 
@@ -8027,6 +8251,14 @@
       <returns>An IMongoQuery that represents the text search for the particular language.</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.Query.Type(System.String,MongoDB.Bson.BsonType)">
+      <summary>
+            Tests that the type of the named element is equal to some type (see $type).
+            </summary>
+      <param name="name">The name of the element to test.</param>
+      <param name="type">The type to compare to.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query.Type(System.String,System.String)">
       <summary>
             Tests that the type of the named element is equal to some type (see $type).
             </summary>
@@ -8103,6 +8335,38 @@
       <param name="memberExpression">The member expression representing the element to test.</param>
       <param name="values">The values to compare to.</param>
       <typeparam name="TValue">The type of the enumerable member values.</typeparam>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.BitsAllClear(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits clear.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.BitsAllSet(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits set.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.BitsAnyClear(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits clear.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.BitsAnySet(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits set.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
       <returns>An IMongoQuery.</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.Query`1.ElemMatch``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IEnumerable{``0}}},System.Func{MongoDB.Driver.Builders.QueryBuilder{``0},MongoDB.Driver.IMongoQuery})">
@@ -8402,7 +8666,25 @@
       <typeparam name="TValue">The type of the value.</typeparam>
       <returns>An IMongoQuery.</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IEnumerable{``0}}},System.String)">
+      <summary>
+            Tests that any of the values in the named array element is equal to some type (see $type).
+            </summary>
+      <param name="memberExpression">The member expression representing the element to test.</param>
+      <param name="type">The type to compare to.</param>
+      <typeparam name="TValue">The type of the value.</typeparam>
+      <returns>An IMongoQuery.</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.Query`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},MongoDB.Bson.BsonType)">
+      <summary>
+            Tests that the type of the named element is equal to some type (see $type).
+            </summary>
+      <param name="memberExpression">The member expression representing the element to test.</param>
+      <param name="type">The type to compare to.</param>
+      <typeparam name="TMember">The member type.</typeparam>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.Query`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
       <summary>
             Tests that the type of the named element is equal to some type (see $type).
             </summary>
@@ -8504,6 +8786,38 @@
             Tests that all the queries are true (see $and in newer versions of the server).
             </summary>
       <param name="queries">A list of subqueries.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.BitsAllClear(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits clear.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.BitsAllSet(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has all of the specified bits set.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.BitsAnyClear(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits clear.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.BitsAnySet(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Int64)">
+      <summary>
+            Tests that the value of the named element has any of the specified bits set.
+            </summary>
+      <param name="memberExpression">The member expression.</param>
+      <param name="bitmask">The bitmask.</param>
       <returns>An IMongoQuery.</returns>
     </member>
     <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.ElemMatch``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IEnumerable{``0}}},System.Func{MongoDB.Driver.Builders.QueryBuilder{``0},MongoDB.Driver.IMongoQuery})">
@@ -8832,7 +9146,25 @@
       <typeparam name="TValue">The type of the value.</typeparam>
       <returns>An IMongoQuery.</returns>
     </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IEnumerable{``0}}},System.String)">
+      <summary>
+            Tests that any of the values in the named array element is equal to some type (see $type).
+            </summary>
+      <param name="memberExpression">The member expression representing the element to test.</param>
+      <param name="type">The type to compare to.</param>
+      <typeparam name="TValue">The type of the value.</typeparam>
+      <returns>An IMongoQuery.</returns>
+    </member>
     <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},MongoDB.Bson.BsonType)">
+      <summary>
+            Tests that the type of the named element is equal to some type (see $type).
+            </summary>
+      <param name="memberExpression">The member expression representing the element to test.</param>
+      <param name="type">The type to compare to.</param>
+      <typeparam name="TMember">The member type.</typeparam>
+      <returns>An IMongoQuery.</returns>
+    </member>
+    <member name="M:MongoDB.Driver.Builders.QueryBuilder`1.Type``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
       <summary>
             Tests that the type of the named element is equal to some type (see $type).
             </summary>

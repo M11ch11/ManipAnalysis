@@ -4,12 +4,12 @@ using ManipAnalysis_v2.MongoDb;
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _02_baseline : ISzenarioDefinition
-    {
-        public const string StudyName = "Study 10";
+    {        
+        new public const string StudyName = "Study 10";
 
-        public const string SzenarioName = "02_baseline";
+        new public const string SzenarioName = "02_baseline";
 
-        public const int TrialCount = 40;
+        new public const int TrialCount = 40;
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

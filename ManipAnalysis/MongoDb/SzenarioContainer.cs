@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.MongoDb
 {
     internal class SzenarioContainer
     {
-        public string GroupName;
+        public string GroupName = null;
 
         public DateTime MeasureFileCreationDateTime;
 

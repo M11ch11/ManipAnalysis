@@ -5,11 +5,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class RL_01_Familiarization : ISzenarioDefinition
     {
-        public const string StudyName = "Study 7";
+        new public const string StudyName = "Study 7";
 
-        public const string SzenarioName = "RL_01_Familiarization";
+        new public const string SzenarioName = "RL_01_Familiarization";
 
-        public const int TrialCount = 336;
+        new public const int TrialCount = 336;
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

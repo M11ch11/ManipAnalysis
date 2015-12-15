@@ -1678,7 +1678,7 @@ namespace ManipAnalysis_v2
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, saveFileDialog.FileName);
+                WriteToLogBox("Unimplemented!");
             }
         }
 
@@ -1771,7 +1771,7 @@ namespace ManipAnalysis_v2
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _manipAnalysisFunctions.ExportVelocityBaseline(comboBox_Others_Study.SelectedItem.ToString(), comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem, saveFileDialog.FileName);
+                WriteToLogBox("Unimplemented!");
             }
         }
 
