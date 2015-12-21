@@ -9,6 +9,7 @@ using ManipAnalysis_v2.Container;
 using ManipAnalysis_v2.MeasureFileParser;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 
 namespace ManipAnalysis_v2
 {
@@ -16,6 +17,7 @@ namespace ManipAnalysis_v2
     ///     This class provides all interactive functionality between the Gui and the programm.
     /// </summary>
     internal class ManipAnalysisFunctions
+
     {
         private readonly MongoDbWrapper _myDatabaseWrapper;
 
@@ -167,25 +169,7 @@ namespace ManipAnalysis_v2
         {
             return _myDatabaseWrapper.GetSubjects(study, group);
         }
-
-        /// <summary>
-        ///     Gets all turns from database of a given study, szenario and subject
-        /// </summary>
-        /// <param name="study"></param>
-        /// <param name="szenario"></param>
-        /// <param name="subject"></param>
-        /// <returns></returns>
-        public IEnumerable<string> GetTurns(string study, string szenario, SubjectContainer subject)
-        {
-            var turnList = new List<string>();
-            int turns = _myDatabaseWrapper.GetTurns(study, szenario, subject).Count();
-            for (int turn = 1; turn <= turns; turn++)
-            {
-                turnList.Add("Turn " + turn);
-            }
-            return turnList;
-        }
-
+        
         /// <summary>
         ///     Gets all turns from database of a given study, group, szenario and subject
         /// </summary>
@@ -206,14 +190,33 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
+        ///     Gets all turns from database of a given study, szenario and subject and group-array
+        /// </summary>
+        /// <param name="study"></param>
+        /// <param name="group"></param>
+        /// <param name="szenario"></param>
+        /// <param name="subject"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetTurns(string study, string[] group, string szenario, SubjectContainer subject)
+        {
+            var turnList = new List<string>();
+            int turns = _myDatabaseWrapper.GetTurns(study, group, szenario, subject).Count();
+            for (int turn = 1; turn <= turns; turn++)
+            {
+                turnList.Add("Turn " + turn);
+            }
+            return turnList;
+        }
+
+        /// <summary>
         ///     Gets all targets from database of a given study and szenario
         /// </summary>
         /// <param name="study"></param>
         /// <param name="szenario"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetTargets(string study, string szenario)
+        public IEnumerable<string> GetTargets(string studyName, string groupName, string szenarioName, SubjectContainer subject)
         {
-            return _myDatabaseWrapper.GetTargets(study, szenario).Select(t => "Target " + t.ToString("00"));
+            return _myDatabaseWrapper.GetTargets(studyName, groupName, szenarioName, subject).Select(t => "Target " + t.ToString("00"));
         }
 
         /// <summary>
@@ -222,9 +225,9 @@ namespace ManipAnalysis_v2
         /// <param name="study"></param>
         /// <param name="szenario"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetTrials(string study, string szenario)
+        public IEnumerable<string> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject)
         {
-            return _myDatabaseWrapper.GetTargetTrials(study, szenario).Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetTargetTrials(studyName, groupName, szenarioName, subject).Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>
@@ -279,7 +282,7 @@ namespace ManipAnalysis_v2
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 DateTime turnDateTime = GetTurnDateTime(study, group, szenario, subject, turn);
-                SzenarioMeanTime[] szenarioMeanTimes = _myDatabaseWrapper.GetSzenarioMeanTime(study, group, szenario, subject, turnDateTime);
+                SzenarioMeanTime[] szenarioMeanTimes = _myDatabaseWrapper.GetSzenarioMeanTime(study, group, szenario, subject, turnDateTime).ToArray();
 
                 _myMatlabWrapper.CreateMeanTimeFigure();
 
@@ -504,9 +507,8 @@ namespace ManipAnalysis_v2
                     _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                 }
 
-                var baselineFields = new FieldsBuilder<Baseline>();
-                baselineFields.Include(t => t.ZippedPosition);
-                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
+                var baselineFields = Builders<Baseline>.Projection.Include(t => t.ZippedPosition);
+                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields).ToArray();
 
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
@@ -521,14 +523,9 @@ namespace ManipAnalysis_v2
             }));
         }
 
-        public IEnumerable<string> GetTrialsOfSzenario(string study, string szenario, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        public IEnumerable<string> GetTrialsOfSzenario(string studyName, string groupName, string szenarioName, SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
         {
-            return _myDatabaseWrapper.GetSzenarioTrials(study, szenario, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
-        }
-
-        public IEnumerable<string> GetTrialsOfSzenario(string studyName, string szenarioName, SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
-        {
-            return _myDatabaseWrapper.GetSzenarioTrials(studyName, szenarioName, subject, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
+            return _myDatabaseWrapper.GetSzenarioTrials(studyName, groupName, szenarioName, subject, trialTypes, forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
         }
 
         public void PlotExportDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials, string statisticType, string fitEquation, int pdTime, bool plotFit, bool plotErrorbars, string fileName)
@@ -542,9 +539,8 @@ namespace ManipAnalysis_v2
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
 
-                    var fields = new FieldsBuilder<Trial>();
-                    fields.Include(t => t.ZippedStatistics);
-                    fields.Include(t => t.TrialNumberInSzenario);
+                    var fields = Builders<Trial>.Projection.Include(t => t.ZippedStatistics);
+                    fields = fields.Include(t => t.TrialNumberInSzenario);
                     // Neccessary for sorting!
 
                     if (selectedTrialsList.Any())
@@ -906,9 +902,8 @@ namespace ManipAnalysis_v2
                 _myManipAnalysisGui.WriteProgressInfo("Getting data...");
                 List<StatisticPlotContainer> selectedTrialsList = selectedTrials.ToList();
 
-                var fields = new FieldsBuilder<Trial>();
-                fields.Include(t => t.ZippedStatistics);
-                fields.Include(t => t.TrialNumberInSzenario);
+                var fields = Builders<Trial>.Projection.Include(t => t.ZippedStatistics);
+                fields = fields.Include(t => t.TrialNumberInSzenario);
                 // Neccessary for sorting!
 
                 if (selectedTrialsList.Any())
@@ -1980,8 +1975,20 @@ namespace ManipAnalysis_v2
 
                 try
                 {
-                    var baselineFields = new FieldsBuilder<Trial>();
-                    baselineFields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
+                    var baselineFields = Builders<Trial>.Projection.Include(t1 => t1.ZippedPositionNormalized);
+                    baselineFields = baselineFields.Include(t2 => t2.ZippedVelocityNormalized);
+                    baselineFields = baselineFields.Include(t3 => t3.ZippedMeasuredForcesNormalized);
+                    baselineFields = baselineFields.Include(t4 => t4.ZippedMomentForcesNormalized);
+                    baselineFields = baselineFields.Include(t5 => t5.TrialType);
+                    baselineFields = baselineFields.Include(t6 => t6.ForceFieldType);
+                    baselineFields = baselineFields.Include(t7 => t7.Handedness);
+                    baselineFields = baselineFields.Include(t8 => t8.Study);
+                    baselineFields = baselineFields.Include(t9 => t9.Group);
+                    baselineFields = baselineFields.Include(t10 => t10.Subject);
+                    baselineFields = baselineFields.Include(t11 => t11.TrialNumberInSzenario);
+                    baselineFields = baselineFields.Include(t12 => t12.Target);
+                    baselineFields = baselineFields.Include(t13 => t13.NormalizedDataSampleRate);
+                    baselineFields = baselineFields.Include(t14 => t14.Id);
                     var baselinesContainer = new List<Baseline>();
                     IEnumerable<string> studys = _myDatabaseWrapper.GetStudys();
 
@@ -2443,8 +2450,20 @@ namespace ManipAnalysis_v2
                 int counter = 0;
                 try
                 {
-                    var statisticFields = new FieldsBuilder<Trial>();
-                    statisticFields.Include(t1 => t1.ZippedVelocityNormalized, t2 => t2.ZippedPositionNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.Study, t5 => t5.Group, t6 => t6.Szenario, t7 => t7.Subject, t8 => t8.Origin, t9 => t9.Target, t10 => t10.TrialNumberInSzenario, t11 => t11.TrialType, t12 => t12.ForceFieldType, t13 => t13.Handedness, t14 => t14.ForceFieldMatrix);
+                    var statisticFields = Builders<Trial>.Projection.Include(t1 => t1.ZippedVelocityNormalized);
+                    statisticFields = statisticFields.Include(t2 => t2.ZippedPositionNormalized);
+                    statisticFields = statisticFields.Include(t3 => t3.ZippedMeasuredForcesNormalized);
+                    statisticFields = statisticFields.Include(t4 => t4.Study);
+                    statisticFields = statisticFields.Include(t5 => t5.Group);
+                    statisticFields = statisticFields.Include(t6 => t6.Szenario);
+                    statisticFields = statisticFields.Include(t7 => t7.Subject);
+                    statisticFields = statisticFields.Include(t8 => t8.Origin);
+                    statisticFields = statisticFields.Include(t9 => t9.Target);
+                    statisticFields = statisticFields.Include(t10 => t10.TrialNumberInSzenario);
+                    statisticFields = statisticFields.Include(t11 => t11.TrialType);
+                    statisticFields = statisticFields.Include(t12 => t12.ForceFieldType);
+                    statisticFields = statisticFields.Include(t13 => t13.Handedness);
+                    statisticFields = statisticFields.Include(t14 => t14.ForceFieldMatrix);
                     List<Trial> trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     var baselineBuffer = new List<Baseline>();
@@ -2507,8 +2526,6 @@ namespace ManipAnalysis_v2
                                             Thread.Sleep(100);
                                         }
 
-                                        var baselineFields = new FieldsBuilder<Baseline>();
-                                        baselineFields.Include(t1 => t1.Study, t2 => t2.Group, t3 => t3.Subject, t4 => t4.Origin, t5 => t5.Target, t6 => t6.TrialType, t7 => t7.ForceFieldType, t8 => t8.Handedness, t9 => t9.ZippedVelocity, t10 => t10.ZippedPosition, t11 => t11.ZippedMeasuredForces);
                                         Baseline baseline = null;
 
                                         if (trial.Study == "Study 7")
@@ -2518,7 +2535,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2533,7 +2550,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2551,7 +2568,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2566,7 +2583,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2584,7 +2601,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2599,7 +2616,7 @@ namespace ManipAnalysis_v2
                                                 baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
-                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2615,7 +2632,7 @@ namespace ManipAnalysis_v2
                                             baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
                                             if (baseline == null)
                                             {
-                                                baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness, baselineFields);
+                                                baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness);
                                                 if (baseline != null)
                                                 {
                                                     lock (baselineBuffer)
@@ -2820,30 +2837,31 @@ namespace ManipAnalysis_v2
                     double processedTrialsCount = 0;
                     string study = selectedTrialsList.Select(t => t.Study).Distinct().First();
 
-                    var fields = new FieldsBuilder<Trial>();
-                    // Neccessary for sorting!
-                    fields.Include(t => t.TargetTrialNumberInSzenario, t2 => t2.ForceFieldMatrix);
 
+                    ProjectionDefinition<Trial> test;
+                   
+                    var fields = Builders<Trial>.Projection.Include(t => t.ForceFieldMatrix);                    
                     if (trajectoryVelocityForce == "Velocity - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedVelocityNormalized);
+                        fields = fields.Include(t1 => t1.ZippedVelocityNormalized);
                         _myMatlabWrapper.CreateVelocityFigure("Velocity plot normalized", 101);
                     }
                     else if (trajectoryVelocityForce == "Velocity - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedVelocityFiltered);
+                        fields = fields.Include(t1 => t1.ZippedVelocityFiltered);
                         _myMatlabWrapper.CreateFigure("Velocity plot filtered", "[Samples]", "Velocity [m/s]");
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Normalized")
                     {
                         if (showForceVectors || showPdForceVectors)
                         {
-                            fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedMeasuredForcesNormalized);
+                            fields = fields.Include(t1 => t1.ZippedPositionNormalized);
+                            fields = fields.Include(t2 => t2.ZippedMeasuredForcesNormalized);
                             _myMatlabWrapper.CreateTrajectoryForceFigure("Trajectory plot normalized");
                         }
                         else
                         {
-                            fields.Include(t1 => t1.ZippedPositionNormalized);
+                            fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
                         if (study == "Study 8")
@@ -2863,12 +2881,13 @@ namespace ManipAnalysis_v2
                     {
                         if (showForceVectors || showPdForceVectors)
                         {
-                            fields.Include(t1 => t1.ZippedPositionFiltered, t2 => t2.ZippedMeasuredForcesFiltered);
+                            fields = fields.Include(t1 => t1.ZippedPositionFiltered);
+                            fields = fields.Include(t2 => t2.ZippedMeasuredForcesFiltered);
                             _myMatlabWrapper.CreateTrajectoryForceFigure("Trajectory plot filtered");
                         }
                         else
                         {
-                            fields.Include(t1 => t1.ZippedPositionFiltered);
+                            fields = fields.Include(t1 => t1.ZippedPositionFiltered);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
 
@@ -2889,12 +2908,13 @@ namespace ManipAnalysis_v2
                     {
                         if (showForceVectors || showPdForceVectors)
                         {
-                            fields.Include(t1 => t1.ZippedPositionRaw, t2 => t2.ZippedMeasuredForcesRaw);
+                            fields = fields.Include(t1 => t1.ZippedPositionRaw);
+                            fields = fields.Include(t2 => t2.ZippedMeasuredForcesRaw);
                             _myMatlabWrapper.CreateTrajectoryForceFigure("Trajectory plot raw");
                         }
                         else
                         {
-                            fields.Include(t1 => t1.ZippedPositionRaw);
+                            fields = fields.Include(t1 => t1.ZippedPositionRaw);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
 
@@ -2913,17 +2933,20 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedMeasuredForcesNormalized);
+                        fields = fields.Include(t1 => t1.ZippedPositionNormalized);
+                        fields = fields.Include(t2 => t2.ZippedMeasuredForcesNormalized);
                         _myMatlabWrapper.CreateForceFigure("Force plot normalized", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedPositionFiltered, t2 => t2.ZippedMeasuredForcesFiltered);
+                        fields = fields.Include(t1 => t1.ZippedPositionFiltered);
+                        fields = fields.Include(t2 => t2.ZippedMeasuredForcesFiltered);
                         _myMatlabWrapper.CreateForceFigure("Force plot filtered", "[Samples]", "Force [N]");
                     }
                     else if (trajectoryVelocityForce == "Force - Raw")
                     {
-                        fields.Include(t1 => t1.ZippedPositionRaw, t2 => t2.ZippedMeasuredForcesRaw);
+                        fields = fields.Include(t1 => t1.ZippedPositionRaw);
+                        fields = fields.Include(t2 => t2.ZippedMeasuredForcesRaw);
                         _myMatlabWrapper.CreateForceFigure("Force plot raw", "[Samples]", "Force [N]");
                     }
 
@@ -3392,14 +3415,14 @@ namespace ManipAnalysis_v2
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
 
-                    var fields = new FieldsBuilder<Trial>();
+
+                    var fields = Builders<Trial>.Projection.Include(t => t.ForceFieldMatrix);
                     var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
                     var dataFileWriter = new StreamWriter(dataFileStream);
 
-                    fields.Include(t => t.ForceFieldMatrix);
                     if (trajectoryVelocityForce == "Velocity - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedVelocityNormalized);
+                        fields = fields.Include(t1 => t1.ZippedVelocityNormalized);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityX;VelocityY");
@@ -3411,7 +3434,7 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Velocity - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedVelocityFiltered);
+                        fields = fields.Include(t1 => t1.ZippedVelocityFiltered);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;VelocityX;VelocityY");
@@ -3423,7 +3446,7 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedPositionNormalized);
+                        fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -3435,7 +3458,7 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedPositionFiltered);
+                        fields = fields.Include(t1 => t1.ZippedPositionFiltered);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -3447,7 +3470,7 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
-                        fields.Include(t1 => t1.ZippedPositionRaw);
+                        fields = fields.Include(t1 => t1.ZippedPositionRaw);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;PositionCartesianX;PositionCartesianY");
@@ -3459,7 +3482,8 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesNormalized, t2 => t2.ZippedPositionNormalized);
+                        fields = fields.Include(t1 => t1.ZippedMeasuredForcesNormalized);
+                        fields = fields.Include(t2 => t2.ZippedPositionNormalized);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY;ForcePD;ForcePara;ForceAbs");
@@ -3471,7 +3495,8 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Force - Filtered")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesFiltered, t2 => t2.ZippedPositionFiltered);
+                        fields = fields.Include(t1 => t1.ZippedMeasuredForcesFiltered);
+                        fields = fields.Include(t2 => t2.ZippedPositionFiltered);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY;ForcePD;ForcePara;ForceAbs");
@@ -3483,7 +3508,8 @@ namespace ManipAnalysis_v2
                     }
                     else if (trajectoryVelocityForce == "Force - Raw")
                     {
-                        fields.Include(t1 => t1.ZippedMeasuredForcesRaw, t2 => t2.ZippedPositionRaw);
+                        fields = fields.Include(t1 => t1.ZippedMeasuredForcesRaw);
+                        fields = fields.Include(t2 => t2.ZippedPositionRaw);
                         if (meanIndividual == "Individual")
                         {
                             dataFileWriter.WriteLine("Study;Group;Szenario;Subject;Turn;Target;Trial;TimeStamp;MeasuredForcesX;MeasuredForcesY;ForcePD;ForcePara;ForceAbs");
@@ -3897,9 +3923,8 @@ namespace ManipAnalysis_v2
             {
                 _myMatlabWrapper.CreateVelocityFigure("Velocity baseline plot", 101);
 
-                var baselineFields = new FieldsBuilder<Baseline>();
-                baselineFields.Include(t => t.ZippedVelocity);
-                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
+                var baselineFields = Builders<Baseline>.Projection.Include(t => t.ZippedVelocity);
+                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields).ToArray();
 
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
@@ -3919,9 +3944,9 @@ namespace ManipAnalysis_v2
             {
                 _myMatlabWrapper.CreateForceFigure("Force baseline plot", "[Samples]", "Force [N]");
 
-                var baselineFields = new FieldsBuilder<Baseline>();
-                baselineFields.Include(t => t.ZippedMeasuredForces, t2 => t2.ZippedPosition);
-                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields);
+                var baselineFields = Builders<Baseline>.Projection.Include(t => t.ZippedMeasuredForces);
+                baselineFields = baselineFields.Include(t2 => t2.ZippedPosition);
+                Baseline[] baselines = _myDatabaseWrapper.GetBaseline(study, group, subject, targets, trialTypes, forceFields, handedness, baselineFields).ToArray();
 
                 for (int baselineCounter = 0; baselineCounter < baselines.Length & !TaskManager.Cancel; baselineCounter++)
                 {
@@ -3963,15 +3988,26 @@ namespace ManipAnalysis_v2
 
             foreach (TrajectoryVelocityPlotContainer targetData in selectedTrials)
             {
-                var baselineFields = new FieldsBuilder<Baseline>();
-                baselineFields.Include(t => t.Id);
+                var baselineFields = Builders<Baseline>.Projection.Include(t => t.Id);
 
-                Baseline originalBaseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group, targetData.Subject, targetData.Target, trialType, forceFieldType, handedness, baselineFields);
+                Baseline originalBaseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group, targetData.Subject, targetData.Target, trialType, forceFieldType, handedness);
 
                 DateTime turnDateTime = GetTurnDateTime(targetData.Study, targetData.Group, targetData.Szenario, targetData.Subject, targetData.Turn);
-               
-                var fields = new FieldsBuilder<Trial>();
-                fields.Include(t1 => t1.ZippedPositionNormalized, t2 => t2.ZippedVelocityNormalized, t3 => t3.ZippedMeasuredForcesNormalized, t4 => t4.ZippedMomentForcesNormalized, t5 => t5.TrialType, t6 => t6.ForceFieldType, t7 => t7.Handedness, t8 => t8.Study, t9 => t9.Group, t10 => t10.Subject, t11 => t11.TrialNumberInSzenario, t12 => t12.Target, t13 => t13.NormalizedDataSampleRate, t14 => t14.Id);
+
+                var fields = Builders<Trial>.Projection.Include(t1 => t1.ZippedPositionNormalized);
+                fields = fields.Include(t2 => t2.ZippedVelocityNormalized);
+                fields = fields.Include(t3 => t3.ZippedMeasuredForcesNormalized);
+                fields = fields.Include(t4 => t4.ZippedMomentForcesNormalized);
+                fields = fields.Include(t5 => t5.TrialType);
+                fields = fields.Include(t6 => t6.ForceFieldType);
+                fields = fields.Include(t7 => t7.Handedness);
+                fields = fields.Include(t8 => t8.Study);
+                fields = fields.Include(t9 => t9.Group);
+                fields = fields.Include(t10 => t10.Subject);
+                fields = fields.Include(t11 => t11.TrialNumberInSzenario);
+                fields = fields.Include(t12 => t12.Target);
+                fields = fields.Include(t13 => t13.NormalizedDataSampleRate);
+                fields = fields.Include(t14 => t14.Id);
 
                 List<Trial> trials = _myDatabaseWrapper.GetTrials(targetData.Study, targetData.Group, targetData.Szenario, targetData.Subject, turnDateTime, targetData.Target, targetData.Trials, fields).ToList();
 
