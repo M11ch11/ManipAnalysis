@@ -21,7 +21,7 @@ namespace ManipAnalysis_v2
         public static long Toc()
         {
             toc = DateTime.UtcNow.Ticks;
-            return (toc - tic)/10000;
+            return (toc - tic) / 10000;
         }
     }
 }

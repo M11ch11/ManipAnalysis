@@ -78,13 +78,13 @@ namespace ManipAnalysis_v2
 
         public void WriteTo(BinaryWriter writer, bool isLast = false)
         {
-            writer.Write((sbyte) Name.Length);
+            writer.Write((sbyte)Name.Length);
             writer.Write(Id);
             writer.Write(Name.ToCharArray());
             //  string name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
 
             // compute offset of the next item
-            var nextItem = (Int16) (isLast ? 0 : (Description.Length + 2 // next item number 
+            var nextItem = (Int16)(isLast ? 0 : (Description.Length + 2 // next item number 
                                                   + 1 // desc length number
                                                   + GetContentLength()));
 
@@ -92,7 +92,7 @@ namespace ManipAnalysis_v2
             writer.Write(nextItem);
             WriteContent(writer);
 
-            writer.Write((byte) (Description.Length));
+            writer.Write((byte)(Description.Length));
             writer.Write(Description.ToCharArray());
         }
 
@@ -235,7 +235,7 @@ namespace ManipAnalysis_v2
                 ReadScalar(reader, GetType(_paramType));
             }
 
-            _C3DParameterSize = (int) (reader.BaseStream.Position - position);
+            _C3DParameterSize = (int)(reader.BaseStream.Position - position);
         }
 
         public Parameter()
@@ -289,13 +289,13 @@ namespace ManipAnalysis_v2
             switch (c3dDataType)
             {
                 case -1:
-                    return typeof (char);
+                    return typeof(char);
                 case 1:
-                    return typeof (byte);
+                    return typeof(byte);
                 case 2:
-                    return typeof (Int16);
+                    return typeof(Int16);
                 case 4:
-                    return typeof (float);
+                    return typeof(float);
                 default:
                     throw new ApplicationException("Unknown data type of c3d parameter");
             }
@@ -327,7 +327,7 @@ namespace ManipAnalysis_v2
 
         protected override Int16 GetContentLength()
         {
-            return (Int16) (_vectorData.Length + 1 + // to store parameter type (sbyte)
+            return (Int16)(_vectorData.Length + 1 + // to store parameter type (sbyte)
                             1 + // to store number of dimensions type (byte)
                             _dimensions.Length
                 // +
@@ -338,11 +338,11 @@ namespace ManipAnalysis_v2
         protected override void WriteContent(BinaryWriter writer)
         {
             writer.Write(_paramType);
-            writer.Write((byte) _dimensions.Length);
+            writer.Write((byte)_dimensions.Length);
             for (int i = 0; i < _dimensions.Length; i
                                                         ++)
             {
-                writer.Write((byte) _dimensions[i]);
+                writer.Write((byte)_dimensions[i]);
             }
             writer.Write(_vectorData);
         }
@@ -354,65 +354,65 @@ namespace ManipAnalysis_v2
             //
             //  BASIC TYPES
             //
-            if (typeof (T) == typeof (char))
+            if (typeof(T) == typeof(char))
             {
                 _paramType = -1;
-                _dimensions = new int[] {};
-                _vectorData = BitConverter.GetBytes((char) (object) data);
+                _dimensions = new int[] { };
+                _vectorData = BitConverter.GetBytes((char)(object)data);
                 _length = 1;
                 IsScalar = true;
             }
-            else if (typeof (T) == typeof (byte))
+            else if (typeof(T) == typeof(byte))
             {
-                _dimensions = new int[] {};
+                _dimensions = new int[] { };
                 _paramType = 1;
-                _vectorData = BitConverter.GetBytes((byte) (object) data);
+                _vectorData = BitConverter.GetBytes((byte)(object)data);
                 _length = 1;
                 IsScalar = true;
             }
-            else if (typeof (T) == typeof (Int16))
+            else if (typeof(T) == typeof(Int16))
             {
-                _dimensions = new int[] {};
+                _dimensions = new int[] { };
                 _paramType = 2;
-                _vectorData = BitConverter.GetBytes((Int16) (object) data);
+                _vectorData = BitConverter.GetBytes((Int16)(object)data);
                 _length = 1;
                 IsScalar = true;
             }
-            else if (typeof (T) == typeof (float))
+            else if (typeof(T) == typeof(float))
             {
-                _dimensions = new int[] {};
+                _dimensions = new int[] { };
                 _paramType = 4;
-                _vectorData = BitConverter.GetBytes((float) (object) data);
+                _vectorData = BitConverter.GetBytes((float)(object)data);
                 _length = 1;
                 IsScalar = true;
             }
-            else if (typeof (T) == typeof (string))
+            else if (typeof(T) == typeof(string))
             {
-                _dimensions = new[] {((string) (object) data).Length};
+                _dimensions = new[] { ((string)(object)data).Length };
                 _paramType = -1;
-                _vectorData = Encoding.ASCII.GetBytes((string) (object) data);
+                _vectorData = Encoding.ASCII.GetBytes((string)(object)data);
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
                 IsScalar = false;
             }
 
-                //
-                // 1D Arrays
-                //
-            else if (typeof (T) == typeof (string[]))
+            //
+            // 1D Arrays
+            //
+            else if (typeof(T) == typeof(string[]))
             {
-                int count = ((string[]) (object) data).Length;
+                int count = ((string[])(object)data).Length;
                 int maxLen = 0;
                 foreach (string
                     s
                     in
-                    ((string[]) (object) data))
+                    ((string[])(object)data))
                 {
                     maxLen = Math.Max(s.Length, maxLen);
                 }
-                _dimensions = new[] {maxLen, count};
+                _dimensions = new[] { maxLen, count };
                 _paramType = -1;
-                _vectorData = new byte[count*maxLen];
+                _vectorData = new byte[count * maxLen];
 
 
                 // in C# there is really no other method for initialising arrays to a non-default value (without creating temporary objects)
@@ -430,43 +430,43 @@ namespace ManipAnalysis_v2
                 for (int i = 0; i < count; i
                                                ++)
                 {
-                    string s = ((string[]) (object) data)[i];
-                    Encoding.ASCII.GetBytes(s, 0, s.Length, _vectorData, i*maxLen);
+                    string s = ((string[])(object)data)[i];
+                    Encoding.ASCII.GetBytes(s, 0, s.Length, _vectorData, i * maxLen);
                 }
                 IsScalar = false;
             }
-            else if (typeof (T) == typeof (float[]))
+            else if (typeof(T) == typeof(float[]))
             {
-                int count = ((float[]) (object) data).Length;
-                _dimensions = new[] {count};
+                int count = ((float[])(object)data).Length;
+                _dimensions = new[] { count };
                 _paramType = 4;
-                _vectorData = new byte[count*GetSize(4)];
+                _vectorData = new byte[count * GetSize(4)];
 
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
                 for (int i = 0; i < count; i
                                                ++)
                 {
-                    float f = ((float[]) (object) data)[i];
-                    Array.Copy(BitConverter.GetBytes(f), 0, _vectorData, i*GetSize(_paramType), GetSize(_paramType));
+                    float f = ((float[])(object)data)[i];
+                    Array.Copy(BitConverter.GetBytes(f), 0, _vectorData, i * GetSize(_paramType), GetSize(_paramType));
                 }
                 IsScalar = false;
             }
-            else if (typeof (T) == typeof (Int16[]))
+            else if (typeof(T) == typeof(Int16[]))
             {
-                int count = ((Int16[]) (object) data).Length;
-                _dimensions = new[] {count};
+                int count = ((Int16[])(object)data).Length;
+                _dimensions = new[] { count };
                 _paramType = 2;
-                _vectorData = new byte[count*GetSize(2)];
+                _vectorData = new byte[count * GetSize(2)];
                 _length = _vectorData.Length;
                 // it is the same length as it is in string because ASCII encoding
                 for (int i = 0; i < count; i
                                                ++)
                 {
-                    Int16 n = ((Int16[]) (object) data)[i];
+                    Int16 n = ((Int16[])(object)data)[i];
 
                     // TODO : check this
-                    Array.Copy(BitConverter.GetBytes(n), 0, _vectorData, i*GetSize(_paramType), GetSize(_paramType));
+                    Array.Copy(BitConverter.GetBytes(n), 0, _vectorData, i * GetSize(_paramType), GetSize(_paramType));
                 }
                 IsScalar = false;
             }
@@ -519,59 +519,59 @@ namespace ManipAnalysis_v2
             //
             //  BASIC TYPES
             //
-            if (typeof (T) == typeof (char))
+            if (typeof(T) == typeof(char))
             {
-                ret = (T) (object) BitConverter.ToChar(_vectorData, i);
+                ret = (T)(object)BitConverter.ToChar(_vectorData, i);
             }
-            else if (typeof (T) == typeof (byte))
+            else if (typeof(T) == typeof(byte))
             {
-                ret = (T) (object) _vectorData[i];
+                ret = (T)(object)_vectorData[i];
             }
-            else if (typeof (T) == typeof (Int16))
+            else if (typeof(T) == typeof(Int16))
             {
-                ret = (T) (object) BitConverter.ToInt16(_vectorData, i*sizeof (Int16));
+                ret = (T)(object)BitConverter.ToInt16(_vectorData, i * sizeof(Int16));
             }
-            else if (typeof (T) == typeof (float))
+            else if (typeof(T) == typeof(float))
             {
-                ret = (T) (object) BitConverter.ToSingle(_vectorData, i*sizeof (float));
+                ret = (T)(object)BitConverter.ToSingle(_vectorData, i * sizeof(float));
             }
-            else if (typeof (T) == typeof (string))
+            else if (typeof(T) == typeof(string))
             {
-                ret = (T) (object) DataToString();
+                ret = (T)(object)DataToString();
             }
 
-                //
-                // 1D Arrays
-                //
-            else if (typeof (T) == typeof (string[]))
+            //
+            // 1D Arrays
+            //
+            else if (typeof(T) == typeof(string[]))
             {
-                ret = (T) (object) DataToStringArray();
+                ret = (T)(object)DataToStringArray();
             }
-            else if (typeof (T) == typeof (char[]))
+            else if (typeof(T) == typeof(char[]))
             {
-                ret = (T) (object) Get1DArray<char>();
+                ret = (T)(object)Get1DArray<char>();
             }
-            else if (typeof (T) == typeof (byte[]))
+            else if (typeof(T) == typeof(byte[]))
             {
-                ret = (T) (object) Get1DArray<byte>();
+                ret = (T)(object)Get1DArray<byte>();
             }
-            else if (typeof (T) == typeof (Int16[]))
+            else if (typeof(T) == typeof(Int16[]))
             {
-                ret = (T) (object) Get1DArray<Int16>();
+                ret = (T)(object)Get1DArray<Int16>();
             }
-            else if (typeof (T) == typeof (float[]))
+            else if (typeof(T) == typeof(float[]))
             {
-                ret = (T) (object) Get1DArray<float>();
+                ret = (T)(object)Get1DArray<float>();
             }
-                //
-                // 2D Arrays
-                //
-                // TODO: DO IT IF YOU NEED IT :)
-                //
-                //    else if (typeof(T) == typeof(Int16 [,]))
-                //    {
-                //        ret = (T)(object)Get2DArray<Int16>();
-                //    }
+            //
+            // 2D Arrays
+            //
+            // TODO: DO IT IF YOU NEED IT :)
+            //
+            //    else if (typeof(T) == typeof(Int16 [,]))
+            //    {
+            //        ret = (T)(object)Get2DArray<Int16>();
+            //    }
 
             else
             {
@@ -594,7 +594,7 @@ namespace ManipAnalysis_v2
                                                         ++)
                 {
                     // TODO: still need to test following line
-                    array[x, y] = GetData<T>(x + y*x);
+                    array[x, y] = GetData<T>(x + y * x);
                 }
             }
             return array;
@@ -639,7 +639,7 @@ namespace ManipAnalysis_v2
             for (int i = 0; i < _dimensions[1]; i
                                                     ++)
             {
-                retArray[i] = Encoding.UTF8.GetString(_vectorData, i*_dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
+                retArray[i] = Encoding.UTF8.GetString(_vectorData, i * _dimensions[0], _dimensions[0]).TrimEnd(' ').TrimEnd('\0');
             }
             return retArray;
         }

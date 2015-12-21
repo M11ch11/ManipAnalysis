@@ -68,7 +68,7 @@ namespace ManipAnalysis_v2
                 _mongoDbUsernameString = username;
                 _mongoDbPasswordString = password;
                 _connectionString = "mongodb://" + _mongoDbUsernameString + ":" + _mongoDbPasswordString + "@" + _mongoDbServerString + "/" + _mongoDbDatabaseString;
-                _mongoClient = new MongoClient(_connectionString);                
+                _mongoClient = new MongoClient(_connectionString);
             }
             catch (Exception ex)
             {
@@ -117,7 +117,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.TargetTrialNumberInSzenario)
                     .Ascending(t => t.TrialType)
                     .Ascending(t => t.ForceFieldType);
-                var options = new CreateIndexOptions { Unique = true, Sparse = true, Name="1"};
+                var options = new CreateIndexOptions { Unique = true, Sparse = true, Name = "1" };
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -134,7 +134,7 @@ namespace ManipAnalysis_v2
                 trialCollectionKeys = Builders<Trial>.IndexKeys
                     .Ascending(t => t.Study)
                     .Ascending(t => t.Group);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "3" };                
+                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "3" };
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -355,7 +355,7 @@ namespace ManipAnalysis_v2
                 var filter = Builders<Trial>.Filter.Eq(t => t.Study, studyName);
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Group, u => new { u.Key }).ToList().Select(t => t.Key);                
+                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Group, u => new { u.Key }).ToList().Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetGroups(string studyName)");
 
                 return retVal;
@@ -377,7 +377,7 @@ namespace ManipAnalysis_v2
                 });
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Szenario, u => new { u.Key }).ToList().Select(t => t.Key);                
+                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Szenario, u => new { u.Key }).ToList().Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSzenarios(string studyName, string groupName)");
 
                 return retVal;
@@ -423,7 +423,7 @@ namespace ManipAnalysis_v2
                 });
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);                
+                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSubjects(string studyName, string groupName, string szenarioName)");
 
                 return retVal;
@@ -445,7 +445,7 @@ namespace ManipAnalysis_v2
                 });
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);                
+                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSubjects(string studyName, string groupName)");
 
                 return retVal;
@@ -629,7 +629,7 @@ namespace ManipAnalysis_v2
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
                     .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario))
-                    .Project<Trial>(fields)                    
+                    .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
             }
@@ -650,7 +650,7 @@ namespace ManipAnalysis_v2
             {
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
-                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))                    
+                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
                     .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
@@ -700,7 +700,7 @@ namespace ManipAnalysis_v2
             try
             {
                 return _baselineCollection
-                    .Find(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber && t.TrialType == trialType && t.ForceFieldType == forceField && t.Handedness == handedness)                    
+                    .Find(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber && t.TrialType == trialType && t.ForceFieldType == forceField && t.Handedness == handedness)
                     .First<Baseline>();
             }
             catch (Exception)

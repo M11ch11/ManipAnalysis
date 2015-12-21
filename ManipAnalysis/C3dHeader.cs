@@ -38,7 +38,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 0, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 0, sizeof(Int16));
             }
         }
 
@@ -62,7 +62,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 2, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 2, sizeof(Int16));
             }
         }
 
@@ -74,7 +74,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 4, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 4, sizeof(Int16));
             }
         }
 
@@ -86,7 +86,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 6, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 6, sizeof(Int16));
             }
         }
 
@@ -98,7 +98,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 8, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 8, sizeof(Int16));
             }
         }
 
@@ -110,7 +110,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 10, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 10, sizeof(Int16));
             }
         }
 
@@ -122,7 +122,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 12, sizeof (float));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 12, sizeof(float));
             }
         }
 
@@ -134,7 +134,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 16, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 16, sizeof(Int16));
             }
         }
 
@@ -146,7 +146,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 18, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 18, sizeof(Int16));
             }
         }
 
@@ -158,7 +158,7 @@ namespace ManipAnalysis_v2
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 20, sizeof (float));
+                Array.Copy(BitConverter.GetBytes(value), 0, _data, 20, sizeof(float));
             }
         }
 
@@ -166,11 +166,11 @@ namespace ManipAnalysis_v2
         {
             get
             {
-                return BitConverter.ToInt16(_data, 149*2) == 12345;
+                return BitConverter.ToInt16(_data, 149 * 2) == 12345;
             }
             set
             {
-                Array.Copy(BitConverter.GetBytes(value ? 12345 : 0), 0, _data, 149*2, sizeof (Int16));
+                Array.Copy(BitConverter.GetBytes(value ? 12345 : 0), 0, _data, 149 * 2, sizeof(Int16));
             }
         }
 

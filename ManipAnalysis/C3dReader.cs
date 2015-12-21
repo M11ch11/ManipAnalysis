@@ -105,7 +105,7 @@ namespace ManipAnalysis_v2
         {
             get
             {
-                return (int) (_analogRate/_pointRate);
+                return (int)(_analogRate / _pointRate);
             }
         }
 
@@ -242,7 +242,7 @@ namespace ManipAnalysis_v2
             }
 
 
-            _dataStart = 512*(Header.DataStart - 1);
+            _dataStart = 512 * (Header.DataStart - 1);
             // Parameter Section Data Start Value doesnt work
             //_dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
 
@@ -412,12 +412,12 @@ namespace ManipAnalysis_v2
                     _reader.ReadSingle(), /* float y = */
                     _reader.ReadSingle(), /* float z = */
                     _reader.ReadSingle());
-                var cc = (int) _reader.ReadSingle();
+                var cc = (int)_reader.ReadSingle();
             }
 
 
             // Read Analog data
-            var samplesPerFrame = (int) (_analogRate/_pointRate);
+            var samplesPerFrame = (int)(_analogRate / _pointRate);
 
             var allData = new float[_analogUsed, samplesPerFrame];
             for (int rate = 0; rate < samplesPerFrame; rate
@@ -428,7 +428,7 @@ namespace ManipAnalysis_v2
                 {
                     float data = _reader.ReadSingle();
                     //real world value = (data value - zero offset) * channel scale * general scale
-                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0))*_analogGenScale*(_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
+                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0)) * _analogGenScale * (_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
                 }
             }
             _analogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);
@@ -448,14 +448,14 @@ namespace ManipAnalysis_v2
                                                    ++)
             {
                 _points[i] = new Vector3( /* float x = */
-                    _reader.ReadInt16()*_pointScale, /* float y = */
-                    _reader.ReadInt16()*_pointScale, /* float z = */
-                    _reader.ReadInt16()*_pointScale);
+                    _reader.ReadInt16() * _pointScale, /* float y = */
+                    _reader.ReadInt16() * _pointScale, /* float z = */
+                    _reader.ReadInt16() * _pointScale);
                 int cc = _reader.ReadInt16();
             }
 
             // reading of analog data
-            var samplesPerFrame = (int) (_analogRate/_pointRate);
+            var samplesPerFrame = (int)(_analogRate / _pointRate);
             var allData = new float[_analogUsed, samplesPerFrame];
             for (int rate = 0; rate < samplesPerFrame; rate
                                                            ++)
@@ -465,7 +465,7 @@ namespace ManipAnalysis_v2
                 {
                     float data = _reader.ReadInt16();
                     // real world value = (data value - zero offset) * channel scale * general scale
-                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0))*_analogGenScale*(_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
+                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0)) * _analogGenScale * (_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
                 }
             }
             _analogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);

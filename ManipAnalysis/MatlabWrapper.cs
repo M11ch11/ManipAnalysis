@@ -70,7 +70,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] {command});
+                _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] { command });
             }
             catch (Exception
                 ex)
@@ -349,7 +349,7 @@ namespace ManipAnalysis_v2
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString + ", sin(degtorad(45)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString + ", sin(degtorad(90)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString + ", sin(degtorad(135)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString + ", sin(degtorad(180)) * " + radiusString + ");");                
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString + ", sin(degtorad(180)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString + ", sin(degtorad(225)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString + ", sin(degtorad(270)) * " + radiusString + ");");
                 Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString + ", sin(degtorad(315)) * " + radiusString + ");");
@@ -446,7 +446,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab, new[] {name, "base", variable});
+                _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab, new[] { name, "base", variable });
             }
             catch (Exception
                 ex)
@@ -459,7 +459,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab, new Object[] {name, "base"}, null);
+                return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab, new Object[] { name, "base" }, null);
             }
             catch (Exception
                 ex)

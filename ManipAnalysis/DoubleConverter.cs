@@ -36,7 +36,7 @@ namespace ManipAnalysis_v2
             long bits = BitConverter.DoubleToInt64Bits(d);
             // Note that the shift is sign-extended, hence the test against -1 not 1
             bool negative = (bits < 0);
-            var exponent = (int) ((bits >> 52) & 0x7ffL);
+            var exponent = (int)((bits >> 52) & 0x7ffL);
             long mantissa = bits & 0xfffffffffffffL;
 
             // Subnormal numbers; exponent is effectively one higher,
@@ -46,8 +46,8 @@ namespace ManipAnalysis_v2
                 exponent
                     ++;
             }
-                // Normal numbers; leave exponent as it is but add extra
-                // bit to the front of the mantissa
+            // Normal numbers; leave exponent as it is but add extra
+            // bit to the front of the mantissa
             else
             {
                 mantissa = mantissa | (1L << 52);
@@ -86,7 +86,7 @@ namespace ManipAnalysis_v2
                 }
                 ad.Shift(-exponent);
             }
-                // Otherwise, we need to repeatedly multiply by 2
+            // Otherwise, we need to repeatedly multiply by 2
             else
             {
                 for (int i = 0; i < exponent; i
@@ -126,7 +126,7 @@ namespace ManipAnalysis_v2
                 for (int i = 0; i < tmp.Length; i
                                                     ++)
                 {
-                    _digits[i] = (byte) (tmp[i] - '0');
+                    _digits[i] = (byte)(tmp[i] - '0');
                 }
                 Normalize();
             }
@@ -141,9 +141,9 @@ namespace ManipAnalysis_v2
                 for (int i = _digits.Length - 1; i >= 0; i
                                                              --)
                 {
-                    int resultDigit = _digits[i]*amount + result[i + 1];
-                    result[i] = (byte) (resultDigit/10);
-                    result[i + 1] = (byte) (resultDigit%10);
+                    int resultDigit = _digits[i] * amount + result[i + 1];
+                    result[i] = (byte)(resultDigit / 10);
+                    result[i + 1] = (byte)(resultDigit % 10);
                 }
                 if (result[0] != 0)
                 {
@@ -216,7 +216,7 @@ namespace ManipAnalysis_v2
                 for (int i = 0; i < _digits.Length; i
                                                         ++)
                 {
-                    digitString[i] = (char) (_digits[i] + '0');
+                    digitString[i] = (char)(_digits[i] + '0');
                 }
 
                 // Simplest case - nothing after the decimal point,

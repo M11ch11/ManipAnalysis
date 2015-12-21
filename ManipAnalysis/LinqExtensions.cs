@@ -16,10 +16,10 @@ namespace ManipAnalysis_v2
                 double avg = values.Average();
 
                 //Perform the Sum of (value-avg)^2
-                double sum = values.Sum(d => (d - avg)*(d - avg));
+                double sum = values.Sum(d => (d - avg) * (d - avg));
 
                 //Divide Sum by (Samples - 1)
-                ret = Math.Sqrt(sum/(count - 1));
+                ret = Math.Sqrt(sum / (count - 1));
             }
             return ret;
         }
@@ -34,10 +34,10 @@ namespace ManipAnalysis_v2
                 double avg = values.Average();
 
                 //Perform the Sum of (value-avg)^2
-                double sum = values.Sum(d => (d - avg)*(d - avg));
+                double sum = values.Sum(d => (d - avg) * (d - avg));
 
                 //Divide Sum by (Samples - 1)
-                ret = Math.Sqrt(sum/(count - 1));
+                ret = Math.Sqrt(sum / (count - 1));
             }
             return ret;
         }
