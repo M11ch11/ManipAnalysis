@@ -85,7 +85,7 @@ namespace ManipAnalysis_v2
             {
                 _myManipAnalysisGui.WriteToLogBox("Connected to Database-Server at \"" + server + "\"");
                 _myDatabaseWrapper.SetDatabaseServer(server);
-                _myManipAnalysisGui.SetSqlDatabases(_myDatabaseWrapper.GetDatabases());
+                _myManipAnalysisGui.SetDatabaseNames(_myDatabaseWrapper.GetDatabases());
                 retVal = true;
             }
             else

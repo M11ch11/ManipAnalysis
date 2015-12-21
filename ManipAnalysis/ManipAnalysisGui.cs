@@ -186,15 +186,6 @@ namespace ManipAnalysis_v2
             if (checkBox_Start_ManualMode.Checked)
             {
                 tabControl.TabPages.Remove(tabPage_Impressum);
-                /*
-                if (Environment.MachineName != textBox_Start_SqlServer.Text)
-                {
-                    MessageBox.Show(@"Import and Calculations only possible when running on ManipServer!");
-                }
-                else
-                {
-                    tabControl.TabPages.Add(tabPage_ImportCalculations);
-                }*/
                 tabControl.TabPages.Add(tabPage_ImportCalculations);
                 tabControl.TabPages.Add(tabPage_Debug);
                 tabControl.TabPages.Add(tabPage_Impressum);
@@ -221,26 +212,17 @@ namespace ManipAnalysis_v2
             var handedness = new List<Trial.HandednessEnum>();
             int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
@@ -302,6 +284,7 @@ namespace ManipAnalysis_v2
 
         private void comboBox_StatisticPlots_Study_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic1_Groups.Items.Clear();
             comboBox_DescriptiveStatistic1_Szenario.Items.Clear();
             listBox_DescriptiveStatistic1_Subjects.Items.Clear();
@@ -317,10 +300,12 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic1_Groups.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_StatisticPlots_Group_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (listBox_DescriptiveStatistic1_Groups.SelectedItems.Count > 0)
             {
                 comboBox_DescriptiveStatistic1_Szenario.Items.Clear();
@@ -347,10 +332,12 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready");
         }
 
         private void comboBox_StatisticPlots_Szenario_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic1_Subjects.Items.Clear();
             listBox_DescriptiveStatistic1_Turns.Items.Clear();
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
@@ -372,10 +359,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_DescriptiveStatistic1_Subjects.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_StatisticPlots_Subject_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic1_Turns.Items.Clear();
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
@@ -411,10 +400,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_DescriptiveStatistic1_Turns.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic1_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
@@ -469,10 +460,12 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic1_Trials.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_StatisticPlots_AddSelected_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (listBox_DescriptiveStatistic1_Trials.SelectedItems.Count > 0)
             {
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
@@ -519,6 +512,7 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_StatisticPlots_ClearSelected_Click(object sender, EventArgs e)
@@ -559,6 +553,7 @@ namespace ManipAnalysis_v2
 
         private void button_StatisticPlots_AddAll_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (listBox_DescriptiveStatistic1_Trials.SelectedItems.Count > 0)
             {
                 string study = comboBox_DescriptiveStatistic1_Study.SelectedItem.ToString();
@@ -605,10 +600,12 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void tabPage_DescriptiveStatistic1_Enter(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic1_TrialType.Items.Clear();
             listBox_DescriptiveStatistic1_ForceField.Items.Clear();
             listBox_DescriptiveStatistic1_Handedness.Items.Clear();
@@ -657,10 +654,12 @@ namespace ManipAnalysis_v2
                     comboBox_DescriptiveStatistic1_Study.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void comboBox_DescriptiveStatistic2_Study_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic2_Groups.Items.Clear();
             comboBox_DescriptiveStatistic2_Szenario.Items.Clear();
             listBox_DescriptiveStatistic2_Subjects.Items.Clear();
@@ -677,10 +676,12 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic2_Groups.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_DescriptiveStatistic2_Groups_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (listBox_DescriptiveStatistic2_Groups.SelectedItems.Count > 0)
             {
                 comboBox_DescriptiveStatistic2_Szenario.Items.Clear();
@@ -706,10 +707,12 @@ namespace ManipAnalysis_v2
                     comboBox_DescriptiveStatistic2_Szenario.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void comboBox_DescriptiveStatistic2_Szenario_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic2_Subjects.Items.Clear();
             listBox_DescriptiveStatistic2_Turns.Items.Clear();
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
@@ -731,10 +734,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_DescriptiveStatistic2_Subjects.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_DescriptiveStatistic2_Subject_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic2_Turns.Items.Clear();
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
@@ -769,10 +774,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_DescriptiveStatistic2_Turns.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_DescriptiveStatistic2_Turns_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic2_Trials.Items.Clear();
 
             string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
@@ -827,10 +834,12 @@ namespace ManipAnalysis_v2
                     listBox_DescriptiveStatistic2_Trials.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_DescriptiveStatistic2_AddSelected_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (comboBox_DescriptiveStatistic2_Study.SelectedItem != null)
             {
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
@@ -840,30 +849,23 @@ namespace ManipAnalysis_v2
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.SelectedItems.Cast<string>().ToArray();
 
-                foreach (string
-                    group
-                    in
-                    groups)
+                foreach (string group in groups)
                 {
-                    foreach (SubjectContainer
-                        subject
-                        in
-                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string
-                            turn
-                            in
-                            turns)
+                        foreach (string turn in turns)
                         {
                             listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                         }
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_DescriptiveStatistic2_AddAll_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (comboBox_DescriptiveStatistic2_Study.SelectedItem != null)
             {
                 string study = comboBox_DescriptiveStatistic2_Study.SelectedItem.ToString();
@@ -873,26 +875,18 @@ namespace ManipAnalysis_v2
                 string[] turns = listBox_DescriptiveStatistic2_Turns.SelectedItems.Cast<string>().ToArray();
                 string[] trials = listBox_DescriptiveStatistic2_Trials.Items.Cast<string>().ToArray();
 
-                foreach (string
-                    group
-                    in
-                    groups)
+                foreach (string group in groups)
                 {
-                    foreach (SubjectContainer
-                        subject
-                        in
-                        subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
+                    foreach (SubjectContainer subject in subjects.Where(t => _manipAnalysisFunctions.GetSubjects(study, group, szenario).Select(u => u.PId).Contains(t.PId)))
                     {
-                        foreach (string
-                            turn
-                            in
-                            turns)
+                        foreach (string turn in turns)
                         {
                             listBox_DescriptiveStatistic2_SelectedTrials.Items.Add(new StatisticPlotContainer(study, group, szenario, subject, turn, trials));
                         }
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_DescriptiveStatistic2_ClearSelected_Click(object sender, EventArgs e)
@@ -910,6 +904,7 @@ namespace ManipAnalysis_v2
 
         private void tabPage_DescriptiveStatistic2_Enter(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_DescriptiveStatistic2_TrialType.Items.Clear();
             listBox_DescriptiveStatistic2_ForceField.Items.Clear();
             listBox_DescriptiveStatistic2_Handedness.Items.Clear();
@@ -959,10 +954,11 @@ namespace ManipAnalysis_v2
                     comboBox_DescriptiveStatistic2_Study.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_DescriptiveStatistic2_CalculateMeanValues_Click(object sender, EventArgs e)
-        {
+        {            
             int pdTime = 300;
             if (comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Abs" || comboBox_DescriptiveStatistic2_DataTypeSelect.SelectedItem.ToString() == "PD - Sign")
             {
@@ -1140,6 +1136,7 @@ namespace ManipAnalysis_v2
 
         private void tabPage_TrajectoryVelocity_Enter(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_TrialType.Items.Clear();
             listBox_TrajectoryVelocity_ForceField.Items.Clear();
             listBox_TrajectoryVelocity_Handedness.Items.Clear();
@@ -1186,10 +1183,12 @@ namespace ManipAnalysis_v2
                     comboBox_TrajectoryVelocity_Study.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void comboBox_TrajectoryVelocity_Study_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_Groups.Items.Clear();
             comboBox_TrajectoryVelocity_Szenario.Items.Clear();
             listBox_TrajectoryVelocity_Subjects.Items.Clear();
@@ -1206,10 +1205,12 @@ namespace ManipAnalysis_v2
                     listBox_TrajectoryVelocity_Groups.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_TrajectoryVelocity_Groups_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (listBox_TrajectoryVelocity_Groups.SelectedItems.Count > 0)
             {
                 comboBox_TrajectoryVelocity_Szenario.Items.Clear();
@@ -1237,10 +1238,12 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void comboBox_TrajectoryVelocity_Szenario_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_Subjects.Items.Clear();
             listBox_TrajectoryVelocity_Turns.Items.Clear();
             listBox_TrajectoryVelocity_Targets.Items.Clear();
@@ -1262,10 +1265,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_TrajectoryVelocity_Subjects.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_TrajectoryVelocity_Subjects_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_Turns.Items.Clear();
             listBox_TrajectoryVelocity_Targets.Items.Clear();
             listBox_TrajectoryVelocity_Trials.Items.Clear();
@@ -1303,10 +1308,12 @@ namespace ManipAnalysis_v2
             {
                 listBox_TrajectoryVelocity_Turns.SelectedIndex = 0;
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void listBox_TrajectoryVelocity_Turns_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_Targets.Items.Clear();
             listBox_TrajectoryVelocity_Trials.Items.Clear();
 
@@ -1335,10 +1342,12 @@ namespace ManipAnalysis_v2
                     listBox_TrajectoryVelocity_Trials.SelectedIndex = 0;
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_TrajectoryVelocity_AddSelected_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (comboBox_TrajectoryVelocity_Study.SelectedItem != null)
             {
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
@@ -1386,10 +1395,12 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_TrajectoryVelocity_AddAll_Click(object sender, EventArgs e)
         {
+            WriteProgressInfo("Loading...");
             if (comboBox_TrajectoryVelocity_Study.SelectedItem != null)
             {
                 string study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
@@ -1437,6 +1448,7 @@ namespace ManipAnalysis_v2
                     }
                 }
             }
+            WriteProgressInfo("Ready.");
         }
 
         private void button_TrajectoryVelocity_ClearSelected_Click(object sender, EventArgs e)
@@ -1708,7 +1720,7 @@ namespace ManipAnalysis_v2
             checkBox_Start_ManualMode.Enabled = true;
         }
 
-        private void button_Start_ConnectToSQlServer_Click(object sender, EventArgs e)
+        private void button_Start_ConnectToDatabaseServer_Click(object sender, EventArgs e)
         {
             WriteProgressInfo("Connecting to server...");
 
@@ -1732,7 +1744,7 @@ namespace ManipAnalysis_v2
             WriteProgressInfo("Ready");
         }
 
-        public void SetSqlDatabases(IEnumerable<string> databases)
+        public void SetDatabaseNames(IEnumerable<string> databases)
         {
             if (databases != null && databases.Any())
             {
@@ -1773,26 +1785,17 @@ namespace ManipAnalysis_v2
             var handedness = new List<Trial.HandednessEnum>();
             int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
@@ -1834,26 +1837,17 @@ namespace ManipAnalysis_v2
             var handedness = new List<Trial.HandednessEnum>();
             int[] targets = listBox_OtherStatistics_Targets.SelectedItems.Cast<string>().Select(t => Convert.ToInt32(t.Substring(7, 2))).ToArray();
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_TrialType.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
             {
                 trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_ForceField.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
             {
                 forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
             }
 
-            foreach (string
-                item
-                in
-                listBox_OtherStatistics_Handedness.SelectedItems)
+            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
             {
                 handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
             }
@@ -2080,7 +2074,7 @@ namespace ManipAnalysis_v2
                 string[] trials = listBox_BaselineRecalculation_Trials.SelectedItems.Cast<string>().ToArray();
 
 
-                //if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
+                if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                 {
                     if (listBox_BaselineRecalculation_SelectedTrials.Items.Count > 0)
                     {
@@ -2120,7 +2114,7 @@ namespace ManipAnalysis_v2
                 string[] trials = listBox_BaselineRecalculation_Trials.Items.Cast<string>().ToArray();
 
 
-                //if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
+                if (_manipAnalysisFunctions.GetTurns(study, group, szenario, subject) != null)
                 {
                     if (listBox_BaselineRecalculation_SelectedTrials.Items.Count > 0)
                     {

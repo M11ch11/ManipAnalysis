@@ -359,7 +359,7 @@ namespace ManipAnalysis_v2
             this.button_Start_ConnectToSQlServer.TabIndex = 16;
             this.button_Start_ConnectToSQlServer.Text = "Connect";
             this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
-            this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToSQlServer_Click);
+            this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToDatabaseServer_Click);
             // 
             // label_Start_ManipAnalysis
             // 
