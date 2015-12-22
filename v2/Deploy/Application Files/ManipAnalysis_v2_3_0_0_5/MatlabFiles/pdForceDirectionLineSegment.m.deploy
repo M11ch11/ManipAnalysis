@@ -31,8 +31,8 @@
 %		sign_pd = [1] when pd_force is directed anti clockwise to the movement direction,
 %				  [-1] when pd_force is directed clockwise
 %
-%		sign_ff = [1] when pd_force is pointing in the direction of the forceFieldMatrix,
-%				  [-1] when pd_force is pointing in the opposite direction
+%		sign_ff = [-1] when pd_force is pointing in the direction of the forceFieldMatrix,
+%				  [1] when pd_force is pointing in the opposite direction
 %
 
 function [ pd_force, sign_pd, sign_ff ] = pdForceDirectionLineSegment(force_vector, v_pos_1, v_pos_2, forceFieldMatrix)
