@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class T1_ccw_01_Fam_Base_TrainA : ISzenarioDefinition
     {
-        new public const string StudyName = "Study 8";
+        new public const string StudyName = "Study 08";
 
         new public const string SzenarioName = "T1_ccw_01_Fam_Base_TrainA";
         new public const int TrialCount = 436;

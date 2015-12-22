@@ -494,13 +494,18 @@ namespace ManipAnalysis_v2
             TaskManager.PushBack(Task.Factory.StartNew(() =>
             {
                 _myMatlabWrapper.CreateTrajectoryFigure("Trajectory baseline plot");
-                if (study == "Study 8")
+
+                if (study == "Study 7")
                 {
                     _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                 }
-                else if (study == "Study 7")
+                else if (study == "Study 08")
                 {
                     _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                }
+                else if (study == "Study 09")
+                {
+                    _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                 }
                 else if (study == "Study 10")
                 {
@@ -2024,7 +2029,46 @@ namespace ManipAnalysis_v2
                                 }
                             }
                         }
-                        else if (study == "Study 8")
+                        if (study == "Study 09")
+                        {
+                            string baseLineName = "02_CI_baseline";
+                            IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
+
+                            foreach (string group in groups)
+                            {
+                                IEnumerable<SubjectContainer> subjects = _myDatabaseWrapper.GetSubjects(study, group, baseLineName);
+
+                                foreach (SubjectContainer subject in subjects)
+                                {
+                                    DateTime turnDateTime = _myDatabaseWrapper.GetTurns(study, group, baseLineName, subject).ElementAt(0);
+
+                                    List<Trial> baselineTrialsNull = _myDatabaseWrapper.GetTrials(study, group, baseLineName, subject, turnDateTime, Enumerable.Range(17, 16), baselineFields).ToList();
+                                    List<Trial> baselineTrialsFF = _myDatabaseWrapper.GetTrials(study, group, baseLineName, subject, turnDateTime, Enumerable.Range(33, 8), baselineFields).ToList();
+
+                                    baselineTrialsNull.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsNull.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    baselineTrialsFF.ForEach(t => t.PositionNormalized = Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsFF.ForEach(t => t.VelocityNormalized = Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsFF.ForEach(t => t.MeasuredForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+                                    baselineTrialsFF.ForEach(t => t.MomentForcesNormalized = Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized).OrderBy(u => u.TimeStamp).ToList());
+
+                                    if (baselineTrialsNull.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == Trial.HandednessEnum.RightHand) &&
+                                        baselineTrialsFF.All(t => t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && t.Handedness == Trial.HandednessEnum.RightHand))
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsNull));
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsFF));
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox("Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group + " / " + subject);
+                                    }
+                                }
+                            }
+                        }
+                        else if (study == "Study 08")
                         {
                             IEnumerable<string> groups = _myDatabaseWrapper.GetGroups(study);
 
@@ -2561,7 +2605,7 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
-                                        else if (trial.Study == "Study 8")
+                                        else if (trial.Study == "Study 08")
                                         {
                                             if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
                                             {
@@ -2569,6 +2613,39 @@ namespace ManipAnalysis_v2
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == trial.TrialType && t.ForceFieldType == trial.ForceFieldType && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, trial.TrialType, trial.ForceFieldType, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (trial.Study == "Study 09")
+                                        {
+                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW || trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
+                                            {
+                                                baseline = baselineBuffer.Find(t => t.Study == trial.Study && t.Group == trial.Group && t.Subject == trial.Subject && t.Target.Number == trial.Target.Number && t.TrialType == Trial.TrialTypeEnum.StandardTrial && t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField && t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group, trial.Subject, trial.Target.Number, Trial.TrialTypeEnum.StandardTrial, Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -2863,13 +2940,18 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
-                        if (study == "Study 8")
+
+                        if (study == "Study 7")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
-                        else if (study == "Study 7")
+                        else if (study == "Study 08")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                        }                        
+                        else if (study == "Study 09")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 10")
                         {
@@ -2890,13 +2972,17 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
 
-                        if (study == "Study 8")
+                        if (study == "Study 7")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
-                        else if (study == "Study 7")
+                        else if (study == "Study 08")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 09")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 10")
                         {
@@ -2917,13 +3003,17 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
 
-                        if (study == "Study 8")
+                        if (study == "Study 7")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
                         }
-                        else if (study == "Study 7")
+                        else if (study == "Study 08")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
+                        }
+                        else if (study == "Study 09")
+                        {
+                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
                         }
                         else if (study == "Study 10")
                         {

@@ -6,7 +6,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class T2_cw_02_InterB_RetA_RetB : ISzenarioDefinition
     {
-        new public const string StudyName = "Study 8";
+        new public const string StudyName = "Study 08";
 
         new public const string SzenarioName = "T2_cw_02_InterB_RetA_RetB";
 
