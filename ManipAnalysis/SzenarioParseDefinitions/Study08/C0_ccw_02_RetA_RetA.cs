@@ -22,7 +22,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 trial = null;
             }
             else
-            {                
+            {
                 if ((trial.Target.Number >= 1 && trial.Target.Number <= 3) || (trial.Target.Number >= 11 && trial.Target.Number <= 13)) // NullField
                 {
                     trial.Target.Number = trial.Target.Number;
@@ -241,6 +241,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
+                    //ForceFieldCCW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = -15;
+                    trial.ForceFieldMatrix[1, 0] = 15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.TrialNumberInSzenario >= 7 && trial.TrialNumberInSzenario <= 78)
                 {
@@ -253,6 +258,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 72;
+                    //ForceFieldCCW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = -15;
+                    trial.ForceFieldMatrix[1, 0] = 15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.TrialNumberInSzenario >= 85 && trial.TrialNumberInSzenario <= TrialCount)
                 {

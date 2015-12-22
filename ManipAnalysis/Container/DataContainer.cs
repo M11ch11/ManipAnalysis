@@ -16,22 +16,22 @@ namespace ManipAnalysis_v2.Container
 
         public readonly List<VelocityDataContainer> VelocityDataNormalized = new List<VelocityDataContainer>();
 
-        public List<BaselineDataContainer> BaselineData;
+        public List<BaselineDataContainer> BaselineData = null;
 
-        public string GroupName;
+        public string GroupName = null;
 
-        public string MeasureFileCreationDate;
+        public string MeasureFileCreationDate = null;
 
-        public string MeasureFileCreationTime;
+        public string MeasureFileCreationTime = null;
 
-        public string MeasureFileHash;
+        public string MeasureFileHash = null;
 
-        public string StudyName;
+        public string StudyName = null;
 
-        public string SubjectID;
+        public string SubjectID = null;
 
-        public string SubjectName;
+        public string SubjectName = null;
 
-        public string SzenarioName;
+        public string SzenarioName = null;
     }
 }

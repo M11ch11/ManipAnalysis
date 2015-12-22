@@ -1284,10 +1284,10 @@ namespace ManipAnalysis_v2
                                     _myDatabaseWrapper.Insert(trialsContainer);
                                     _myDatabaseWrapper.Insert(szenarioMeanTimesContainer);
                                 }
-                                catch (Exception ex)
+                                catch
                                 {
                                     _myDatabaseWrapper.RemoveMeasureFile(trialsContainer[0].MeasureFile);
-                                    throw ex;
+                                    throw;
                                 }
                             }
                             else
@@ -2789,10 +2789,12 @@ namespace ManipAnalysis_v2
                                 catch (Exception ex)
                                 {
                                     _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                                    
+                                }
+                                finally
+                                {
                                     taskMatlabWrapper.Dispose();
                                 }
-
-                                taskMatlabWrapper.Dispose();
 
                                 lock (calculatingTasks)
                                 {
@@ -2836,9 +2838,6 @@ namespace ManipAnalysis_v2
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
                     string study = selectedTrialsList.Select(t => t.Study).Distinct().First();
-
-
-                    ProjectionDefinition<Trial> test;
 
                     var fields = Builders<Trial>.Projection.Include(t => t.ForceFieldMatrix);
                     if (trajectoryVelocityForce == "Velocity - Normalized")
@@ -3415,7 +3414,6 @@ namespace ManipAnalysis_v2
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
 
-
                     var fields = Builders<Trial>.Projection.Include(t => t.ForceFieldMatrix);
                     var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
                     var dataFileWriter = new StreamWriter(dataFileStream);
@@ -3905,7 +3903,6 @@ namespace ManipAnalysis_v2
                     }
 
                     dataFileWriter.Close();
-                    dataFileStream.Close();
                 }
                 catch (Exception ex)
                 {

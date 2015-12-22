@@ -28,7 +28,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 trial = null;
             }
             else
-            {                
+            {
                 // Correcting TrialNumberInSzenario count
                 if (trial.TrialNumberInSzenario > 132 && trial.TrialNumberInSzenario < 177)
                 {

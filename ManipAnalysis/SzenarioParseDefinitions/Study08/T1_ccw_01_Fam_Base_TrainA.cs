@@ -8,7 +8,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         new public const string StudyName = "Study 8";
 
         new public const string SzenarioName = "T1_ccw_01_Fam_Base_TrainA";
-
         new public const int TrialCount = 436;
 
         public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)

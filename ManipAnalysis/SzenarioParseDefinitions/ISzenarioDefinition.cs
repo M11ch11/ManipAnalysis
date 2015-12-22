@@ -160,7 +160,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
             // Set TargetTrialNumberInSzenario Field 
             if (trialsContainer.Any())
-            {                           
+            {
                 foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
                     foreach (int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
@@ -172,7 +172,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         }
                     }
                 }
-            }         
+            }
 
             return trialsContainer;
         }

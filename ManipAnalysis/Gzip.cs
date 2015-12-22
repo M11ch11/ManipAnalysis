@@ -11,37 +11,34 @@ namespace ManipAnalysis_v2
             byte[] compressedData;
 
             using (var uncompressedStream = new MemoryStream())
+            using (var compressedStream = new MemoryStream())
+            using (var gZipCompressor = new GZipStream(compressedStream, CompressionMode.Compress))
             {
                 var xml = new XmlSerializer(typeof(T));
                 xml.Serialize(uncompressedStream, tObject);
                 uncompressedStream.Position = 0;
-                using (var compressedStream = new MemoryStream())
-                {
-                    using (var gZipCompressor = new GZipStream(compressedStream, CompressionMode.Compress))
-                    {
-                        uncompressedStream.CopyTo(gZipCompressor);
-                    }
-                    compressedData = compressedStream.ToArray();
-                }
+                uncompressedStream.CopyTo(gZipCompressor);
+                compressedData = compressedStream.ToArray();
             }
+
             return compressedData;
         }
 
         public static T DeCompress(byte[] data)
         {
+            T decompressedData;
+
             using (var compressedStream = new MemoryStream(data))
+            using (var uncompressedStream = new MemoryStream())
+            using (var gZipDecompressor = new GZipStream(compressedStream, CompressionMode.Decompress))
             {
-                using (var uncompressedStream = new MemoryStream())
-                {
-                    using (var gZipDecompressor = new GZipStream(compressedStream, CompressionMode.Decompress))
-                    {
-                        gZipDecompressor.CopyTo(uncompressedStream);
-                    }
-                    uncompressedStream.Position = 0;
-                    var xml = new XmlSerializer(typeof(T));
-                    return (T)xml.Deserialize(uncompressedStream);
-                }
+                gZipDecompressor.CopyTo(uncompressedStream);
+                uncompressedStream.Position = 0;
+                var xml = new XmlSerializer(typeof(T));
+                decompressedData = (T)xml.Deserialize(uncompressedStream);
             }
+
+            return decompressedData;
         }
     }
 }

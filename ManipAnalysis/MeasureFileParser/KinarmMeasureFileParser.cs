@@ -134,7 +134,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         in
                         Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))// && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))// && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
@@ -183,7 +183,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
             bool retVal = true;
             try
             {
-                var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
+                var szenarioDefinition = (ISzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
                 _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName, _offset));
             }
             catch (Exception

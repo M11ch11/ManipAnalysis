@@ -248,6 +248,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Szenario = "Interference Bias";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    //ForceFieldCCW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = -15;
+                    trial.ForceFieldMatrix[1, 0] = 15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.TrialNumberInSzenario >= 7 && trial.TrialNumberInSzenario <= 150)
                 {
@@ -260,6 +265,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 150;
+                    //ForceFieldCW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.TrialNumberInSzenario >= 157 && trial.TrialNumberInSzenario <= 228)
                 {
@@ -272,6 +282,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Szenario = "Retention Bias";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 222;
+                    //ForceFieldCCW
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = -15;
+                    trial.ForceFieldMatrix[1, 0] = 15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.TrialNumberInSzenario >= 235 && trial.TrialNumberInSzenario <= 306)
                 {
@@ -286,7 +301,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override bool checkTrialCount(int trialCount)
         {
-            
+
             return trialCount == TrialCount;
         }
     }

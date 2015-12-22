@@ -16,7 +16,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             trial.Study = StudyName;
             trial.Szenario = SzenarioName;
 
-            if(trial.TrialNumberInSzenario >= 129 && trial.TrialNumberInSzenario <= 131 ||
+            if (trial.TrialNumberInSzenario >= 129 && trial.TrialNumberInSzenario <= 131 ||
                trial.TrialNumberInSzenario >= 176 && trial.TrialNumberInSzenario <= 179)
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping invalidated trial. " + trial.Szenario + ", Trail " + trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
@@ -43,7 +43,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 {
                     trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
-                    trial.TrialType = Trial.TrialTypeEnum.StandardTrial;                    
+                    trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
                 else if ((trial.Target.Number >= 4 && trial.Target.Number <= 6) || (trial.Target.Number >= 14 && trial.Target.Number <= 16)) // CCW ForceField
                 {

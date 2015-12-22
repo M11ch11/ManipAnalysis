@@ -15,7 +15,7 @@ using System.IO;
 
 namespace ManipAnalysis_v2
 {
-    public class C3dReader
+    public class C3dReader : IDisposable
     {
         private readonly HashSet<Parameter> _allParameters;
 
@@ -24,7 +24,6 @@ namespace ManipAnalysis_v2
         private readonly Dictionary<string, ParameterGroup> _nameToGroups;
 
         private float _analogGenScale;
-
 
         private float _analogRate;
 
@@ -479,6 +478,11 @@ namespace ManipAnalysis_v2
             _reader.Close();
             _fs.Close();
             return true;
+        }
+
+        public void Dispose()
+        {
+            Close();
         }
     }
 

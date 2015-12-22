@@ -3,7 +3,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class _03_training_variable_CW: ISzenarioDefinition
+    internal class _03_training_variable_CW : ISzenarioDefinition
     {
         new public const string StudyName = "Study 10";
 
