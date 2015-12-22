@@ -28,9 +28,11 @@
 %           measured perpendicular force of data points (typically 1x100)
 %		forceFieldMatrix
 %           a 2x2 matrix containing the forceField of the trial
+%
 %   - Output:
-%       fcp = force compensation factor calculated through linear
-%       regression between force ideal and force measured
+%       fcp
+%			force compensation factor calculated through linear
+%			regression between force ideal and force measured
 %
 %========================================================================%
 

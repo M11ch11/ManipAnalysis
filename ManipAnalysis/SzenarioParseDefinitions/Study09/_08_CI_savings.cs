@@ -25,13 +25,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             {
                 if (trial.Target.Number >= 1 && trial.Target.Number <= 8) // Null
                 {
-                    trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
                 else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null, Position control, skip
                 {
-                    trial.Target.Number = trial.Target.Number;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
@@ -78,7 +76,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause 10s + Position control, skip
                 {
-                    trial.Target.Number = trial.Target.Number - 52;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
@@ -96,7 +93,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number >= 81 && trial.Target.Number <= 88) // Pause 60s + Position control, skip
                 {
-                    trial.Target.Number = trial.Target.Number - 52;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
