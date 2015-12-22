@@ -7,8 +7,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
     {
         new public const string StudyName = "Study 09";
 
-        new public const string SzenarioName = "06_CI_washout_Day2A
-";
+        new public const string SzenarioName = "06_CI_washout_Day2A";
 
         new public const int TrialCount = 56;
 
