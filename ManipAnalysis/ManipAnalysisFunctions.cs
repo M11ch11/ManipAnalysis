@@ -1992,8 +1992,9 @@ namespace ManipAnalysis_v2
                     baselineFields = baselineFields.Include(t10 => t10.Subject);
                     baselineFields = baselineFields.Include(t11 => t11.TrialNumberInSzenario);
                     baselineFields = baselineFields.Include(t12 => t12.Target);
-                    baselineFields = baselineFields.Include(t13 => t13.NormalizedDataSampleRate);
-                    baselineFields = baselineFields.Include(t14 => t14.Id);
+                    baselineFields = baselineFields.Include(t13 => t13.Origin);
+                    baselineFields = baselineFields.Include(t14 => t14.NormalizedDataSampleRate);
+                    baselineFields = baselineFields.Include(t15 => t15.Id);
                     var baselinesContainer = new List<Baseline>();
                     IEnumerable<string> studys = _myDatabaseWrapper.GetStudys();
 
