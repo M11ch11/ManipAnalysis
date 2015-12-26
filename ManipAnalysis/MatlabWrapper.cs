@@ -70,7 +70,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] { command });
+                _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] {command});
             }
             catch (Exception
                 ex)
@@ -153,7 +153,8 @@ namespace ManipAnalysis_v2
                 Execute("ylabel('Movement time [s]');");
                 Execute("axis([0 18 0.2 1.4]);");
                 Execute("axis manual;");
-                Execute("set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
+                Execute(
+                    "set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
             }
             catch (Exception
                 ex)
@@ -204,7 +205,9 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar, string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit, bool plotFit, bool plotErrorBars)
+        public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
+            string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit,
+            bool plotFit, bool plotErrorBars)
         {
             try
             {
@@ -215,7 +218,9 @@ namespace ManipAnalysis_v2
 
                 if (stdVar != null && plotErrorBars)
                 {
-                    Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" + dataVar + "(:)-" + stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar + "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
+                    Execute("patch([[1:1:length(" + dataVar + ")], [length(" + dataVar + "):-1:1]],[" + dataVar + "(:)-" +
+                            stdVar + "(:); flipud(" + dataVar + "(:)+" + stdVar +
+                            "(:))],[0.8 0.8 0.8], 'EdgeColor',[0.8 0.8 0.8])");
                 }
 
                 Execute("plot(" + dataVar + ");");
@@ -227,7 +232,11 @@ namespace ManipAnalysis_v2
 
                 Execute("xlabel('" + xAxisLabel + "');");
                 Execute("ylabel('" + yAxisLabel + "');");
-                Execute("set(gca,'YLim',[" + yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'YLimMode', 'manual','XLim',[" + xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " + xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'XLimMode', 'manual');");
+                Execute("set(gca,'YLim',[" + yNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                        yPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) +
+                        "],'YLimMode', 'manual','XLim',[" +
+                        xNegLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + " " +
+                        xPosLimit.ToString("R", CultureInfo.CreateSpecificCulture("en-US")) + "],'XLimMode', 'manual');");
                 Execute("set(gca, 'Layer','top');");
             }
             catch (Exception
@@ -280,7 +289,8 @@ namespace ManipAnalysis_v2
                 Execute("xlabel('Displacement [m]');");
                 Execute("ylabel('Displacement [m]');");
                 Execute("grid on");
-                Execute("axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
+                Execute(
+                    "axis2 = axes('Position',get(axis1,'Position'),'XAxisLocation','top','YAxisLocation','right','Color','none','XColor','k','YColor','k');");
                 Execute("set(axis2, 'XTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
                 Execute("set(axis2, 'XTickLabel', {'', '', '', '', ''});");
@@ -322,15 +332,20 @@ namespace ManipAnalysis_v2
 
         public void DrawTargetsCenterOut3(double diameter, double radius, double centerX, double centerY)
         {
-            string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-            string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            var diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            var radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
 
             try
             {
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString + ", sin(degtorad(45)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString + ", sin(degtorad(90)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString + ", sin(degtorad(135)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", " + centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " + centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString +
+                        ", sin(degtorad(45)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString +
+                        ", sin(degtorad(90)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString +
+                        ", sin(degtorad(135)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", " +
+                        centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
+                        centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
             }
             catch (Exception ex)
             {
@@ -340,20 +355,30 @@ namespace ManipAnalysis_v2
 
         public void DrawTargetsCenterOut8(double diameter, double radius, double centerX, double centerY)
         {
-            string diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
-            string radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            var diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+            var radiusString = radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
 
             try
             {
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString + ", sin(degtorad(0)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString + ", sin(degtorad(45)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString + ", sin(degtorad(90)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString + ", sin(degtorad(135)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString + ", sin(degtorad(180)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString + ", sin(degtorad(225)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString + ", sin(degtorad(270)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString + ", sin(degtorad(315)) * " + radiusString + ");");
-                Execute("drawCircle(" + diameterString + ", " + centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " + centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(0)) * " + radiusString +
+                        ", sin(degtorad(0)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(45)) * " + radiusString +
+                        ", sin(degtorad(45)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(90)) * " + radiusString +
+                        ", sin(degtorad(90)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(135)) * " + radiusString +
+                        ", sin(degtorad(135)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(180)) * " + radiusString +
+                        ", sin(degtorad(180)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(225)) * " + radiusString +
+                        ", sin(degtorad(225)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(270)) * " + radiusString +
+                        ", sin(degtorad(270)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", cos(degtorad(315)) * " + radiusString +
+                        ", sin(degtorad(315)) * " + radiusString + ");");
+                Execute("drawCircle(" + diameterString + ", " +
+                        centerX.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ", " +
+                        centerY.ToString(CultureInfo.InvariantCulture).Replace(',', '.') + ");");
             }
             catch (Exception ex)
             {
@@ -391,14 +416,7 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                if (showWindow)
-                {
-                    Execute("showMatlabCommandWindow(1)");
-                }
-                else
-                {
-                    Execute("showMatlabCommandWindow(0)");
-                }
+                Execute(showWindow ? "showMatlabCommandWindow(1)" : "showMatlabCommandWindow(0)");
             }
             catch (Exception
                 ex)
@@ -446,7 +464,8 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab, new[] { name, "base", variable });
+                _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
+                    new[] {name, "base", variable});
             }
             catch (Exception
                 ex)
@@ -459,7 +478,8 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab, new Object[] { name, "base" }, null);
+                return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
+                    new object[] {name, "base"}, null);
             }
             catch (Exception
                 ex)
@@ -486,7 +506,8 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar + ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
+                Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar +
+                        ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
             }
             catch (Exception
                 ex)

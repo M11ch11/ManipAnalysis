@@ -18,7 +18,8 @@ namespace ManipAnalysis_v2.Container
 
         public readonly double VelocityZ;
 
-        public VelocityDataContainer(DateTime timeStamp, double velocityX, double velocityY, double velocityZ, int szenarioTrialNumber, int targetNumber, int positionStatus)
+        public VelocityDataContainer(DateTime timeStamp, double velocityX, double velocityY, double velocityZ,
+            int szenarioTrialNumber, int targetNumber, int positionStatus)
         {
             TimeStamp = timeStamp;
             VelocityX = velocityX;

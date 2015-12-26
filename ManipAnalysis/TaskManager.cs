@@ -16,27 +16,28 @@ namespace ManipAnalysis_v2
             RunningTasks.Add(task);
         }
 
-        public static int GetIndex(int? taskID)
+        public static int GetIndex(int? taskId)
         {
-            int retVal = -1;
+            var retVal = -1;
 
-            for (int i = 0; i < RunningTasks.Count; i
-                                                        ++)
+            foreach (var t in RunningTasks)
             {
-                if (taskID == RunningTasks[i].Id)
+                if (taskId == t.Id)
                 {
-                    retVal = RunningTasks.IndexOf(RunningTasks[i]);
+                    retVal = RunningTasks.IndexOf(t);
                 }
             }
             return retVal;
         }
 
-        public static void Remove(int? taskID)
+        public static void Remove(int? taskId)
         {
-            for (int i = 0; i < RunningTasks.Count; i
-                                                        ++)
+            for (var i = 0;
+                i < RunningTasks.Count;
+                i
+                    ++)
             {
-                if (taskID == RunningTasks[i].Id)
+                if (taskId == RunningTasks[i].Id)
                 {
                     RunningTasks.Remove(RunningTasks[i]);
                 }

@@ -15,7 +15,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public const int TrialCount = 0;
 
-        public List<Trial> parseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles, DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId, string groupName, string studyName, string szenarioName, Vector3 offset)
+        public List<Trial> ParseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
+            DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
+            string groupName, string studyName, string szenarioName, Vector3 offset)
         {
             var trialsContainer = new List<Trial>();
 
@@ -23,7 +25,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             {
                 try
                 {
-                    var c3DReader = new C3dReader();
+                    var c3DReader = new C3DReader();
                     c3DReader.Open(c3DFiles[filesCounter]);
 
                     var currentTrial = new Trial();
@@ -32,14 +34,14 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     var targetContainer = new TargetContainer();
                     var originContainer = new TargetContainer();
 
-                    string startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
+                    var startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
                     var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
-                    float frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
-                    int targetTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TP_NUM");
+                    var frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
+                    int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
                     // -1 == Compensation of first Trial
-                    int szenarioTrialNumber = c3DReader.GetParameter<Int16>("TRIAL:TRIAL_NUM") - 1;
-                    int targetNumber = c3DReader.GetParameter<Int16>("TRIAL:TP");
+                    var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
+                    int targetNumber = c3DReader.GetParameter<short>("TRIAL:TP");
 
                     measureFileContainer.CreationTime = measureFileCreationDateTime;
                     measureFileContainer.FileHash = measureFileHash;
@@ -67,16 +69,16 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial.PositionOffset.X = offset.X;
                     currentTrial.PositionOffset.Y = offset.Y;
 
-                    for (int frame = 0; frame < c3DReader.FramesCount; frame++)
+                    for (var frame = 0; frame < c3DReader.FramesCount; frame++)
                     {
                         var measuredForcesRaw = new ForceContainer();
                         var momentForcesRaw = new ForceContainer();
                         var positionRaw = new PositionContainer();
-                        double timeOffset = frameTimeInc * frame;
-                        DateTime timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
+                        double timeOffset = frameTimeInc*frame;
+                        var timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                         // Returns an array of all points, it is necessary to call this method in each cycle
-                        Vector3 positionDataVector = c3DReader.ReadFrame()[0];
+                        var positionDataVector = c3DReader.ReadFrame()[0];
                         // [0] == Right Hand
 
                         /*
@@ -87,7 +89,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
                         <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
                        */
-                        int positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
+                        var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
 
                         positionRaw.PositionStatus = positionStatus;
                         positionRaw.TimeStamp = timeStamp;
@@ -114,12 +116,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         currentTrial.PositionRaw.Add(positionRaw);
                     }
 
-                    currentTrial = setTrialMetadata(myManipAnalysisGui, currentTrial);
+                    currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
                     if (currentTrial != null)
                     {
                         if (currentTrial.MeasuredForcesRaw.Count == 0)
                         {
-                            throw new Exception("No data frames found in szenario trial " + currentTrial.TrialNumberInSzenario);
+                            throw new Exception("No data frames found in szenario trial " +
+                                                currentTrial.TrialNumberInSzenario);
                         }
                         lock (trialsContainer)
                         {
@@ -137,21 +140,24 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
             });
 
-            if (!checkTrialCount(trialsContainer.Count))
+            if (!CheckTrialCount(trialsContainer.Count))
             {
-                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " + measureFilePath + "\nSkipping File.");
+                myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " +
+                                                 measureFilePath + "\nSkipping File.");
                 trialsContainer.Clear();
             }
 
             // Check for valid TrialNumberInSzenario Sequence
             if (trialsContainer.Any())
             {
-                foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+                foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    IEnumerable<int> trialNumberList = trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
+                    var trialNumberList =
+                        trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
                     if (!IsValidTrialNumberInSzenarioSequence(trialNumberList))
                     {
-                        myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" + szenario + "\" in file " + measureFilePath + "\nSkipping File.");
+                        myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" +
+                                                         szenario + "\" in file " + measureFilePath + "\nSkipping File.");
                         trialsContainer.Clear();
                         break;
                     }
@@ -161,12 +167,16 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             // Set TargetTrialNumberInSzenario Field 
             if (trialsContainer.Any())
             {
-                foreach (string szenario in trialsContainer.Select(t => t.Szenario).Distinct())
+                foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
-                    foreach (int target in trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
+                    foreach (
+                        var target in
+                            trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.Target.Number).Distinct())
                     {
-                        IOrderedEnumerable<Trial> tempList = trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target).OrderBy(t => t.StartDateTimeOfTrialRecording);
-                        for (int i = 0; i < tempList.Count(); i++)
+                        var tempList =
+                            trialsContainer.Where(t => t.Szenario == szenario && t.Target.Number == target)
+                                .OrderBy(t => t.StartDateTimeOfTrialRecording);
+                        for (var i = 0; i < tempList.Count(); i++)
                         {
                             tempList.ElementAt(i).TargetTrialNumberInSzenario = i + 1;
                         }
@@ -179,22 +189,21 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         protected double DegreeToRadian(double angle)
         {
-            return Math.PI * angle / 180.0;
+            return Math.PI*angle/180.0;
         }
 
         private bool IsValidTrialNumberInSzenarioSequence(IEnumerable<int> trialNumbersInSzenario)
         {
-            List<int> orderedTrialNumbersInSzenario = trialNumbersInSzenario.OrderBy(t => t).ToList();
+            var orderedTrialNumbersInSzenario = trialNumbersInSzenario.OrderBy(t => t).ToList();
 
-            bool isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
-            bool isValidStart = orderedTrialNumbersInSzenario.First() == 1;
+            var isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
+            var isValidStart = orderedTrialNumbersInSzenario.First() == 1;
 
             return isConsecutive && isValidStart;
         }
 
-        public abstract Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
+        public abstract Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);
 
-        public abstract bool checkTrialCount(int trialCount);
-
+        public abstract bool CheckTrialCount(int trialCount);
     }
 }

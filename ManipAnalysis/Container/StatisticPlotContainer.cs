@@ -1,107 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.Container
 {
     internal class StatisticPlotContainer
     {
-        private readonly string _group;
-
-        private readonly string _study;
-
-        private readonly SubjectContainer _subject;
-
-        private readonly string _szenario;
-
-        private readonly List<int> _trials;
-
-        private readonly string _turn;
-
-        public StatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn, IEnumerable<string> trials)
+        public StatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn,
+            IEnumerable<string> trials)
         {
-            _study = study;
-            _group = group;
-            _szenario = szenario;
-            _subject = subject;
-            _turn = turn;
+            Study = study;
+            Group = group;
+            Szenario = szenario;
+            Subject = subject;
+            Turn = turn;
 
-            _trials = new List<int>();
+            Trials = new List<int>();
 
-            foreach (string
+            foreach (var
                 trial
                 in
                 trials)
             {
-                _trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
+                Trials.Add(Convert.ToInt32(trial.Substring(6, 3)));
             }
         }
 
-        public List<int> Trials
-        {
-            get
-            {
-                return _trials;
-            }
-        }
+        public List<int> Trials { get; }
 
-        public string Study
-        {
-            get
-            {
-                return _study;
-            }
-        }
+        public string Study { get; }
 
-        public string Group
-        {
-            get
-            {
-                return _group;
-            }
-        }
+        public string Group { get; }
 
-        public string Szenario
-        {
-            get
-            {
-                return _szenario;
-            }
-        }
+        public string Szenario { get; }
 
-        public SubjectContainer Subject
-        {
-            get
-            {
-                return _subject;
-            }
-        }
+        public SubjectContainer Subject { get; }
 
-        public string Turn
-        {
-            get
-            {
-                return _turn;
-            }
-        }
+        public string Turn { get; }
 
-        public bool UpdateStatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject, string turn, IEnumerable<string> trials)
+        public bool UpdateStatisticPlotContainer(string study, string group, string szenario, SubjectContainer subject,
+            string turn, IEnumerable<string> trials)
         {
-            bool retval = false;
+            var retval = false;
 
-            if ((_study == study) && (_group == group) && (_szenario == szenario) && (_subject.PId == subject.PId) && (_turn == turn))
+            if ((Study == study) && (Group == group) && (Szenario == szenario) && (Subject.PId == subject.PId) &&
+                (Turn == turn))
             {
-                foreach (string
+                foreach (var
                     trial
                     in
                     trials)
                 {
-                    int temp = Convert.ToInt32(trial.Substring(6, 3));
-                    if (!_trials.Contains(temp))
+                    var temp = Convert.ToInt32(trial.Substring(6, 3));
+                    if (!Trials.Contains(temp))
                     {
-                        _trials.Add(temp);
+                        Trials.Add(temp);
                     }
                 }
                 retval = true;
@@ -112,26 +66,25 @@ namespace ManipAnalysis_v2.Container
 
         public override string ToString()
         {
-            _trials.Sort();
-            string retVal = _study + " - " + _group + " - " + _szenario + " - " + _subject + " - " + _turn + " - Trials ";
+            Trials.Sort();
+            var retVal = Study + " - " + Group + " - " + Szenario + " - " + Subject + " - " + Turn + " - Trials ";
 
-            retVal += _trials[0];
-            int tempCounter = 0;
-            for (int i = 1; i < _trials.Count(); i
-                                                     ++)
+            retVal += Trials[0];
+            var tempCounter = 0;
+            for (var i = 1; i < Trials.Count; i++)
             {
-                if (_trials[i - 1] != _trials[i] - 1)
+                if (Trials[i - 1] != Trials[i] - 1)
                 {
-                    if ((tempCounter + 1) != i)
+                    if (tempCounter + 1 != i)
                     {
-                        retVal += "-" + _trials[i - 1];
+                        retVal += "-" + Trials[i - 1];
                     }
-                    retVal += "/" + _trials[i];
+                    retVal += "/" + Trials[i];
                     tempCounter = i;
                 }
-                else if (i == _trials.Count() - 1)
+                else if (i == Trials.Count - 1)
                 {
-                    retVal += "-" + _trials[i];
+                    retVal += "-" + Trials[i];
                 }
             }
 
@@ -140,25 +93,24 @@ namespace ManipAnalysis_v2.Container
 
         public string GetTrialsString()
         {
-            _trials.Sort();
-            string retVal = _trials[0].ToString(CultureInfo.InvariantCulture);
+            Trials.Sort();
+            var retVal = Trials[0].ToString(CultureInfo.InvariantCulture);
 
-            int tempCounter = 0;
-            for (int i = 1; i < _trials.Count(); i
-                                                     ++)
+            var tempCounter = 0;
+            for (var i = 1; i < Trials.Count; i++)
             {
-                if (_trials[i - 1] != _trials[i] - 1)
+                if (Trials[i - 1] != Trials[i] - 1)
                 {
-                    if ((tempCounter + 1) != i)
+                    if (tempCounter + 1 != i)
                     {
-                        retVal += "-" + _trials[i - 1];
+                        retVal += "-" + Trials[i - 1];
                     }
-                    retVal += "/" + _trials[i];
+                    retVal += "/" + Trials[i];
                     tempCounter = i;
                 }
-                else if (i == _trials.Count() - 1)
+                else if (i == Trials.Count - 1)
                 {
-                    retVal += "-" + _trials[i];
+                    retVal += "-" + Trials[i];
                 }
             }
 

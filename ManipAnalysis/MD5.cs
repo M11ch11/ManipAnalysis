@@ -10,11 +10,11 @@ namespace ManipAnalysis_v2
         {
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             var md5 = new MD5CryptoServiceProvider();
-            byte[] buffer = md5.ComputeHash(fs);
+            var buffer = md5.ComputeHash(fs);
             fs.Close();
             md5.Clear();
 
-            string hash = Convert.ToBase64String(buffer);
+            var hash = Convert.ToBase64String(buffer);
 
             return hash;
         }

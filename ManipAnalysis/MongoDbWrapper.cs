@@ -4,8 +4,6 @@ using System.Linq;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Builders;
-using MongoDB.Driver.Linq;
 
 namespace ManipAnalysis_v2
 {
@@ -44,10 +42,10 @@ namespace ManipAnalysis_v2
 
         public IEnumerable<string> GetDatabases()
         {
-            List<string> databasesList = null;
+            List<string> databasesList;
             using (var cursor = _mongoClient.ListDatabases())
             {
-                databasesList = cursor.ToList<BsonDocument>().Select(t => t["name"].AsString).ToList();
+                databasesList = cursor.ToList().Select(t => t["name"].AsString).ToList();
             }
             databasesList.Remove("admin");
             databasesList.Remove("local");
@@ -67,7 +65,8 @@ namespace ManipAnalysis_v2
                 _mongoDbDatabaseString = database;
                 _mongoDbUsernameString = username;
                 _mongoDbPasswordString = password;
-                _connectionString = "mongodb://" + _mongoDbUsernameString + ":" + _mongoDbPasswordString + "@" + _mongoDbServerString + "/" + _mongoDbDatabaseString;
+                _connectionString = "mongodb://" + _mongoDbUsernameString + ":" + _mongoDbPasswordString + "@" +
+                                    _mongoDbServerString + "/" + _mongoDbDatabaseString;
                 _mongoClient = new MongoClient(_connectionString);
             }
             catch (Exception ex)
@@ -117,7 +116,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.TargetTrialNumberInSzenario)
                     .Ascending(t => t.TrialType)
                     .Ascending(t => t.ForceFieldType);
-                var options = new CreateIndexOptions { Unique = true, Sparse = true, Name = "1" };
+                var options = new CreateIndexOptions {Unique = true, Sparse = true, Name = "1"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -125,7 +124,7 @@ namespace ManipAnalysis_v2
                  */
                 trialCollectionKeys = Builders<Trial>.IndexKeys
                     .Ascending(t => t.Study);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "2" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "2"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -134,7 +133,7 @@ namespace ManipAnalysis_v2
                 trialCollectionKeys = Builders<Trial>.IndexKeys
                     .Ascending(t => t.Study)
                     .Ascending(t => t.Group);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "3" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "3"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -144,7 +143,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Study)
                     .Ascending(t => t.Group)
                     .Ascending(t => t.Szenario);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "4" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "4"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -155,7 +154,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Group)
                     .Ascending(t => t.Szenario)
                     .Ascending(t => t.Subject);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "5" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "5"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -167,7 +166,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Szenario)
                     .Ascending(t => t.Subject)
                     .Ascending(t => t.MeasureFile.CreationTime);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "6" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "6"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -177,7 +176,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Study)
                     .Ascending(t => t.Szenario)
                     .Ascending(t => t.Target.Number);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "7" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "7"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -191,7 +190,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.ForceFieldType)
                     .Ascending(t => t.TrialType)
                     .Ascending(t => t.Handedness);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "8" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "8"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -204,7 +203,7 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.TrialType)
                     .Ascending(t => t.Handedness)
                     .Ascending(t => t.TargetTrialNumberInSzenario);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "9" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "9"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 /*
@@ -218,13 +217,13 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.TrialType)
                     .Ascending(t => t.Handedness)
                     .Ascending(t => t.TrialNumberInSzenario);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "10" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "10"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 // MeasureFileHash
                 trialCollectionKeys = Builders<Trial>.IndexKeys
                     .Ascending(t => t.MeasureFile.FileHash);
-                options = new CreateIndexOptions { Unique = false, Sparse = false, Name = "11" };
+                options = new CreateIndexOptions {Unique = false, Sparse = false, Name = "11"};
                 _trialCollection.Indexes.CreateOne(trialCollectionKeys, options);
 
                 #endregion
@@ -239,12 +238,12 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Group)
                     .Ascending(t => t.Subject)
                     .Ascending(t => t.Target.Number);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "GetBaseline" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "GetBaseline"};
                 _baselineCollection.Indexes.CreateOne(baselineCollectionKeys, options);
 
                 // MeasureFileHash
                 baselineCollectionKeys = Builders<Baseline>.IndexKeys.Ascending(t => t.MeasureFile.FileHash);
-                options = new CreateIndexOptions { Unique = false, Sparse = false, Name = "MeasureFileHash" };
+                options = new CreateIndexOptions {Unique = false, Sparse = false, Name = "MeasureFileHash"};
                 _baselineCollection.Indexes.CreateOne(baselineCollectionKeys, options);
 
                 #endregion
@@ -260,13 +259,13 @@ namespace ManipAnalysis_v2
                     .Ascending(t => t.Szenario)
                     .Ascending(t => t.Subject)
                     .Ascending(t => t.MeasureFile.CreationTime);
-                options = new CreateIndexOptions { Unique = false, Sparse = true, Name = "GetSzenarioMeanTime" };
+                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "GetSzenarioMeanTime"};
                 _szenarioMeanTimeCollection.Indexes.CreateOne(szenarioMeanTimeCollectionKeys, options);
 
                 // MeasureFileHash
                 szenarioMeanTimeCollectionKeys = Builders<SzenarioMeanTime>.IndexKeys
                     .Ascending(t => t.MeasureFile.FileHash);
-                options = new CreateIndexOptions { Unique = false, Sparse = false, Name = "MeasureFileHash" };
+                options = new CreateIndexOptions {Unique = false, Sparse = false, Name = "MeasureFileHash"};
                 _szenarioMeanTimeCollection.Indexes.CreateOne(szenarioMeanTimeCollectionKeys, options);
 
                 #endregion
@@ -355,7 +354,12 @@ namespace ManipAnalysis_v2
                 var filter = Builders<Trial>.Filter.Eq(t => t.Study, studyName);
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Group, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Group, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetGroups(string studyName)");
 
                 return retVal;
@@ -371,13 +375,16 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
-                    Builders<Trial>.Filter.Eq(t => t.Group, groupName)
-                });
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                    Builders<Trial>.Filter.Eq(t => t.Group, groupName));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Szenario, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Szenario, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSzenarios(string studyName, string groupName)");
 
                 return retVal;
@@ -393,14 +400,17 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
-                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Szenario, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Szenario, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSzenarios(string studyName, string groupName, SubjectContainer subject)");
 
                 return retVal;
@@ -416,14 +426,17 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
-                    Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Subject, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSubjects(string studyName, string groupName, string szenarioName)");
 
                 return retVal;
@@ -439,13 +452,16 @@ namespace ManipAnalysis_v2
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
-                    Builders<Trial>.Filter.Eq(t => t.Group, groupName),
-                });
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                    Builders<Trial>.Filter.Eq(t => t.Group, groupName));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Subject, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Subject, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSubjects(string studyName, string groupName)");
 
                 return retVal;
@@ -457,19 +473,23 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<DateTime> GetTurns(string studyName, string groupName, string szenarioName, SubjectContainer subject)
+        public IEnumerable<DateTime> GetTurns(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject)
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
                     Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
-                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.MeasureFile.CreationTime, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.MeasureFile.CreationTime, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetTurns(string studyName, string groupName, string szenarioName, SubjectContainer subject)");
 
                 return retVal;
@@ -481,19 +501,23 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<DateTime> GetTurns(string studyName, string[] groupNames, string szenarioName, SubjectContainer subject)
+        public IEnumerable<DateTime> GetTurns(string studyName, string[] groupNames, string szenarioName,
+            SubjectContainer subject)
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.In(t => t.Group, groupNames),
                     Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
-                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.MeasureFile.CreationTime, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.MeasureFile.CreationTime, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetTurns(string studyName, string[] groupNames, string szenarioName, SubjectContainer subject)");
 
                 return retVal;
@@ -505,19 +529,23 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetTargets(string studyName, string groupName, string szenarioName, SubjectContainer subject)
+        public IEnumerable<int> GetTargets(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject)
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
                     Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
-                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.Target.Number, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Target.Number, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetTargets(string studyName, string groupName, string szenarioName, SubjectContainer subject)");
 
                 return retVal;
@@ -529,19 +557,23 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetTargetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject)
+        public IEnumerable<int> GetTargetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject)
         {
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
                     Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
-                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
-                });
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
 
                 //TicToc.Tic();
-                var retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.TargetTrialNumberInSzenario, u => new { u.Key }).ToList().Select(t => t.Key);
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.TargetTrialNumberInSzenario, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetTargetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject)");
 
                 return retVal;
@@ -553,23 +585,28 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<int> GetSzenarioTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        public IEnumerable<int> GetSzenarioTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes,
+            IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
         {
             IEnumerable<int> retVal;
             try
             {
-                var filter = Builders<Trial>.Filter.And(new FilterDefinition<Trial>[] {
-                    Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
                     Builders<Trial>.Filter.Eq(t => t.Group, groupName),
                     Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
                     Builders<Trial>.Filter.Eq(t => t.Subject, subject),
                     Builders<Trial>.Filter.In(t => t.TrialType, trialTypes),
                     Builders<Trial>.Filter.In(t => t.ForceFieldType, forceFields),
-                    Builders<Trial>.Filter.In(t => t.Handedness, handedness),
-                });
+                    Builders<Trial>.Filter.In(t => t.Handedness, handedness));
 
                 //TicToc.Tic();
-                retVal = _trialCollection.Aggregate().Match(filter).Group(t => t.TrialNumberInSzenario, u => new { u.Key }).ToList().Select(t => t.Key);
+                retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.TrialNumberInSzenario, u => new {u.Key})
+                        .ToList()
+                        .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSzenarioTrials(string studyName, string szenarioName, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)");
             }
             catch (Exception ex)
@@ -581,14 +618,22 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
+            IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
-                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
+                    .Find(
+                        t =>
+                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                            t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                            targetTrials.Contains(t.TargetTrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
+                            forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
                     .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
@@ -601,14 +646,20 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials, ProjectionDefinition<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials,
+            ProjectionDefinition<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
-                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target && targetTrials.Contains(t.TargetTrialNumberInSzenario))
+                    .Find(
+                        t =>
+                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                            t.Subject == subject && t.MeasureFile.CreationTime == turn && t.Target.Number == target &&
+                            targetTrials.Contains(t.TargetTrialNumberInSzenario))
                     .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
@@ -621,14 +672,19 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, ProjectionDefinition<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, ProjectionDefinition<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
-                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario))
+                    .Find(
+                        t =>
+                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                            t.Subject == subject && t.MeasureFile.CreationTime == turn &&
+                            szenarioTrials.Contains(t.TrialNumberInSzenario))
                     .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
@@ -643,14 +699,22 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName, SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Trial> fields)
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
+            IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Trial> fields)
         {
             IEnumerable<Trial> retVal;
             try
             {
                 fields = fields.Include(t => t.TargetTrialNumberInSzenario);
                 retVal = _trialCollection
-                    .Find(t => t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName && t.Subject == subject && t.MeasureFile.CreationTime == turn && szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
+                    .Find(
+                        t =>
+                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                            t.Subject == subject && t.MeasureFile.CreationTime == turn &&
+                            szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
+                            forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
                     .Project<Trial>(fields)
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
@@ -668,7 +732,9 @@ namespace ManipAnalysis_v2
         public void UpdateTrialStatisticsAndBaselineId(Trial trial)
         {
             var filter = Builders<Trial>.Filter.Eq(t => t.Id, trial.Id);
-            var update = Builders<Trial>.Update.Set(t => t.ZippedStatistics, trial.ZippedStatistics).Set(t => t.BaselineObjectId, trial.BaselineObjectId);
+            var update =
+                Builders<Trial>.Update.Set(t => t.ZippedStatistics, trial.ZippedStatistics)
+                    .Set(t => t.BaselineObjectId, trial.BaselineObjectId);
             _trialCollection.FindOneAndUpdate(filter, update);
         }
 
@@ -682,7 +748,12 @@ namespace ManipAnalysis_v2
         public void UpdateBaseline(Baseline baseline)
         {
             var filter = Builders<Baseline>.Filter.Eq(t => t.Id, baseline.Id);
-            var update = Builders<Baseline>.Update.Set(t => t.ZippedMeasuredForces, baseline.ZippedMeasuredForces).Set(t => t.ZippedMomentForces, baseline.ZippedMomentForces).Set(t => t.ZippedNominalForces, baseline.ZippedNominalForces).Set(t => t.ZippedPosition, baseline.ZippedPosition).Set(t => t.ZippedVelocity, baseline.ZippedVelocity);
+            var update =
+                Builders<Baseline>.Update.Set(t => t.ZippedMeasuredForces, baseline.ZippedMeasuredForces)
+                    .Set(t => t.ZippedMomentForces, baseline.ZippedMomentForces)
+                    .Set(t => t.ZippedNominalForces, baseline.ZippedNominalForces)
+                    .Set(t => t.ZippedPosition, baseline.ZippedPosition)
+                    .Set(t => t.ZippedVelocity, baseline.ZippedVelocity);
             _baselineCollection.FindOneAndUpdate(filter, update);
         }
 
@@ -690,17 +761,21 @@ namespace ManipAnalysis_v2
         {
             return _trialCollection
                 .Find(t => t.ZippedStatistics == null)
-                .Project(statisticFields)
-                .ToList()
-                .Cast<Trial>();
+                .Project<Trial>(statisticFields)
+                .ToList();
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber, Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceField, Trial.HandednessEnum handedness)
+        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
+            Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceField, Trial.HandednessEnum handedness)
         {
             try
             {
                 return _baselineCollection
-                    .Find(t => t.Study == study && t.Group == group && t.Subject == subject && t.Target.Number == targetNumber && t.TrialType == trialType && t.ForceFieldType == forceField && t.Handedness == handedness)
+                    .Find(
+                        t =>
+                            t.Study == study && t.Group == group && t.Subject == subject &&
+                            t.Target.Number == targetNumber && t.TrialType == trialType &&
+                            t.ForceFieldType == forceField && t.Handedness == handedness)
                     .First<Baseline>();
             }
             catch (Exception)
@@ -709,15 +784,20 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<Baseline> GetBaseline(string study, string group, SubjectContainer subject, int[] targets, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Baseline> baselineFields)
+        public IEnumerable<Baseline> GetBaseline(string study, string group, SubjectContainer subject, int[] targets,
+            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
+            IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Baseline> baselineFields)
         {
             try
             {
                 return _baselineCollection
-                    .Find(t => t.Study == study && t.Group == group && t.Subject == subject && targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) && forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
-                    .Project(baselineFields)
-                    .ToList()
-                    .Cast<Baseline>();
+                    .Find(
+                        t =>
+                            t.Study == study && t.Group == group && t.Subject == subject &&
+                            targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) &&
+                            forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
+                    .Project<Baseline>(baselineFields)
+                    .ToList();
             }
             catch (Exception)
             {
@@ -737,14 +817,17 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public IEnumerable<SzenarioMeanTime> GetSzenarioMeanTime(string study, string group, string szenario, SubjectContainer subject, DateTime turn)
+        public IEnumerable<SzenarioMeanTime> GetSzenarioMeanTime(string study, string group, string szenario,
+            SubjectContainer subject, DateTime turn)
         {
             try
             {
                 return _szenarioMeanTimeCollection
-                    .Find(t => t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject && t.MeasureFile.CreationTime == turn)
-                    .ToList()
-                    .Cast<SzenarioMeanTime>();
+                    .Find(
+                        t =>
+                            t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject &&
+                            t.MeasureFile.CreationTime == turn)
+                    .ToList();
             }
             catch (Exception)
             {
@@ -789,7 +872,8 @@ namespace ManipAnalysis_v2
             try
             {
                 _trialCollection.DeleteMany(Builders<Trial>.Filter.Eq(t => t.MeasureFile, measureFile));
-                _szenarioMeanTimeCollection.DeleteMany(Builders<SzenarioMeanTime>.Filter.Eq(t => t.MeasureFile, measureFile));
+                _szenarioMeanTimeCollection.DeleteMany(Builders<SzenarioMeanTime>.Filter.Eq(t => t.MeasureFile,
+                    measureFile));
                 _baselineCollection.DeleteMany(Builders<Baseline>.Filter.Eq(t => t.MeasureFile, measureFile));
             }
             catch (Exception
@@ -801,7 +885,6 @@ namespace ManipAnalysis_v2
 
         public void DropStatistics()
         {
-
             var filter = Builders<Trial>.Filter.Ne(t => t.ZippedStatistics, null);
             var update = Builders<Trial>.Update.Set(t => t.ZippedStatistics, null);
             _trialCollection.UpdateMany(filter, update);

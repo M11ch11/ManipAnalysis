@@ -10,7 +10,8 @@ namespace ManipAnalysis_v2.Container
 
         public readonly List<MeasureDataContainer> MeasureDataRaw = new List<MeasureDataContainer>();
 
-        public readonly List<SzenarioMeanTimeDataContainer> SzenarioMeanTimeData = new List<SzenarioMeanTimeDataContainer>();
+        public readonly List<SzenarioMeanTimeDataContainer> SzenarioMeanTimeData =
+            new List<SzenarioMeanTimeDataContainer>();
 
         public readonly List<VelocityDataContainer> VelocityDataFiltered = new List<VelocityDataContainer>();
 

@@ -13,7 +13,7 @@ namespace ManipAnalysis_v2.MongoDb
             ForceFieldCW = 1,
 
             ForceFieldCCW = 2
-        };
+        }
 
         public enum HandednessEnum
         {
@@ -22,7 +22,7 @@ namespace ManipAnalysis_v2.MongoDb
             LeftHand = 1,
 
             Unknown = 2
-        };
+        }
 
         public enum TrialTypeEnum
         {
@@ -33,7 +33,9 @@ namespace ManipAnalysis_v2.MongoDb
             CatchTrial = 2,
 
             PositionControlTrial = 3
-        };
+        }
+
+        public double[,] ForceFieldMatrix = new double[2, 2];
 
         public List<ForceContainer> MeasuredForcesFiltered;
 
@@ -122,8 +124,6 @@ namespace ManipAnalysis_v2.MongoDb
         public TrialTypeEnum TrialType { get; set; }
 
         public ForceFieldTypeEnum ForceFieldType { get; set; }
-
-        public double[,] ForceFieldMatrix = new double[2, 2];
 
         public HandednessEnum Handedness { get; set; }
 

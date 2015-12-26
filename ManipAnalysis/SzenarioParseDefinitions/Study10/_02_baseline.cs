@@ -11,7 +11,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public new const int TrialCount = 40;
 
-        public override Trial setTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
+        public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = StudyName;
             trial.Szenario = SzenarioName;
@@ -304,7 +304,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             return trial;
         }
 
-        public override bool checkTrialCount(int trialCount)
+        public override bool CheckTrialCount(int trialCount)
         {
             return trialCount == TrialCount;
         }

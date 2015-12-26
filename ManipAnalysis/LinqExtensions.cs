@@ -9,17 +9,17 @@ namespace ManipAnalysis_v2
         public static double StdDev(this IEnumerable<double> values)
         {
             double ret = 0;
-            int count = values.Count();
-            if (count > 1)
+            var doubles = values as IList<double> ?? values.ToList();
+            if (doubles.Count > 1)
             {
                 //Compute the Average
-                double avg = values.Average();
+                var avg = doubles.Average();
 
                 //Perform the Sum of (value-avg)^2
-                double sum = values.Sum(d => (d - avg) * (d - avg));
+                var sum = doubles.Sum(d => (d - avg)*(d - avg));
 
                 //Divide Sum by (Samples - 1)
-                ret = Math.Sqrt(sum / (count - 1));
+                ret = Math.Sqrt(sum/(doubles.Count - 1));
             }
             return ret;
         }
@@ -27,17 +27,17 @@ namespace ManipAnalysis_v2
         public static double StdDev(this IEnumerable<long> values)
         {
             double ret = 0;
-            int count = values.Count();
-            if (count > 1)
+            var longs = values as IList<long> ?? values.ToList();
+            if (longs.Count > 1)
             {
                 //Compute the Average
-                double avg = values.Average();
+                var avg = longs.Average();
 
                 //Perform the Sum of (value-avg)^2
-                double sum = values.Sum(d => (d - avg) * (d - avg));
+                var sum = longs.Sum(d => (d - avg)*(d - avg));
 
                 //Divide Sum by (Samples - 1)
-                ret = Math.Sqrt(sum / (count - 1));
+                ret = Math.Sqrt(sum/(longs.Count - 1));
             }
             return ret;
         }
@@ -46,17 +46,24 @@ namespace ManipAnalysis_v2
         public static double[] ArrayAverage(List<double[]> arrays)
         {
             //Checks wether all arrays are the same size
-            int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
+            var arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
-            return Enumerable.Range(0, arrays[0].Length).Select(i => arrays.Select(a => a.Skip(i).First()).Average()).ToArray();
+            return
+                Enumerable.Range(0, arrays[0].Length)
+                    .Select(i => arrays.Select(a => a.Skip(i).First()).Average())
+                    .ToArray();
         }
 
         public static long[] ArrayAverage(List<long[]> arrays)
         {
             //Checks wether all arrays are the same size
-            int arrayLength = arrays.Select(a => a.Length).Distinct().Single();
+            var arrayLength = arrays.Select(a => a.Length).Distinct().Single();
 
-            return Enumerable.Range(0, arrays[0].Length).Select(i => arrays.Select(a => a.Skip(i).First()).Average()).Cast<long>().ToArray();
+            return
+                Enumerable.Range(0, arrays[0].Length)
+                    .Select(i => arrays.Select(a => a.Skip(i).First()).Average())
+                    .Cast<long>()
+                    .ToArray();
         }
     }
 }

@@ -12,11 +12,11 @@ using System;
 
 namespace ManipAnalysis_v2
 {
-    public class C3dHeader
+    public class C3DHeader
     {
         private readonly byte[] _data;
 
-        internal C3dHeader()
+        internal C3DHeader()
         {
             _data = new byte[512];
             FirstWord = 0x5002;
@@ -30,148 +30,76 @@ namespace ManipAnalysis_v2
             Support4CharEventLabels = true;
         }
 
-        public Int16 FirstWord
+        public short FirstWord
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 0);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 0, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 0); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 0, sizeof (short)); }
         }
 
         public byte FirstParameterBlock
         {
-            get
-            {
-                return _data[0];
-            }
-            set
-            {
-                _data[0] = value;
-            }
+            get { return _data[0]; }
+            set { _data[0] = value; }
         }
 
-        public Int16 NumberOfPoints
+        public short NumberOfPoints
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 2);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 2, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 2); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 2, sizeof (short)); }
         }
 
-        public Int16 AnalogChannels
+        public short AnalogChannels
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 4);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 4, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 4); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 4, sizeof (short)); }
         }
 
-        public Int16 FirstSampleNumber
+        public short FirstSampleNumber
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 6);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 6, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 6); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 6, sizeof (short)); }
         }
 
-        public Int16 LastSampleNumber
+        public short LastSampleNumber
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 8);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 8, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 8); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 8, sizeof (short)); }
         }
 
-        public Int16 MaxInterpolationGaps
+        public short MaxInterpolationGaps
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 10);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 10, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 10); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 10, sizeof (short)); }
         }
 
         public float ScaleFactor
         {
-            get
-            {
-                return BitConverter.ToSingle(_data, 12);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 12, sizeof(float));
-            }
+            get { return BitConverter.ToSingle(_data, 12); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 12, sizeof (float)); }
         }
 
-        public Int16 DataStart
+        public short DataStart
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 16);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 16, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 16); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 16, sizeof (short)); }
         }
 
-        public Int16 AnalogSamplesPerFrame
+        public short AnalogSamplesPerFrame
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 18);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 18, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 18); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 18, sizeof (short)); }
         }
 
         public float FrameRate
         {
-            get
-            {
-                return BitConverter.ToSingle(_data, 20);
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value), 0, _data, 20, sizeof(float));
-            }
+            get { return BitConverter.ToSingle(_data, 20); }
+            set { Array.Copy(BitConverter.GetBytes(value), 0, _data, 20, sizeof (float)); }
         }
 
         public bool Support4CharEventLabels
         {
-            get
-            {
-                return BitConverter.ToInt16(_data, 149 * 2) == 12345;
-            }
-            set
-            {
-                Array.Copy(BitConverter.GetBytes(value ? 12345 : 0), 0, _data, 149 * 2, sizeof(Int16));
-            }
+            get { return BitConverter.ToInt16(_data, 149*2) == 12345; }
+            set { Array.Copy(BitConverter.GetBytes(value ? 12345 : 0), 0, _data, 149*2, sizeof (short)); }
         }
 
         internal void SetHeader(byte[] headerData)

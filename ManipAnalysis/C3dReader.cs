@@ -15,7 +15,7 @@ using System.IO;
 
 namespace ManipAnalysis_v2
 {
-    public class C3dReader : IDisposable
+    public class C3DReader : IDisposable
     {
         private readonly HashSet<Parameter> _allParameters;
 
@@ -31,9 +31,9 @@ namespace ManipAnalysis_v2
 
         private int _analogUsed;
 
-        private Int16[] _analogZeroOffset;
+        private short[] _analogZeroOffset;
 
-        private string _c3dFile;
+        private string _c3DFile;
 
         private int _dataStart;
 
@@ -43,126 +43,9 @@ namespace ManipAnalysis_v2
 
         private float _pointScale;
 
-        private int _pointsNumber;
-
         private BinaryReader _reader;
 
-        #region Properties
-
-        private readonly List<string> _pointsLabels;
-
-        private readonly Dictionary<string, int> _pointsLabelsToId;
-
-        private AnalogDataArray _analogData;
-
-        internal List<string> _analogLabels;
-
-        internal Dictionary<string, int> _analogLabelsToId;
-
-        private int _currentFrame;
-
-        private C3dHeader _header;
-
-        private int _pointFrames;
-
-        public Vector3[] _points = null;
-
-
-        public IList<string> Labels
-        {
-            get
-            {
-                return _pointsLabels.AsReadOnly();
-            }
-        }
-
-        public IList<string> AnalogLabels
-        {
-            get
-            {
-                return _analogLabels.AsReadOnly();
-            }
-        }
-
-        public int CurrentFrame
-        {
-            get
-            {
-                return _currentFrame;
-            }
-        }
-
-        public AnalogDataArray AnalogData
-        {
-            get
-            {
-                return _analogData;
-            }
-        }
-
-        public int AnalogChannels
-        {
-            get
-            {
-                return (int)(_analogRate / _pointRate);
-            }
-        }
-
-        public Vector3[] Points
-        {
-            get
-            {
-                return _points;
-            }
-        }
-
-        public int FramesCount
-        {
-            get
-            {
-                return _pointFrames;
-            }
-        }
-
-        public int NumberOfPointsInFrame
-        {
-            get
-            {
-                return _pointsNumber;
-            }
-            set
-            {
-                _pointsNumber = value;
-            }
-        }
-
-        public C3dHeader Header
-        {
-            get
-            {
-                return _header;
-            }
-        }
-
-        public bool IsInterger
-        {
-            get
-            {
-                return _pointScale >= 0;
-            }
-        }
-
-        public bool IsFloat
-        {
-            get
-            {
-                return _pointScale < 0;
-            }
-        }
-
-        #endregion
-
-        public C3dReader()
+        public C3DReader()
         {
             _nameToGroups = new Dictionary<string, ParameterGroup>();
             _idToGroups = new Dictionary<int, ParameterGroup>();
@@ -205,14 +88,19 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public void Dispose()
+        {
+            Close();
+        }
+
         public bool Open(string c3dFile)
         {
-            _c3dFile = c3dFile;
+            _c3DFile = c3dFile;
             try
             {
-                _fs = new FileStream(_c3dFile, FileMode.Open, FileAccess.Read);
+                _fs = new FileStream(_c3DFile, FileMode.Open, FileAccess.Read);
                 _reader = new BinaryReader(_fs);
-                _header = new C3dHeader();
+                Header = new C3DHeader();
 
                 ReadHeader();
                 ReadParameters();
@@ -232,35 +120,39 @@ namespace ManipAnalysis_v2
         private void ParseRequiredParameters()
         {
             var labels = GetParameter<string[]>("POINT:LABELS");
-            for (int i = 0; i < labels.Length; i
-                                                   ++)
+            for (var i = 0;
+                i < labels.Length;
+                i
+                    ++)
             {
-                string label = labels[i].TrimEnd(' ');
+                var label = labels[i].TrimEnd(' ');
                 _pointsLabelsToId.Add(label, i);
                 _pointsLabels.Insert(i, label);
             }
 
 
-            _dataStart = 512 * (Header.DataStart - 1);
+            _dataStart = 512*(Header.DataStart - 1);
             // Parameter Section Data Start Value doesnt work
             //_dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
 
-            _pointsNumber = GetParameter<Int16>("POINT:USED");
-            _pointFrames = GetParameter<Int16>("POINT:FRAMES");
+            NumberOfPointsInFrame = GetParameter<short>("POINT:USED");
+            FramesCount = GetParameter<short>("POINT:FRAMES");
             _pointScale = GetParameter<float>("POINT:SCALE");
             _pointRate = GetParameter<float>("POINT:RATE");
 
             _analogRate = GetParameter<float>("ANALOG:RATE");
-            _analogUsed = GetParameter<Int16>("ANALOG:USED");
+            _analogUsed = GetParameter<short>("ANALOG:USED");
             _analogScale = GetParameter<float[]>("ANALOG:SCALE");
             _analogGenScale = GetParameter<float>("ANALOG:GEN_SCALE");
-            _analogZeroOffset = GetParameter<Int16[]>("ANALOG:OFFSET");
+            _analogZeroOffset = GetParameter<short[]>("ANALOG:OFFSET");
 
             var analogLabels = GetParameter<string[]>("ANALOG:LABELS");
-            for (int i = 0; i < analogLabels.Length; i
-                                                         ++)
+            for (var i = 0;
+                i < analogLabels.Length;
+                i
+                    ++)
             {
-                string label = analogLabels[i].TrimEnd(' ').TrimEnd('\0');
+                var label = analogLabels[i].TrimEnd(' ').TrimEnd('\0');
                 _analogLabelsToId.Add(label, i);
                 _analogLabels.Insert(i, label);
             }
@@ -270,39 +162,38 @@ namespace ManipAnalysis_v2
         private void ReadHeader()
         {
             var data = new byte[512];
-            int n = _reader.Read(data, 0, 512);
+            _reader.Read(data, 0, 512);
             Header.SetHeader(data);
         }
 
         private void ReadParameters()
         {
             var parameters = new byte[4];
-            int nb = _reader.Read(parameters, 0, 4);
+            _reader.Read(parameters, 0, 4);
             // TODO we should not ignore first 4 bytes as it is now
 
             int nextItem;
             do
             {
-                sbyte nameLen = ParameterModel.ReadNameLength(_reader);
-                bool isLocked = nameLen < 0;
-                sbyte id = ParameterModel.ReadGroupID(_reader);
-                string name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
+                var nameLen = ParameterModel.ReadNameLength(_reader);
+                var id = ParameterModel.ReadGroupID(_reader);
+                var name = ParameterModel.ReadName(_reader, Math.Abs(nameLen));
                 nextItem = ParameterModel.ReadNextItemOffset(_reader);
 
-                ParameterModel param = null;
-                int parameterDataSize = 0;
+                ParameterModel param;
+                var parameterDataSize = 0;
                 if (id > 0) //if id > 0 then it is parameter, otherwise it is group
                 {
                     param = new Parameter(_reader);
-                    parameterDataSize = (param as Parameter).C3DParameterSize;
+                    parameterDataSize = ((Parameter) param).C3DParameterSize;
                 }
                 else
                 {
                     param = new ParameterGroup();
                 }
 
-                byte descLen = ParameterModel.ReadDescLength(_reader);
-                string desc = ParameterModel.ReadName(_reader, descLen);
+                var descLen = ParameterModel.ReadDescLength(_reader);
+                var desc = ParameterModel.ReadName(_reader, descLen);
 
                 // general assignment
                 param.Name = name;
@@ -312,20 +203,21 @@ namespace ManipAnalysis_v2
 
                 if (param is Parameter)
                 {
-                    _allParameters.Add(param as Parameter);
+                    _allParameters.Add((Parameter) param);
                 }
                 else
                 {
-                    _nameToGroups.Add(param.Name, param as ParameterGroup);
-                    _idToGroups.Add(param.Id, param as ParameterGroup);
+                    _nameToGroups.Add(param.Name, (ParameterGroup) param);
+                    _idToGroups.Add(param.Id, (ParameterGroup) param);
                 }
 
                 // if next item is more far read unknown data
                 // I assume that there will be no more than 512 bytes of unknown data
 
-                if (nextItem > (descLen + 3 + parameterDataSize)) // If the C3D file is correct this will never happen, but real life is far from perfect
+                if (nextItem > descLen + 3 + parameterDataSize)
+                    // If the C3D file is correct this will never happen, but real life is far from perfect
                 {
-                    int toRead = nextItem - (descLen + 1);
+                    var toRead = nextItem - (descLen + 1);
                     _reader.Read(parameters, 0, toRead);
                 }
                 //else if (nextItem < (descLen + 3 + parameterDataSize)) {
@@ -333,7 +225,7 @@ namespace ManipAnalysis_v2
                 //}
             } while (nextItem > 0);
 
-            foreach (Parameter
+            foreach (var
                 p
                 in
                 _allParameters)
@@ -347,7 +239,7 @@ namespace ManipAnalysis_v2
 
         public T GetParameter<T>(string path)
         {
-            string[] elements = path.Split(':');
+            var elements = path.Split(':');
             if (elements.Length != 2)
             {
                 throw new ApplicationException("Wrong path format (use GROUP:PARAMETER)");
@@ -358,9 +250,9 @@ namespace ManipAnalysis_v2
                 throw new ApplicationException("Group " + elements[0] + " deasn't exist.");
             }
 
-            ParameterGroup grp = _nameToGroups[elements[0]];
+            var grp = _nameToGroups[elements[0]];
 
-            foreach (Parameter
+            foreach (var
                 p
                 in
                 grp.Parameters)
@@ -376,7 +268,6 @@ namespace ManipAnalysis_v2
 
         public Vector3[] ReadFrame()
         {
-            Vector3[] data;
             if (_fs == null)
             {
                 throw new ApplicationException("The C3d file is not open. Open the file before reading.");
@@ -388,9 +279,9 @@ namespace ManipAnalysis_v2
             //    _currentFrame = 0;
             //}
 
-            data = _pointScale < 0 ? ReadFloatData() : ReadIntData();
+            var data = _pointScale < 0 ? ReadFloatData() : ReadIntData();
 
-            _currentFrame
+            CurrentFrame
                 ++;
             //Console.WriteLine(_currentFrame);
             return data;
@@ -400,37 +291,50 @@ namespace ManipAnalysis_v2
         {
             if (!IsFloat)
             {
-                throw new ApplicationException("Data stored in C3D file are in Inetger format. You are trying to read it as a Floating-point format.");
+                throw new ApplicationException(
+                    "Data stored in C3D file are in Inetger format. You are trying to read it as a Floating-point format.");
             }
 
-            _points = new Vector3[_pointsNumber];
-            for (int i = 0; i < _pointsNumber; i
-                                                   ++)
+            _points = new Vector3[NumberOfPointsInFrame];
+            for (var i = 0;
+                i < NumberOfPointsInFrame;
+                i
+                    ++)
             {
                 _points[i] = new Vector3( /* float x = */
                     _reader.ReadSingle(), /* float y = */
                     _reader.ReadSingle(), /* float z = */
                     _reader.ReadSingle());
-                var cc = (int)_reader.ReadSingle();
+                _reader.ReadSingle();
             }
 
 
             // Read Analog data
-            var samplesPerFrame = (int)(_analogRate / _pointRate);
+            var samplesPerFrame = (int) (_analogRate/_pointRate);
 
             var allData = new float[_analogUsed, samplesPerFrame];
-            for (int rate = 0; rate < samplesPerFrame; rate
-                                                           ++)
+            for (var rate = 0;
+                rate < samplesPerFrame;
+                rate
+                    ++)
             {
-                for (int variable = 0; variable < _analogUsed; variable
-                                                                   ++)
+                for (var variable = 0;
+                    variable < _analogUsed;
+                    variable
+                        ++)
                 {
-                    float data = _reader.ReadSingle();
+                    var data = _reader.ReadSingle();
                     //real world value = (data value - zero offset) * channel scale * general scale
-                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0)) * _analogGenScale * (_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
+                    allData[variable, rate] = (data -
+                                               (_analogZeroOffset != null && _analogZeroOffset.Length > 0
+                                                   ? _analogZeroOffset[variable]
+                                                   : 0))*_analogGenScale*
+                                              (_analogScale != null && _analogScale.Length > 0
+                                                  ? _analogScale[variable]
+                                                  : 1);
                 }
             }
-            _analogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);
+            AnalogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);
 
             return _points;
         }
@@ -439,35 +343,48 @@ namespace ManipAnalysis_v2
         {
             if (!IsInterger)
             {
-                throw new ApplicationException("Data stored in C3D file are in Floating-point format. You are trying to read it as a Integer format.");
+                throw new ApplicationException(
+                    "Data stored in C3D file are in Floating-point format. You are trying to read it as a Integer format.");
             }
 
-            _points = new Vector3[_pointsNumber];
-            for (int i = 0; i < _pointsNumber; i
-                                                   ++)
+            _points = new Vector3[NumberOfPointsInFrame];
+            for (var i = 0;
+                i < NumberOfPointsInFrame;
+                i
+                    ++)
             {
                 _points[i] = new Vector3( /* float x = */
-                    _reader.ReadInt16() * _pointScale, /* float y = */
-                    _reader.ReadInt16() * _pointScale, /* float z = */
-                    _reader.ReadInt16() * _pointScale);
-                int cc = _reader.ReadInt16();
+                    _reader.ReadInt16()*_pointScale, /* float y = */
+                    _reader.ReadInt16()*_pointScale, /* float z = */
+                    _reader.ReadInt16()*_pointScale);
+                _reader.ReadInt16();
             }
 
             // reading of analog data
-            var samplesPerFrame = (int)(_analogRate / _pointRate);
+            var samplesPerFrame = (int) (_analogRate/_pointRate);
             var allData = new float[_analogUsed, samplesPerFrame];
-            for (int rate = 0; rate < samplesPerFrame; rate
-                                                           ++)
+            for (var rate = 0;
+                rate < samplesPerFrame;
+                rate
+                    ++)
             {
-                for (int variable = 0; variable < _analogUsed; variable
-                                                                   ++)
+                for (var variable = 0;
+                    variable < _analogUsed;
+                    variable
+                        ++)
                 {
                     float data = _reader.ReadInt16();
                     // real world value = (data value - zero offset) * channel scale * general scale
-                    allData[variable, rate] = (data - ((_analogZeroOffset != null && _analogZeroOffset.Length > 0) ? _analogZeroOffset[variable] : 0)) * _analogGenScale * (_analogScale != null && _analogScale.Length > 0 ? _analogScale[variable] : 1);
+                    allData[variable, rate] = (data -
+                                               (_analogZeroOffset != null && _analogZeroOffset.Length > 0
+                                                   ? _analogZeroOffset[variable]
+                                                   : 0))*_analogGenScale*
+                                              (_analogScale != null && _analogScale.Length > 0
+                                                  ? _analogScale[variable]
+                                                  : 1);
                 }
             }
-            _analogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);
+            AnalogData = new AnalogDataArray(_analogLabels, _analogLabelsToId, allData);
 
             return _points;
         }
@@ -480,56 +397,78 @@ namespace ManipAnalysis_v2
             return true;
         }
 
-        public void Dispose()
-        {
-            Close();
-        }
+        #region Properties
+
+        private readonly List<string> _pointsLabels;
+
+        private readonly Dictionary<string, int> _pointsLabelsToId;
+
+        internal List<string> _analogLabels;
+
+        internal Dictionary<string, int> _analogLabelsToId;
+
+        public Vector3[] _points;
+
+
+        public IList<string> Labels => _pointsLabels.AsReadOnly();
+
+        public IList<string> AnalogLabels => _analogLabels.AsReadOnly();
+
+        public int CurrentFrame { get; private set; }
+
+        public AnalogDataArray AnalogData { get; private set; }
+
+        public int AnalogChannels => (int) (_analogRate/_pointRate);
+
+        public Vector3[] Points => _points;
+
+        public int FramesCount { get; private set; }
+
+        public int NumberOfPointsInFrame { get; set; }
+
+        public C3DHeader Header { get; private set; }
+
+        public bool IsInterger => _pointScale >= 0;
+
+        public bool IsFloat => _pointScale < 0;
+
+        #endregion
     }
 
     public class AnalogDataArray
     {
-        private readonly float[,] _analogData;
-
-        internal AnalogDataArray(List<string> analogLabels, Dictionary<string, int> analogLabelsToId, float[,] analogData)
+        internal AnalogDataArray(List<string> analogLabels, Dictionary<string, int> analogLabelsToId,
+            float[,] analogData)
         {
             _analogLabels = analogLabels;
             _analogLabelsToId = analogLabelsToId;
-            _analogData = analogData;
+            Data = analogData;
         }
 
-        private List<string> _analogLabels { get; set; }
+        private List<string> _analogLabels { get; }
 
-        private Dictionary<string, int> _analogLabelsToId { get; set; }
+        private Dictionary<string, int> _analogLabelsToId { get; }
 
-        public float[,] Data
-        {
-            get
-            {
-                return _analogData;
-            }
-        }
+        public float[,] Data { get; }
 
         public IList<string> Labels
         {
-            get
-            {
-                return _analogLabels.AsReadOnly();
-            }
+            get { return _analogLabels.AsReadOnly(); }
         }
 
         public float this[int key, int channel]
         {
             get
             {
-                if (_analogData == null)
+                if (Data == null)
                 {
                     throw new ApplicationException("You must open file and read freame first");
                 }
-                if (key < 0 || key >= _analogData.Length)
+                if (key < 0 || key >= Data.Length)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return _analogData[key, channel];
+                return Data[key, channel];
             }
         }
 
@@ -537,15 +476,15 @@ namespace ManipAnalysis_v2
         {
             get
             {
-                if (_analogData == null)
+                if (Data == null)
                 {
                     throw new ApplicationException("You must open file and read freame first");
                 }
-                if (key < 0 || key >= _analogData.Length)
+                if (key < 0 || key >= Data.Length)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return _analogData[key, 0];
+                return Data[key, 0];
             }
         }
 
@@ -559,9 +498,10 @@ namespace ManipAnalysis_v2
                 }
                 if (!_analogLabelsToId.ContainsKey(key))
                 {
-                    throw new ApplicationException("Analog data label " + key + " doesn't exist in the 3D point data section");
+                    throw new ApplicationException("Analog data label " + key +
+                                                   " doesn't exist in the 3D point data section");
                 }
-                return _analogData[_analogLabelsToId[key], channel];
+                return Data[_analogLabelsToId[key], channel];
             }
         }
 
@@ -575,9 +515,10 @@ namespace ManipAnalysis_v2
                 }
                 if (!_analogLabelsToId.ContainsKey(key))
                 {
-                    throw new ApplicationException("Analog data label " + key + " doesn't exist in the 3D point data section");
+                    throw new ApplicationException("Analog data label " + key +
+                                                   " doesn't exist in the 3D point data section");
                 }
-                return _analogData[_analogLabelsToId[key], 0];
+                return Data[_analogLabelsToId[key], 0];
             }
         }
     }

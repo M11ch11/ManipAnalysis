@@ -248,7 +248,7 @@
     <Compile Include="SzenarioParseDefinitions\Study07\LRc_02_Training_NoFFTransfer.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\LR_01_Familiarization.cs" />
     <Compile Include="SzenarioParseDefinitions\Study07\RL_01_Familiarization.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study09\_09_CI_washout_Day2B - Kopieren.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study09\_09_CI_washout_Day2B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study09\_11_CI_transfer_IW.cs" />
     <Compile Include="SzenarioParseDefinitions\Study09\_08_CI_savings.cs" />
     <Compile Include="SzenarioParseDefinitions\Study09\_06_CI_washout_Day2A.cs" />

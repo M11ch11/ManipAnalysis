@@ -24,15 +24,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
         private string _measureFilePath;
 
+        private Vector3 _offset;
+
         private string _probandId;
 
         private string _studyName;
 
         private string _szenarioName;
-
-        private List<Trial> _trialsContainer;
-
-        private Vector3 _offset;
 
 
         public KinarmMeasureFileParser(ManipAnalysisGui myManipAnalysisGui)
@@ -41,24 +39,19 @@ namespace ManipAnalysis_v2.MeasureFileParser
             _offset = new Vector3();
         }
 
-        public List<Trial> TrialsContainer
-        {
-            get
-            {
-                return _trialsContainer;
-            }
-        }
+        public List<Trial> TrialsContainer { get; private set; }
 
-        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui, ManipAnalysisFunctions myManipAnalysisFunctions, string filePath)
+        public static bool IsValidFile(ManipAnalysisGui myManipAnalysisGui,
+            ManipAnalysisFunctions myManipAnalysisFunctions, string filePath)
         {
-            bool retVal = false;
+            var retVal = false;
             try
             {
-                string fileName = Path.GetFileName(filePath);
+                var fileName = Path.GetFileName(filePath);
 
-                if (fileName.EndsWith(".zip"))
+                if (fileName != null && fileName.EndsWith(".zip"))
                 {
-                    if (fileName.Split('_').Count() == 3)
+                    if (fileName.Split('_').Length == 3)
                     {
                         if (!myManipAnalysisFunctions.CheckIfMeasureFileHashAlreadyExists(Md5.ComputeHash(filePath)))
                         {
@@ -78,12 +71,12 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
         public bool ParseFile(string path)
         {
-            bool retVal = false;
+            var retVal = false;
             if (path != null)
             {
                 _measureFilePath = path;
 
-                Type szenarioDefinitionType = ParseFileInfo();
+                var szenarioDefinitionType = ParseFileInfo();
 
                 if (szenarioDefinitionType != null)
                 {
@@ -91,7 +84,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 }
                 else
                 {
-                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " + _szenarioName + ".");
+                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " +
+                                                      _szenarioName + ".");
                 }
             }
             return retVal;
@@ -100,13 +94,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
         private Type ParseFileInfo()
         {
             Type szenarioDefinitionType = null;
-            var c3DReader = new C3dReader();
+            var c3DReader = new C3DReader();
 
             try
             {
                 _measureFileHash = Md5.ComputeHash(_measureFilePath);
-                string fileName = Path.GetFileName(_measureFilePath);
-                string tempPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\temp";
+                var fileName = Path.GetFileName(_measureFilePath);
+                var tempPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\temp";
 
                 if (Directory.Exists(tempPath))
                 {
@@ -117,24 +111,29 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 ZipFile.ExtractToDirectory(_measureFilePath, tempPath);
 
                 _c3DFiles = Directory.EnumerateFiles(tempPath + @"\raw", "*_*_*.c3d*").ToArray();
-                string _commonFile = tempPath + @"\raw\common.c3d";
+                var commonFile = tempPath + @"\raw\common.c3d";
 
-                c3DReader.Open(_commonFile);
+                c3DReader.Open(commonFile);
 
                 _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                 _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
-                _offset.X = (c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0]) / 100.0f;
-                _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] - c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
+                _offset.X = (c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] -
+                             c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0])/100.0f;
+                _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] -
+                             c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0])/100.0f;
 
                 try
                 {
-                    foreach (Type
+                    foreach (var
                         szenarioDefinitionIterable
                         in
-                        Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                        Assembly.GetExecutingAssembly()
+                            .GetTypes()
+                            .Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))// && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))
+                            // && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
@@ -162,10 +161,12 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 c3DReader.Close();
 
                 _probandId = fileName.Split('_')[0].Trim();
-                string datetime = fileName.Split('_')[1].Replace('-', '.') + " " + fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
-                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
+                var datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
+                               fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
+                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss",
+                    CultureInfo.InvariantCulture);
 
-                _trialsContainer = new List<Trial>();
+                TrialsContainer = new List<Trial>();
             }
             catch (Exception
                 ex)
@@ -180,11 +181,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
         private bool ParseMeasureData(Type szenarioDefinitionType)
         {
-            bool retVal = true;
+            var retVal = true;
             try
             {
-                var szenarioDefinition = (ISzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
-                _trialsContainer.AddRange(szenarioDefinition.parseMeasureFile(_myManipAnalysisGui, _c3DFiles, _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName, _szenarioName, _offset));
+                var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
+                TrialsContainer.AddRange(szenarioDefinition.ParseMeasureFile(_myManipAnalysisGui, _c3DFiles,
+                    _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
+                    _szenarioName, _offset));
             }
             catch (Exception
                 ex)

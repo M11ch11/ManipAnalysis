@@ -46,9 +46,9 @@ namespace ManipAnalysis_v2
             }
 
             //Calculate the hash code for the array
-            int hashCode = 0;
-            bool isFirst = true;
-            foreach (int
+            var hashCode = 0;
+            var isFirst = true;
+            foreach (var
                 i
                 in
                 intArray)

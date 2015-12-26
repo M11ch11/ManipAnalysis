@@ -33,11 +33,11 @@ namespace ManipAnalysis_v2
             }
 
             // Translate the double into sign, exponent and mantissa.
-            long bits = BitConverter.DoubleToInt64Bits(d);
+            var bits = BitConverter.DoubleToInt64Bits(d);
             // Note that the shift is sign-extended, hence the test against -1 not 1
-            bool negative = (bits < 0);
-            var exponent = (int)((bits >> 52) & 0x7ffL);
-            long mantissa = bits & 0xfffffffffffffL;
+            var negative = bits < 0;
+            var exponent = (int) ((bits >> 52) & 0x7ffL);
+            var mantissa = bits & 0xfffffffffffffL;
 
             // Subnormal numbers; exponent is effectively one higher,
             // but there's no extra normalisation bit in the mantissa
@@ -79,8 +79,10 @@ namespace ManipAnalysis_v2
             // by 5 and dividing by 10.
             if (exponent < 0)
             {
-                for (int i = 0; i < -exponent; i
-                                                   ++)
+                for (var i = 0;
+                    i < -exponent;
+                    i
+                        ++)
                 {
                     ad.MultiplyBy(5);
                 }
@@ -89,8 +91,10 @@ namespace ManipAnalysis_v2
             // Otherwise, we need to repeatedly multiply by 2
             else
             {
-                for (int i = 0; i < exponent; i
-                                                  ++)
+                for (var i = 0;
+                    i < exponent;
+                    i
+                        ++)
                 {
                     ad.MultiplyBy(2);
                 }
@@ -121,12 +125,14 @@ namespace ManipAnalysis_v2
             /// </summary>
             internal ArbitraryDecimal(long x)
             {
-                string tmp = x.ToString(CultureInfo.InvariantCulture);
+                var tmp = x.ToString(CultureInfo.InvariantCulture);
                 _digits = new byte[tmp.Length];
-                for (int i = 0; i < tmp.Length; i
-                                                    ++)
+                for (var i = 0;
+                    i < tmp.Length;
+                    i
+                        ++)
                 {
-                    _digits[i] = (byte)(tmp[i] - '0');
+                    _digits[i] = (byte) (tmp[i] - '0');
                 }
                 Normalize();
             }
@@ -138,12 +144,14 @@ namespace ManipAnalysis_v2
             internal void MultiplyBy(int amount)
             {
                 var result = new byte[_digits.Length + 1];
-                for (int i = _digits.Length - 1; i >= 0; i
-                                                             --)
+                for (var i = _digits.Length - 1;
+                    i >= 0;
+                    i
+                        --)
                 {
-                    int resultDigit = _digits[i] * amount + result[i + 1];
-                    result[i] = (byte)(resultDigit / 10);
-                    result[i + 1] = (byte)(resultDigit % 10);
+                    var resultDigit = _digits[i]*amount + result[i + 1];
+                    result[i] = (byte) (resultDigit/10);
+                    result[i + 1] = (byte) (resultDigit%10);
                 }
                 if (result[0] != 0)
                 {
@@ -173,8 +181,10 @@ namespace ManipAnalysis_v2
             private void Normalize()
             {
                 int first;
-                for (first = 0; first < _digits.Length; first
-                                                            ++)
+                for (first = 0;
+                    first < _digits.Length;
+                    first
+                        ++)
                 {
                     if (_digits[first] != 0)
                     {
@@ -182,8 +192,10 @@ namespace ManipAnalysis_v2
                     }
                 }
                 int last;
-                for (last = _digits.Length - 1; last >= 0; last
-                                                               --)
+                for (last = _digits.Length - 1;
+                    last >= 0;
+                    last
+                        --)
                 {
                     if (_digits[last] != 0)
                     {
@@ -197,8 +209,10 @@ namespace ManipAnalysis_v2
                 }
 
                 var tmp = new byte[last - first + 1];
-                for (int i = 0; i < tmp.Length; i
-                                                    ++)
+                for (var i = 0;
+                    i < tmp.Length;
+                    i
+                        ++)
                 {
                     tmp[i] = _digits[i + first];
                 }
@@ -210,13 +224,15 @@ namespace ManipAnalysis_v2
             /// <summary>
             ///     Converts the value to a proper decimal string representation.
             /// </summary>
-            public override String ToString()
+            public override string ToString()
             {
                 var digitString = new char[_digits.Length];
-                for (int i = 0; i < _digits.Length; i
-                                                        ++)
+                for (var i = 0;
+                    i < _digits.Length;
+                    i
+                        ++)
                 {
-                    digitString[i] = (char)(_digits[i] + '0');
+                    digitString[i] = (char) (_digits[i] + '0');
                 }
 
                 // Simplest case - nothing after the decimal point,
@@ -236,13 +252,14 @@ namespace ManipAnalysis_v2
                 // Nothing before the decimal point, eg 0.035
                 if (_decimalPoint >= digitString.Length)
                 {
-                    return "0." + new string('0', (_decimalPoint - digitString.Length)) + new string(digitString);
+                    return "0." + new string('0', _decimalPoint - digitString.Length) + new string(digitString);
                 }
 
                 // Most complicated case - part of the string comes
                 // before the decimal point, part comes after it,
                 // eg 3.5
-                return new string(digitString, 0, digitString.Length - _decimalPoint) + "." + new string(digitString, digitString.Length - _decimalPoint, _decimalPoint);
+                return new string(digitString, 0, digitString.Length - _decimalPoint) + "." +
+                       new string(digitString, digitString.Length - _decimalPoint, _decimalPoint);
             }
         }
     }

@@ -9,14 +9,14 @@ namespace ManipAnalysis_v2.Container
             ForceFieldCW,
             ForceFieldCCW,
             NullField
-        };
+        }
 
         public enum TrialTypeEnum
         {
             StandardTrial,
             ErrorClampTrial,
             CatchTrial
-        };
+        }
 
         public readonly double ForceActualX;
 
@@ -58,7 +58,11 @@ namespace ManipAnalysis_v2.Container
 
         public DateTime TimeStamp;
 
-        public MeasureDataContainer(DateTime timeStamp, double forceActualX, double forceActualY, double forceActualZ, double forceNominalX, double forceNominalY, double forceNominalZ, double forceMomentX, double forceMomentY, double forceMomentZ, double positionCartesianX, double positionCartesianY, double positionCartesianZ, int targetNumber, int targetTrialNumber, int szenarioTrialNumber, TrialTypeEnum trialType, ForceFieldTypeEnum forceFieldType, int positionStatus)
+        public MeasureDataContainer(DateTime timeStamp, double forceActualX, double forceActualY, double forceActualZ,
+            double forceNominalX, double forceNominalY, double forceNominalZ, double forceMomentX, double forceMomentY,
+            double forceMomentZ, double positionCartesianX, double positionCartesianY, double positionCartesianZ,
+            int targetNumber, int targetTrialNumber, int szenarioTrialNumber, TrialTypeEnum trialType,
+            ForceFieldTypeEnum forceFieldType, int positionStatus)
         {
             TimeStamp = timeStamp;
             ForceActualX = forceActualX;

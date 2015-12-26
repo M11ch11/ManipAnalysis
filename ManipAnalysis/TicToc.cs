@@ -4,14 +4,14 @@ namespace ManipAnalysis_v2
 {
     internal static class TicToc
     {
-        private static long tic, toc;
+        private static long _tic, _toc;
 
         /// <summary>
         ///     Starts TicToc-Logic
         /// </summary>
         public static void Tic()
         {
-            tic = DateTime.UtcNow.Ticks;
+            _tic = DateTime.UtcNow.Ticks;
         }
 
         /// <summary>
@@ -20,8 +20,8 @@ namespace ManipAnalysis_v2
         /// <returns>Time between Tic() and Toc() in milliseconds.</returns>
         public static long Toc()
         {
-            toc = DateTime.UtcNow.Ticks;
-            return (toc - tic) / 10000;
+            _toc = DateTime.UtcNow.Ticks;
+            return (_toc - _tic)/10000;
         }
     }
 }
