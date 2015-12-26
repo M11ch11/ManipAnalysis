@@ -75,9 +75,9 @@ sign_ff = 0;
 ff_angle = rad2deg(atan2(norm(cross([force_vector 0],[transpose(ff_position_vector) 0])),dot(force_vector, ff_position_vector)));
 
 if (ff_angle > 90)
-	sign_ff = -1;
-else
 	sign_ff = 1;
+else
+	sign_ff = -1;
 end
 %-------------------------------------------------------------------------%
 
