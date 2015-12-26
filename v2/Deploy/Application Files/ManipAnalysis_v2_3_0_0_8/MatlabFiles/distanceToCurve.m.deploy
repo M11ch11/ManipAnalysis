@@ -36,8 +36,8 @@
 %		sign_pd = [1] when the point is located in anti clockwise to the movement direction,
 %				  [-1] when clockwise
 %
-%		sign_ff = [1] when the point is located in the direction of the forceFieldMatrix,
-%				  [-1] when in the opposite direction
+%		sign_ff = [-1] when the point is located in the direction of the forceFieldMatrix,
+%				  [1] when in the opposite direction
 %
 %========================================================================%
 
@@ -155,9 +155,9 @@ for i=1:nTraj
     ff_angle = rad2deg(atan2(norm(cross([start_point_vector 0],[transpose(ff_position_vector) 0])),dot(start_point_vector, ff_position_vector)));
 
     if (ff_angle > 90)
-        sign_ff(i) = -1;
-    else
         sign_ff(i) = 1;
+    else
+        sign_ff(i) = -1;
     end
     %-------------------------------------------------------------------------%
 end
