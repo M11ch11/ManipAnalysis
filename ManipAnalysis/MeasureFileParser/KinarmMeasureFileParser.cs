@@ -123,22 +123,29 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] -
                              c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
 
-                try
+                foreach (
+                        var szenarioDefinitionIterable in
+                            Assembly.GetExecutingAssembly()
+                                .GetTypes()
+                                .Where(
+                                    t =>
+                                        !t.IsInterface && !t.IsAbstract && t.IsClass &&
+                                        t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                 {
-                    foreach (var szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.FullName != typeof(AbstractSzenarioDefinition).FullName && !t.IsInterface && !t.IsAbstract && t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                    try
                     {
-                        if (_szenarioName == szenarioDefinitionIterable.GetProperty("SzenarioName").ReflectedType?.Name
+                        if (_szenarioName ==
+                            szenarioDefinitionIterable.GetProperty("SzenarioName").ReflectedType?.Name
                             && _studyName == szenarioDefinitionIterable.GetProperty("StudyName").ReflectedType?.Name)
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
-                    szenarioDefinitionType = null;
+                    catch
+                    {
+                        // ignored
+                    }
                 }
 
                 if (_szenarioName == "")
