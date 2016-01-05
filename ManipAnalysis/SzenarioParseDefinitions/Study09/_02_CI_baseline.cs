@@ -5,7 +5,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _02_CI_baseline : ISzenarioDefinition
     {
-        public override string StudyName => "Study 09";
+        public override string StudyName => "Study_09_CI";
 
         public override string SzenarioName => "02_CI_baseline";
 
@@ -15,7 +15,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
-            trial.Study = StudyName;
+            trial.Study = "Study 09";
             trial.Szenario = SzenarioName;
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial

@@ -125,15 +125,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 try
                 {
-                    foreach (var
-                        szenarioDefinitionIterable
-                        in
-                        Assembly.GetExecutingAssembly()
-                            .GetTypes()
-                            .Where(t => t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                    foreach (var szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsInterface && !t.IsAbstract && t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
-                        if (_szenarioName == (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null))
-                            // && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
+                        if (_szenarioName == szenarioDefinitionIterable.GetProperty("SzenarioName").ReflectedType?.Name
+                            && _studyName == szenarioDefinitionIterable.GetProperty("StudyName").ReflectedType?.Name)
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
