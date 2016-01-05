@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class RL_01_Familiarization : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 7";
+        public new static string StudyName => "Study 7";
 
-        public override string SzenarioName => "RL_01_Familiarization";
+        public new static string SzenarioName => "RL_01_Familiarization";
 
         public override int TrialCount => 336;
 

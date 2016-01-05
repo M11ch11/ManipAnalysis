@@ -9,11 +9,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal abstract class AbstractSzenarioDefinition
     {
-        public abstract string StudyName { get; }
+        public virtual string StudyName => null;
 
-        public abstract string SzenarioName { get; }
+        public virtual string SzenarioName => null;
 
-        public abstract int TrialCount { get; }
+        public virtual int TrialCount => 0;
 
         public virtual bool CheckForConsecutiveTrialNumberSequence => true;
 
@@ -37,9 +37,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     var originContainer = new TargetContainer();
 
                     var startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
+                    /*
                     var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
                     var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
-                    var frameTimeInc = 1.0f/c3DReader.Header.FrameRate;
+                    */
+                    var frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
                     int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
                     // -1 == Compensation of first Trial
                     var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
@@ -76,7 +78,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         var measuredForcesRaw = new ForceContainer();
                         var momentForcesRaw = new ForceContainer();
                         var positionRaw = new PositionContainer();
-                        double timeOffset = frameTimeInc*frame;
+                        double timeOffset = frameTimeInc * frame;
                         var timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
                         // Returns an array of all points, it is necessary to call this method in each cycle
@@ -191,7 +193,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         protected double DegreeToRadian(double angle)
         {
-            return Math.PI*angle/180.0;
+            return Math.PI * angle / 180.0;
         }
 
         private bool IsValidTrialNumberInSzenarioSequence(IEnumerable<int> trialNumbersInSzenario)

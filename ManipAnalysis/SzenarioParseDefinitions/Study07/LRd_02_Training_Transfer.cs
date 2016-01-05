@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class LRd_02_Training_Transfer : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 7";
+        public new static string StudyName => "Study 7";
 
-        public override string SzenarioName => "LR_02_LRd_Training&Transfer";
+        public new static string SzenarioName => "LR_02_LRd_Training&Transfer";
 
         public override int TrialCount => 354;
 

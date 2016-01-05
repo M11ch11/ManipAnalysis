@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _02_baseline : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 10";
+        public new static string StudyName => "Study 10";
 
-        public override string SzenarioName => "02_baseline";
+        public new static string SzenarioName => "02_baseline";
 
         public override int TrialCount => 40;
 

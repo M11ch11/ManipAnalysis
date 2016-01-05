@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class C0_ccw_01_Fam_Base_TrainA : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 08";
+        public new static string StudyName => "Study 08";
 
-        public override string SzenarioName => "C0_ccw_01_Fam_Base_TrainA";
+        public new static string SzenarioName => "C0_ccw_01_Fam_Base_TrainA";
 
         public override int TrialCount => 436;
 

@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class LRc_02_Training_NoFFTransfer : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 7";
+        public new static string StudyName => "Study 7";
 
-        public override string SzenarioName => "LR_02_LRc_Training&NoFFTransfer";
+        public new static string SzenarioName => "LR_02_LRc_Training&NoFFTransfer";
 
         public override int TrialCount => 186;
 

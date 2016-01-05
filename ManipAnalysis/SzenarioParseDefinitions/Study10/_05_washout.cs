@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _05_washout : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study 10";
+        public new static string StudyName => "Study 10";
 
-        public override string SzenarioName => "05_washout";
+        public new static string SzenarioName => "05_washout";
 
         public override int TrialCount => 56;
 

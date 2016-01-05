@@ -134,9 +134,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 {
                     try
                     {
-                        if (_szenarioName ==
-                            szenarioDefinitionIterable.GetProperty("SzenarioName").ReflectedType?.Name
-                            && _studyName == szenarioDefinitionIterable.GetProperty("StudyName").ReflectedType?.Name)
+                        if (_szenarioName == (string)szenarioDefinitionIterable.GetProperty("SzenarioName").GetValue(null)
+                            && _studyName == (string)szenarioDefinitionIterable.GetProperty("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;

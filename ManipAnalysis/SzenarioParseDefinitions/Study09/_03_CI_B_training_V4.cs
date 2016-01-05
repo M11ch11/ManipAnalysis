@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _03_CI_B_training_V4 : AbstractSzenarioDefinition
     {
-        public override string StudyName => "Study_09_CI";
+        public new static string StudyName => "Study_09_CI";
 
-        public override string SzenarioName => "_03_CI_B_training_V4";
+        public new static string SzenarioName => "03_CI_B_training_V4";
 
         public override int TrialCount => 152;
 
@@ -16,7 +16,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = "Study 09";
-            trial.Szenario = "03_CI_B_training_V4";
+            trial.Szenario = SzenarioName;
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {
