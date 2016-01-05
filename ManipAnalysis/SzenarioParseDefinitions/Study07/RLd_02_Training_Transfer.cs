@@ -3,7 +3,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class RLd_02_Training_Transfer : ISzenarioDefinition
+    internal class RLd_02_Training_Transfer : AbstractSzenarioDefinition
     {
         public override string StudyName => "Study 7";
 

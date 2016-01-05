@@ -3,7 +3,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class T1_ccw_02_InterA_RetA_RetA : ISzenarioDefinition
+    internal class T1_ccw_02_InterA_RetA_RetA : AbstractSzenarioDefinition
     {
         public override string StudyName => "Study 08";
 

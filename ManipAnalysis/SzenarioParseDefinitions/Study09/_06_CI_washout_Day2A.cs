@@ -3,11 +3,11 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class _06_CI_washout_Day2A : ISzenarioDefinition
+    internal class _06_CI_washout_Day2A : AbstractSzenarioDefinition
     {
         public override string StudyName => "Study_09_CI";
 
-        public override string SzenarioName => "06_CI_washout_Day2A";
+        public override string SzenarioName => "_06_CI_washout_Day2A";
 
         public override int TrialCount => 56;
 
@@ -16,7 +16,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
             trial.Study = "Study 09";
-            trial.Szenario = SzenarioName;
+            trial.Szenario = "06_CI_washout_Day2A";
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {

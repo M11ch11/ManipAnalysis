@@ -227,7 +227,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="LinqExtensions.cs" />
-    <Compile Include="SzenarioParseDefinitions\ISzenarioDefinition.cs" />
+    <Compile Include="SzenarioParseDefinitions\AbstractSzenarioDefinition.cs" />
     <Compile Include="SzenarioParseDefinitions\Study08\C0_ccw_02_RetA_RetA.cs" />
     <Compile Include="SzenarioParseDefinitions\Study08\C0_cw_02_RetA_RetA.cs" />
     <Compile Include="SzenarioParseDefinitions\Study08\T2_ccw_02_InterB_RetA_RetB.cs" />

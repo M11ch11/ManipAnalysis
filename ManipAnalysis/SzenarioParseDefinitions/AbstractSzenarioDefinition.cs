@@ -7,7 +7,7 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal abstract class ISzenarioDefinition
+    internal abstract class AbstractSzenarioDefinition
     {
         public abstract string StudyName { get; }
 

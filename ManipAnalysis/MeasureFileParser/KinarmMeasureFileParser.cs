@@ -119,13 +119,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                 _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
                 _offset.X = (c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] -
-                             c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0])/100.0f;
+                             c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0]) / 100.0f;
                 _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] -
-                             c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0])/100.0f;
+                             c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
 
                 try
                 {
-                    foreach (var szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsInterface && !t.IsAbstract && t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                    foreach (var szenarioDefinitionIterable in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.FullName != typeof(AbstractSzenarioDefinition).FullName && !t.IsInterface && !t.IsAbstract && t.IsClass && t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
                     {
                         if (_szenarioName == szenarioDefinitionIterable.GetProperty("SzenarioName").ReflectedType?.Name
                             && _studyName == szenarioDefinitionIterable.GetProperty("StudyName").ReflectedType?.Name)
@@ -135,8 +135,9 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                     szenarioDefinitionType = null;
                 }
 
@@ -179,7 +180,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
             var retVal = true;
             try
             {
-                var szenarioDefinition = (ISzenarioDefinition) Activator.CreateInstance(szenarioDefinitionType);
+                var szenarioDefinition = (AbstractSzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
                 TrialsContainer.AddRange(szenarioDefinition.ParseMeasureFile(_myManipAnalysisGui, _c3DFiles,
                     _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
                     _szenarioName, _offset));
