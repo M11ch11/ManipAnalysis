@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class T2_ccw_02_InterB_RetA_RetB : AbstractSzenarioDefinition
     {
-        public new static string StudyName => "Study 08";
+       public new const string StudyName = "Study 08";
 
-        public new static string SzenarioName => "T2_ccw_02_InterB_RetA_RetB";
+       public new const string SzenarioName = "T2_ccw_02_InterB_RetA_RetB";
 
         public override int TrialCount => 306;
 

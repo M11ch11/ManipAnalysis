@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class LRc_03_ConsoTransfer : AbstractSzenarioDefinition
     {
-        public new static string StudyName => "Study 7";
+       public new const string StudyName = "Study 7";
 
-        public new static string SzenarioName => "LR_03_LRc_ConsoTransfer";
+       public new const string SzenarioName = "LR_03_LRc_ConsoTransfer";
 
         public override int TrialCount => 174;
 

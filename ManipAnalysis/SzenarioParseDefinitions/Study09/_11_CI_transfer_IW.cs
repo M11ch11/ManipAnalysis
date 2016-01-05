@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _11_CI_transfer_IW : AbstractSzenarioDefinition
     {
-        public new static string StudyName => "Study_09_CI";
+       public new const string StudyName = "Study_09_CI";
 
-        public new static string SzenarioName => "11_CI_transfer_IW";
+       public new const string SzenarioName = "11_CI_transfer_IW";
 
         public override int TrialCount => 40;
         

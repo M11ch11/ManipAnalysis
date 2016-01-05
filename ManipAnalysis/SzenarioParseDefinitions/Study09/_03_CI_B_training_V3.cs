@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _03_CI_B_training_V3 : AbstractSzenarioDefinition
     {
-        public new static string StudyName => "Study_09_CI";
+       public new const string StudyName = "Study_09_CI";
 
-        public new static string SzenarioName => "03_CI_B_training_V3";
+       public new const string SzenarioName = "03_CI_B_training_V3";
 
         public override int TrialCount => 152;
 

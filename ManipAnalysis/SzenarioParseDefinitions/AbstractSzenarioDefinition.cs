@@ -9,9 +9,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal abstract class AbstractSzenarioDefinition
     {
-        public virtual string StudyName => null;
+        public const string StudyName = "Unknown";
 
-        public virtual string SzenarioName => null;
+        public const string SzenarioName = "Unknown";
 
         public virtual int TrialCount => 0;
 

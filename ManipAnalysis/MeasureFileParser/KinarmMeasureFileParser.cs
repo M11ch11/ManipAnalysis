@@ -134,14 +134,17 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 {
                     try
                     {
-                        if (_szenarioName == (string)szenarioDefinitionIterable.GetProperty("SzenarioName").GetValue(null)
-                            && _studyName == (string)szenarioDefinitionIterable.GetProperty("StudyName").GetValue(null))
+                        var test1 = (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null);
+                        var test2 = (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null);
+
+                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)
+                            && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
                             szenarioDefinitionType = szenarioDefinitionIterable;
                             break;
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // ignored
                     }
