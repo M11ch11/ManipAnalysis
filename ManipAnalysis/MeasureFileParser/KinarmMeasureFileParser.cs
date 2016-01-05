@@ -134,9 +134,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 {
                     try
                     {
-                        var test1 = (string) szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null);
-                        var test2 = (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null);
-
                         if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)
                             && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
                         {
@@ -144,7 +141,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                             break;
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         // ignored
                     }
