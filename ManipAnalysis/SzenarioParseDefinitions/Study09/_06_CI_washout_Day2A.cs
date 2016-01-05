@@ -11,7 +11,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override int TrialCount => 56;
 
-        public override bool CheckForConsecutiveTrialNumberSequence => false;
+        public override bool CheckValidTrialNumberInSzenarioSequence => false;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

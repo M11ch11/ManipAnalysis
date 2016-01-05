@@ -15,7 +15,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public virtual int TrialCount => 0;
 
-        public virtual bool CheckForConsecutiveTrialNumberSequence => true;
+        public virtual bool CheckValidTrialNumberInSzenarioSequence => true;
 
         public List<Trial> ParseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
             DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
@@ -152,7 +152,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
 
             // Check for valid TrialNumberInSzenario Sequence
-            if (trialsContainer.Any())
+            if (CheckValidTrialNumberInSzenarioSequence && trialsContainer.Any())
             {
                 foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())
                 {
@@ -203,14 +203,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             var isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
             var isValidStart = orderedTrialNumbersInSzenario.First() == 1;
 
-            if (CheckForConsecutiveTrialNumberSequence)
-            {
-                return isConsecutive && isValidStart;
-            }
-            else
-            {
-                return isValidStart;
-            }
+            return isConsecutive && isValidStart;
         }
 
         public abstract Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);

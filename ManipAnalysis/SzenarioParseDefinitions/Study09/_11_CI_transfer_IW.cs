@@ -11,7 +11,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override int TrialCount => 40;
         
-        public override bool CheckForConsecutiveTrialNumberSequence => false;
+        public override bool CheckValidTrialNumberInSzenarioSequence => false;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
@@ -26,16 +26,16 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
             else
             {
-                if (trial.Target.Number >= 1 && trial.Target.Number <= 8) // Null
+                if (trial.Target.Number >= 1 && trial.Target.Number <= 8) // Null, Position control, skip
                 {
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial = null;
                 }
-                else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null, Position control, skip
+                else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null
                 {
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
-                    trial = null;
                 }
                 else if (trial.Target.Number >= 21 && trial.Target.Number <= 28) // CW weak
                 {
