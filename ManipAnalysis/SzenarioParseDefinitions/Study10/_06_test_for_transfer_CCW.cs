@@ -5,11 +5,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _06_test_for_transfer_CCW : ISzenarioDefinition
     {
-        public new const string StudyName = "Study 10";
+        public override string StudyName => "Study 10";
 
-        public new const string SzenarioName = "06_test_for_transfer_CCW";
+        public override string SzenarioName => "06_test_for_transfer_CCW";
 
-        public new const int TrialCount = 40;
+        public override int TrialCount => 40;
+
+        public override bool CheckForConsecutiveTrialNumberSequence => false;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

@@ -5,11 +5,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class RLc_03_ConsoTransfer : ISzenarioDefinition
     {
-        public new const string StudyName = "Study 7";
+        public override string StudyName => "Study 7";
 
-        public new const string SzenarioName = "RL_03_RLc_ConsoTransfer";
+        public override string SzenarioName => "RL_03_RLc_ConsoTransfer";
 
-        public new const int TrialCount = 174;
+        public override int TrialCount => 174;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

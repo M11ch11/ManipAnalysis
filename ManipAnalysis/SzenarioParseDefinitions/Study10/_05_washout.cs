@@ -5,11 +5,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _05_washout : ISzenarioDefinition
     {
-        public new const string StudyName = "Study 10";
+        public override string StudyName => "Study 10";
 
-        public new const string SzenarioName = "05_washout";
+        public override string SzenarioName => "05_washout";
 
-        public new const int TrialCount = 56;
+        public override int TrialCount => 56;
+
+        public override bool CheckForConsecutiveTrialNumberSequence => false;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {

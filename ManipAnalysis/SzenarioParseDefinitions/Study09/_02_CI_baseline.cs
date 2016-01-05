@@ -5,11 +5,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _02_CI_baseline : ISzenarioDefinition
     {
-        public new const string StudyName = "Study 09";
+        public override string StudyName => "Study 09";
 
-        public new const string SzenarioName = "02_CI_baseline";
+        public override string SzenarioName => "02_CI_baseline";
 
-        public new const int TrialCount = 40;
+        public override int TrialCount => 40;
+
+        public override bool CheckForConsecutiveTrialNumberSequence => false;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
@@ -117,187 +119,173 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 if (trial != null)
                 {
-                    if (trial.Target.Number == 1)
+                    switch (trial.Target.Number)
                     {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(90));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(90));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 2)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(45));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(45));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 3)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(0));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(0));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 4)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(315));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(315));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 5)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(270));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(270));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 6)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(225));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(225));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 7)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(180));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(180));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 8)
-                    {
-                        trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(135));
-                        trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(135));
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                        trial.Origin.XPos = 0;
-                        trial.Origin.YPos = 0;
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                    }
-                    if (trial.Target.Number == 11)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(90));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(90));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 12)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(45));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(45));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 13)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(0));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(0));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 14)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(315));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(315));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 15)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(270));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(270));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 16)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(225));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(225));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 17)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(180));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(180));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else if (trial.Target.Number == 18)
-                    {
-                        trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(135));
-                        trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(135));
-                        trial.Origin.ZPos = 0;
-                        trial.Origin.Radius = 0.0025;
-                        trial.Target.XPos = 0;
-                        trial.Target.YPos = 0;
-                        trial.Target.ZPos = 0;
-                        trial.Target.Radius = 0.0025;
-                    }
-                    else
-                    {
-                        myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " + trial.Szenario + ", Trail " +
-                                                         trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
-                        trial = null;
+                        case 1:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(90));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(90));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 2:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(45));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(45));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 3:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(0));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(0));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 4:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(315));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(315));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 5:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(270));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(270));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 6:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(225));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(225));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 7:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(180));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(180));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 8:
+                            trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(135));
+                            trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(135));
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            trial.Origin.XPos = 0;
+                            trial.Origin.YPos = 0;
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            break;
+                        case 11:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(90));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(90));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 12:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(45));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(45));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 13:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(0));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(0));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 14:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(315));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(315));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 15:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(270));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(270));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 16:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(225));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(225));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 17:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(180));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(180));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        case 18:
+                            trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(135));
+                            trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(135));
+                            trial.Origin.ZPos = 0;
+                            trial.Origin.Radius = 0.0025;
+                            trial.Target.XPos = 0;
+                            trial.Target.YPos = 0;
+                            trial.Target.ZPos = 0;
+                            trial.Target.Radius = 0.0025;
+                            break;
+                        default:
+                            myManipAnalysisGui.WriteToLogBox("Invalid Target-Number. " + trial.Szenario + ", Trail " +
+                                                             trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
+                            trial = null;
+                            break;
                     }
                 }
 

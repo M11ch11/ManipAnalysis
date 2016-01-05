@@ -9,11 +9,13 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal abstract class ISzenarioDefinition
     {
-        public const string StudyName = "Unknown";
+        public abstract string StudyName { get; }
 
-        public const string SzenarioName = "Unknown";
+        public abstract string SzenarioName { get; }
 
-        public const int TrialCount = 0;
+        public abstract int TrialCount { get; }
+
+        public virtual bool CheckForConsecutiveTrialNumberSequence => true;
 
         public List<Trial> ParseMeasureFile(ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
             DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
@@ -199,7 +201,14 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             var isConsecutive = !orderedTrialNumbersInSzenario.Select((i, j) => i - j).Distinct().Skip(1).Any();
             var isValidStart = orderedTrialNumbersInSzenario.First() == 1;
 
-            return isConsecutive && isValidStart;
+            if (CheckForConsecutiveTrialNumberSequence)
+            {
+                return isConsecutive && isValidStart;
+            }
+            else
+            {
+                return isValidStart;
+            }
         }
 
         public abstract Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial);

@@ -5,11 +5,11 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class T1_cw_01_Fam_Base_TrainA : ISzenarioDefinition
     {
-        public new const string StudyName = "Study 08";
+        public override string StudyName => "Study 08";
 
-        public new const string SzenarioName = "T1_cw_01_Fam_Base_TrainA";
+        public override string SzenarioName => "T1_cw_01_Fam_Base_TrainA";
 
-        public new const int TrialCount = 436;
+        public override int TrialCount => 436;
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
