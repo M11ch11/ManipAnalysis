@@ -26,16 +26,16 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             }
             else
             {
-                if (trial.Target.Number >= 1 && trial.Target.Number <= 8) // Null, Position control, skip
+                if (trial.Target.Number >= 1 && trial.Target.Number <= 8) // Null
                 {
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
-                    trial = null;
                 }
-                else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null
+                else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null, Position control, skip
                 {
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
+                    trial = null;
                 }
                 else if (trial.Target.Number >= 21 && trial.Target.Number <= 28) // CW weak
                 {
@@ -83,16 +83,12 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
                 }
-                else if (trial.Target.Number >= 71 && trial.Target.Number <= 78) // CCW medium
+                else if (trial.Target.Number >= 71 && trial.Target.Number <= 78) // Null, Position control, skip
                 {
                     trial.Target.Number = trial.Target.Number - 70;
-                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
-                    trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
-                    // This is intentional! Same ForceFieldMatrix for CCW as for CW
-                    trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
-                    trial.ForceFieldMatrix[1, 1] = 0;
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
+                    trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
+                    trial = null;
                 }
                 else if (trial.Target.Number >= 81 && trial.Target.Number <= 88) // Pause 60s + Position control, skip
                 {
