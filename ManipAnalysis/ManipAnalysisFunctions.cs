@@ -2429,10 +2429,10 @@ namespace ManipAnalysis_v2
 
                                     var baselineTrialsNull =
                                         _myDatabaseWrapper.GetTrials(study, group, baseLineName, subject, turnDateTime,
-                                            Enumerable.Range(17, 16), baselineFields).ToList();
+                                            Extensions.AlternateRange(33, 32), baselineFields).ToList();
                                     var baselineTrialsFF =
                                         _myDatabaseWrapper.GetTrials(study, group, baseLineName, subject, turnDateTime,
-                                            Enumerable.Range(33, 8), baselineFields).ToList();
+                                            Extensions.AlternateRange(65, 16), baselineFields).ToList();
 
                                     baselineTrialsNull.ForEach(
                                         t =>
@@ -2492,7 +2492,7 @@ namespace ManipAnalysis_v2
                                                 t.Handedness == Trial.HandednessEnum.RightHand) &&
                                         baselineTrialsFF.All(
                                             t =>
-                                                t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
+                                                t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
                                                 t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW &&
                                                 t.Handedness == Trial.HandednessEnum.RightHand))
                                     {

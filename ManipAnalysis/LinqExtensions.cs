@@ -65,5 +65,13 @@ namespace ManipAnalysis_v2
                     .Cast<long>()
                     .ToArray();
         }
+
+        public static IEnumerable<int> AlternateRange(int start, int count)
+        {
+            for (int i = start; i < start + count; i += 2)
+            {
+                yield return i;
+            }
+        }
     }
 }

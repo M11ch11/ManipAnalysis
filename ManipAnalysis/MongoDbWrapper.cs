@@ -664,8 +664,9 @@ namespace ManipAnalysis_v2
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 retVal = null;
             }
 
@@ -689,8 +690,7 @@ namespace ManipAnalysis_v2
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 retVal = null;
@@ -719,8 +719,7 @@ namespace ManipAnalysis_v2
                     .ToList()
                     .OrderBy(t => t.TargetTrialNumberInSzenario);
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _myManipAnalysisGui.WriteToLogBox(ex.ToString());
                 retVal = null;
