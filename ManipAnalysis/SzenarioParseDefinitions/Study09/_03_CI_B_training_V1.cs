@@ -17,6 +17,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
         {
             trial.Study = "Study 09";
             trial.Szenario = SzenarioName;
+            trial.PositionOffset.Y -= 0.05;
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {

@@ -73,56 +73,58 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial.PositionOffset.X = offset.X;
                     currentTrial.PositionOffset.Y = offset.Y;
 
-                    for (var frame = 0; frame < c3DReader.FramesCount; frame++)
-                    {
-                        var measuredForcesRaw = new ForceContainer();
-                        var momentForcesRaw = new ForceContainer();
-                        var positionRaw = new PositionContainer();
-                        double timeOffset = frameTimeInc * frame;
-                        var timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
-
-                        // Returns an array of all points, it is necessary to call this method in each cycle
-                        var positionDataVector = c3DReader.ReadFrame()[0];
-                        // [0] == Right Hand
-
-                        /*
-                        <Event code="1" name="TRIAL_STARTED"  desc="Trial has started" />
-                        <Event code="2" name="SUBJECT_IS_IN_FIRST_TARGET"  desc="Subject is in the first target" />
-                        <Event code="3" name="SUBJECT_HAS_LEFT_FIRST_TARGET"  desc="Subject has left the first target" />
-                        <Event code="4" name="SUBJECT_IS_IN_SECOND_TARGET"  desc="Subject is in the second target" />
-                        <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
-                        <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
-                       */
-                        var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
-
-                        positionRaw.PositionStatus = positionStatus;
-                        positionRaw.TimeStamp = timeStamp;
-                        positionRaw.X = positionDataVector.X + currentTrial.PositionOffset.X;
-                        positionRaw.Y = positionDataVector.Y + currentTrial.PositionOffset.Y;
-                        positionRaw.Z = positionDataVector.Z + currentTrial.PositionOffset.Z;
-
-                        // Get analog data for this frame
-                        measuredForcesRaw.PositionStatus = positionStatus;
-                        measuredForcesRaw.TimeStamp = timeStamp;
-                        measuredForcesRaw.X = c3DReader.AnalogData["Right_FS_ForceX", 0];
-                        measuredForcesRaw.Y = c3DReader.AnalogData["Right_FS_ForceY", 0];
-                        measuredForcesRaw.Z = c3DReader.AnalogData["Right_FS_ForceZ", 0];
-
-                        momentForcesRaw.PositionStatus = positionStatus;
-                        momentForcesRaw.TimeStamp = timeStamp;
-                        momentForcesRaw.X = c3DReader.AnalogData["Right_FS_TorqueX", 0];
-                        momentForcesRaw.Y = c3DReader.AnalogData["Right_FS_TorqueY", 0];
-                        momentForcesRaw.Z = c3DReader.AnalogData["Right_FS_TorqueZ", 0];
-
-                        // Fill Trial
-                        currentTrial.MeasuredForcesRaw.Add(measuredForcesRaw);
-                        currentTrial.MomentForcesRaw.Add(momentForcesRaw);
-                        currentTrial.PositionRaw.Add(positionRaw);
-                    }
-
                     currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
+
                     if (currentTrial != null)
                     {
+
+                        for (var frame = 0; frame < c3DReader.FramesCount; frame++)
+                        {
+                            var measuredForcesRaw = new ForceContainer();
+                            var momentForcesRaw = new ForceContainer();
+                            var positionRaw = new PositionContainer();
+                            double timeOffset = frameTimeInc*frame;
+                            var timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
+
+                            // Returns an array of all points, it is necessary to call this method in each cycle
+                            var positionDataVector = c3DReader.ReadFrame()[0];
+                            // [0] == Right Hand
+
+                            /*
+                            <Event code="1" name="TRIAL_STARTED"  desc="Trial has started" />
+                            <Event code="2" name="SUBJECT_IS_IN_FIRST_TARGET"  desc="Subject is in the first target" />
+                            <Event code="3" name="SUBJECT_HAS_LEFT_FIRST_TARGET"  desc="Subject has left the first target" />
+                            <Event code="4" name="SUBJECT_IS_IN_SECOND_TARGET"  desc="Subject is in the second target" />
+                            <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
+                            <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
+                           */
+                            var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
+
+                            positionRaw.PositionStatus = positionStatus;
+                            positionRaw.TimeStamp = timeStamp;
+                            positionRaw.X = positionDataVector.X + currentTrial.PositionOffset.X;
+                            positionRaw.Y = positionDataVector.Y + currentTrial.PositionOffset.Y;
+                            positionRaw.Z = positionDataVector.Z + currentTrial.PositionOffset.Z;
+
+                            // Get analog data for this frame
+                            measuredForcesRaw.PositionStatus = positionStatus;
+                            measuredForcesRaw.TimeStamp = timeStamp;
+                            measuredForcesRaw.X = c3DReader.AnalogData["Right_FS_ForceX", 0];
+                            measuredForcesRaw.Y = c3DReader.AnalogData["Right_FS_ForceY", 0];
+                            measuredForcesRaw.Z = c3DReader.AnalogData["Right_FS_ForceZ", 0];
+
+                            momentForcesRaw.PositionStatus = positionStatus;
+                            momentForcesRaw.TimeStamp = timeStamp;
+                            momentForcesRaw.X = c3DReader.AnalogData["Right_FS_TorqueX", 0];
+                            momentForcesRaw.Y = c3DReader.AnalogData["Right_FS_TorqueY", 0];
+                            momentForcesRaw.Z = c3DReader.AnalogData["Right_FS_TorqueZ", 0];
+
+                            // Fill Trial
+                            currentTrial.MeasuredForcesRaw.Add(measuredForcesRaw);
+                            currentTrial.MomentForcesRaw.Add(momentForcesRaw);
+                            currentTrial.PositionRaw.Add(positionRaw);
+                        }
+
                         if (currentTrial.MeasuredForcesRaw.Count == 0)
                         {
                             throw new Exception("No data frames found in szenario trial " +
