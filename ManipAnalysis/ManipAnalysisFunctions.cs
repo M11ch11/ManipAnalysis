@@ -9,6 +9,7 @@ using ManipAnalysis_v2.Container;
 using ManipAnalysis_v2.MeasureFileParser;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Driver;
+using ManipAnalysis_v2.SzenarioParseDefinitions;
 
 namespace ManipAnalysis_v2
 {
@@ -3356,8 +3357,8 @@ namespace ManipAnalysis_v2
                     statisticFields = statisticFields.Include(t12 => t12.ForceFieldType);
                     statisticFields = statisticFields.Include(t13 => t13.Handedness);
                     statisticFields = statisticFields.Include(t14 => t14.ForceFieldMatrix);
-                    var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
+                    var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
                     var baselineBuffer = new List<Baseline>();
                     var cpuCount = Environment.ProcessorCount;
 
@@ -3529,24 +3530,38 @@ namespace ManipAnalysis_v2
                                         }
                                         else if (trial.Study == "Study 09")
                                         {
-                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW ||
-                                                trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
+                                            if (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
                                             {
+                                                int targetNumber = trial.Target.Number;
+
+                                                /**
+                                                In Szenario _11_CI_transfer_IW, the subjects perform inward movements instead of outwards.
+                                                The Baseline to be used is from the opposite Target outward movement (18 => 4, 11 => 5, ...)
+                                                RMSE Statistics will be way off because of this, all other parameters should be fine.
+                                                **/
+                                                if (trial.Szenario == _11_CI_transfer_IW.SzenarioName)
+                                                {
+                                                    targetNumber -= 10;
+                                                    targetNumber = (targetNumber + 4) % 8;
+                                                    targetNumber = (targetNumber == 0) ? 8 : targetNumber;
+                                                }
+
                                                 baseline =
                                                     baselineBuffer.Find(
                                                         t =>
                                                             t.Study == trial.Study && t.Group == trial.Group &&
                                                             t.Subject == trial.Subject &&
-                                                            t.Target.Number == trial.Target.Number &&
+                                                            t.Target.Number == targetNumber &&
                                                             t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
                                                             t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
                                                             t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
-                                                        trial.Subject, trial.Target.Number,
+                                                        trial.Subject, targetNumber,
                                                         Trial.TrialTypeEnum.StandardTrial,
-                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                        Trial.ForceFieldTypeEnum.NullField, 
+                                                        trial.Handedness);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
