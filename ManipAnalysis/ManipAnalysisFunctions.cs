@@ -3541,11 +3541,11 @@ namespace ManipAnalysis_v2
                                                 **/
                                                 if (trial.Szenario == _11_CI_transfer_IW.SzenarioName)
                                                 {
-                                                    targetNumber -= 10;
+                                                    targetNumber = ((trial.Target.Number >= 11) && (trial.Target.Number <= 18)) ? targetNumber - 10 : targetNumber;
                                                     targetNumber = (targetNumber + 4) % 8;
                                                     targetNumber = (targetNumber == 0) ? 8 : targetNumber;
                                                 }
-
+                                                
                                                 baseline =
                                                     baselineBuffer.Find(
                                                         t =>
