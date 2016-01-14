@@ -87,6 +87,10 @@ forceIdeal = forceIdealUncut (2:end);
 p = polyfit(forceIdeal, forcePD, 1);
 
 %-------------------------------------------------------------------------%
-fcp = p(1);   % Return value
+fcp = p(1);   % The ForceFieldCompensationFactor
+
+if isnan(fcp) % Could not calculate the ForceFieldCompensationFactor, so return zero
+	fcp = 0; 	
+end
 
 end
