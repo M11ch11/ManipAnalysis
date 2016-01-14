@@ -3096,6 +3096,7 @@ namespace ManipAnalysis_v2
                     if (baselinesContainer.Any())
                     {
                         CompressBaselineData(baselinesContainer);
+                        _myDatabaseWrapper.DropBaselines();
                         _myDatabaseWrapper.Insert(baselinesContainer);
                     }
                 }
@@ -6031,8 +6032,9 @@ namespace ManipAnalysis_v2
                 fields = fields.Include(t10 => t10.Subject);
                 fields = fields.Include(t11 => t11.TrialNumberInSzenario);
                 fields = fields.Include(t12 => t12.Target);
-                fields = fields.Include(t13 => t13.NormalizedDataSampleRate);
-                fields = fields.Include(t14 => t14.Id);
+                fields = fields.Include(t13 => t13.Origin);
+                fields = fields.Include(t14 => t14.NormalizedDataSampleRate);
+                fields = fields.Include(t15 => t15.Id);
 
                 var trials =
                     _myDatabaseWrapper.GetTrials(targetData.Study, targetData.Group, targetData.Szenario,

@@ -330,6 +330,18 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public void DropBaselines()
+        {
+            try
+            {
+                _mongoDatabase.DropCollection("Baseline");
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+            }
+        }
+
         public IEnumerable<string> GetStudys()
         {
             try
