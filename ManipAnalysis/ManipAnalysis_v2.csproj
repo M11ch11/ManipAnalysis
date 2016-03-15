@@ -270,11 +270,12 @@
     <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V1_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_04_test_for_savings_CW_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_06_test_for_transfer_IW_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10\_01_familiarization.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10\_02_baseline.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10\_03_training_variable_CW.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10\_04_test_for_savings_CW.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_05_washout.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_06_test_for_transfer_CCW.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10\_04_test_for_savings_CW.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10\_03_training_variable_CW.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10\_02_baseline.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
     <None Include="app.config" />
@@ -363,6 +364,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

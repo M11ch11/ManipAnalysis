@@ -189,7 +189,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                         trial.Origin.ZPos = 0;
                         trial.Origin.Radius = 0.0025;
                     }
-                    if (trial.Target.Number == 11)
+                    else if (trial.Target.Number == 11)
                     {
                         trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(90));
                         trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(90));
