@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class _04_test_for_savings_CW : AbstractSzenarioDefinition
     {
-       public new const string StudyName = "Study 10";
+        public new const string StudyName = "Study_10_sleep";
 
-       public new const string SzenarioName = "04_test_for_savings_CW";
+        public new const string SzenarioName = "04_test_for_savings_CW";
 
         public override int TrialCount => 40;
 
@@ -15,7 +15,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
-            trial.Study = StudyName;
+            trial.Study = "Study 10";
             trial.Szenario = SzenarioName;
             trial.PositionOffset.Y -= 0.05;
 
@@ -35,9 +35,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number >= 11 && trial.Target.Number <= 18) // Null, Position control, skip
                 {
-                    trial.Target.Number = trial.Target.Number;
-                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
-                    trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
                 }
                 else if (trial.Target.Number >= 21 && trial.Target.Number <= 28) // CW weak
@@ -82,9 +79,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause + Position control, skip
                 {
-                    trial.Target.Number = trial.Target.Number - 52;
-                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
-                    trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     trial = null;
                 }
                 else if (trial.Target.Number >= 71 && trial.Target.Number <= 78) // CCW medium

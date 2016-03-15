@@ -3,13 +3,13 @@ using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
-    internal class _05_washout : AbstractSzenarioDefinition
+    internal class _03_training_blocked_V1_B : AbstractSzenarioDefinition
     {
         public new const string StudyName = "Study_10_sleep";
 
-        public new const string SzenarioName = "05_washout";
+        public new const string SzenarioName = "03_training_blocked_V1";
 
-        public override int TrialCount => 56;
+        public override int TrialCount => 152;
 
         public override bool CheckValidTrialNumberInSzenarioSequence => false;
 
@@ -77,16 +77,25 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 0] = -15;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
-                else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause + Position control, skip
+                else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause, Null, Position control, skip
                 {
                     trial = null;
                 }
-                else if (trial.Target.Number >= 71 && trial.Target.Number <= 78) // CCW medium
+                else if (trial.Target.Number >= 71 && trial.Target.Number <= 78) // Null, Position control, skip
+                {
+                    trial = null;
+                }
+                else if (trial.Target.Number >= 81 && trial.Target.Number <= 88) // Null, error clamp
                 {
                     trial.Target.Number = trial.Target.Number - 70;
-                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
+                    trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                }
+                else if (trial.Target.Number >= 91 && trial.Target.Number <= 98) // CW medium
+                {
+                    trial.Target.Number = trial.Target.Number - 80;
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
-                    // This is intentional! Same ForceFieldMatrix for CCW as for CW
                     trial.ForceFieldMatrix[0, 0] = 0;
                     trial.ForceFieldMatrix[0, 1] = 15;
                     trial.ForceFieldMatrix[1, 0] = -15;
@@ -290,7 +299,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
 
-                if (trial != null && (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 112))
+                if (trial != null && (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 304))
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " +
                                                      trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
