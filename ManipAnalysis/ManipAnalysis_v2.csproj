@@ -269,8 +269,8 @@
     <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V2_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V1_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_04_test_for_savings_CW_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_06_test_for_transfer_IW_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10\_01_familiarization.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_05_washout_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_06_transfer_IW_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_02_baseline.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_03_training_variable_CW.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_04_test_for_savings_CW.cs" />
