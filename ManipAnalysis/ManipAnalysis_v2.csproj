@@ -39,7 +39,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>15</ApplicationRevision>
+    <ApplicationRevision>16</ApplicationRevision>
     <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -262,12 +262,12 @@
     <Compile Include="SzenarioParseDefinitions\Study09\_03_CI_B_training_V1.cs" />
     <Compile Include="SzenarioParseDefinitions\Study09\_02_CI_baseline.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_02_baseline_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V6_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V5_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V4_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V3_B.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V2_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V1_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V2_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V3_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V4_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V5_B.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study10B\_03_training_blocked_V6_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_04_test_for_savings_CW_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_05_washout_B.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10B\_06_transfer_IW_B.cs" />
