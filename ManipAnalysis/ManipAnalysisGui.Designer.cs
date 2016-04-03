@@ -921,6 +921,7 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "FeedbackAngle",
             "ForcefieldCompenstionFactor",
             "ForcefieldCompenstionFactor fisher-z",
             "ForcefieldCompenstionFactor fisher-z to r-values",
@@ -936,6 +937,7 @@ namespace ManipAnalysis_v2
             "PDmean - Abs",
             "PDVmax - Abs",
             "PDVmax - Sign",
+            "PredictionAngle",
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",
@@ -1236,6 +1238,7 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
+            "FeedbackAngle",
             "ForcefieldCompenstionFactor",
             "ForcefieldCompenstionFactor fisher-z",
             "ForcefieldCompenstionFactor fisher-z to r-values",
@@ -1251,6 +1254,7 @@ namespace ManipAnalysis_v2
             "PDmean - Abs",
             "PDVmax - Abs",
             "PDVmax - Sign",
+            "PredictionAngle",
             "RMSE",
             "Trajectory length abs",
             "Trajectory length ratio",

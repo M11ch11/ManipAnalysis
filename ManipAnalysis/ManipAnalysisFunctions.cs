@@ -776,6 +776,14 @@ namespace ManipAnalysis_v2
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.RMSE;
                                             break;
+                                        case "PredictionAngle":
+                                            statisticData[trialsArrayCounter, meanCount] =
+                                                trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
+                                            break;
+                                        case "FeedbackAngle":
+                                            statisticData[trialsArrayCounter, meanCount] =
+                                                trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
+                                            break;
                                     }
                                 }
                             }
@@ -1006,6 +1014,20 @@ namespace ManipAnalysis_v2
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Root Mean Square Error",
                                             1, statisticData.Length/meanCount, 0, 0.1, plotFit, plotErrorbars);
+                                        break;
+                                    case "PredictionAngle":
+                                        _myMatlabWrapper.CreateStatisticFigure("Prediction Angle plot",
+                                            "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Prediction Angle",
+                                            1, statisticData.Length / meanCount, 0, 45, plotFit, plotErrorbars);
+                                        break;
+                                    case "FeedbackAngle":
+                                        _myMatlabWrapper.CreateStatisticFigure("Feedback Angle plot",
+                                            "statisticDataPlot",
+                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
+                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Feedback Angle",
+                                            1, statisticData.Length / meanCount, 0, 45, plotFit, plotErrorbars);
                                         break;
                                 }
                             }
@@ -1295,6 +1317,14 @@ namespace ManipAnalysis_v2
                                     case "RMSE":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.RMSE;
+                                        break;
+                                    case "PredictionAngle":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
+                                        break;
+                                    case "FeedbackAngle":
+                                        statisticData[subjectCounter, trialsArrayCounter] =
+                                            trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
                                         break;
                                 }
                             }
