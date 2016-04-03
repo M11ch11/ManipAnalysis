@@ -41,5 +41,9 @@ namespace ManipAnalysis_v2.MongoDb
         public double ForcefieldCompenstionFactor { get; set; }
 
         public double ForcefieldCompenstionFactorRaw { get; set; }
+
+        public double PredictionAngle { get; set; }
+
+        public double FeedbackAngle { get; set; }
     }
 }

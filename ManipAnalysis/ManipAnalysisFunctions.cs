@@ -3772,6 +3772,22 @@ namespace ManipAnalysis_v2
 
                                             taskMatlabWrapper.ClearWorkspace();
 
+                                            try
+                                            {
+                                                var positionDataPoint180ms =
+                                                    trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 180).OrderBy(t => t.TimeStamp).First();
+                                                var positionDataPoint400ms =
+                                                    trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 400).OrderBy(t => t.TimeStamp).First();
+                                                taskMatlabWrapper.SetWorkspaceData("dataPoint180ms",
+                                                    new[,] {{positionDataPoint180ms.X, positionDataPoint180ms.Y}});
+                                                taskMatlabWrapper.SetWorkspaceData("dataPoint400ms",
+                                                    new[,] {{positionDataPoint400ms.X, positionDataPoint400ms.Y}});
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint180ms/positionDataPoint400ms for predicitionAndFeedbackAngle\n" + ex.ToString());
+                                            }
+
                                             taskMatlabWrapper.SetWorkspaceData("startPoint",
                                                 new[,] {{trial.Origin.XPos, trial.Origin.YPos}});
                                             taskMatlabWrapper.SetWorkspaceData("endPoint",
@@ -3820,11 +3836,13 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                             taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
                                             taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                            taskMatlabWrapper.Execute(
-                                                "rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                            taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                            taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
+                                            taskMatlabWrapper.Execute("[predictionAngle, feedbackAngle] = predicitionAndFeedbackAngle(startPoint, endPoint, dataPoint180ms, dataPoint400ms);");
+
 
                                             // Create StatisticContainer and fill it with calculated Matlab statistics
-                                            var statisticContainer = new StatisticContainer();
+                                           var statisticContainer = new StatisticContainer();
                                             statisticContainer.VelocityVectorCorrelation =
                                                 taskMatlabWrapper.GetWorkspaceData("vector_correlation");
                                             statisticContainer.EnclosedArea =
@@ -3840,6 +3858,16 @@ namespace ManipAnalysis_v2
                                             statisticContainer.SignedMaximalPerpendicularDisplacement =
                                                 taskMatlabWrapper.GetWorkspaceData("maxDistanceSign");
                                             statisticContainer.RMSE = taskMatlabWrapper.GetWorkspaceData("rmse");
+                                            try
+                                            {
+                                                statisticContainer.PredictionAngle = taskMatlabWrapper.GetWorkspaceData("predictionAngle");
+                                                statisticContainer.FeedbackAngle = taskMatlabWrapper.GetWorkspaceData("feedbackAngle");
+                                            }
+                                            catch
+                                            {
+                                                statisticContainer.PredictionAngle = 0;
+                                                statisticContainer.FeedbackAngle = 0;
+                                            }
 
                                             // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
                                             double[,] absolutePerpendicularDisplacement =

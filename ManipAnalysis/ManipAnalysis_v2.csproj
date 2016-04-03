@@ -284,6 +284,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ManipIcon.ico" />
+    <Content Include="MatlabFiles\predicitionAndFeedbackAngle.m">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MatlabFiles\distanceToCurve.m">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
