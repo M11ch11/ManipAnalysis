@@ -3802,10 +3802,11 @@ namespace ManipAnalysis_v2
 
                                             taskMatlabWrapper.ClearWorkspace();
 
+                                            DateTime startTimeStamp = trial.PositionNormalized.Select(u => u.TimeStamp).Min();
                                             try
-                                            {
+                                            {   
                                                 var positionDataPoint180ms =
-                                                    trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 180).OrderBy(t => t.TimeStamp).First();
+                                                    trial.PositionNormalized.Where(t => (t.TimeStamp - startTimeStamp).TotalMilliseconds >= 180).OrderBy(t => t.TimeStamp).First();
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint180ms",
                                                    new[,] { { positionDataPoint180ms.X, positionDataPoint180ms.Y } });
                                             }
@@ -3816,7 +3817,7 @@ namespace ManipAnalysis_v2
                                             try
                                             {
                                                 var positionDataPoint350ms =
-                                                   trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 350).OrderBy(t => t.TimeStamp).First();
+                                                   trial.PositionNormalized.Where(t => (t.TimeStamp - startTimeStamp).TotalMilliseconds >= 350).OrderBy(t => t.TimeStamp).First();
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint350ms",
                                                     new[,] { { positionDataPoint350ms.X, positionDataPoint350ms.Y } });
                                             }
@@ -3873,7 +3874,6 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
                                             taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
                                             taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                            taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
                                             taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
                                             taskMatlabWrapper.Execute("[predictionAngle, feedbackAngle] = predicitionAndFeedbackAngle(startPoint, endPoint, dataPoint180ms, dataPoint350ms);");
 

@@ -90,12 +90,12 @@ point180ms = double(point180ms);    % ensure point180ms entries are doubles
 point350ms = double(point350ms);    % ensure point350ms entries are doubles
 %-------------------------------------------------------------------------%
 
-start_end_vector = startPoint - endPoint;
 start_point180ms_vector = startPoint - point180ms;
+start_end_vector = startPoint - endPoint;
+point180ms_point350ms_vector = point180ms - point350ms;
 point180ms_end_vector = point180ms - endPoint;
-point180ms_point350ms = point180ms - point350ms;
 
 predictionAngle = rad2deg(atan2(norm(cross([start_point180ms_vector 0],[start_end_vector 0])),dot(start_point180ms_vector, start_end_vector)));
-feedbackAngle = rad2deg(atan2(norm(cross([point180ms_point350ms 0],[point180ms_end_vector 0])),dot(point180ms_point350ms, point180ms_end_vector)));
+feedbackAngle = rad2deg(atan2(norm(cross([point180ms_point350ms_vector 0],[point180ms_end_vector 0])),dot(point180ms_point350ms_vector, point180ms_end_vector)));
 
 end
