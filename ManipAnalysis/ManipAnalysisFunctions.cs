@@ -3806,16 +3806,23 @@ namespace ManipAnalysis_v2
                                             {
                                                 var positionDataPoint180ms =
                                                     trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 180).OrderBy(t => t.TimeStamp).First();
-                                                var positionDataPoint400ms =
-                                                    trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 400).OrderBy(t => t.TimeStamp).First();
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint180ms",
-                                                    new[,] {{positionDataPoint180ms.X, positionDataPoint180ms.Y}});
-                                                taskMatlabWrapper.SetWorkspaceData("dataPoint400ms",
-                                                    new[,] {{positionDataPoint400ms.X, positionDataPoint400ms.Y}});
+                                                   new[,] { { positionDataPoint180ms.X, positionDataPoint180ms.Y } });
                                             }
                                             catch (Exception ex)
                                             {
-                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint180ms/positionDataPoint400ms for predicitionAndFeedbackAngle\n" + ex.ToString());
+                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint180ms for predicitionAndFeedbackAngle\n" + ex.ToString());
+                                            }
+                                            try
+                                            {
+                                                var positionDataPoint350ms =
+                                                   trial.PositionNormalized.Where(t => (t.TimeStamp - trial.PositionNormalized.Select(u => u.TimeStamp).Min()).TotalMilliseconds >= 350).OrderBy(t => t.TimeStamp).First();
+                                                taskMatlabWrapper.SetWorkspaceData("dataPoint350ms",
+                                                    new[,] { { positionDataPoint350ms.X, positionDataPoint350ms.Y } });
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint350ms for predicitionAndFeedbackAngle\n" + ex.ToString());
                                             }
 
                                             taskMatlabWrapper.SetWorkspaceData("startPoint",
@@ -3868,7 +3875,7 @@ namespace ManipAnalysis_v2
                                             taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
                                             taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
                                             taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
-                                            taskMatlabWrapper.Execute("[predictionAngle, feedbackAngle] = predicitionAndFeedbackAngle(startPoint, endPoint, dataPoint180ms, dataPoint400ms);");
+                                            taskMatlabWrapper.Execute("[predictionAngle, feedbackAngle] = predicitionAndFeedbackAngle(startPoint, endPoint, dataPoint180ms, dataPoint350ms);");
 
 
                                             // Create StatisticContainer and fill it with calculated Matlab statistics
