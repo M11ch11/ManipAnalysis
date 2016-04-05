@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="3.0.0.16" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="3.0.0.17" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5939.17820" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5939.24278" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -44,13 +44,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="886272">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5939.17820" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5939.24278" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ZLc8lZg35xLkhzzMeB7TYXbbElXGVaAhq4ojhnVe7Vg=</dsig:DigestValue>
+        <dsig:DigestValue>emXnqXhymDDiqBSqsNrk5Kn3jZ8VkoUTZ+L+UQNQz1I=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -201,13 +201,13 @@
       <dsig:DigestValue>2OpKNuv9sjLOe6Gyby+Hg6jNpn8KtSDNSFY+w9z3hI4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\predicitionAndFeedbackAngle.m" size="4523">
+  <file name="MatlabFiles\predicitionAndFeedbackAngle.m" size="4544">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>0EKnIKxOylP3MWjVmS3nUNiA4MK54cEJRavuf2YSvk4=</dsig:DigestValue>
+      <dsig:DigestValue>RafcXZgmd59j2UWULrCBoJvTeDFpLRliPcj9k2zXveM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\rootMeanSquareError.m" size="1855">
