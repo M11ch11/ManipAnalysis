@@ -3822,6 +3822,62 @@ namespace ManipAnalysis_v2
                                                     }
                                                 }
                                             }
+                                        }
+                                        else if (trial.Study == "Study 11")
+                                        {
+                                            if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial
+                                            && trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
+                                            {
+                                                baseline =
+                                                    baselineBuffer.Find(
+                                                        t =>
+                                                            t.Study == trial.Study && t.Group == trial.Group &&
+                                                            t.Subject == trial.Subject &&
+                                                            t.Target.Number == trial.Target.Number &&
+                                                            t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
+                                                            t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                            t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
+                                                        trial.Subject, trial.Target.Number,
+                                                        Trial.TrialTypeEnum.StandardTrial,
+                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
+                                            {
+                                                baseline =
+                                                    baselineBuffer.Find(
+                                                        t =>
+                                                            t.Study == trial.Study && t.Group == trial.Group &&
+                                                            t.Subject == trial.Subject &&
+                                                            t.Target.Number == trial.Target.Number &&
+                                                            t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
+                                                            t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                            t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
+                                                        trial.Subject, trial.Target.Number,
+                                                        Trial.TrialTypeEnum.ErrorClampTrial,
+                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                }
+                                            }
                                             else
                                             {
                                                 baseline =

@@ -99,12 +99,14 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                            */
                             var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
 
+                            /*
+                            * Study 11 Special analog data field
                             var forceFieldStrength = Convert.ToDouble(c3DReader.AnalogData["ACH5", 0]);
                             currentTrial.ForceFieldMatrix[0, 0] = 0;
                             currentTrial.ForceFieldMatrix[0, 1] = -forceFieldStrength;
                             currentTrial.ForceFieldMatrix[1, 0] = forceFieldStrength;
                             currentTrial.ForceFieldMatrix[1, 1] = 0;
-
+                            */
                             positionRaw.PositionStatus = positionStatus;
                             positionRaw.TimeStamp = timeStamp;
                             positionRaw.X = positionDataVector.X + currentTrial.PositionOffset.X;
