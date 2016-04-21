@@ -214,6 +214,25 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                                                      trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
+                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 72)
+                {
+                    trial.Szenario = "Familiarization";
+                }
+                else if (trial.TrialNumberInSzenario >= 73 && trial.TrialNumberInSzenario <= 148)
+                {
+                    trial.Szenario = "Baseline";
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 72;
+                }
+                else if (trial.TrialNumberInSzenario >= 149 && trial.TrialNumberInSzenario <= 616)
+                {
+                    trial.Szenario = "Practise";
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 148;
+                }
+                else if (trial.TrialNumberInSzenario >= 617 && trial.TrialNumberInSzenario <= 872)
+                {
+                    trial.Szenario = "TransferEarly";
+                    trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 616;
+                }
             }
 
             return trial;

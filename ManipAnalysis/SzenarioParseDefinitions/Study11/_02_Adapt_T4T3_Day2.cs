@@ -214,6 +214,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                                                      trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
                     trial = null;
                 }
+                else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 256)
+                {
+                    trial.Szenario = "TransferRetention";
+                }
             }
 
             return trial;
