@@ -603,7 +603,7 @@ namespace ManipAnalysis_v2
                                     trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
                                     trialsArrayCounter++)
                                 {
-                                    _myManipAnalysisGui.SetProgressBarValue(100.0/sumOfAllTrials*processedTrialsCount++);
+                                    _myManipAnalysisGui.SetProgressBarValue(100.0 / sumOfAllTrials * processedTrialsCount++);
 
                                     trialsArray[trialsArrayCounter].Statistics =
                                         Gzip<StatisticContainer>.DeCompress(
@@ -847,7 +847,7 @@ namespace ManipAnalysis_v2
                                             "Velocity Vector Correlation Fisher Z plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length/meanCount,
+                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length / meanCount,
                                             0.0, 2.0, plotFit, plotErrorbars);
                                         break;
 
@@ -857,7 +857,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length/meanCount,
+                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length / meanCount,
                                             0.5, 1, plotFit, plotErrorbars);
                                         break;
 
@@ -866,7 +866,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Newton [N]", 1,
-                                            statisticData.Length/meanCount, -3.0, 3.0, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, -3.0, 3.0, plotFit, plotErrorbars);
                                         break;
 
                                     case "MidMovementForce - PD Raw":
@@ -874,7 +874,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Newton [N]", 1,
-                                            statisticData.Length/meanCount, -3.0, 3.0, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, -3.0, 3.0, plotFit, plotErrorbars);
                                         break;
 
                                     case "PD - Abs":
@@ -882,28 +882,28 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
-                                            statisticData.Length/meanCount, 0, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PDmean - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "MeanPD [m]", 1,
-                                            statisticData.Length/meanCount, 0, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PDmax - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("MaxPD abs plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                            statisticData.Length/meanCount, 0, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PDVmax - Abs":
                                         _myMatlabWrapper.CreateStatisticFigure("VmaxPD abs plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                            statisticData.Length/meanCount, 0, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PD - Sign":
@@ -911,21 +911,21 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
-                                            statisticData.Length/meanCount, -0.05, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, -0.05, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PDmax - Sign":
                                         _myMatlabWrapper.CreateStatisticFigure("MaxPD sign plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                            statisticData.Length/meanCount, -0.05, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, -0.05, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "PDVmax - Sign":
                                         _myMatlabWrapper.CreateStatisticFigure("VmaxPD sign plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "MaxPD [m]", 1,
-                                            statisticData.Length/meanCount, -0.05, 0.05, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, -0.05, 0.05, plotFit, plotErrorbars);
                                         break;
 
                                     case "Trajectory length abs":
@@ -933,7 +933,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Trajectory Length [m]",
-                                            1, statisticData.Length/meanCount, 0.07, 0.2, plotFit, plotErrorbars);
+                                            1, statisticData.Length / meanCount, 0.07, 0.2, plotFit, plotErrorbars);
                                         break;
 
                                     case "Trajectory length ratio":
@@ -941,14 +941,14 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Trajectory Length Ratio",
-                                            1, statisticData.Length/meanCount, 0.2, 1.8, plotFit, plotErrorbars);
+                                            1, statisticData.Length / meanCount, 0.2, 1.8, plotFit, plotErrorbars);
                                         break;
 
                                     case "Enclosed area":
                                         _myMatlabWrapper.CreateStatisticFigure("Enclosed area plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Enclosed Area [m²]", 1,
-                                            statisticData.Length/meanCount, 0, 0.002, plotFit, plotErrorbars);
+                                            statisticData.Length / meanCount, 0, 0.002, plotFit, plotErrorbars);
                                         break;
 
                                     case "ForcefieldCompenstionFactor":
@@ -956,7 +956,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -966,7 +966,7 @@ namespace ManipAnalysis_v2
                                             "Forcefield Compenstion Factor fisher-z plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -976,7 +976,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -985,7 +985,7 @@ namespace ManipAnalysis_v2
                                             "Forcefield Compenstion Factor Raw plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -994,7 +994,7 @@ namespace ManipAnalysis_v2
                                             "Forcefield Compenstion Factor Raw fisher-z plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -1004,7 +1004,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Forcefield Compenstion Factor", 1, statisticData.Length/meanCount, -1.0,
+                                            "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
@@ -1013,7 +1013,7 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Root Mean Square Error",
-                                            1, statisticData.Length/meanCount, 0, 0.1, plotFit, plotErrorbars);
+                                            1, statisticData.Length / meanCount, 0, 0.1, plotFit, plotErrorbars);
                                         break;
                                     case "PredictionAngle":
                                         _myMatlabWrapper.CreateStatisticFigure("Prediction Angle plot",
@@ -1154,7 +1154,7 @@ namespace ManipAnalysis_v2
                                 trialsArrayCounter < trialList.Count & !TaskManager.Cancel;
                                 trialsArrayCounter++)
                             {
-                                _myManipAnalysisGui.SetProgressBarValue(100.0/selectedTrialsList.Count*subjectCounter);
+                                _myManipAnalysisGui.SetProgressBarValue(100.0 / selectedTrialsList.Count * subjectCounter);
 
                                 trialsArray[trialsArrayCounter].Statistics =
                                     Gzip<StatisticContainer>.DeCompress(trialsArray[trialsArrayCounter].ZippedStatistics);
@@ -1484,7 +1484,7 @@ namespace ManipAnalysis_v2
                             Thread.Sleep(100);
                         }
 
-                        _myManipAnalysisGui.SetProgressBarValue(100.0/measureFilesList.Count*files);
+                        _myManipAnalysisGui.SetProgressBarValue(100.0 / measureFilesList.Count * files);
 
                         var filename = measureFilesList.ElementAt(files);
 
@@ -1840,7 +1840,7 @@ namespace ManipAnalysis_v2
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial =
                     trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1)
-                        .Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)))/100.0*percentPeakVelocity;
+                        .Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))) / 100.0 * percentPeakVelocity;
 
                 DateTime startTime;
                 DateTime stopTime;
@@ -2384,7 +2384,109 @@ namespace ManipAnalysis_v2
 
                     foreach (var study in studys)
                     {
-                        if (study == "Study 10")
+                        if (study == "Study 11")
+                        {
+                            var groups = _myDatabaseWrapper.GetGroups(study);
+
+                            foreach (var group in groups)
+                            {
+                                var subjects = _myDatabaseWrapper.GetSubjects(study, group, "Baseline");
+
+                                foreach (var subject in subjects)
+                                {
+                                    var turnDateTime =
+                                        _myDatabaseWrapper.GetTurns(study, group, "Baseline", subject).ElementAt(0);
+
+                                    var baselineTrialsNull =
+                                        _myDatabaseWrapper.GetTrials(study, group, "Baseline", subject, turnDateTime,
+                                            Enumerable.Range(63, 6), baselineFields).ToList();
+                                    baselineTrialsNull.AddRange(
+                                        _myDatabaseWrapper.GetTrials(study, group, "Baseline", subject, turnDateTime,
+                                            Enumerable.Range(71, 6), baselineFields).ToList());
+
+                                    var baselineTrialsEC =
+                                        _myDatabaseWrapper.GetTrials(study, group, "Baseline", subject, turnDateTime,
+                                            Enumerable.Range(55, 2), baselineFields).ToList();
+                                    baselineTrialsEC.AddRange(
+                                        _myDatabaseWrapper.GetTrials(study, group, "Baseline", subject, turnDateTime,
+                                            Enumerable.Range(69, 2), baselineFields).ToList());
+
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.PositionNormalized =
+                                                Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.MomentForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+
+                                    baselineTrialsEC.ForEach(
+                                       t =>
+                                           t.PositionNormalized =
+                                               Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized)
+                                                   .OrderBy(u => u.TimeStamp)
+                                                   .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.MomentForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+
+                                    if (
+                                        baselineTrialsNull.All(
+                                            t =>
+                                                t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
+                                                t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                t.Handedness == Trial.HandednessEnum.RightHand)
+                                        &&
+                                        baselineTrialsEC.All(
+                                            t =>
+                                                t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
+                                                t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                t.Handedness == Trial.HandednessEnum.RightHand))
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsNull));
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsEC));
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox(
+                                            "Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group +
+                                            " / " + subject);
+                                    }
+                                }
+                            }
+                        }
+                        else if (study == "Study 10")
                         {
                             var groups = _myDatabaseWrapper.GetGroups(study);
 
@@ -2460,7 +2562,7 @@ namespace ManipAnalysis_v2
                                             t =>
                                                 t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
                                                 t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
-                                                t.Handedness == Trial.HandednessEnum.RightHand) 
+                                                t.Handedness == Trial.HandednessEnum.RightHand)
                                         &&
                                         baselineTrialsEC.All(
                                             t =>
@@ -2480,7 +2582,7 @@ namespace ManipAnalysis_v2
                                 }
                             }
                         }
-                        if (study == "Study 09")
+                        else if (study == "Study 09")
                         {
                             var baseLineName = "02_CI_baseline";
                             var groups = _myDatabaseWrapper.GetGroups(study);
@@ -3278,9 +3380,9 @@ namespace ManipAnalysis_v2
                     baselineTimeStamps[timeSample] = DateTime.Now;
                     //baselineTrials[0].MeasureFile.CreationTime;
                     baselineTimeStamps[timeSample] =
-                        baselineTimeStamps[timeSample].AddSeconds(1.0/
+                        baselineTimeStamps[timeSample].AddSeconds(1.0 /
                                                                   Convert.ToDouble(
-                                                                      baselineTrials[0].NormalizedDataSampleRate)*
+                                                                      baselineTrials[0].NormalizedDataSampleRate) *
                                                                   Convert.ToDouble(timeSample));
                 }
 
@@ -3612,7 +3714,7 @@ namespace ManipAnalysis_v2
                                                     targetNumber = (targetNumber + 4) % 8;
                                                     targetNumber = (targetNumber == 0) ? 8 : targetNumber;
                                                 }
-                                                
+
                                                 baseline =
                                                     baselineBuffer.Find(
                                                         t =>
@@ -3627,7 +3729,7 @@ namespace ManipAnalysis_v2
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
                                                         trial.Subject, targetNumber,
                                                         Trial.TrialTypeEnum.StandardTrial,
-                                                        Trial.ForceFieldTypeEnum.NullField, 
+                                                        Trial.ForceFieldTypeEnum.NullField,
                                                         trial.Handedness);
                                                     if (baseline != null)
                                                     {
@@ -3666,7 +3768,7 @@ namespace ManipAnalysis_v2
                                         }
                                         else if (trial.Study == "Study 10")
                                         {
-                                            if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial && 
+                                            if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial &&
                                                 (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW ||
                                                 trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW))
                                             {
@@ -3804,7 +3906,7 @@ namespace ManipAnalysis_v2
 
                                             DateTime startTimeStamp = trial.PositionNormalized.Select(u => u.TimeStamp).Min();
                                             try
-                                            {   
+                                            {
                                                 var positionDataPoint180ms =
                                                     trial.PositionNormalized.Where(t => (t.TimeStamp - startTimeStamp).TotalMilliseconds >= 180).OrderBy(t => t.TimeStamp).First();
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint180ms",
@@ -3827,9 +3929,9 @@ namespace ManipAnalysis_v2
                                             }
 
                                             taskMatlabWrapper.SetWorkspaceData("startPoint",
-                                                new[,] {{trial.Origin.XPos, trial.Origin.YPos}});
+                                                new[,] { { trial.Origin.XPos, trial.Origin.YPos } });
                                             taskMatlabWrapper.SetWorkspaceData("endPoint",
-                                                new[,] {{trial.Target.XPos, trial.Target.YPos}});
+                                                new[,] { { trial.Target.XPos, trial.Target.YPos } });
                                             taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix",
                                                 trial.ForceFieldMatrix);
                                             taskMatlabWrapper.SetWorkspaceData("positionX",
@@ -3879,7 +3981,7 @@ namespace ManipAnalysis_v2
 
 
                                             // Create StatisticContainer and fill it with calculated Matlab statistics
-                                           var statisticContainer = new StatisticContainer();
+                                            var statisticContainer = new StatisticContainer();
                                             statisticContainer.VelocityVectorCorrelation =
                                                 taskMatlabWrapper.GetWorkspaceData("vector_correlation");
                                             statisticContainer.EnclosedArea =
@@ -4063,10 +4165,10 @@ namespace ManipAnalysis_v2
                                             trial.Statistics = statisticContainer;
                                             trial.BaselineObjectId = baseline.Id;
 
-                                            CompressTrialData(new List<Trial> {trial});
+                                            CompressTrialData(new List<Trial> { trial });
                                             _myDatabaseWrapper.UpdateTrialStatisticsAndBaselineId(trial);
 
-                                            _myManipAnalysisGui.SetProgressBarValue(100.0/trialList.Count*++counter);
+                                            _myManipAnalysisGui.SetProgressBarValue(100.0 / trialList.Count * ++counter);
                                         }
                                         else
                                         {
@@ -4292,7 +4394,7 @@ namespace ManipAnalysis_v2
                                     break;
                                 }
 
-                                _myManipAnalysisGui.SetProgressBarValue(100.0/sumOfAllTrials*processedTrialsCount++);
+                                _myManipAnalysisGui.SetProgressBarValue(100.0 / sumOfAllTrials * processedTrialsCount++);
 
                                 if (trialsArray != null)
                                 {
@@ -4806,7 +4908,7 @@ namespace ManipAnalysis_v2
                                             break;
                                         }
 
-                                        _myManipAnalysisGui.SetProgressBarValue(100.0/sumOfAllTrials*
+                                        _myManipAnalysisGui.SetProgressBarValue(100.0 / sumOfAllTrials *
                                                                                 processedTrialsCount++);
 
                                         if (trialsArray != null)
@@ -4961,13 +5063,13 @@ namespace ManipAnalysis_v2
                                             for (var i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                             {
                                                 _myMatlabWrapper.SetWorkspaceData("vpos1",
-                                                    new[] {xData[i - 2], yData[i - 2]});
+                                                    new[] { xData[i - 2], yData[i - 2] });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vpos2",
-                                                    new[] {xData[i - 1], yData[i - 1]});
+                                                    new[] { xData[i - 1], yData[i - 1] });
 
                                                 _myMatlabWrapper.SetWorkspaceData("vforce",
-                                                    new[] {forceVectorDataX[i - 2]/100.0, forceVectorDataY[i - 2]/100.0});
+                                                    new[] { forceVectorDataX[i - 2] / 100.0, forceVectorDataY[i - 2] / 100.0 });
 
                                                 if (showForceVectors)
                                                 {
@@ -5000,11 +5102,11 @@ namespace ManipAnalysis_v2
                                         for (var i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                         {
                                             _myMatlabWrapper.SetWorkspaceData("vpos1",
-                                                new[] {xData[i - 2], yData[i - 2]});
+                                                new[] { xData[i - 2], yData[i - 2] });
                                             _myMatlabWrapper.SetWorkspaceData("vpos2",
-                                                new[] {xData[i - 1], yData[i - 1]});
+                                                new[] { xData[i - 1], yData[i - 1] });
                                             _myMatlabWrapper.SetWorkspaceData("vforce",
-                                                new[] {forceVectorDataX[i - 2], forceVectorDataY[i - 2]});
+                                                new[] { forceVectorDataX[i - 2], forceVectorDataY[i - 2] });
 
                                             _myMatlabWrapper.Execute(
                                                 "[fPD, fPDsign, fFFsign] = pdForceDirectionLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)], [0 0; 0 0]);");
@@ -5203,7 +5305,7 @@ namespace ManipAnalysis_v2
                                     break;
                                 }
 
-                                _myManipAnalysisGui.SetProgressBarValue(100.0/sumOfAllTrials*processedTrialsCount++);
+                                _myManipAnalysisGui.SetProgressBarValue(100.0 / sumOfAllTrials * processedTrialsCount++);
 
 
                                 if (trajectoryVelocityForce == "Velocity - Normalized")
@@ -5806,7 +5908,7 @@ namespace ManipAnalysis_v2
                                             break;
                                         }
 
-                                        _myManipAnalysisGui.SetProgressBarValue(100.0/sumOfAllTrials*
+                                        _myManipAnalysisGui.SetProgressBarValue(100.0 / sumOfAllTrials *
                                                                                 processedTrialsCount++);
 
 
@@ -5954,11 +6056,11 @@ namespace ManipAnalysis_v2
                                         for (var i = 2; i <= xData.Length & !TaskManager.Pause; i++)
                                         {
                                             _myMatlabWrapper.SetWorkspaceData("vpos1",
-                                                new[] {xData[i - 2], yData[i - 2]});
+                                                new[] { xData[i - 2], yData[i - 2] });
                                             _myMatlabWrapper.SetWorkspaceData("vpos2",
-                                                new[] {xData[i - 1], yData[i - 1]});
+                                                new[] { xData[i - 1], yData[i - 1] });
                                             _myMatlabWrapper.SetWorkspaceData("vforce",
-                                                new[] {forceVectorDataX[i - 2], forceVectorDataY[i - 2]});
+                                                new[] { forceVectorDataX[i - 2], forceVectorDataY[i - 2] });
 
                                             _myMatlabWrapper.Execute(
                                                 "[fPD, fPDsign, fFFsign] = pdForceDirectionLineSegment([vforce(1,1) vforce(1,2)], [vpos1(1,1) vpos1(1,2)], [vpos2(1,1) vpos2(1,2)], [0 0; 0 0]);");
