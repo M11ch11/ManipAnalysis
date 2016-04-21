@@ -77,7 +77,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                     if (currentTrial != null)
                     {
-
                         for (var frame = 0; frame < c3DReader.FramesCount; frame++)
                         {
                             var measuredForcesRaw = new ForceContainer();
@@ -99,6 +98,12 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                             <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
                            */
                             var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
+
+                            var forceFieldStrength = Convert.ToDouble(c3DReader.AnalogData["ACH5", 0]);
+                            currentTrial.ForceFieldMatrix[0, 0] = 0;
+                            currentTrial.ForceFieldMatrix[0, 1] = -forceFieldStrength;
+                            currentTrial.ForceFieldMatrix[1, 0] = forceFieldStrength;
+                            currentTrial.ForceFieldMatrix[1, 1] = 0;
 
                             positionRaw.PositionStatus = positionStatus;
                             positionRaw.TimeStamp = timeStamp;

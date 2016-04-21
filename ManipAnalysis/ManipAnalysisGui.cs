@@ -42,10 +42,7 @@ namespace ManipAnalysis_v2
             {
                 var textArray = text.Split('\n');
 
-                for (var i = 0;
-                    i < textArray.Length;
-                    i
-                        ++)
+                for (var i = 0; i < textArray.Length; i++)
                 {
                     if (i == 0)
                     {

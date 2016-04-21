@@ -5,9 +5,9 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal class C0_cw_02_RetA_RetA : AbstractSzenarioDefinition
     {
-       public new const string StudyName = "Study 08";
+        public new const string StudyName = "Study 08";
 
-       public new const string SzenarioName = "C0_cw_02_RetA_RetA";
+        public new const string SzenarioName = "C0_cw_02_RetA_RetA";
 
         public override int TrialCount => 156;
 
@@ -17,7 +17,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             trial.Szenario = SzenarioName;
 
             if (trial.Target.Number == 10 || trial.Target.Number == 20 || trial.Target.Number == 30)
-                // Target 10/20/30 == StartTrial
+            // Target 10/20/30 == StartTrial
             {
                 myManipAnalysisGui.WriteToLogBox("Skipping Start-Trial. " + trial.Szenario + ", Trail " +
                                                  trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);
@@ -116,7 +116,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 63)
-                    // 30s Pause + Wechsel R=>L + CW ForceField
+                // 30s Pause + Wechsel R=>L + CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 50;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
@@ -127,7 +127,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 64 && trial.Target.Number <= 66)
-                    // 30s Pause + Wechsel L=>R + CW ForceField
+                // 30s Pause + Wechsel L=>R + CW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 53;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
@@ -138,21 +138,21 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 71 && trial.Target.Number <= 73)
-                    // 30s Pause + Wechsel R=>L + ErrorClampTrial
+                // 30s Pause + Wechsel R=>L + ErrorClampTrial
                 {
                     trial.Target.Number = trial.Target.Number - 60;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
                 else if (trial.Target.Number >= 74 && trial.Target.Number <= 76)
-                    // 30s Pause + Wechsel L=>R + ErrorClampTrial
+                // 30s Pause + Wechsel L=>R + ErrorClampTrial
                 {
                     trial.Target.Number = trial.Target.Number - 63;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
                 else if (trial.Target.Number >= 81 && trial.Target.Number <= 83)
-                    // 30s Pause + Wechsel R=>L + CCW ForceField
+                // 30s Pause + Wechsel R=>L + CCW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 70;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
@@ -163,7 +163,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 84 && trial.Target.Number <= 86)
-                    // 30s Pause + Wechsel L=>R + CCW ForceField
+                // 30s Pause + Wechsel L=>R + CCW ForceField
                 {
                     trial.Target.Number = trial.Target.Number - 73;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
@@ -183,8 +183,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
                 if (trial.Target.Number == 1)
                 {
-                    trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(135));
-                    trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(135));
+                    trial.Target.XPos = 0.1 * Math.Cos(DegreeToRadian(135));
+                    trial.Target.YPos = 0.1 * Math.Sin(DegreeToRadian(135));
                     trial.Target.ZPos = 0;
                     trial.Target.Radius = 0.00175;
                     trial.Origin.XPos = 0;
@@ -194,8 +194,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number == 2)
                 {
-                    trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(90));
-                    trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(90));
+                    trial.Target.XPos = 0.1 * Math.Cos(DegreeToRadian(90));
+                    trial.Target.YPos = 0.1 * Math.Sin(DegreeToRadian(90));
                     trial.Target.ZPos = 0;
                     trial.Target.Radius = 0.00175;
                     trial.Origin.XPos = 0;
@@ -205,8 +205,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number == 3)
                 {
-                    trial.Target.XPos = 0.1*Math.Cos(DegreeToRadian(45));
-                    trial.Target.YPos = 0.1*Math.Sin(DegreeToRadian(45));
+                    trial.Target.XPos = 0.1 * Math.Cos(DegreeToRadian(45));
+                    trial.Target.YPos = 0.1 * Math.Sin(DegreeToRadian(45));
                     trial.Target.ZPos = 0;
                     trial.Target.Radius = 0.00175;
                     trial.Origin.XPos = 0;
@@ -214,10 +214,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Origin.ZPos = 0;
                     trial.Origin.Radius = 0.00175;
                 }
-                if (trial.Target.Number == 11)
+                else if (trial.Target.Number == 11)
                 {
-                    trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(135));
-                    trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(135));
+                    trial.Origin.XPos = 0.1 * Math.Cos(DegreeToRadian(135));
+                    trial.Origin.YPos = 0.1 * Math.Sin(DegreeToRadian(135));
                     trial.Origin.ZPos = 0;
                     trial.Origin.Radius = 0.00175;
                     trial.Target.XPos = 0;
@@ -227,8 +227,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number == 12)
                 {
-                    trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(90));
-                    trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(90));
+                    trial.Origin.XPos = 0.1 * Math.Cos(DegreeToRadian(90));
+                    trial.Origin.YPos = 0.1 * Math.Sin(DegreeToRadian(90));
                     trial.Origin.ZPos = 0;
                     trial.Origin.Radius = 0.00175;
                     trial.Target.XPos = 0;
@@ -238,8 +238,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number == 13)
                 {
-                    trial.Origin.XPos = 0.1*Math.Cos(DegreeToRadian(45));
-                    trial.Origin.YPos = 0.1*Math.Sin(DegreeToRadian(45));
+                    trial.Origin.XPos = 0.1 * Math.Cos(DegreeToRadian(45));
+                    trial.Origin.YPos = 0.1 * Math.Sin(DegreeToRadian(45));
                     trial.Origin.ZPos = 0;
                     trial.Origin.Radius = 0.00175;
                     trial.Target.XPos = 0;

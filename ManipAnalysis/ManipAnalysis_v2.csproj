@@ -276,6 +276,14 @@
     <Compile Include="SzenarioParseDefinitions\Study10\_04_test_for_savings_CW.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_05_washout.cs" />
     <Compile Include="SzenarioParseDefinitions\Study10\_06_test_for_transfer_CCW.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_01_Skill_T4T3_Day1.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_01_Skill_T3T4_Day1.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_01_Adapt_T4T3_Day1.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_02_Skill_T4T3_Day2.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_02_Skill_T3T4_Day2.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_02_Adapt_T4T3_Day2.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_02_Adapt_T3T4_Day2.cs" />
+    <Compile Include="SzenarioParseDefinitions\Study11\_01_Adapt_T3T4_Day1.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
     <None Include="app.config" />
