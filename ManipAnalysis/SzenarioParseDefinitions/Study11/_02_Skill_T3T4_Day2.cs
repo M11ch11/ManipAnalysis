@@ -119,7 +119,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.Target.Number == 100) // 3s Pause + CCW ForceField 8.5N + ErrorClamp + ContextCue
                 {
-                    trial.Target.Number = trial.Target.Number - 97;
+                    trial.Target.Number = trial.Target.Number - 98;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                 }
