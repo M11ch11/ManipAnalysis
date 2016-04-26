@@ -15,24 +15,30 @@ namespace ManipAnalysis_v2
         [STAThread]
         private static void Main()
         {
-            var splash = new ManipAnalysisSplash();
-            splash.Show();
+            try {
+                var splash = new ManipAnalysisSplash();
+                splash.Show();
 
-            var manipAnalysisGui = new ManipAnalysisGui();
-            var matlabWrapper = new MatlabWrapper(manipAnalysisGui, MatlabWrapper.MatlabInstanceType.Shared);
-            var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
-            var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, mongoDbWrapper);
-            manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
+                var manipAnalysisGui = new ManipAnalysisGui();
+                var matlabWrapper = new MatlabWrapper(manipAnalysisGui, MatlabWrapper.MatlabInstanceType.Shared);
+                var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
+                var manipAnalysisModel = new ManipAnalysisFunctions(manipAnalysisGui, matlabWrapper, mongoDbWrapper);
+                manipAnalysisGui.SetManipAnalysisModel(manipAnalysisModel);
 
-            splash.Close();
+                splash.Close();
 
-            Application.EnableVisualStyles();
-            Application.Run(manipAnalysisGui);
+                Application.EnableVisualStyles();
+                Application.Run(manipAnalysisGui);
 
-            if (MessageBox.Show(@"Close the MATLAB-Instance as well?", @"Close MATLAB?", MessageBoxButtons.YesNo) ==
-                DialogResult.Yes)
+                if (MessageBox.Show(@"Close the MATLAB-Instance as well?", @"Close MATLAB?", MessageBoxButtons.YesNo) ==
+                    DialogResult.Yes)
+                {
+                    matlabWrapper.Dispose();
+                }
+            }
+            catch(Exception ex)
             {
-                matlabWrapper.Dispose();
+                MessageBox.Show("Error! Please send a screenshot to a responsible person!\n\n" + ex.ToString());
             }
         }
     }

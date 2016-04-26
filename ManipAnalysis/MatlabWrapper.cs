@@ -25,29 +25,30 @@ namespace ManipAnalysis_v2
 
         public MatlabWrapper(ManipAnalysisGui manipAnalysisGui, MatlabInstanceType instanceType)
         {
-            try
+            _instanceType = instanceType;
+            if (_instanceType == MatlabInstanceType.Shared)
             {
-                _instanceType = instanceType;
-                if (_instanceType == MatlabInstanceType.Shared)
-                {
-                    _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver");
-                }
-                else if (_instanceType == MatlabInstanceType.Single)
-                {
-                    _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver.Single");
-                }
+                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver");
+            }
+            else if (_instanceType == MatlabInstanceType.Single)
+            {
+                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver.Single");
+            }
 
+            if (_matlabType != null)
+            {
                 _matlab = Activator.CreateInstance(_matlabType);
-                _manipAnalysisGui = manipAnalysisGui;
-
-                ClearWorkspace();
-                NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
-                ShowCommandWindow(false);
             }
-            catch (Exception ex)
+            else
             {
-                _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started.\n" + ex);
+                _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started! Please restart.");
             }
+            _manipAnalysisGui = manipAnalysisGui;
+
+            ClearWorkspace();
+            NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
+            ShowCommandWindow(false);
+
         }
 
         public void Dispose()
@@ -58,7 +59,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("exit");
             }
-            else if (_instanceType == MatlabInstanceType.Single)
+            else if (_instanceType == MatlabInstanceType.Single && _matlabType != null)
             {
                 _matlabType.InvokeMember("Quit", BindingFlags.InvokeMethod, null, _matlab, null);
             }
@@ -70,8 +71,7 @@ namespace ManipAnalysis_v2
             {
                 _matlabType.InvokeMember("Execute", BindingFlags.InvokeMethod, null, _matlab, new object[] { command });
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -88,8 +88,7 @@ namespace ManipAnalysis_v2
                 Execute("xlabel('" + xAxisLabel + "');");
                 Execute("ylabel('" + yAxisLabel + "');");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -106,8 +105,7 @@ namespace ManipAnalysis_v2
                 Execute("xlabel('" + xAxisLabel + "');");
                 Execute("ylabel('" + yAxisLabel + "');");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -119,8 +117,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("legend('" + legend1 + "','" + legend2 + "');");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -132,8 +129,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("legend('" + legend1 + "','" + legend2 + "','" + legend3 + "');");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -465,8 +461,7 @@ namespace ManipAnalysis_v2
                 _matlabType.InvokeMember("PutWorkspaceData", BindingFlags.InvokeMethod, null, _matlab,
                     new[] { name, "base", variable });
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -479,8 +474,7 @@ namespace ManipAnalysis_v2
                 return _matlabType.InvokeMember("GetVariable", BindingFlags.InvokeMethod, null, _matlab,
                     new object[] { name, "base" }, null);
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
                 return null;
@@ -493,8 +487,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("clear " + name);
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -507,8 +500,7 @@ namespace ManipAnalysis_v2
                 Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar +
                         ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -520,8 +512,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -549,8 +540,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("plot(" + xVar + ",'LineWidth'," + lineWidth + ")");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
@@ -562,8 +552,7 @@ namespace ManipAnalysis_v2
             {
                 Execute("plot(" + xVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
             }
-            catch (Exception
-                ex)
+            catch (Exception ex)
             {
                 _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
             }
