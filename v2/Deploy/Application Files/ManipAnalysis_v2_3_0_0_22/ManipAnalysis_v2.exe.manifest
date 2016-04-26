@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="3.0.0.21" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="3.0.0.22" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5960.28370" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5960.29544" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="956928">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5960.28370" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="916992">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.5960.29544" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>c+zreKuxqzsr5LbfSHG3RZTmUsDB4OqM2FxFuzA9RKw=</dsig:DigestValue>
+        <dsig:DigestValue>QG+Ne5rxmB0ndanmEMcxEi1pbfpMIT66Dq7b3G1nKEY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -111,13 +111,13 @@
       <dsig:DigestValue>1SR2HBfPDeqUEJ8/zazS7LZ1UBFf+eAwf3jAUFVBnv4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ManipAnalysis_v2.pdb" size="931328">
+  <file name="ManipAnalysis_v2.pdb" size="843264">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>7ijQ9ReHCE9WZ9268yXHk4IqXQjHjd57UWXR3UOAFR8=</dsig:DigestValue>
+      <dsig:DigestValue>rPJU1jvnBGWpwTvfbpMSIGL71ljCpcrVPC0AQT6f9is=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ManipIcon.ico" size="51262">
