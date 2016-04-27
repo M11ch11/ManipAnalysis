@@ -15,10 +15,9 @@ namespace ManipAnalysis_v2
         [STAThread]
         private static void Main()
         {
+            var splash = new ManipAnalysisSplash();
+            splash.Show();
             try {
-                var splash = new ManipAnalysisSplash();
-                splash.Show();
-
                 var manipAnalysisGui = new ManipAnalysisGui();
                 var matlabWrapper = new MatlabWrapper(manipAnalysisGui, MatlabWrapper.MatlabInstanceType.Shared);
                 var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
@@ -38,7 +37,8 @@ namespace ManipAnalysis_v2
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Error! Please send a screenshot to a responsible person!\n\n" + ex.ToString());
+                splash.Close();
+                MessageBox.Show("Error! Please send a screenshot to a responsible person!\n\n" + ex.ToString());                
             }
         }
     }
