@@ -40,7 +40,7 @@ namespace ManipAnalysis_v2
             this.button_Start_SelectDatabase = new System.Windows.Forms.Button();
             this.comboBox_Start_Database = new System.Windows.Forms.ComboBox();
             this.label_Start_Database = new System.Windows.Forms.Label();
-            this.button_Start_ConnectToSQlServer = new System.Windows.Forms.Button();
+            this.button_Start_ConnectToDatabaseServer = new System.Windows.Forms.Button();
             this.label_Start_ManipAnalysis = new System.Windows.Forms.Label();
             this.tabPage_VisualizationExport = new System.Windows.Forms.TabPage();
             this.tabControl_VisualizationExport = new System.Windows.Forms.TabControl();
@@ -286,7 +286,7 @@ namespace ManipAnalysis_v2
             this.tabPage_Start.Controls.Add(this.button_Start_SelectDatabase);
             this.tabPage_Start.Controls.Add(this.comboBox_Start_Database);
             this.tabPage_Start.Controls.Add(this.label_Start_Database);
-            this.tabPage_Start.Controls.Add(this.button_Start_ConnectToSQlServer);
+            this.tabPage_Start.Controls.Add(this.button_Start_ConnectToDatabaseServer);
             this.tabPage_Start.Controls.Add(this.label_Start_ManipAnalysis);
             this.tabPage_Start.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Start.Name = "tabPage_Start";
@@ -351,15 +351,15 @@ namespace ManipAnalysis_v2
             this.label_Start_Database.TabIndex = 19;
             this.label_Start_Database.Text = "Database:";
             // 
-            // button_Start_ConnectToSQlServer
+            // button_Start_ConnectToDatabaseServer
             // 
-            this.button_Start_ConnectToSQlServer.Location = new System.Drawing.Point(301, 128);
-            this.button_Start_ConnectToSQlServer.Name = "button_Start_ConnectToSQlServer";
-            this.button_Start_ConnectToSQlServer.Size = new System.Drawing.Size(90, 23);
-            this.button_Start_ConnectToSQlServer.TabIndex = 16;
-            this.button_Start_ConnectToSQlServer.Text = "Connect";
-            this.button_Start_ConnectToSQlServer.UseVisualStyleBackColor = true;
-            this.button_Start_ConnectToSQlServer.Click += new System.EventHandler(this.button_Start_ConnectToDatabaseServer_Click);
+            this.button_Start_ConnectToDatabaseServer.Location = new System.Drawing.Point(301, 128);
+            this.button_Start_ConnectToDatabaseServer.Name = "button_Start_ConnectToDatabaseServer";
+            this.button_Start_ConnectToDatabaseServer.Size = new System.Drawing.Size(90, 23);
+            this.button_Start_ConnectToDatabaseServer.TabIndex = 16;
+            this.button_Start_ConnectToDatabaseServer.Text = "Connect";
+            this.button_Start_ConnectToDatabaseServer.UseVisualStyleBackColor = true;
+            this.button_Start_ConnectToDatabaseServer.Click += new System.EventHandler(this.button_Start_ConnectToDatabaseServer_Click);
             // 
             // label_Start_ManipAnalysis
             // 
@@ -2644,7 +2644,7 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.TabPage tabPage_Start;
         private System.Windows.Forms.Label label_Start_ManipAnalysis;
         private System.Windows.Forms.TabPage tabPage_VisualizationExport;
-        private System.Windows.Forms.Button button_Start_ConnectToSQlServer;
+        private System.Windows.Forms.Button button_Start_ConnectToDatabaseServer;
         private System.Windows.Forms.CheckBox checkBox_Start_ManualMode;
         private System.Windows.Forms.TabControl tabControl_VisualizationExport;
         private System.Windows.Forms.TabPage tabPage_DescriptiveStatistic1;

@@ -17,7 +17,8 @@ namespace ManipAnalysis_v2
         {
             var splash = new ManipAnalysisSplash();
             splash.Show();
-            try {
+            try
+            {
                 var manipAnalysisGui = new ManipAnalysisGui();
                 var matlabWrapper = new MatlabWrapper(manipAnalysisGui, MatlabWrapper.MatlabInstanceType.Shared);
                 var mongoDbWrapper = new MongoDbWrapper(manipAnalysisGui);
@@ -35,10 +36,10 @@ namespace ManipAnalysis_v2
                     matlabWrapper.Dispose();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 splash.Close();
-                MessageBox.Show("Error! Please send a screenshot to a responsible person!\n\n" + ex.ToString());                
+                MessageBox.Show("Error in ManipAnalysis! Please send a screenshot to a responsible person!\nChristian Stockinger [christian.stockinger@kit.edu]\n\n" + ex.Source + "\n\n" + ex.StackTrace);
             }
         }
     }

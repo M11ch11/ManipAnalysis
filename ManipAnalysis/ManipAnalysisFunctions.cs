@@ -45,7 +45,6 @@ namespace ManipAnalysis_v2
 
             using (var tcp = new TcpClient())
             {
-                //IAsyncResult ar = tcp.BeginConnect(server, 1433, null, null); // For MS-SQL
                 var ar = tcp.BeginConnect(server, 27017, null, null);
                 // For MongoDB
                 var wh = ar.AsyncWaitHandle;
@@ -95,7 +94,7 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
-        ///     Sets a Database in the SQL-Wrapper
+        ///     Sets a Database
         /// </summary>
         /// <param name="database">The new Database</param>
         public void SetDatabase(string database)
