@@ -32,13 +32,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://eoptam.github.io/ManipAnalysis/Deploy/</InstallUrl>
+    <InstallUrl>http://Alx-Wo.github.io/ManipAnalysis/Deploy/</InstallUrl>
     <ProductName>ManipAnalysis</ProductName>
     <PublisherName>Karlsruhe Institute of Technology</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>64</ApplicationRevision>
+    <ApplicationRevision>65</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -128,7 +128,7 @@
     <ManifestKeyFile>ManipAnalysis_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
