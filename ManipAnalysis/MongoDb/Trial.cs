@@ -12,7 +12,9 @@ namespace ManipAnalysis_v2.MongoDb
 
             ForceFieldCW = 1,
 
-            ForceFieldCCW = 2
+            ForceFieldCCW = 2,
+
+            ForceFieldDF = 3
         }
 
         public enum HandednessEnum
@@ -32,7 +34,9 @@ namespace ManipAnalysis_v2.MongoDb
 
             CatchTrial = 2,
 
-            PositionControlTrial = 3
+            PositionControlTrial = 3,
+
+            ViconTrial = 4
         }
 
         public double[,] ForceFieldMatrix = new double[2, 2];
