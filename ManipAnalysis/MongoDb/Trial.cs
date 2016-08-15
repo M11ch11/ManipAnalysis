@@ -23,7 +23,11 @@ namespace ManipAnalysis_v2.MongoDb
 
             LeftHand = 1,
 
-            Unknown = 2
+            Unknown = 2,
+
+            RightHandVicon = 3,
+
+            LeftHandVicon = 4
         }
 
         public enum TrialTypeEnum
@@ -35,8 +39,6 @@ namespace ManipAnalysis_v2.MongoDb
             CatchTrial = 2,
 
             PositionControlTrial = 3,
-
-            ViconTrial = 4
         }
 
         public double[,] ForceFieldMatrix = new double[2, 2];
