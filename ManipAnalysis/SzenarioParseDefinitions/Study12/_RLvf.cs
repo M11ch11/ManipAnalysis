@@ -285,11 +285,6 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                     trial = null;
                 }
 
-                if (trial != null)
-                {
-                    trial.Handedness = Trial.HandednessEnum.RightHand;
-                }
-
                 if (trial != null && (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > TrialCount))
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " +
@@ -299,20 +294,68 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                 else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 96)
                 {
                     trial.Szenario = "Familiarization";
+                    if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 48) // Trials mit rechter Hand
+                    {
+                        trial.Handedness = Trial.HandednessEnum.RightHand;
+                    } else if(trial.TrialNumberInSzenario >= 49 && trial.TrialNumberInSzenario <= 96) // Trials mit linker Hand
+                    {
+                        trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    }
                 }
                 else if (trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= 313)
                 {
                     trial.Szenario = "Base1";
+                    if ((trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= (97 + 48)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 97) && trial.TrialNumberInSzenario <= (97 + 144)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 205) && trial.TrialNumberInSzenario <= (97 + 216))) // Trials mit rechter Hand
+                    {
+                        trial.Handedness = Trial.HandednessEnum.RightHand;
+                        if ((trial.TrialNumberInSzenario == (97 + 8)) || (trial.TrialNumberInSzenario == (97 + 20)) || (trial.TrialNumberInSzenario == (97 + 32)) ||
+                            (trial.TrialNumberInSzenario == (97 + 43)) || (trial.TrialNumberInSzenario == (97 + 105)) || (trial.TrialNumberInSzenario == (97 + 119)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 133) && trial.TrialNumberInSzenario <= (97 + 144)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 205) && trial.TrialNumberInSzenario <= (97 + 216))) // Davon ViconTrials:
+                        {
+                            trial.Handedness = Trial.HandednessEnum.RightHandVicon;
+                        }
+                    } else if ((trial.TrialNumberInSzenario >= (97 + 49) && trial.TrialNumberInSzenario <= (97 + 96)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 145) && trial.TrialNumberInSzenario <= (97 + 204))) // Trials mit linker Hand
+                    {
+                        trial.Handedness = Trial.HandednessEnum.LeftHand;
+                        if ((trial.TrialNumberInSzenario == (97 + 56)) || (trial.TrialNumberInSzenario == (97 + 68)) || (trial.TrialNumberInSzenario == (97 + 80)) ||
+                            (trial.TrialNumberInSzenario == (97 + 91)) || (trial.TrialNumberInSzenario == (97 + 153)) || (trial.TrialNumberInSzenario == (97 + 167)) ||
+                            (trial.TrialNumberInSzenario >= (97 + 181) && trial.TrialNumberInSzenario <= (97 + 204))) // Davon ViconTrials:
+                        {
+                            trial.Handedness = Trial.HandednessEnum.LeftHandVicon;
+                        }
+                    }
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 96;
                 }
                 else if (trial.TrialNumberInSzenario >= 314 && trial.TrialNumberInSzenario <= 482)
                 {
                     trial.Szenario = "Training";
+                    trial.Handedness = Trial.HandednessEnum.RightHand;
+                    if ((trial.TrialNumberInSzenario >= 314 && trial.TrialNumberInSzenario <= (314 + 24)) ||
+                        (trial.TrialNumberInSzenario >= (314 + 43) && trial.TrialNumberInSzenario <= (314 + 54)) ||
+                        (trial.TrialNumberInSzenario >= (314 + 73) && trial.TrialNumberInSzenario <= (314 + 84)) ||
+                        (trial.TrialNumberInSzenario >= (314 + 109) && trial.TrialNumberInSzenario <= (314 + 120)) ||
+                        (trial.TrialNumberInSzenario >= (314 + 157) && trial.TrialNumberInSzenario <= (314 + 168))) //Davon ViconTrials:
+                    {
+                        trial.Handedness = Trial.HandednessEnum.RightHandVicon;
+                    }
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 313;
                 }
                 else if (trial.TrialNumberInSzenario >= 483 && trial.TrialNumberInSzenario <= TrialCount)
                 {
                     trial.Szenario = "Generalization";
+                    trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    if ((trial.TrialNumberInSzenario >= 483 && trial.TrialNumberInSzenario <= (483 + 6 + 24)) ||
+                        (trial.TrialNumberInSzenario >= (483 + 6 + 43) && trial.TrialNumberInSzenario <= (483 + 6 + 54)) ||
+                        (trial.TrialNumberInSzenario >= (483 + 6 + 73) && trial.TrialNumberInSzenario <= (483 + 6 + 84)) ||
+                        (trial.TrialNumberInSzenario >= (483 + 6 + 109) && trial.TrialNumberInSzenario <= (483 + 6 + 120)) ||
+                        (trial.TrialNumberInSzenario >= (483 + 6 + 157) && trial.TrialNumberInSzenario <= (483 + 6 + 168)))
+                    {
+                        trial.Handedness = Trial.HandednessEnum.LeftHandVicon;
+                    }
                     trial.TrialNumberInSzenario = trial.TrialNumberInSzenario - 482;
                 }
             }
