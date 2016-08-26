@@ -284,7 +284,6 @@
     <Compile Include="SzenarioParseDefinitions\Study11\_02_Adapt_T4T3_Day2.cs" />
     <Compile Include="SzenarioParseDefinitions\Study11\_02_Adapt_T3T4_Day2.cs" />
     <Compile Include="SzenarioParseDefinitions\Study11\_01_Adapt_T3T4_Day1.cs" />
-    <Compile Include="SzenarioParseDefinitions\Study12\_00_Demo.cs" />
     <Compile Include="SzenarioParseDefinitions\Study12\_RLdf.cs" />
     <Compile Include="SzenarioParseDefinitions\Study12\_RLvf.cs" />
     <Compile Include="TaskManager.cs" />

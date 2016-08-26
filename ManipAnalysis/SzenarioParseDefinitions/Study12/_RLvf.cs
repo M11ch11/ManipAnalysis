@@ -293,7 +293,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                 }
                 else if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 96)
                 {
-                    trial.Szenario = "Familiarization";
+                    trial.Szenario = "RLvf_Familiarization";
                     if (trial.TrialNumberInSzenario >= 1 && trial.TrialNumberInSzenario <= 48) // Trials mit rechter Hand
                     {
                         trial.Handedness = Trial.HandednessEnum.RightHand;
@@ -304,7 +304,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                 }
                 else if (trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= 313)
                 {
-                    trial.Szenario = "Base1";
+                    trial.Szenario = "RLvf_Base1";
                     if ((trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= (97 + 48)) ||
                             (trial.TrialNumberInSzenario >= (97 + 97) && trial.TrialNumberInSzenario <= (97 + 144)) ||
                             (trial.TrialNumberInSzenario >= (97 + 205) && trial.TrialNumberInSzenario <= (97 + 216))) // Trials mit rechter Hand
@@ -332,7 +332,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                 }
                 else if (trial.TrialNumberInSzenario >= 314 && trial.TrialNumberInSzenario <= 482)
                 {
-                    trial.Szenario = "Training";
+                    trial.Szenario = "RLvf_Training";
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                     if ((trial.TrialNumberInSzenario >= 314 && trial.TrialNumberInSzenario <= (314 + 24)) ||
                         (trial.TrialNumberInSzenario >= (314 + 43) && trial.TrialNumberInSzenario <= (314 + 54)) ||
@@ -346,7 +346,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions.Study12
                 }
                 else if (trial.TrialNumberInSzenario >= 483 && trial.TrialNumberInSzenario <= TrialCount)
                 {
-                    trial.Szenario = "Generalization";
+                    trial.Szenario = "RLvf_Generalization";
                     trial.Handedness = Trial.HandednessEnum.LeftHand;
                     if ((trial.TrialNumberInSzenario >= 483 && trial.TrialNumberInSzenario <= (483 + 6 + 24)) ||
                         (trial.TrialNumberInSzenario >= (483 + 6 + 43) && trial.TrialNumberInSzenario <= (483 + 6 + 54)) ||
