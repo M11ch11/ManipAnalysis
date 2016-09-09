@@ -2383,7 +2383,7 @@ namespace ManipAnalysis_v2
 
                     foreach (var study in studys)
                     {
-                        if (study == "Study 12")
+                        if (study == "Study_12_HEiKA")
                         {
                             var groups = _myDatabaseWrapper.GetGroups(study);
 
@@ -2530,7 +2530,7 @@ namespace ManipAnalysis_v2
                                         _myDatabaseWrapper.GetTurns(study, group, "RLvf_Base1", subject).ElementAt(0);
 
                                     var baselineTrials =
-                                        _myDatabaseWrapper.GetTrials(study, group, "Base1", subject, turnDateTime,
+                                        _myDatabaseWrapper.GetTrials(study, group, "RLvf_Base1", subject, turnDateTime,
                                             Enumerable.Range(1, 204), baselineFields).ToList();
 
 
