@@ -19,7 +19,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
-            trial.Study = "Study 12";
+            trial.Study = "Study_12_HEiKA";
             trial.Szenario = SzenarioName;
 
             if (trial.Target.Number == 10 || trial.Target.Number == 20) // Target 10/20 == StartTrial(RightHand/LeftHand)
@@ -311,7 +311,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 }
                 else if (trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= 314)
                 {
-                    trial.Szenario = "RLvf_Base1";
+                    trial.Szenario = "Baseline";
                     if ((trial.TrialNumberInSzenario >= 97 && trial.TrialNumberInSzenario <= 144) ||
                             (trial.TrialNumberInSzenario >= 193 && trial.TrialNumberInSzenario <= 240) ||
                             (trial.TrialNumberInSzenario >= 302 && trial.TrialNumberInSzenario <= 313)) // Trials mit rechter Hand
@@ -325,7 +325,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                             trial.Handedness = Trial.HandednessEnum.RightHandVicon;
                         }
                     } else if ((trial.TrialNumberInSzenario >= 145 && trial.TrialNumberInSzenario <= 192) ||
-                            (trial.TrialNumberInSzenario >= 241 && trial.TrialNumberInSzenario <= 288)) // Trials mit linker Hand
+                            (trial.TrialNumberInSzenario >= 241 && trial.TrialNumberInSzenario <= 288) ||
+                            (trial.TrialNumberInSzenario >= 290 && trial.TrialNumberInSzenario <= 301)) // Trials mit linker Hand
                     {
                         trial.Handedness = Trial.HandednessEnum.LeftHand;
                         if ((trial.TrialNumberInSzenario == 152) || (trial.TrialNumberInSzenario == 164) || (trial.TrialNumberInSzenario == 176) ||
