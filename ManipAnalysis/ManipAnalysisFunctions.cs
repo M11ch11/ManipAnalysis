@@ -4100,7 +4100,7 @@ namespace ManipAnalysis_v2
                                             }
                                             catch (Exception ex)
                                             {
-                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint350ms for predicitionAndFeedbackAngle\n" + ex.ToString());
+                                                _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint350ms for predicitionAndFeedbackAngle in Trial " + trial.TrialNumberInSzenario + "in Szenario " + trial.Szenario + "\n" + ex.ToString());
                                             }
 
                                             taskMatlabWrapper.SetWorkspaceData("startPoint",
