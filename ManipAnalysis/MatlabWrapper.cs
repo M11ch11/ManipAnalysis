@@ -12,6 +12,12 @@ namespace ManipAnalysis_v2
             Shared,
             Single
         }
+        private class MatlabException : Exception
+        {
+            public MatlabException(string message) : base(message)
+            {
+            }
+        }
 
         private readonly MatlabInstanceType _instanceType;
 
@@ -25,29 +31,43 @@ namespace ManipAnalysis_v2
 
         public MatlabWrapper(ManipAnalysisGui manipAnalysisGui, MatlabInstanceType instanceType)
         {
-            _instanceType = instanceType;
-            if (_instanceType == MatlabInstanceType.Shared)
+            try
             {
-                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver");
-            }
-            else if (_instanceType == MatlabInstanceType.Single)
-            {
-                _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver.Single");
-            }
 
-            if (_matlabType != null)
-            {
-                _matlab = Activator.CreateInstance(_matlabType);
-            }
-            else
-            {
-                _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started! Please restart.");
-            }
-            _manipAnalysisGui = manipAnalysisGui;
 
-            ClearWorkspace();
-            NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
-            ShowCommandWindow(false);
+                _instanceType = instanceType;
+                if (_instanceType == MatlabInstanceType.Shared)
+                {
+                    _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver");
+                }
+                else if (_instanceType == MatlabInstanceType.Single)
+                {
+                    _matlabType = Type.GetTypeFromProgID("Matlab.Autoserver.Single");
+                }
+
+                if (_matlabType != null)
+                {
+                    _matlab = Activator.CreateInstance(_matlabType);
+                }
+                else
+                {
+                    /* rausgenommen, da evtl durch unsychronen Aufruf manipAnalysisGUI noch nicht gestartet ist zu diesem Zeitpunkt und dann alles abschmiert...
+
+                    _manipAnalysisGui.WriteToLogBox("MATLAB-Interface could not be started! Please restart.");
+
+                    */
+                    throw new MatlabException("Matlab-Instance is could not be started and is instatiated with null");
+                }
+                _manipAnalysisGui = manipAnalysisGui;
+
+                ClearWorkspace();
+                NavigateToPath(Application.StartupPath + "\\MatlabFiles\\");
+                ShowCommandWindow(false);
+            }
+            catch (MatlabException e)
+            {
+                MessageBox.Show("Matlab-Instance could not be started, please close the application, as it will not work properly! " + e.Source + "\n\n" + e.StackTrace);
+            }
 
         }
 
