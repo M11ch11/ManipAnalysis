@@ -5483,7 +5483,7 @@ namespace ManipAnalysis_v2
                                     tempContainer.Trials, trialTypes, forceFields, handedness, fields).ToArray();
 
                             for (var trialsArrayCounter = 0;
-                                trialsArrayCounter < tempContainer.Trials.Count & !TaskManager.Cancel;
+                                trialsArrayCounter < trialsArray.Length & !TaskManager.Cancel;
                                 trialsArrayCounter++)
                             {
                                 if (TaskManager.Cancel)
