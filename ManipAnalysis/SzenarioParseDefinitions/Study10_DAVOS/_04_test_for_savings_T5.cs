@@ -9,7 +9,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public new const string SzenarioName = "04_test_for_savings_T5";
 
-        public override int TrialCount => 61;
+        public override int TrialCount => 46; //Number of valid trials(without skipped/nulled Trials for PositionControl
 
         public override bool CheckValidTrialNumberInSzenarioSequence => false;
 
@@ -294,7 +294,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Handedness = Trial.HandednessEnum.RightHand;
                 }
 
-                if (trial != null && (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 61))
+                if (trial != null && (trial.TrialNumberInSzenario < 1 || trial.TrialNumberInSzenario > 93)) //93 is the number of all trials in this szenario
                 {
                     myManipAnalysisGui.WriteToLogBox("Invalid Trial-Number. " + trial.Szenario + ", Trail " +
                                                      trial.TrialNumberInSzenario + ", Target " + trial.Target.Number);

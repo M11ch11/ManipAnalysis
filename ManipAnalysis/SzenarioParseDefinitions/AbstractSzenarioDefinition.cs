@@ -97,7 +97,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                             <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
                             <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
                            */
-                            var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
+                            //For newer Imports use PositionStatus, for older ones ACH4
+                            //var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
+
+                            var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
 
                             /*
                             * Study 11 Special analog data field
