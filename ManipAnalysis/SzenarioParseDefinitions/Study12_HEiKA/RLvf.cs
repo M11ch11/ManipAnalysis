@@ -57,6 +57,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 20;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 24 && trial.Target.Number <= 26) ||
                          (trial.Target.Number >= 34 && trial.Target.Number <= 36)) // ViscousForceField(ForceFieldCW) + Vicon
@@ -64,6 +68,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 23;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 27 && trial.Target.Number <= 29) ||
                          (trial.Target.Number >= 37 && trial.Target.Number <= 39)) // ForceChannel(ErrorClampTrial) VF + Vicon
@@ -71,6 +79,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 26;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 41 && trial.Target.Number <= 43) ||
                          (trial.Target.Number >= 51 && trial.Target.Number <= 53)) // DivergentForceField(ForceFieldDF)
@@ -78,6 +90,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 40;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 44 && trial.Target.Number <= 46) ||
                          (trial.Target.Number >= 54 && trial.Target.Number <= 56)) // DivergentForceField(ForceFieldDF) + Vicon
@@ -85,6 +101,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 43;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 47 && trial.Target.Number <= 49) ||
                          (trial.Target.Number >= 57 && trial.Target.Number <= 59)) // ForceChannel(ErrorclampTrial)DF + Vicon
@@ -92,6 +112,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 46;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 /*
                  * Will never happen in this study
@@ -117,6 +141,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 60;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 64 && trial.Target.Number <= 66)) // 30s Pause + NullField + Handwechsel -> L
                 {
@@ -135,12 +163,20 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 63;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 77 && trial.Target.Number <= 79)) // 30s Pause + ViscousForceField(ForceFieldCW) + Vicon + Handwechsel -> R
                 {
                     trial.Target.Number = trial.Target.Number - 66;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 81 && trial.Target.Number <= 83) ||
                          (trial.Target.Number >= 91 && trial.Target.Number <= 93)) // ForceChannel(ErrorClampTrial) + ViscousForceField(ForceFieldCW)
@@ -148,18 +184,30 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 80;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 84 && trial.Target.Number <= 86)) // 30s Pause + ForceFieldDF + Vicon + Handwechsel -> L
                 {
                     trial.Target.Number = trial.Target.Number - 73;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 87 && trial.Target.Number <= 89)) // 30s Pause + ForceFieldDF + Vicon + Handwechsel -> R
                 {
                     trial.Target.Number = trial.Target.Number - 76;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 15;
+                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if ((trial.Target.Number >= 94 && trial.Target.Number <= 96)) // 30s Pause + NullField + ForceChannel(ErrorclampTrial) + Vicon + Handwechsel -> L
                 {

@@ -3843,7 +3843,7 @@ namespace ManipAnalysis_v2
                                                             t.Subject == trial.Subject &&
                                                             t.Target.Number == trial.Target.Number &&
                                                             t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
-                                                            t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW &&
+                                                            t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW && // Für Import von 06_transfer_IW_B wird hier keine passende Baseline gefunden...
                                                             t.Handedness == trial.Handedness);
                                                 if (baseline == null)
                                                 {
@@ -4347,7 +4347,9 @@ namespace ManipAnalysis_v2
                                         }
                                         else
                                         {
-                                            _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial: " +
+                                            if (trial.Szenario != "06_transfer_IW")
+                                            {
+                                                _myManipAnalysisGui.WriteToLogBox("No matching Baseline for Trial: " +
                                                                               trial.Study + " / " + trial.Group + " / " +
                                                                               trial.Subject.PId + " / " + trial.Szenario +
                                                                               " / Trial " + trial.TrialNumberInSzenario +
@@ -4361,6 +4363,8 @@ namespace ManipAnalysis_v2
                                                                               Enum.GetName(
                                                                                   typeof(Trial.HandednessEnum),
                                                                                   trial.Handedness));
+                                            }
+                                            
                                         }
                                     }
                                 }
