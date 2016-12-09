@@ -1499,6 +1499,11 @@ namespace ManipAnalysis_v2
                             {
                                 var trialsContainer = myParser.TrialsContainer;
 
+                                //TODO: REMOVE LINE
+                                //var trial153 = trialsContainer.Where(t => t.TrialNumberInSzenario == 153 && t.Szenario == "Baseline").First();
+                                //trialsContainer.Remove(trial153);
+    
+
                                 var taskTrialListParts = new List<List<Trial>>();
                                 var threadCount = 0;
 
@@ -1514,10 +1519,8 @@ namespace ManipAnalysis_v2
                                     while (trialCounter < trialsContainer.Count)
                                     {
                                         taskTrialListParts[listCounter].Add(trialsContainer[trialCounter]);
-                                        trialCounter
-                                            ++;
-                                        listCounter
-                                            ++;
+                                        trialCounter++;
+                                        listCounter++;
                                         if (listCounter >= cpuCount)
                                         {
                                             listCounter = 0;
@@ -1542,20 +1545,25 @@ namespace ManipAnalysis_v2
                                     _myManipAnalysisGui.WriteProgressInfo("Processing data...");
                                     calculatingTasks.Add(Task.Factory.StartNew(delegate
                                     {
-                                        var taskTrialList = tempTaskTrialList;
-                                        var taskMatlabWrapper = tempMatlabWrapper;
+                                        try {
+                                            var taskTrialList = tempTaskTrialList;
+                                            var taskMatlabWrapper = tempMatlabWrapper;
 
-                                        ButterWorthFilter(taskMatlabWrapper, taskTrialList, butterFilterOrder,
-                                            butterFilterCutOffPosition, butterFilterCutOffForce, samplesPerSecond);
+                                            ButterWorthFilter(taskMatlabWrapper, taskTrialList, butterFilterOrder,
+                                                butterFilterCutOffPosition, butterFilterCutOffForce, samplesPerSecond);
 
-                                        VelocityCalculation(taskMatlabWrapper, taskTrialList, samplesPerSecond);
+                                            VelocityCalculation(taskMatlabWrapper, taskTrialList, samplesPerSecond);
 
-                                        TimeNormalization(taskMatlabWrapper, taskTrialList, timeNormalizationSamples,
-                                            percentPeakVelocity);
+                                            TimeNormalization(taskMatlabWrapper, taskTrialList, timeNormalizationSamples,
+                                                percentPeakVelocity);
 
-                                        lock (calculatingTasks)
-                                        {
-                                            calculatingTasks.Remove(calculatingTasks.First(t => t.Id == Task.CurrentId));
+                                            lock (calculatingTasks)
+                                            {
+                                                calculatingTasks.Remove(calculatingTasks.First(t => t.Id == Task.CurrentId));
+                                            }
+                                        }
+                                        catch (Exception ex) {
+                                            _myManipAnalysisGui.WriteToLogBox("Exception: " + ex.ToString());
                                         }
                                     }));
                                 }
@@ -1564,12 +1572,17 @@ namespace ManipAnalysis_v2
                                 {
                                     Thread.Sleep(500);
                                 }
-
+                                
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
                                 var szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
-
+                                
                                 _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
                                 CompressTrialData(trialsContainer);
+
+
+                                //TODO: REMOVE LINE
+                                //trialsContainer.Add(trial153);
+
 
                                 _myManipAnalysisGui.WriteProgressInfo("Uploading into database...");
                                 try
@@ -1627,157 +1640,163 @@ namespace ManipAnalysis_v2
 
             for (var trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
-                myMatlabWrapper.SetWorkspaceData("force_actual_x",
-                    trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
-                myMatlabWrapper.SetWorkspaceData("force_actual_y",
-                    trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Y).ToArray());
-                myMatlabWrapper.SetWorkspaceData("force_actual_z",
-                    trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Z).ToArray());
+                try {
+                    myMatlabWrapper.SetWorkspaceData("force_actual_x",
+                        trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("force_actual_y",
+                        trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Y).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("force_actual_z",
+                        trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.Z).ToArray());
 
-                if (trialsContainer[trialCounter].NominalForcesRaw != null)
-                {
-                    myMatlabWrapper.SetWorkspaceData("force_nominal_x",
-                        trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.X).ToArray());
-                    myMatlabWrapper.SetWorkspaceData("force_nominal_y",
-                        trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Y).ToArray());
-                    myMatlabWrapper.SetWorkspaceData("force_nominal_z",
-                        trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Z).ToArray());
-                }
-
-                myMatlabWrapper.SetWorkspaceData("force_moment_x",
-                    trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.X).ToArray());
-                myMatlabWrapper.SetWorkspaceData("force_moment_y",
-                    trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Y).ToArray());
-                myMatlabWrapper.SetWorkspaceData("force_moment_z",
-                    trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Z).ToArray());
-
-                myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
-                    trialsContainer[trialCounter].PositionRaw.Select(t => t.X).ToArray());
-                myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
-                    trialsContainer[trialCounter].PositionRaw.Select(t => t.Y).ToArray());
-                myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
-                    trialsContainer[trialCounter].PositionRaw.Select(t => t.Z).ToArray());
-
-                myMatlabWrapper.Execute("force_actual_x = filtfilt(bForce, aForce, force_actual_x);");
-                myMatlabWrapper.Execute("force_actual_y = filtfilt(bForce, aForce, force_actual_y);");
-                myMatlabWrapper.Execute("force_actual_z = filtfilt(bForce, aForce, force_actual_z);");
-
-                if (trialsContainer[trialCounter].NominalForcesRaw != null)
-                {
-                    myMatlabWrapper.Execute("force_nominal_x = filtfilt(bForce, aForce,force_nominal_x);");
-                    myMatlabWrapper.Execute("force_nominal_y = filtfilt(bForce, aForce,force_nominal_y);");
-                    myMatlabWrapper.Execute("force_nominal_z = filtfilt(bForce, aForce,force_nominal_z);");
-                }
-                myMatlabWrapper.Execute("force_moment_x = filtfilt(bForce, aForce, force_moment_x);");
-                myMatlabWrapper.Execute("force_moment_y = filtfilt(bForce, aForce, force_moment_y);");
-                myMatlabWrapper.Execute("force_moment_z = filtfilt(bForce, aForce, force_moment_z);");
-
-                myMatlabWrapper.Execute("position_cartesian_x = filtfilt(bPosition, aPosition, position_cartesian_x);");
-                myMatlabWrapper.Execute("position_cartesian_y = filtfilt(bPosition, aPosition, position_cartesian_y);");
-                myMatlabWrapper.Execute("position_cartesian_z = filtfilt(bPosition, aPosition, position_cartesian_z);");
-
-
-                double[,] forceActualX = myMatlabWrapper.GetWorkspaceData("force_actual_x");
-                double[,] forceActualY = myMatlabWrapper.GetWorkspaceData("force_actual_y");
-                double[,] forceActualZ = myMatlabWrapper.GetWorkspaceData("force_actual_z");
-
-                double[,] forceNominalX = null;
-                double[,] forceNominalY = null;
-                double[,] forceNominalZ = null;
-                if (trialsContainer[trialCounter].NominalForcesRaw != null)
-                {
-                    forceNominalX = myMatlabWrapper.GetWorkspaceData("force_nominal_x");
-                    forceNominalY = myMatlabWrapper.GetWorkspaceData("force_nominal_y");
-                    forceNominalZ = myMatlabWrapper.GetWorkspaceData("force_nominal_z");
-                }
-                double[,] forceMomentX = myMatlabWrapper.GetWorkspaceData("force_moment_x");
-                double[,] forceMomentY = myMatlabWrapper.GetWorkspaceData("force_moment_y");
-                double[,] forceMomentZ = myMatlabWrapper.GetWorkspaceData("force_moment_z");
-
-                double[,] positionCartesianX = myMatlabWrapper.GetWorkspaceData("position_cartesian_x");
-                double[,] positionCartesianY = myMatlabWrapper.GetWorkspaceData("position_cartesian_y");
-                double[,] positionCartesianZ = myMatlabWrapper.GetWorkspaceData("position_cartesian_z");
-
-
-                trialsContainer[trialCounter].MeasuredForcesFiltered = new List<ForceContainer>();
-                if (trialsContainer[trialCounter].NominalForcesRaw != null)
-                {
-                    trialsContainer[trialCounter].NominalForcesFiltered = new List<ForceContainer>();
-                }
-                trialsContainer[trialCounter].MomentForcesFiltered = new List<ForceContainer>();
-                trialsContainer[trialCounter].PositionFiltered = new List<PositionContainer>();
-
-                for (var frameCount = 0; frameCount < trialsContainer[trialCounter].PositionRaw.Count; frameCount++)
-                {
-                    var measuredForcesFiltered = new ForceContainer();
-                    ForceContainer nominalForcesFiltered = null;
                     if (trialsContainer[trialCounter].NominalForcesRaw != null)
                     {
-                        nominalForcesFiltered = new ForceContainer();
-                    }
-                    var momentForcesFiltered = new ForceContainer();
-                    var positionFiltered = new PositionContainer();
-
-                    measuredForcesFiltered.PositionStatus =
-                        trialsContainer[trialCounter].MeasuredForcesRaw[frameCount].PositionStatus;
-                    measuredForcesFiltered.TimeStamp =
-                        trialsContainer[trialCounter].MeasuredForcesRaw[frameCount].TimeStamp;
-                    measuredForcesFiltered.X = forceActualX[0, frameCount];
-                    measuredForcesFiltered.Y = forceActualY[0, frameCount];
-                    measuredForcesFiltered.Z = forceActualZ[0, frameCount];
-
-                    if (trialsContainer[trialCounter].NominalForcesRaw != null && nominalForcesFiltered != null && forceNominalX != null && forceNominalY != null && forceNominalZ != null)
-                    {
-                        nominalForcesFiltered.PositionStatus =
-                            trialsContainer[trialCounter].NominalForcesRaw[frameCount].PositionStatus;
-                        nominalForcesFiltered.TimeStamp =
-                            trialsContainer[trialCounter].NominalForcesRaw[frameCount].TimeStamp;
-                        nominalForcesFiltered.X = forceNominalX[0, frameCount];
-                        nominalForcesFiltered.Y = forceNominalY[0, frameCount];
-                        nominalForcesFiltered.Z = forceNominalZ[0, frameCount];
+                        myMatlabWrapper.SetWorkspaceData("force_nominal_x",
+                            trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.X).ToArray());
+                        myMatlabWrapper.SetWorkspaceData("force_nominal_y",
+                            trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Y).ToArray());
+                        myMatlabWrapper.SetWorkspaceData("force_nominal_z",
+                            trialsContainer[trialCounter].NominalForcesRaw.Select(t => t.Z).ToArray());
                     }
 
-                    momentForcesFiltered.PositionStatus =
-                        trialsContainer[trialCounter].MomentForcesRaw[frameCount].PositionStatus;
-                    momentForcesFiltered.TimeStamp = trialsContainer[trialCounter].MomentForcesRaw[frameCount].TimeStamp;
-                    momentForcesFiltered.X = forceMomentX[0, frameCount];
-                    momentForcesFiltered.Y = forceMomentY[0, frameCount];
-                    momentForcesFiltered.Z = forceMomentZ[0, frameCount];
+                    myMatlabWrapper.SetWorkspaceData("force_moment_x",
+                        trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.X).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("force_moment_y",
+                        trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Y).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("force_moment_z",
+                        trialsContainer[trialCounter].MomentForcesRaw.Select(t => t.Z).ToArray());
 
-                    positionFiltered.PositionStatus =
-                        trialsContainer[trialCounter].PositionRaw[frameCount].PositionStatus;
-                    positionFiltered.TimeStamp = trialsContainer[trialCounter].PositionRaw[frameCount].TimeStamp;
-                    positionFiltered.X = positionCartesianX[0, frameCount];
-                    positionFiltered.Y = positionCartesianY[0, frameCount];
-                    positionFiltered.Z = positionCartesianZ[0, frameCount];
+                    myMatlabWrapper.SetWorkspaceData("position_cartesian_x",
+                        trialsContainer[trialCounter].PositionRaw.Select(t => t.X).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("position_cartesian_y",
+                        trialsContainer[trialCounter].PositionRaw.Select(t => t.Y).ToArray());
+                    myMatlabWrapper.SetWorkspaceData("position_cartesian_z",
+                        trialsContainer[trialCounter].PositionRaw.Select(t => t.Z).ToArray());
 
-                    trialsContainer[trialCounter].MeasuredForcesFiltered.Add(measuredForcesFiltered);
+                    myMatlabWrapper.Execute("force_actual_x = filtfilt(bForce, aForce, force_actual_x);");
+                    myMatlabWrapper.Execute("force_actual_y = filtfilt(bForce, aForce, force_actual_y);");
+                    myMatlabWrapper.Execute("force_actual_z = filtfilt(bForce, aForce, force_actual_z);");
+
                     if (trialsContainer[trialCounter].NominalForcesRaw != null)
                     {
-                        trialsContainer[trialCounter].NominalForcesFiltered.Add(nominalForcesFiltered);
+                        myMatlabWrapper.Execute("force_nominal_x = filtfilt(bForce, aForce,force_nominal_x);");
+                        myMatlabWrapper.Execute("force_nominal_y = filtfilt(bForce, aForce,force_nominal_y);");
+                        myMatlabWrapper.Execute("force_nominal_z = filtfilt(bForce, aForce,force_nominal_z);");
                     }
-                    trialsContainer[trialCounter].MomentForcesFiltered.Add(momentForcesFiltered);
-                    trialsContainer[trialCounter].PositionFiltered.Add(positionFiltered);
+                    myMatlabWrapper.Execute("force_moment_x = filtfilt(bForce, aForce, force_moment_x);");
+                    myMatlabWrapper.Execute("force_moment_y = filtfilt(bForce, aForce, force_moment_y);");
+                    myMatlabWrapper.Execute("force_moment_z = filtfilt(bForce, aForce, force_moment_z);");
 
-                    trialsContainer[trialCounter].FilteredDataSampleRate =
-                        trialsContainer[trialCounter].RawDataSampleRate;
+                    myMatlabWrapper.Execute("position_cartesian_x = filtfilt(bPosition, aPosition, position_cartesian_x);");
+                    myMatlabWrapper.Execute("position_cartesian_y = filtfilt(bPosition, aPosition, position_cartesian_y);");
+                    myMatlabWrapper.Execute("position_cartesian_z = filtfilt(bPosition, aPosition, position_cartesian_z);");
+
+
+                    double[,] forceActualX = myMatlabWrapper.GetWorkspaceData("force_actual_x");
+                    double[,] forceActualY = myMatlabWrapper.GetWorkspaceData("force_actual_y");
+                    double[,] forceActualZ = myMatlabWrapper.GetWorkspaceData("force_actual_z");
+
+                    double[,] forceNominalX = null;
+                    double[,] forceNominalY = null;
+                    double[,] forceNominalZ = null;
+                    if (trialsContainer[trialCounter].NominalForcesRaw != null)
+                    {
+                        forceNominalX = myMatlabWrapper.GetWorkspaceData("force_nominal_x");
+                        forceNominalY = myMatlabWrapper.GetWorkspaceData("force_nominal_y");
+                        forceNominalZ = myMatlabWrapper.GetWorkspaceData("force_nominal_z");
+                    }
+                    double[,] forceMomentX = myMatlabWrapper.GetWorkspaceData("force_moment_x");
+                    double[,] forceMomentY = myMatlabWrapper.GetWorkspaceData("force_moment_y");
+                    double[,] forceMomentZ = myMatlabWrapper.GetWorkspaceData("force_moment_z");
+
+                    double[,] positionCartesianX = myMatlabWrapper.GetWorkspaceData("position_cartesian_x");
+                    double[,] positionCartesianY = myMatlabWrapper.GetWorkspaceData("position_cartesian_y");
+                    double[,] positionCartesianZ = myMatlabWrapper.GetWorkspaceData("position_cartesian_z");
+
+
+                    trialsContainer[trialCounter].MeasuredForcesFiltered = new List<ForceContainer>();
+                    if (trialsContainer[trialCounter].NominalForcesRaw != null)
+                    {
+                        trialsContainer[trialCounter].NominalForcesFiltered = new List<ForceContainer>();
+                    }
+                    trialsContainer[trialCounter].MomentForcesFiltered = new List<ForceContainer>();
+                    trialsContainer[trialCounter].PositionFiltered = new List<PositionContainer>();
+
+                    for (var frameCount = 0; frameCount < trialsContainer[trialCounter].PositionRaw.Count; frameCount++)
+                    {
+                        var measuredForcesFiltered = new ForceContainer();
+                        ForceContainer nominalForcesFiltered = null;
+                        if (trialsContainer[trialCounter].NominalForcesRaw != null)
+                        {
+                            nominalForcesFiltered = new ForceContainer();
+                        }
+                        var momentForcesFiltered = new ForceContainer();
+                        var positionFiltered = new PositionContainer();
+
+                        measuredForcesFiltered.PositionStatus =
+                            trialsContainer[trialCounter].MeasuredForcesRaw[frameCount].PositionStatus;
+                        measuredForcesFiltered.TimeStamp =
+                            trialsContainer[trialCounter].MeasuredForcesRaw[frameCount].TimeStamp;
+                        measuredForcesFiltered.X = forceActualX[0, frameCount];
+                        measuredForcesFiltered.Y = forceActualY[0, frameCount];
+                        measuredForcesFiltered.Z = forceActualZ[0, frameCount];
+
+                        if (trialsContainer[trialCounter].NominalForcesRaw != null && nominalForcesFiltered != null && forceNominalX != null && forceNominalY != null && forceNominalZ != null)
+                        {
+                            nominalForcesFiltered.PositionStatus =
+                                trialsContainer[trialCounter].NominalForcesRaw[frameCount].PositionStatus;
+                            nominalForcesFiltered.TimeStamp =
+                                trialsContainer[trialCounter].NominalForcesRaw[frameCount].TimeStamp;
+                            nominalForcesFiltered.X = forceNominalX[0, frameCount];
+                            nominalForcesFiltered.Y = forceNominalY[0, frameCount];
+                            nominalForcesFiltered.Z = forceNominalZ[0, frameCount];
+                        }
+
+                        momentForcesFiltered.PositionStatus =
+                            trialsContainer[trialCounter].MomentForcesRaw[frameCount].PositionStatus;
+                        momentForcesFiltered.TimeStamp = trialsContainer[trialCounter].MomentForcesRaw[frameCount].TimeStamp;
+                        momentForcesFiltered.X = forceMomentX[0, frameCount];
+                        momentForcesFiltered.Y = forceMomentY[0, frameCount];
+                        momentForcesFiltered.Z = forceMomentZ[0, frameCount];
+
+                        positionFiltered.PositionStatus =
+                            trialsContainer[trialCounter].PositionRaw[frameCount].PositionStatus;
+                        positionFiltered.TimeStamp = trialsContainer[trialCounter].PositionRaw[frameCount].TimeStamp;
+                        positionFiltered.X = positionCartesianX[0, frameCount];
+                        positionFiltered.Y = positionCartesianY[0, frameCount];
+                        positionFiltered.Z = positionCartesianZ[0, frameCount];
+
+                        trialsContainer[trialCounter].MeasuredForcesFiltered.Add(measuredForcesFiltered);
+                        if (trialsContainer[trialCounter].NominalForcesRaw != null)
+                        {
+                            trialsContainer[trialCounter].NominalForcesFiltered.Add(nominalForcesFiltered);
+                        }
+                        trialsContainer[trialCounter].MomentForcesFiltered.Add(momentForcesFiltered);
+                        trialsContainer[trialCounter].PositionFiltered.Add(positionFiltered);
+
+                        trialsContainer[trialCounter].FilteredDataSampleRate =
+                            trialsContainer[trialCounter].RawDataSampleRate;
+                    }
+
+                    myMatlabWrapper.ClearWorkspaceData("force_actual_x");
+                    myMatlabWrapper.ClearWorkspaceData("force_actual_y");
+                    myMatlabWrapper.ClearWorkspaceData("force_actual_z");
+
+                    myMatlabWrapper.ClearWorkspaceData("force_nominal_x");
+                    myMatlabWrapper.ClearWorkspaceData("force_nominal_y");
+                    myMatlabWrapper.ClearWorkspaceData("force_nominal_z");
+
+                    myMatlabWrapper.ClearWorkspaceData("force_moment_x");
+                    myMatlabWrapper.ClearWorkspaceData("force_moment_y");
+                    myMatlabWrapper.ClearWorkspaceData("force_moment_z");
+
+                    myMatlabWrapper.ClearWorkspaceData("position_cartesian_x");
+                    myMatlabWrapper.ClearWorkspaceData("position_cartesian_y");
+                    myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");
                 }
-
-                myMatlabWrapper.ClearWorkspaceData("force_actual_x");
-                myMatlabWrapper.ClearWorkspaceData("force_actual_y");
-                myMatlabWrapper.ClearWorkspaceData("force_actual_z");
-
-                myMatlabWrapper.ClearWorkspaceData("force_nominal_x");
-                myMatlabWrapper.ClearWorkspaceData("force_nominal_y");
-                myMatlabWrapper.ClearWorkspaceData("force_nominal_z");
-
-                myMatlabWrapper.ClearWorkspaceData("force_moment_x");
-                myMatlabWrapper.ClearWorkspaceData("force_moment_y");
-                myMatlabWrapper.ClearWorkspaceData("force_moment_z");
-
-                myMatlabWrapper.ClearWorkspaceData("position_cartesian_x");
-                myMatlabWrapper.ClearWorkspaceData("position_cartesian_y");
-                myMatlabWrapper.ClearWorkspaceData("position_cartesian_z");
+                catch (Exception ex)
+                {
+                    _myManipAnalysisGui.WriteToLogBox("Could not filter Trial " + trialsContainer[trialCounter].TrialNumberInSzenario);
+                }
             }
 
             myMatlabWrapper.ClearWorkspace();
@@ -3401,11 +3420,7 @@ namespace ManipAnalysis_v2
                 {
                     baselineTimeStamps[timeSample] = DateTime.Now;
                     //baselineTrials[0].MeasureFile.CreationTime;
-                    baselineTimeStamps[timeSample] =
-                        baselineTimeStamps[timeSample].AddSeconds(1.0 /
-                                                                  Convert.ToDouble(
-                                                                      baselineTrials[0].NormalizedDataSampleRate) *
-                                                                  Convert.ToDouble(timeSample));
+                    baselineTimeStamps[timeSample] = baselineTimeStamps[timeSample].AddSeconds(1.0 / Convert.ToDouble(baselineTrials[0].NormalizedDataSampleRate) * Convert.ToDouble(timeSample));
                 }
 
                 for (var trialCounter = 0; trialCounter < baselineTrialCount; trialCounter++)
