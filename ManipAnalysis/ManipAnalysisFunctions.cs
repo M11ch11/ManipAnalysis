@@ -2527,6 +2527,111 @@ namespace ManipAnalysis_v2
                                 }
                             }
                         }
+
+                        //else if study == "Study 10_DAVOS"...
+                        else if (study == "Study 10_DAVOS")
+                        {
+
+                            var groups = _myDatabaseWrapper.GetGroups(study);
+
+                            foreach (var group in groups)
+                            {
+                                var subjects = _myDatabaseWrapper.GetSubjects(study, group, "02_baseline");
+
+                                foreach (var subject in subjects)
+                                {
+                                    var turnDateTime =
+                                        _myDatabaseWrapper.GetTurns(study, group, "02_baseline", subject).ElementAt(0);
+
+                                    //var baselineTrialsNull = _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime, Enumerable.Range(19, 12),
+                                    //    baselineFields).ToList();
+                                    //var baselineTrialsEC = _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime, Enumerable.Range(31, 37),
+                                    //    baselineFields).ToList();
+
+                                    var baselineTrialsNull =
+                                        _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime,
+                                            Extensions.AlternateRange(37, 24), baselineFields).ToList();
+
+                                    var baselineTrialsEC =
+                                        _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime,
+                                            Extensions.AlternateRange(61, 12), baselineFields).ToList();
+
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.PositionNormalized =
+                                                Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsNull.ForEach(
+                                        t =>
+                                            t.MomentForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+
+                                    baselineTrialsEC.ForEach(
+                                       t =>
+                                           t.PositionNormalized =
+                                               Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized)
+                                                   .OrderBy(u => u.TimeStamp)
+                                                   .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrialsEC.ForEach(
+                                        t =>
+                                            t.MomentForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+
+                                    if (
+                                        baselineTrialsNull.All(
+                                            t =>
+                                                t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
+                                                t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                t.Handedness == Trial.HandednessEnum.RightHand)
+                                        &&
+                                        baselineTrialsEC.All(
+                                            t =>
+                                                t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
+                                                t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                t.Handedness == Trial.HandednessEnum.RightHand))
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsNull));
+                                        baselinesContainer.AddRange(doBaselineCalculation(baselineTrialsEC));
+                                    }
+                                    else
+                                    {
+                                        _myManipAnalysisGui.WriteToLogBox(
+                                            "Error calculating Baseline. Incorrect TrialTypes. " + study + " / " + group +
+                                            " / " + subject);
+                                    }
+                                }
+                            }
+
+                        }
                         else if (study == "Study 10")
                         {
                             var groups = _myDatabaseWrapper.GetGroups(study);
@@ -3819,8 +3924,73 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
+                                        else if (trial.Study == "Study 10_DAVOS")
+                                        {
+                                            //Insert Code!
+                                            if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial && trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
+                                            {
+                                                baseline =
+                                                baselineBuffer.Find(
+                                                    t =>
+                                                        t.Study == trial.Study && t.Group == trial.Group &&
+                                                        t.Subject == trial.Subject &&
+                                                        t.Target.Number == trial.Target.Number &&
+                                                        t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
+                                                        t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                        t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
+                                                        trial.Subject, trial.Target.Number,
+                                                        Trial.TrialTypeEnum.StandardTrial,
+                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        _myManipAnalysisGui.WriteToLogBox("Es konnte kein Trial gefunden werden für entsprechende Standard-Trials mit Forcefield CW.");
+                                                    }
+                                                }
+                                            }
+                                            else if (trial.TrialType == Trial.TrialTypeEnum.ErrorClampTrial)
+                                            {
+                                                baseline =
+                                                baselineBuffer.Find(
+                                                    t =>
+                                                        t.Study == trial.Study && t.Group == trial.Group &&
+                                                        t.Subject == trial.Subject &&
+                                                        t.Target.Number == trial.Target.Number &&
+                                                        t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
+                                                        t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
+                                                        t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
+                                                        trial.Subject, trial.Target.Number,
+                                                        Trial.TrialTypeEnum.ErrorClampTrial,
+                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        _myManipAnalysisGui.WriteToLogBox("Es konnte kein Trial gefunden werden für entsprechende Errorclamptrials mit bel. Forcefield.");
+                                                    }
+                                                }
+                                            }
+                                        }
                                         else if (trial.Study == "Study 10")
                                         {
+                                            
                                             if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial &&
                                                 (trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW ||
                                                 trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW))
@@ -3875,8 +4045,7 @@ namespace ManipAnalysis_v2
                                                     }
                                                 }
                                             }
-                                        }
-                                        else if (trial.Study == "Study 11")
+                                        } else if (trial.Study == "Study 11")
                                         {
                                             if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial
                                             && trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW)
@@ -4063,7 +4232,7 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
-
+                                        //baseline for Study 10 Davos is null so calculation does not work... now to find out, why it is null?
                                         if (baseline != null)
                                         {
                                             baseline.Position =

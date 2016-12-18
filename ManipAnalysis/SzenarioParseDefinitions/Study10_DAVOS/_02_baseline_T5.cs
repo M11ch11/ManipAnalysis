@@ -15,8 +15,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
 
         public override Trial SetTrialMetadata(ManipAnalysisGui myManipAnalysisGui, Trial trial)
         {
-            trial.Study = "Study 10";
-            trial.Szenario = SzenarioName;
+            trial.Study = "Study 10_DAVOS";
+            trial.Szenario = "02_baseline";
             trial.PositionOffset.Y -= 0.05;
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial, skip
