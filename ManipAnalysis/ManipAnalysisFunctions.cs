@@ -3927,6 +3927,9 @@ namespace ManipAnalysis_v2
                                         else if (trial.Study == "Study 10_DAVOS")
                                         {
                                             //Insert Code!
+                                            //Handedness is always set to the RightHand even for left hand trials, because
+                                            //We dont have a good baseline for the left hand and the Statistics that require a baseline
+                                            //are not used anyways according to Benjamin.
                                             if (trial.TrialType == Trial.TrialTypeEnum.StandardTrial && trial.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW)
                                             {
                                                 baseline =
@@ -3937,13 +3940,13 @@ namespace ManipAnalysis_v2
                                                         t.Target.Number == trial.Target.Number &&
                                                         t.TrialType == Trial.TrialTypeEnum.StandardTrial &&
                                                         t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
-                                                        t.Handedness == trial.Handedness);
+                                                        t.Handedness == Trial.HandednessEnum.RightHand);
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
                                                         trial.Subject, trial.Target.Number,
                                                         Trial.TrialTypeEnum.StandardTrial,
-                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                        Trial.ForceFieldTypeEnum.NullField, Trial.HandednessEnum.RightHand);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -3967,13 +3970,13 @@ namespace ManipAnalysis_v2
                                                         t.Target.Number == trial.Target.Number &&
                                                         t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial &&
                                                         t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField &&
-                                                        t.Handedness == trial.Handedness);
+                                                        t.Handedness == Trial.HandednessEnum.RightHand);
                                                 if (baseline == null)
                                                 {
                                                     baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
                                                         trial.Subject, trial.Target.Number,
                                                         Trial.TrialTypeEnum.ErrorClampTrial,
-                                                        Trial.ForceFieldTypeEnum.NullField, trial.Handedness);
+                                                        Trial.ForceFieldTypeEnum.NullField, Trial.HandednessEnum.RightHand);
                                                     if (baseline != null)
                                                     {
                                                         lock (baselineBuffer)
@@ -3984,6 +3987,31 @@ namespace ManipAnalysis_v2
                                                     else
                                                     {
                                                         _myManipAnalysisGui.WriteToLogBox("Es konnte kein Trial gefunden werden für entsprechende Errorclamptrials mit bel. Forcefield.");
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                baseline =
+                                                   baselineBuffer.Find(
+                                                       t =>
+                                                           t.Study == trial.Study && t.Group == trial.Group &&
+                                                           t.Subject == trial.Subject &&
+                                                           t.Target.Number == trial.Target.Number &&
+                                                           t.TrialType == trial.TrialType &&
+                                                           t.ForceFieldType == trial.ForceFieldType &&
+                                                           t.Handedness == trial.Handedness);
+                                                if (baseline == null)
+                                                {
+                                                    baseline = _myDatabaseWrapper.GetBaseline(trial.Study, trial.Group,
+                                                        trial.Subject, trial.Target.Number, trial.TrialType,
+                                                        trial.ForceFieldType, trial.Handedness);
+                                                    if (baseline != null)
+                                                    {
+                                                        lock (baselineBuffer)
+                                                        {
+                                                            baselineBuffer.Add(baseline);
+                                                        }
                                                     }
                                                 }
                                             }
