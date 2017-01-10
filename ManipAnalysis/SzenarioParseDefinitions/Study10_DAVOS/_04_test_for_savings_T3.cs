@@ -18,6 +18,34 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             trial.Study = "Study 10_DAVOS";
             trial.Szenario = SzenarioName;
             trial.PositionOffset.Y -= 0.05;
+            //Because some Subjects have to have a different ForcefieldFactor but you can not distinct them by their trial.group and out of lazyness
+            //I did one switch case that works for all T1 - T6 and just copy pasta 
+            int i = 15;
+            switch (trial.Subject.PId)
+            {
+                //Group T1 and T5 from Sleepblocked and Wakeblocked with ff of 20nms
+                case "1015":
+                case "1007":
+                case "1029":
+                case "1017":
+                case "1046":
+                case "1041":
+                    i = 20;
+                    break;
+                //Group T2 and T6 with Sleepblocked and Wakeblocked with ff of 10 nms
+                case "1053":
+                case "1011":
+                case "1018":
+                case "1010":
+                case "1055":
+                case "1054":
+                    i = 10;
+                    break;
+                //Rest (T3 and T4) from Sleepblocked and Wakeblocked with ff of 15 nms
+                default:
+                    i = 15;
+                    break;
+            }
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {
@@ -44,8 +72,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //sollte hier nicht 10  und -10 statt 15 stehen?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = i;
+                    trial.ForceFieldMatrix[1, 0] = -i;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 31 && trial.Target.Number <= 36) // CW medium
@@ -55,8 +83,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //Hier stimmen die Werte?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = i;
+                    trial.ForceFieldMatrix[1, 0] = -i;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 41 && trial.Target.Number <= 46) // CW strong
@@ -66,8 +94,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //Sollte hier nicht 20 und -20 statt 15 stehen?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = i;
+                    trial.ForceFieldMatrix[1, 0] = -i;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 56) // Nullfield, error clamp
