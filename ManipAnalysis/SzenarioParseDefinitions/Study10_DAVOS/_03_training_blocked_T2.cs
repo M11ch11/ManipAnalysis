@@ -44,8 +44,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //sollte hier nicht 10  und -10 statt 15 stehen?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = 10;
+                    trial.ForceFieldMatrix[1, 0] = -10;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 31 && trial.Target.Number <= 36) // CW medium
@@ -55,8 +55,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //Hier stimmen die Werte?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = 10;
+                    trial.ForceFieldMatrix[1, 0] = -10;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 41 && trial.Target.Number <= 46) // CW strong
@@ -66,8 +66,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     //Sollte hier nicht 20 und -20 statt 15 stehen?
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = 10;
+                    trial.ForceFieldMatrix[1, 0] = -10;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 56) // Nullfield, error clamp
