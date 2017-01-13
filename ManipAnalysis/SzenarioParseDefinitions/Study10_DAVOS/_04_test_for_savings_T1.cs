@@ -24,21 +24,21 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             switch (trial.Subject.PId)
             {
                 //Group T1 and T5 from Sleepblocked and Wakeblocked with ff of 20nms
-                case "1015":
-                case "1007":
-                case "1029":
-                case "1017":
-                case "1046":
-                case "1041":
+                case "DAVOS1015":
+                case "DAVOS1007":
+                case "DAVOS1029":
+                case "DAVOS1017":
+                case "DAVOS1046":
+                case "DAVOS1041":
                     i = 20;
                     break;
                 //Group T2 and T6 with Sleepblocked and Wakeblocked with ff of 10 nms
-                case "1053":
-                case "1011":
-                case "1018":
-                case "1010":
-                case "1055":
-                case "1054":
+                case "DAVOS1053":
+                case "DAVOS1011":
+                case "DAVOS1018":
+                case "DAVOS1010":
+                case "DAVOS1055":
+                case "DAVOS1054":
                     i = 10;
                     break;
                 //Rest (T3 and T4) from Sleepblocked and Wakeblocked with ff of 15 nms
