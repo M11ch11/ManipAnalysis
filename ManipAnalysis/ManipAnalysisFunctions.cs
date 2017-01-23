@@ -2548,6 +2548,7 @@ namespace ManipAnalysis_v2
                                     //var baselineTrialsEC = _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime, Enumerable.Range(31, 37),
                                     //    baselineFields).ToList();
 
+                                    //Hier testen, ob baselineTrialsNull jemals 12 Trials enthält?
                                     var baselineTrialsNull =
                                         _myDatabaseWrapper.GetTrials(study, group, "02_baseline", subject, turnDateTime,
                                             Extensions.AlternateRange(37, 24), baselineFields).ToList();
@@ -4260,7 +4261,6 @@ namespace ManipAnalysis_v2
                                                 }
                                             }
                                         }
-                                        //baseline for Study 10 Davos is null so calculation does not work... now to find out, why it is null?
                                         if (baseline != null)
                                         {
                                             baseline.Position =
