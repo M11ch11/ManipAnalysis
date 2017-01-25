@@ -75,10 +75,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.Target.Number = trial.Target.Number - 50;
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
-                    //trial.ForceFieldMatrix[0, 0] = 0;
-                    //trial.ForceFieldMatrix[0, 1] = 15;
-                    //trial.ForceFieldMatrix[1, 0] = -15;
-                    //trial.ForceFieldMatrix[1, 1] = 0;
+                    trial.ForceFieldMatrix[0, 0] = 0;
+                    trial.ForceFieldMatrix[0, 1] = 20;
+                    trial.ForceFieldMatrix[1, 0] = -20;
+                    trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 66) // Pause + Position control, skip
                 {

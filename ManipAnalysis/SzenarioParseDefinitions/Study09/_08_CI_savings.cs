@@ -18,6 +18,25 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
             trial.Study = "Study 09";
             trial.Szenario = SzenarioName;
             trial.PositionOffset.Y -= 0.05;
+            int forceFieldValue = 15;
+            switch (trial.Subject.PId)
+            {
+                case "CI0052":
+                case "CI0061":
+                case "CI0066":
+                case "CI0070":
+                    forceFieldValue = 20;
+                    break;
+                case "CI0055":
+                case "CI0063":
+                case "CI0064":
+                case "CI0068":
+                    forceFieldValue = 10;
+                    break;
+                default:
+                    forceFieldValue = 15;
+                    break;
+            }
 
             if (trial.Target.Number == 10) // Target 10 == StartTrial
             {
@@ -44,8 +63,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = forceFieldValue;
+                    trial.ForceFieldMatrix[1, 0] = -forceFieldValue;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 31 && trial.Target.Number <= 38) // CW medium
@@ -54,8 +73,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = forceFieldValue;
+                    trial.ForceFieldMatrix[1, 0] = -forceFieldValue;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 41 && trial.Target.Number <= 48) // CW strong
@@ -64,8 +83,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = forceFieldValue;
+                    trial.ForceFieldMatrix[1, 0] = -forceFieldValue;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 51 && trial.Target.Number <= 58) // CW strong, error clamp
@@ -74,8 +93,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = forceFieldValue;
+                    trial.ForceFieldMatrix[1, 0] = -forceFieldValue;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else if (trial.Target.Number >= 61 && trial.Target.Number <= 68) // Pause 10s + Position control, skip
@@ -103,8 +122,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     trial.ForceFieldMatrix[0, 0] = 0;
-                    trial.ForceFieldMatrix[0, 1] = 15;
-                    trial.ForceFieldMatrix[1, 0] = -15;
+                    trial.ForceFieldMatrix[0, 1] = forceFieldValue;
+                    trial.ForceFieldMatrix[1, 0] = -forceFieldValue;
                     trial.ForceFieldMatrix[1, 1] = 0;
                 }
                 else
