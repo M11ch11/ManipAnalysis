@@ -31,6 +31,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 case "DAVOS1046":
                 case "DAVOS1041":
                 case "DAVOS1085":
+                case "DAVOS1095":
                     i = 20;
                     break;
                 //Group T2 and T6 with Sleepblocked and Wakeblocked with ff of 10 nms
@@ -40,6 +41,8 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                 case "DAVOS1010":
                 case "DAVOS1055":
                 case "DAVOS1054":
+                case "DAVOS1089":
+                case "DAVOS1090":
                     i = 10;
                     break;
                 //Rest (T3 and T4) from Sleepblocked and Wakeblocked with ff of 15 nms
