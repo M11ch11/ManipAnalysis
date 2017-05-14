@@ -131,6 +131,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     t =>
                                         !t.IsInterface && !t.IsAbstract && t.IsClass &&
                                         t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
+                                        //Checking the import classes for matching szenario and study name
                 {
                     try
                     {
