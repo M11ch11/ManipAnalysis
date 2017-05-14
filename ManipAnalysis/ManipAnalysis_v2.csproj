@@ -318,6 +318,7 @@
     <Compile Include="SzenarioParseDefinitions\Study12_HEiKA\RLvf.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TicToc.cs" />
+    <Compile Include="XMLParser.cs" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
