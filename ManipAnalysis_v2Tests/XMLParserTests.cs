@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ManipAnalysis_v2.Tests
 {
@@ -19,16 +20,17 @@ namespace ManipAnalysis_v2.Tests
         }
 
         [TestMethod()]
-        public void getTrialTargetNumberTest()
-        {
-
-        }
-
-        [TestMethod()]
         public void getTpTableEntryTest()
         {
             parser = new XMLParser(@"C:\RL_DF.xml", 10);
             Console.WriteLine(parser.getTpTableEntry());
+        }
+
+        [TestMethod()]
+        public void getTrialStartTargetTest()
+        {
+            parser = new XMLParser(@"C:\RL_DF.dtp", 10);
+            Console.WriteLine(parser.getTrialStartTarget());
         }
     }
 }
