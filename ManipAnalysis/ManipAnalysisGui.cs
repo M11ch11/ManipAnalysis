@@ -105,7 +105,7 @@ namespace ManipAnalysis_v2
             openFileDialog.Multiselect = true;
             openFileDialog.Title = @"Select measure-file(s)";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            openFileDialog.Filter = @"KINARM-files (*.zip)|*.zip|BioMotionBot-files (*.csv)|*.csv";
+            openFileDialog.Filter = @"KINARM-files (*.zip)|*.zip|BioMotionBot-files (*.csv)|*.csv|BKINSzenario-files (*.dtp)|*.dtp";
             openFileDialog.ShowDialog();
 
             var filesList = new List<FileInfo>(openFileDialog.FileNames.Select(t => new FileInfo(t)));
@@ -115,7 +115,7 @@ namespace ManipAnalysis_v2
                 filesCounter
                     ++)
             {
-                if (_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName))
+                if ((_manipAnalysisFunctions.IsValidMeasureDataFile(filesList[filesCounter].FullName)) || XMLParser.isValidDocument(filesList[filesCounter].FullName))
                 {
                     if (!listBox_Import_SelectedMeasureFiles.Items.Contains(filesList[filesCounter].FullName))
                     {
@@ -1200,9 +1200,27 @@ namespace ManipAnalysis_v2
 
         private void button_ImportMeasureFiles_Click(object sender, EventArgs e)
         {
+            //In this block, sort the logboxfiles into either measurefiles(containing c3d data), or dtpfiles (containing metadata information of each szenario)
+            List<string> measureFiles = new List<string>();
+            List<string> dtpFiles = new List<string>();
+            List<string> allItems = listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList();
+            for (int i = 0; i < listBox_Import_SelectedMeasureFiles.Items.Count; i++)
+            {
+                if (!(allItems[i].Contains(".dtp")))
+                {
+                    measureFiles.Add(allItems[i]);
+                } else
+                {
+                    dtpFiles.Add(allItems[i]);
+                }
+            }
+            //Afterwards, call the importFunction
+
             _manipAnalysisFunctions.ImportMeasureFiles(
-                listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList(),
-                Convert.ToInt32(textBox_Import_SamplesPerSec.Text), Convert.ToInt32(textBox_Import_FilterOrder.Text),
+                measureFiles,
+                dtpFiles,
+                Convert.ToInt32(textBox_Import_SamplesPerSec.Text), 
+                Convert.ToInt32(textBox_Import_FilterOrder.Text),
                 Convert.ToInt32(textBox_Import_CutoffFreqPosition.Text),
                 Convert.ToInt32(textBox_Import_CutoffFreqForce.Text),
                 Convert.ToInt32(textBox_Import_PercentPeakVelocity.Text),

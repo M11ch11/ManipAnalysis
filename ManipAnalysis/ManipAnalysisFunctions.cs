@@ -1452,12 +1452,17 @@ namespace ManipAnalysis_v2
             //_myDatabaseWrapper.ChangeSubjectSubjectID(subjectId, newSubjectSubjectId);
         }
 
-        public void ImportMeasureFiles(List<string> measureFilesList, int samplesPerSecond, int butterFilterOrder,
+        public void ImportMeasureFiles(List<string> measureFilesList, List<string> dtpFilesList, int samplesPerSecond, int butterFilterOrder,
             int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
             int timeNormalizationSamples)
         {
+            //TODO: WHAT/WHERE TO DO WITH THE dtpFilesList NOW?...
+            //Should be somewhere, where the szenarioParseDefinitions are used, as the dtp files are supposed to replace those...
+            //Add new Task to the Taskmanager which handles the execution of the tasks
             TaskManager.PushBack(Task.Factory.StartNew(delegate
             {
+                //Sleep until Taskmanager gets cancelled(?) or current task is the first task in the Taskmanager(?)... Something seems wrong here, but it's from Matthias
+                //and it works I guess, so don't touch it?
                 while (TaskManager.GetIndex(Task.CurrentId) != 0 & !TaskManager.Cancel)
                 {
                     Thread.Sleep(100);
@@ -1466,6 +1471,7 @@ namespace ManipAnalysis_v2
                 _myManipAnalysisGui.EnableTabPages(false);
                 _myManipAnalysisGui.SetProgressBarValue(0);
 
+                //Creating new Matlabinstances for each processor to parallelize
                 var cpuCount = Environment.ProcessorCount;
                 var taskMatlabWrappers = new List<MatlabWrapper>();
                 for (var i = 0; i < cpuCount; i++)
@@ -1498,12 +1504,6 @@ namespace ManipAnalysis_v2
                             if (myParser.ParseFile(filename) && myParser.TrialsContainer.Count > 0)
                             {
                                 var trialsContainer = myParser.TrialsContainer;
-
-                                //TODO: REMOVE LINE
-                                //var trial153 = trialsContainer.Where(t => t.TrialNumberInSzenario == 153 && t.Szenario == "Baseline").First();
-                                //trialsContainer.Remove(trial153);
-    
-
                                 var taskTrialListParts = new List<List<Trial>>();
                                 var threadCount = 0;
 
