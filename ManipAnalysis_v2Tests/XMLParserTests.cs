@@ -38,19 +38,21 @@ namespace ManipAnalysis_v2.Tests
             }
         }
 
-        [TestMethod()]
-        public void getTpTableEntryTest()
-        {
-            parser = new XMLParser(path, 10);
-            Console.WriteLine(parser.getTpTableEntry());
-        }
+        //Former public methods, for testing only, now private
+        //[TestMethod()]
+        //public void getTpTableEntryTest()
+        //{
+        //    parser = new XMLParser(path, 10);
+        //    Console.WriteLine(parser.getTpTableEntry());
+        //}
 
-        [TestMethod()]
-        public void getTrialStartTargetTest()
-        {
-            parser = new XMLParser(path, 10);
-            Console.WriteLine(parser.getTrialStartTarget());
-        }
+        //Former public methods, for testing only, now private
+        //[TestMethod()]
+        //public void getTrialStartTargetTest()
+        //{
+        //    parser = new XMLParser(path, 10);
+        //    Console.WriteLine(parser.getTrialStartTarget());
+        //}
 
         [TestMethod()]
         public void getTrialEndTargetPositionTest()
@@ -70,6 +72,13 @@ namespace ManipAnalysis_v2.Tests
             {
                 Console.WriteLine(parser.getTrialStartTargetPosition()[i]);
             }
+        }
+
+        [TestMethod()]
+        public void getSzenarioNameTest()
+        {
+            parser = new XMLParser(path, 3);
+            Console.WriteLine(parser.getSzenarioName());
         }
     }
 }

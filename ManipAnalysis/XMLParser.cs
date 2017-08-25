@@ -21,6 +21,7 @@ namespace ManipAnalysis_v2
         const string TPTABLEPATH = "/task_protocol/tptable/text()";
         const string TARGETTABLEPATH = "/task_protocol/targettable/text()";
         const string LOADTABLEPATH = "/task_protocol/loadtable/text()";
+        const string SZENARIONAMEPATH = "/task_protocol/name/text()";
 
         /// <summary>
         /// Gets a path to an dtp/xml file and the trialNumberInSzenario to find the right trial in the dtp file
@@ -31,11 +32,18 @@ namespace ManipAnalysis_v2
         {
             //Assertion: The Trial_Num in the c3d file can be identified and it actually represents the TrialNumberInSzenario
             document = new XmlDocument();
-            document.Load(path);
-            trial.TrialNumberInSzenario = trialNumber;
-            tpTable = getTable(TPTABLEPATH);
-            targetTable = getTable(TARGETTABLEPATH);
-            loadTable = getTable(LOADTABLEPATH);
+            if (isValidDocument(path))
+            {
+                document.Load(path);
+                trial.TrialNumberInSzenario = trialNumber;
+                tpTable = getTable(TPTABLEPATH);
+                targetTable = getTable(TARGETTABLEPATH);
+                loadTable = getTable(LOADTABLEPATH);
+            } else
+            {
+                throw new Exception("Path leads to invalid document");
+            }
+            
         }
 
 
@@ -57,9 +65,11 @@ namespace ManipAnalysis_v2
             }
         }
 
-
-        
-
+        /// <summary>
+        /// Given an xml path this method returns the content of this xml node, split by "]," and filtered
+        /// </summary>
+        /// <param name="path">xml path to the node to extract</param>
+        /// <returns>string array of each entry in this node</returns>
         private string[] getTable(string path)
         {
             XmlNode node = document.SelectSingleNode(path);
@@ -72,8 +82,8 @@ namespace ManipAnalysis_v2
                 parsedContent = Regex.Split(content, "],");
                 for (int i = 0; i < parsedContent.Length; i++)
                 {
-                    //Filtering everything from the Strings except numbers, letters, points, minus and commas
-                    parsedContent[i] = Regex.Replace(parsedContent[i], @"[^0-9A-Za-zäöüßÄÖÜ\.\-,]", "");
+                    //Filtering everything from the Strings except numbers, letters, points, minus, underscores and commas
+                    parsedContent[i] = Regex.Replace(parsedContent[i], @"[^0-9A-Za-zäöüßÄÖÜ\.\-_,]", "");
                 }
                 return parsedContent;
             }
@@ -84,54 +94,16 @@ namespace ManipAnalysis_v2
         }
 
 
-        /// <summary>
-        /// Gives the TpTableEntry of a given Trial
-        /// </summary>
-        /// <returns></returns>
-        public string getTpTableEntry()
-        {
-            //Mit der trialNumber kann der tpTable durchsucht werden (Trialnumber = Index im TpTable)
-            //Enumeration of the TrialNumberInSzenario starts at 1 so decrement it first
-            /*
-
-            WHAT TO DO WHEN TRIALNUMBERINSZENARIO IS ZERO? IS THIS POSSIBLE?
-
-            */
-            return tpTable[trial.TrialNumberInSzenario - 1];
-        }
-        public int getTrialStartTarget()
-        {
-            string startTarget = getTpTableEntry().Split(',')[0];
-            return int.Parse(startTarget);
-        }
+/*
+---------------------------------------------------------------------------------
+The following methods provide easy access to the metadata stored in the dtp file.
+---------------------------------------------------------------------------------
+*/
 
 
-
-        private int getTrialEndTarget()
-        {
-            string endTarget = getTpTableEntry().Split(',')[1];
-            return int.Parse(endTarget);
-        }
 
         /// <summary>
-        /// Returns an array with the X, Y and Z position of the EndTarget, stored in the 1st, 2nd and 3rd slot of the array
-        /// </summary>
-        /// <returns>array[X, Y, Z]</returns>
-        public double[] getTrialEndTargetPosition()
-        {
-            double[] position = { 0, 0, 0 };
-            int endTargetNumber = getTrialEndTarget();
-            //X-Position is always the first entry in the array split at the comma
-            //To make parsing doubles possible, we need CultureInfo, for recognizing doubles with points instead of commas
-            position[0] = double.Parse(targetTable[endTargetNumber - 1].Split(',')[0], CultureInfo.InvariantCulture);
-            //Y-Position is always the second entry in the array split at the comma
-            position[1] = double.Parse(targetTable[endTargetNumber - 1].Split(',')[1], CultureInfo.InvariantCulture);
-            //Z-Value is always 0...
-            return position;
-        }
-
-        /// <summary>
-        /// Returns an array with the X, Y and Z position of the EndTarget, stored in the 1st, 2nd and 3rd slot of the array
+        /// Returns an array with the X, Y and Z position of the StartTarget, stored in the 1st, 2nd and 3rd slot of the array
         /// </summary>
         /// <returns>array[X, Y, Z]</returns>
         public double[] getTrialStartTargetPosition()
@@ -142,32 +114,110 @@ namespace ManipAnalysis_v2
 
             */
             double[] position = { 0, 0, 0 };
-            int startTargetNumber = getTrialStartTarget();
+            int startTargetNumber = getTrialStartTargetNumber();
             //X-Position is always the first entry in the array split at the comma
             //To make parsing doubles possible, we need CultureInfo, for recognizing doubles with points instead of commas
-            position[0] = double.Parse(targetTable[startTargetNumber - 1].Split(',')[0], CultureInfo.InvariantCulture);
-            //Y-Position is always the second entry in the array split at the comma
-            position[1] = double.Parse(targetTable[startTargetNumber - 1].Split(',')[1], CultureInfo.InvariantCulture);
-            //Z-Value is always 0...
+            if (startTargetNumber < 0)
+            {
+                position[0] = double.Parse(targetTable[startTargetNumber - 1].Split(',')[0], CultureInfo.InvariantCulture);
+                //Y-Position is always the second entry in the array split at the comma
+                position[1] = double.Parse(targetTable[startTargetNumber - 1].Split(',')[1], CultureInfo.InvariantCulture);
+                //Z-Value is always 0...
+            }
+            else
+            {
+                //Well what do we do if we have a Target 0 as StartTarget(means no starttarget was set in the protocol)
+            }
+
             return position;
         }
 
 
-
-        public int getForceFieldColumn()
+        /// <summary>
+        /// Returns the radius of the startTarget as double
+        /// </summary>
+        /// <returns>Radius</returns>
+        public double getTrialStartTargetRadius()
         {
-            string ForceFieldColumn = getTpTableEntry().Split(',')[4];
-            return int.Parse(ForceFieldColumn);
+            double radius = 0;
+            int startTargetNumber = getTrialStartTargetNumber();
+            if (startTargetNumber > 0)
+            {
+                //Radius of the target is always stored at the 2nd index of the targetTable
+                radius = double.Parse(targetTable[startTargetNumber - 1].Split(',')[2], CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                //Do something when StartTargetNumber is 0
+            }
+            return radius;
         }
 
 
+        /// <summary>
+        /// Returns an array with the X, Y and Z position of the EndTarget, stored in the 1st, 2nd and 3rd slot of the array
+        /// </summary>
+        /// <returns>array[X, Y, Z]</returns>
+        public double[] getTrialEndTargetPosition()
+        {
+            double[] position = { 0, 0, 0 };
+            int endTargetNumber = getTrialEndTargetNumber();
+            //X-Position is always the first entry in the array split at the comma
+            //To make parsing doubles possible, we need CultureInfo, for recognizing doubles with points instead of commas
+            if (endTargetNumber > 0)
+            {
+                position[0] = double.Parse(targetTable[endTargetNumber - 1].Split(',')[0], CultureInfo.InvariantCulture);
+                //Y-Position is always the second entry in the array split at the comma
+                position[1] = double.Parse(targetTable[endTargetNumber - 1].Split(',')[1], CultureInfo.InvariantCulture);
+                //Z-Value is always 0...
+            }
+            else
+            {
+                //Do something when EndTargetNumber is 0 (thats the case, when the endtarget was not set in the protocol
+            }
 
+            return position;
+        }
+
+
+        /// <summary>
+        /// Returns the radius of the endTarget as double
+        /// </summary>
+        /// <returns>radius</returns>
+        public double getTrialEndTargetRadius()
+        {
+            double radius = 0;
+            int endTargetNumber = getTrialEndTargetNumber();
+            if (endTargetNumber > 0)
+            {
+                //Radius of the target is always stored at the 2nd index of the targetTable
+                radius = double.Parse(targetTable[endTargetNumber - 1].Split(',')[2], CultureInfo.InvariantCulture);
+            } else
+            {
+                //Do something when EndTargetNumber is 0
+            }
+            return radius;
+        }
+
+
+       
+
+
+        /// <summary>
+        /// Returns 1, if the trial has an active force channel, 0 otherwise
+        /// </summary>
+        /// <returns>1/0</returns>
         public int getForceChannelEnabled()
         {
             string ForceChannelEnabled = getTpTableEntry().Split(',')[5];
             return int.Parse(ForceChannelEnabled);
         }
 
+
+        /// <summary>
+        /// Returns 1, if the trial has active position control, 0 otherwise
+        /// </summary>
+        /// <returns>1/0</returns>
         public int getPositionControlEnabled()
         {
             string PositionControlEnabled = getTpTableEntry().Split(',')[6];
@@ -175,11 +225,94 @@ namespace ManipAnalysis_v2
         }
 
 
-
+        /// <summary>
+        /// Returns 1, if the trial has active DFForceField, 0 otherwise
+        /// </summary>
+        /// <returns>1/0</returns>
         public int getDFForceFieldEnabled()
         {
             string DFForceFieldEnabled = getTpTableEntry().Split(',')[7];
             return int.Parse(DFForceFieldEnabled);
         }
+
+
+        /// <summary>
+        /// Returns the SzenarioName as string
+        /// </summary>
+        /// <returns>SzenarioName as String</returns>
+        public string getSzenarioName()
+        {
+            string output;
+            //Because there is always just one szenarioname for each dtp file,
+            //we can access it safe, by looking at the first entry of the array
+            output = getTable(SZENARIONAMEPATH)[0];
+            return output;
+        }
+
+
+
+
+
+
+
+
+
+
+/*
+----------------------------------
+HelperFunctions for better clarity
+----------------------------------
+*/
+
+
+
+        /// <summary>
+        /// Gives the TpTableEntry of a given Trial
+        /// </summary>
+        /// <returns></returns>
+        private string getTpTableEntry()
+        {
+            //Mit der trialNumber kann der tpTable durchsucht werden (Trialnumber = Index im TpTable)
+            //Enumeration of the TrialNumberInSzenario starts at 1 so decrement it first
+            /*
+
+            WHAT TO DO WHEN TRIALNUMBERINSZENARIO IS ZERO? IS THIS POSSIBLE?
+
+            */
+            return tpTable[trial.TrialNumberInSzenario - 1];
+        }
+
+
+        /// <summary>
+        /// Delivers the index of the targetTable for the StartTarget of the given trial
+        /// </summary>
+        /// <returns>index into targetTable as int</returns>
+        private int getTrialStartTargetNumber()
+        {
+            string startTarget = getTpTableEntry().Split(',')[0];
+            return int.Parse(startTarget);
+        }
+
+
+        /// <summary>
+        /// Delivers the index of the targetTable for the EndTarget of the given trial
+        /// </summary>
+        /// <returns>index into targetTable as int</returns>
+        private int getTrialEndTargetNumber()
+        {
+            string endTarget = getTpTableEntry().Split(',')[1];
+            return int.Parse(endTarget);
+        }
+
+        
+        /// <summary>
+        /// Delivers the index in the loadTable for the given trial
+        /// </summary>
+        /// <returns></returns>
+        private int getForceFieldColumn()
+        {
+            string ForceFieldColumn = getTpTableEntry().Split(',')[4];
+            return int.Parse(ForceFieldColumn);
+        } 
     }
 }
