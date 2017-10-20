@@ -1579,11 +1579,6 @@ namespace ManipAnalysis_v2
                                 _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
                                 CompressTrialData(trialsContainer);
 
-
-                                //TODO: REMOVE LINE
-                                //trialsContainer.Add(trial153);
-
-
                                 _myManipAnalysisGui.WriteProgressInfo("Uploading into database...");
                                 try
                                 {

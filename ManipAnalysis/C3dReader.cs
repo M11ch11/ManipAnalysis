@@ -170,7 +170,7 @@ namespace ManipAnalysis_v2
         {
             var parameters = new byte[4];
             _reader.Read(parameters, 0, 4);
-            // TODO we should not ignore first 4 bytes as it is now
+            // TODO we should not ignore first 4 bytes as it is now ?
 
             int nextItem;
             do

@@ -230,7 +230,7 @@ namespace ManipAnalysis_v2
             }
             Length *= GetSize(_paramType);
 
-            // TODO
+            // TODO ?
             _vectorData = new byte[Length];
             reader.Read(_vectorData, 0, Length);
         }
@@ -239,7 +239,7 @@ namespace ManipAnalysis_v2
         {
             _vectorData = new byte[GetSize(_paramType)];
             reader.Read(_vectorData, 0, GetSize(_paramType));
-            // TODO
+            // TODO ?
         }
 
         private static Type GetType(sbyte c3dDataType)
@@ -430,7 +430,7 @@ namespace ManipAnalysis_v2
                 {
                     var n = ((short[]) (object) data)[i];
 
-                    // TODO : check this
+                    // TODO : check this ?
                     Array.Copy(BitConverter.GetBytes(n), 0, _vectorData, i*GetSize(_paramType), GetSize(_paramType));
                 }
                 IsScalar = false;
@@ -454,7 +454,7 @@ namespace ManipAnalysis_v2
             ////
             //// 2D Arrays
             ////
-            //// TODO: DO IT IF YOU NEED IT :)
+            //// TODO: DO IT IF YOU NEED IT :) ?
             ////
             ////    else if (typeof(T) == typeof(Int16 [,]))
             ////    {
@@ -562,7 +562,7 @@ namespace ManipAnalysis_v2
                     y
                         ++)
                 {
-                    // TODO: still need to test following line
+                    // TODO: still need to test following line ?
                     array[x, y] = GetData<T>(x + y*x);
                 }
             }

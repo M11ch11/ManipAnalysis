@@ -61,6 +61,18 @@ namespace ManipAnalysis_v2.Tests
             for (int i = 0; i < parser.getTrialEndTargetPosition().Count(); i++)
             {
                 Console.WriteLine(parser.getTrialEndTargetPosition()[i]);
+                switch (i)
+                {
+                    case 0:
+                        Assert.AreEqual(parser.getTrialEndTargetPosition()[i], 8.66);
+                        break;
+                    case 1:
+                        Assert.AreEqual(parser.getTrialEndTargetPosition()[i], -5);
+                        break;
+                    case 2:
+                        Assert.AreEqual(parser.getTrialEndTargetPosition()[i], 0);
+                        break;
+                }
             }
         }
 
@@ -71,6 +83,7 @@ namespace ManipAnalysis_v2.Tests
             for (int i = 0; i < parser.getTrialStartTargetPosition().Count(); i++)
             {
                 Console.WriteLine(parser.getTrialStartTargetPosition()[i]);
+                Assert.AreEqual(parser.getTrialStartTargetPosition()[i], 0);
             }
         }
 
@@ -79,6 +92,8 @@ namespace ManipAnalysis_v2.Tests
         {
             parser = new XMLParser(path, 3);
             Console.WriteLine(parser.getSzenarioName());
+            Assert.AreEqual(parser.getSzenarioName(), "01_TestForAllTrials");
         }
+
     }
 }

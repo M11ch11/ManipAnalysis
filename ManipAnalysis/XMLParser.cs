@@ -22,6 +22,7 @@ namespace ManipAnalysis_v2
         const string TARGETTABLEPATH = "/task_protocol/targettable/text()";
         const string LOADTABLEPATH = "/task_protocol/loadtable/text()";
         const string SZENARIONAMEPATH = "/task_protocol/name/text()";
+        const string TASKLEVELPARAMSPATH = "/task_protocol/tasklevelparams/text()";
 
         /// <summary>
         /// Gets a path to an dtp/xml file and the trialNumberInSzenario to find the right trial in the dtp file
@@ -96,7 +97,7 @@ namespace ManipAnalysis_v2
 
 /*
 ---------------------------------------------------------------------------------
-The following methods provide easy access to the metadata stored in the dtp file.
+The following methods provide easy access to the required metadata stored in the dtp file.
 ---------------------------------------------------------------------------------
 */
 
@@ -200,9 +201,6 @@ The following methods provide easy access to the metadata stored in the dtp file
         }
 
 
-       
-
-
         /// <summary>
         /// Returns 1, if the trial has an active force channel, 0 otherwise
         /// </summary>
@@ -250,19 +248,161 @@ The following methods provide easy access to the metadata stored in the dtp file
         }
 
 
+        /// <summary>
+        /// This method gives a string representing the ForceFieldType which can be:
+        /// ForceFieldDF, ForceFieldCW, ForceFieldCCW or Nullfield.
+        /// This String must then be translated into a ForceFieldTypeEnum and set in the trial object.
+        /// This can not be done directly, because of internal classes and bad OO desig...
+        /// </summary>
+        /// <returns>string representing the ForceFieldTypeEnum</returns>
+        private string getForceFieldType()
+        {
+            string ForceFieldType = "";
+            if (getDFForceFieldEnabled() == 1)
+            {
+                ForceFieldType = "ForceFieldDF";
+            } else if (false)
+            {
+                // TODO How to determine ForceFieldCW/ForceFieldCCW? --> Look at LoadTable Parameters A,B,C,D either they are CW or CCW or invalid
+                //When B and D < 0 ?
+                ForceFieldType = "ForceFieldCCW";
+            } else if (false)
+            {
+                //When A and C < 0 ?
+                ForceFieldType = "ForceFieldCW";
+            } else if (true)
+            {
+                //When A, B, C and D == 0
+                ForceFieldType = "NullField";
+            }
+            return ForceFieldType;
+        }
+
+
+        /// <summary>
+        /// Sets the proper ForceFieldType in the trial, because we can not create ForceFieldTypeEnums due to bad access rights
+        /// </summary>
+        public void setForceFieldType()
+        {
+            string ForceField = getForceFieldType();
+            switch (ForceField)
+            {
+                case ("ForceFieldDF"):
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldDF;
+                    break;
+                case ("NullField"):
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.NullField;
+                    break;
+                case ("ForceFieldCW"):
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCW;
+                    break;
+                case ("ForceFieldCCW"):
+                    trial.ForceFieldType = Trial.ForceFieldTypeEnum.ForceFieldCCW;
+                    break;        
+            }
+        }
+
+
+        /// <summary>
+        /// This method gives a string representing the TrialType which can be:
+        /// ErrorClampTrial, PositionControlTrial, CatchTrial or StandardTrial.
+        /// This String must then be translated into a TrialTypeEnum and set in the trial object.
+        /// This can not be done directly, because of internal classes and bad OO desig...
+        /// </summary>
+        /// <returns>string representing the TrialTypeEnum</returns>
+        private string getTrialType()
+        {
+            string TrialType = "";
+            if (getForceChannelEnabled() == 1)
+            {
+                TrialType = "ErrorClampTrial";
+            } else if(getPositionControlEnabled() == 1)
+            {
+                TrialType = "PositionControlTrial";
+            } else if (false)
+            {
+                // TODO When is a trial a CatchTrial?
+                TrialType = "CatchTrial";
+            } else
+            {
+                TrialType = "StandardTrial";
+            }
+            return TrialType;
+        }
+
+
+        /// <summary>
+        /// Sets the proper TrialType in the trial, because we can not create TrialTypeEnums due to bad access rights
+        /// </summary>
+        public void setTrialType()
+        {
+            string TrialType = getTrialType();
+            switch (TrialType)
+            {
+                case ("ErrorClampTrial"):
+                    trial.TrialType = Trial.TrialTypeEnum.ErrorClampTrial;
+                    break;
+                case ("PositionControlTrial"):
+                    trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
+                    break;
+                case ("CatchTrial"):
+                    trial.TrialType = Trial.TrialTypeEnum.CatchTrial;
+                    break;
+                case ("Standardtrial"):
+                    trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// This method gives a string representing the Handedness which can be 0 or 1, with 0 being RightHand and 1 being LeftHand
+        /// Additionally it can be implemented to translate numbers 2 and 3 to RigthHandVicon or LeftHandVicon if needed in the future.
+        /// This string then must be translated into a HandednessEnum with the setHandednessFunction
+        /// </summary>
+        /// <returns>0 or 1 for RightHand or LeftHand</returns>
+        private string getHandedness()
+        {
+            // TODO How to get the Handedness from the dtp file?
+            string handednessEntry;
+            handednessEntry = getTable(TASKLEVELPARAMSPATH)[0];
+            string handedness = handednessEntry.Split(',')[1];
+            return handedness;
+        }
+
+        /// <summary>
+        /// Sets the proper Handedness in the trial, because we can not create HandednessEnums due to bad access rights
+        /// </summary>
+        public void setTrialHandedness()
+        {
+            string handedness = getHandedness();
+            switch (handedness)
+            {
+                case ("0"):
+                    trial.Handedness = Trial.HandednessEnum.RightHand;
+                    break;
+                case ("1"):
+                    trial.Handedness = Trial.HandednessEnum.LeftHand;
+                    break;
+                case ("2"):
+                    //Is not explained in the TaskLevelTextbox in Dexterit 3.6 so far, because it is not used so far
+                    trial.Handedness = Trial.HandednessEnum.RightHandVicon;
+                    break;
+                case ("3"):
+                    //Is not explained in the TaskLevelTextbox in Dexterit 3.6 so far, because it is not used so far
+                    trial.Handedness = Trial.HandednessEnum.LeftHandVicon;
+                    break;
+            }
+        }
 
 
 
 
 
-
-
-
-/*
-----------------------------------
-HelperFunctions for better clarity
-----------------------------------
-*/
+        /*
+        ----------------------------------
+        HelperFunctions for better clarity
+        ----------------------------------
+        */
 
 
 
@@ -313,6 +453,6 @@ HelperFunctions for better clarity
         {
             string ForceFieldColumn = getTpTableEntry().Split(',')[4];
             return int.Parse(ForceFieldColumn);
-        } 
+        }
     }
 }
