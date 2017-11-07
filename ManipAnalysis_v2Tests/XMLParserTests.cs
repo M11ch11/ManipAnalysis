@@ -13,7 +13,7 @@ namespace ManipAnalysis_v2.Tests
     public class XMLParserTests
     {
         XMLParser parser;
-        string path = @"C:\Users\Administrator\Desktop\BKINFiles\SampleDTPFiles\general_study\01_TestForAllTrials.dtp";
+        string path = @"C:\Users\Administrator\Desktop\BKINFiles_Szenarios\SampleDTPFiles\general_study\01_TestForAllTrials.dtp";
         [TestMethod()]
         public void XMLParserTest()
         {
@@ -95,5 +95,16 @@ namespace ManipAnalysis_v2.Tests
             Assert.AreEqual(parser.getSzenarioName(), "01_TestForAllTrials");
         }
 
+        //Former public methods, for testing only, now private
+        //[TestMethod()]
+        //public void getForceFieldMatrixTest()
+        //{
+        //    parser = new XMLParser(path, 3);
+        //    float[] matrix = parser.getForceFieldMatrix();
+        //    for (int i = 0; i < matrix.Count(); i++)
+        //    {
+        //        Console.WriteLine(matrix[i]);
+        //    }
+        //}
     }
 }

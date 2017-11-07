@@ -258,21 +258,24 @@ The following methods provide easy access to the required metadata stored in the
         private string getForceFieldType()
         {
             string ForceFieldType = "";
+            float[] ForceFieldMatrix = getForceFieldMatrix();
             if (getDFForceFieldEnabled() == 1)
             {
                 ForceFieldType = "ForceFieldDF";
-            } else if (false)
+            } else if (ForceFieldMatrix[2] < 0 && ForceFieldMatrix[3] > 0)
             {
                 // TODO How to determine ForceFieldCW/ForceFieldCCW? --> Look at LoadTable Parameters A,B,C,D either they are CW or CCW or invalid
-                //When B and D < 0 ?
+                // TODO Check if this condition is actually true in older studies
+                //When C < 0 && D > 0?
                 ForceFieldType = "ForceFieldCCW";
-            } else if (false)
+            } else if (ForceFieldMatrix[2] > 0 && ForceFieldMatrix[3] < 0)
             {
-                //When A and C < 0 ?
+                //When C > 0 && D < 0!
                 ForceFieldType = "ForceFieldCW";
             } else if (true)
             {
                 //When A, B, C and D == 0
+                //Should always be the case if the above conditions fail...
                 ForceFieldType = "NullField";
             }
             return ForceFieldType;
@@ -362,7 +365,7 @@ The following methods provide easy access to the required metadata stored in the
         /// <returns>0 or 1 for RightHand or LeftHand</returns>
         private string getHandedness()
         {
-            // TODO How to get the Handedness from the dtp file?
+            //Handedness can be found in 1st Entry of the TaskLevelParams
             string handednessEntry;
             handednessEntry = getTable(TASKLEVELPARAMSPATH)[0];
             string handedness = handednessEntry.Split(',')[1];
@@ -453,6 +456,23 @@ The following methods provide easy access to the required metadata stored in the
         {
             string ForceFieldColumn = getTpTableEntry().Split(',')[4];
             return int.Parse(ForceFieldColumn);
+        }
+
+
+        /// <summary>
+        /// Delivers the A, B, C and D value of the rotational forcefield matrix in this order
+        /// </summary>
+        /// <returns>{A, B, C, D}</returns>
+        private float[] getForceFieldMatrix()
+        {
+            float[] matrix = { 0, 0, 0, 0 };
+            for (int i = 0; i < 4; i++)
+            {
+                //The first 4 entries of the loadTable represent the entries A, B, C and D for the matrix
+                string[] forceFieldEntries = loadTable[trial.TrialNumberInSzenario - 1].Split(',');
+                matrix[i] = float.Parse(forceFieldEntries[i], CultureInfo.InvariantCulture);
+            }
+            return matrix;
         }
     }
 }
