@@ -1,6 +1,6 @@
 ﻿namespace ManipAnalysis_v2.MongoDb
 {
-    internal class SubjectContainer
+    public class SubjectContainer
     {
         public string PId { get; set; }
 

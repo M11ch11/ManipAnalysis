@@ -4,7 +4,7 @@ using MongoDB.Bson;
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class Trial
+    public class Trial
     {
         public enum ForceFieldTypeEnum
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class SzenarioContainer
+    public class SzenarioContainer
     {
         public string GroupName = null;
 

@@ -2,7 +2,7 @@
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class MeasureFileContainer
+    public class MeasureFileContainer
     {
         private DateTime _creationTime;
 

@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class Baseline
+    public class Baseline
     {
         public List<ForceContainer> MeasuredForces;
 

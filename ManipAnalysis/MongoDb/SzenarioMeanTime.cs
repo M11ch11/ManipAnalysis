@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace ManipAnalysis_v2.MongoDb
 {
-    internal class SzenarioMeanTime
+    public class SzenarioMeanTime
     {
         public ObjectId Id { get; set; }
 

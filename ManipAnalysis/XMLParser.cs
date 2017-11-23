@@ -46,6 +46,87 @@ namespace ManipAnalysis_v2
             }
             
         }
+        public Trial parseTrial()
+        {
+            //TODO: Get the StudyName somehow?
+            //TODO: trial.Target.Number richtig setzen?
+            //TODO: PositionControl und PauseTrials filtern
+            //TODO: Starttrials für linke und rechte Hand rausfiltern?
+
+            //Position control kann direkt gefiltert werden über getPositionControl, PauseTrial weiß ich noch nicht...
+
+            if (isValidTrial())
+            {
+                //SzenarioName eintragen
+                trial.Szenario = getSzenarioName();
+
+                //ForceFieldType eintragen
+                setForceFieldType();
+
+                //TrialType eintragen
+                setTrialType();
+
+                //TrialHandedness eintragen
+                setTrialHandedness();
+
+
+                //Koordinaten des StartTargets eintragen
+                trial.Origin.XPos = getTrialStartTargetPosition()[0] / 100.0f;
+                trial.Origin.YPos = getTrialStartTargetPosition()[1] / 100.0f;
+                trial.Origin.ZPos = getTrialStartTargetPosition()[2] / 100.0f;
+
+                //Radius des StartTargets eintragen
+                //trial.Origin.Radius = getTrialStartTargetRadius() / 2.0f / 100.0f; in some studies the ManipRadius was halfed, but it should not be so I think...
+                trial.Origin.Radius = getTrialStartTargetRadius() / 100.0f;
+
+                //Koordinaten des EndTargets eintragen
+                trial.Target.XPos = getTrialEndTargetPosition()[0] / 100.0f;
+                trial.Target.YPos = getTrialEndTargetPosition()[1] / 100.0f;
+                trial.Target.ZPos = getTrialEndTargetPosition()[2] / 100.0f;
+
+                //Radius des EndTargets eintragen
+                //trial.Target.Radius = getTrialEndTargetRadius() / 2.0f / 100.0f; in some studies the ManipRadius was halfed, but it should not be so I think...
+                trial.Target.Radius = getTrialEndTargetRadius() / 100.0f;
+
+
+                //Default Values for the reference matrix to calculate certain statistics.
+                //Might need to be dynamic later maybe(Handled by user input)?
+                trial.ForceFieldMatrix[0, 0] = 0;
+                trial.ForceFieldMatrix[0, 1] = 15;
+                trial.ForceFieldMatrix[1, 0] = -15;
+                trial.ForceFieldMatrix[1, 1] = 0;
+            } else
+            {
+                trial = null;
+            }
+            
+
+            return trial;
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the trial has to be passed or not
+        /// Trials that should not be parsed because they don't contain any relevant data are:
+        /// PositionControlTrials
+        /// StartTrials
+        /// PauseTrials
+        /// </summary>
+        /// <returns>true/false</returns>
+        private bool isValidTrial()
+        {
+            if (getPositionControlEnabled() == 1) //PositionControlTrial you shall not parse
+            {
+                return false;
+            } else if(true) //PauseTrials and StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
+            {
+                //TODO proper handling of start trials and pause trials...
+                return false;
+            }
+            return true;
+        }
 
 
         /// <summary>
