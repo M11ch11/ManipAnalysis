@@ -211,12 +211,20 @@ namespace ManipAnalysis_v2.MeasureFileParser
             return szenarioDefinitionType;
         }
 
+        /// <summary>
+        /// Calls the szenarioParseDefinition with the use of the SzenarioDefinitionType which then writes the MetaData 
+        /// for a list of trials and pushes those into the TrialsContainer.
+        /// </summary>
+        /// <param name="szenarioDefinitionType">type that points to the szenarioParseDefinition that fits for the c3d-file</param>
+        /// <returns></returns>
         private bool ParseMeasureData(Type szenarioDefinitionType)
         {
             var retVal = true;
             try
             {
                 var szenarioDefinition = (AbstractSzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
+                //Here ParseMeasureFile in the proper SzenarioParseDefinition is being called, which then writes the metadata for a list of trials
+                //that then get pushed into the TrialsContainer
                 TrialsContainer.AddRange(szenarioDefinition.ParseMeasureFile(_myManipAnalysisGui, _c3DFiles,
                     _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
                     _szenarioName, _offset));
