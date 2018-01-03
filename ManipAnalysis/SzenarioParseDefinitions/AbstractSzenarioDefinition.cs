@@ -74,7 +74,10 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial.PositionOffset.Y = offset.Y;
 
                     //TODO: Insert the metadata parser instead of this method
-                    currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
+                    //currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
+                    XMLParser parser = new XMLParser(path, szenarioTrialNumber);
+                    
+                    currentTrial = parser.parseTrial();
 
                     if (currentTrial != null)
                     {

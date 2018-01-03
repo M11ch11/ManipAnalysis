@@ -50,8 +50,10 @@ namespace ManipAnalysis_v2
         {
             //TODO: Get the StudyName somehow?
             //TODO: trial.Target.Number richtig setzen?
-            //TODO: PositionControl und PauseTrials filtern
-            //TODO: Starttrials für linke und rechte Hand rausfiltern?
+            //trial.Target.Number gibt an, welches Target angesteuert wird:
+            //
+            //DONE: PositionControl filtern
+            //DONE: Starttrials für linke und rechte Hand rausfiltern? ### StartTrials haben egal mit welcher Hand immer selbes Start und EndTarget
 
             //Position control kann direkt gefiltert werden über getPositionControl, PauseTrial weiß ich noch nicht...
 
@@ -108,21 +110,25 @@ namespace ManipAnalysis_v2
 
 
         /// <summary>
-        /// Checks if the trial has to be passed or not
+        /// Checks if the trial has to be parsed or not
         /// Trials that should not be parsed because they don't contain any relevant data are:
         /// PositionControlTrials
         /// StartTrials
-        /// PauseTrials
         /// </summary>
         /// <returns>true/false</returns>
         private bool isValidTrial()
         {
+            //StartTrials in Simulink/BKIN: 
+            //Start und EndTarget ist identisch
+
+
             if (getPositionControlEnabled() == 1) //PositionControlTrial you shall not parse
             {
                 return false;
-            } else if(true) //PauseTrials and StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
+            //Wenn StartTarget und EndTarget identisch sind, werden keine relevanten Daten erzeugt.
+            //StartTrials nutzen dies aus und können dadurch gefiltert werden.
+            } else if(Enumerable.SequenceEqual(getTrialStartTargetPosition(), getTrialEndTargetPosition())) //StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
             {
-                //TODO proper handling of start trials and pause trials...
                 return false;
             }
             return true;
@@ -255,7 +261,7 @@ The following methods provide easy access to the required metadata stored in the
             }
             else
             {
-                //Do something when EndTargetNumber is 0 (thats the case, when the endtarget was not set in the protocol
+                //Do something when EndTargetNumber is 0 (thats the case, when the endtarget was not set in the protocol; should never happen actually
             }
 
             return position;
@@ -276,7 +282,7 @@ The following methods provide easy access to the required metadata stored in the
                 radius = double.Parse(targetTable[endTargetNumber - 1].Split(',')[2], CultureInfo.InvariantCulture);
             } else
             {
-                //Do something when EndTargetNumber is 0
+                //Do something when EndTargetNumber is 0; should never happen actually
             }
             return radius;
         }
@@ -345,9 +351,7 @@ The following methods provide easy access to the required metadata stored in the
                 ForceFieldType = "ForceFieldDF";
             } else if (ForceFieldMatrix[2] < 0 && ForceFieldMatrix[3] > 0)
             {
-                // TODO How to determine ForceFieldCW/ForceFieldCCW? --> Look at LoadTable Parameters A,B,C,D either they are CW or CCW or invalid
-                // TODO Check if this condition is actually true in older studies
-                //When C < 0 && D > 0?
+                //When C < 0 && D > 0
                 ForceFieldType = "ForceFieldCCW";
             } else if (ForceFieldMatrix[2] > 0 && ForceFieldMatrix[3] < 0)
             {

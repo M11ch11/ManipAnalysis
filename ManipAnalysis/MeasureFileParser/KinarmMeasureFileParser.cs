@@ -69,6 +69,14 @@ namespace ManipAnalysis_v2.MeasureFileParser
             return retVal;
         }
 
+        /// <summary>
+        /// sets the measureFilePath in the KinarmMeasureFileParser
+        /// then calls ParseFileInfo-method to parse c3d information
+        /// if ParseFileInfo-method succeeds:
+        /// Measurefile data is pushed into trialsContainer with the ParseMeasureData-method
+        /// </summary>
+        /// <param name="path">path to the c3d file</param>
+        /// <returns>true/false whether all those operations succeeded</returns>
         public bool ParseFile(string path)
         {
             var retVal = false;
@@ -91,6 +99,18 @@ namespace ManipAnalysis_v2.MeasureFileParser
             return retVal;
         }
 
+
+        /// <summary>
+        /// creates a temporary directory where the zipfiles of the c3d archive are extracted.
+        /// reads metadata information like szenarioname, groupname, studyname etc. from the so called "common"-file (*.c3d).
+        /// If no metadata for these fields was found, replaces the information with "unknown"
+        /// 
+        /// Then searches the execution assembly for the SzenarioParseDefinitions that match the parse-file (DEPRECATED!)
+        /// 
+        /// extracts ProbandID and MeasureFileCreationDateTime from the path to the c3d file
+        /// 
+        /// </summary>
+        /// <returns>a SzenarioDefinitionType that points to the matching SzenarioParseDefinition to parse the MetaData</returns>
         private Type ParseFileInfo()
         {
             Type szenarioDefinitionType = null;
@@ -123,6 +143,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] -
                              c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
 
+
+                //TODO: Don't use SzenarioParseDefinitions to parse metadata anymore.
+                // instead use the XMLParse with a path to the matching dtp file.
+                //Here the whole execution assembly is being traversed and searched for the szenarioParseDefinitions.
+                //These SzenarioParseDefinitions then are checked for matching szenarioName and studyName
+                //... which is tbh completely inefficient and cumbersome.
+                //Instead just use the xmlparser for that job!
                 foreach (
                         var szenarioDefinitionIterable in
                             Assembly.GetExecutingAssembly()
@@ -169,6 +196,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss",
                     CultureInfo.InvariantCulture);
 
+
+                //TODO Why do we instantiate the TrialsContainer here??
                 TrialsContainer = new List<Trial>();
             }
             catch (Exception
