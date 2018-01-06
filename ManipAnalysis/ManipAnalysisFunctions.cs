@@ -1492,6 +1492,7 @@ namespace ManipAnalysis_v2
                         _myManipAnalysisGui.SetProgressBarValue(100.0 / measureFilesList.Count * files);
 
                         var filename = measureFilesList.ElementAt(files);
+                        
 
                         var tempFileHash = Md5.ComputeHash(filename);
 
@@ -1501,6 +1502,8 @@ namespace ManipAnalysis_v2
                             var myParser = new KinarmMeasureFileParser(_myManipAnalysisGui);
 
                             _myManipAnalysisGui.WriteProgressInfo("Parsing file...");
+                            //In this if-condition the c3d data is parsed from the file filename.
+                            //Here we now need to also include the proper dtp file.
                             if (myParser.ParseFile(filename) && myParser.TrialsContainer.Count > 0)
                             {
                                 var trialsContainer = myParser.TrialsContainer;
