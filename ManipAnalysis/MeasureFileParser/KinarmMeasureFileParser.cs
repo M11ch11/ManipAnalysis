@@ -222,8 +222,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         */
                         var frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
                         int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
+                        //The TP_NUM seems to be an ID for the trial within the szenario
                         // -1 == Compensation of first Trial
                         var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
+                        //The TRIAL_NUM might be a distinct ID for a trial within the whole recording/proband?
                         int targetNumber = c3DReader.GetParameter<short>("TRIAL:TP");
 
                         measureFileContainer.CreationTime = measureFileCreationDateTime;
@@ -254,7 +256,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                         //TODO: Insert the metadata parser instead of this method
                         currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
-                        //XMLParser parser = new XMLParser(path, szenarioTrialNumber);
+                        //XMLParser parser = new XMLParser(dtpPath, szenarioTrialNumber);
                         //currentTrial = parser.parseTrial();
 
                         if (currentTrial != null)
