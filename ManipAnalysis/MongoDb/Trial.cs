@@ -134,7 +134,6 @@ namespace ManipAnalysis_v2.MongoDb
         /// Example:
         /// We have a szenario that contains exactly 3 trials that go to target number 1 but any number of trials overall. These 3 trials now will get the 
         /// TrialNumberInSzenario of 1, 2 and 3 depending on when they have been created
-        /// 
         /// </summary>
         public int TargetTrialNumberInSzenario { get; set; }
 

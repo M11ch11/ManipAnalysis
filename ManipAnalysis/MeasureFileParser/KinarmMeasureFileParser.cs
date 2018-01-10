@@ -249,6 +249,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         currentTrial.Origin = originContainer;
                         currentTrial.TargetTrialNumberInSzenario = targetTrialNumber;
                         currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
+                        //Maybe it makes sense to divide szenarioTrialNumber by 2 first, because in current study TRIAL_NUM gets increased by 2 instead of 1, starting by 2...
+                        //Also in study 10 DAVOS, every other trial was invalid and filtered afaik?
                         currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                         currentTrial.TrialVersion = "KINARM_1.0";
                         currentTrial.PositionOffset.X = offset.X;

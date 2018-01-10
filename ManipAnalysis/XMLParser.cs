@@ -25,7 +25,11 @@ namespace ManipAnalysis_v2
         const string TASKLEVELPARAMSPATH = "/task_protocol/tasklevelparams/text()";
 
         /// <summary>
-        /// Gets a path to an dtp/xml file and the trialNumberInSzenario to find the right trial in the dtp file
+        /// Gets a path to the dtp/xml file of an szenario and the trialNumberInSzenario to find the right trial in the dtp file
+        /// 
+        /// In the future this could also get improved by parsing the protocol.dtp that one can find in each folder that belongs to a specific subjects szenario.
+        /// Then you must be able to get the names of each field from the protocol.dtp as you can not hardcode the indices anymore afaik.
+        /// Would be much more elegant though!
         /// </summary>
         /// <param name="path">path to the dtp file</param>
         /// <param name="trialNumber">trialNumberInSzenario of the trial</param>
@@ -50,6 +54,7 @@ namespace ManipAnalysis_v2
         {
             //TODO: Get the StudyName somehow?
             //TODO: trial.Target.Number richtig setzen?
+            //trial.Target.Number = trial.Target.Number % 10 sollte passen.
             //trial.Target.Number gibt an, welches Target angesteuert wird:
             //
             //DONE: PositionControl filtern
