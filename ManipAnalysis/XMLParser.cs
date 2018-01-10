@@ -53,6 +53,7 @@ namespace ManipAnalysis_v2
         public Trial parseTrial()
         {
             //TODO: Get the StudyName somehow?
+            //The studyName comes from the c3dReader that reads the "EXPERIMENT:STUDY" field.
             //TODO: trial.Target.Number richtig setzen?
             //trial.Target.Number = trial.Target.Number % 10 sollte passen.
             //trial.Target.Number gibt an, welches Target angesteuert wird:

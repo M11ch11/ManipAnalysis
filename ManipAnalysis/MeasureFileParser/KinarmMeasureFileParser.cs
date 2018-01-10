@@ -251,12 +251,21 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
                         //Maybe it makes sense to divide szenarioTrialNumber by 2 first, because in current study TRIAL_NUM gets increased by 2 instead of 1, starting by 2...
                         //Also in study 10 DAVOS, every other trial was invalid and filtered afaik?
+                        /*
+                        It seems that positionControlTrials are immediately filtered from Dexterit?
+                        Therefore the trialNumberInSZenario should be determined by newly enumerating all trials within a szenario
+                        from 1 to end
+                        */
                         currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                         currentTrial.TrialVersion = "KINARM_1.0";
                         currentTrial.PositionOffset.X = offset.X;
                         currentTrial.PositionOffset.Y = offset.Y;
 
                         //TODO: Insert the metadata parser instead of this method
+                        //The dtp path might be getable from the szenario field, as the szenariofield has the same name as the .dtp file.
+                        //So as long as we know the general path to where dtp files are stored, we can then find the corresponding dtp file from the szenarioField.
+                        //We just need to search all the dtp files in the dtplist for the one that matches the szenarioField.
+                        //Alternatively we could also specifiy one general folder hardcoded...
                         currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
                         //XMLParser parser = new XMLParser(dtpPath, szenarioTrialNumber);
                         //currentTrial = parser.parseTrial();
