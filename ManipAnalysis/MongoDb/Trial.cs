@@ -122,9 +122,20 @@ namespace ManipAnalysis_v2.MongoDb
         public TargetContainer Origin { get; set; }
 
         public MeasureFileContainer MeasureFile { get; set; }
-
+        /// <summary>
+        /// The id for that trial in the szenario, first trial gets 1, and so on...
+        /// </summary>
         public int TrialNumberInSzenario { get; set; }
-
+        /// <summary>
+        /// This is first initialized with the TRIAL:TP_NUM from the c3d file, but later changed in the parsing process
+        /// After parsing it is supposed to tell you: Das wievielte Trial von allen Trials des Szenario, die dasselbe Target haben , ist dieses.
+        /// Fucking hard to describe that in English... Also no clue, why we need that attribute anywhere?
+        /// 
+        /// Example:
+        /// We have a szenario that contains exactly 3 trials that go to target number 1 but any number of trials overall. These 3 trials now will get the 
+        /// TrialNumberInSzenario of 1, 2 and 3 depending on when they have been created
+        /// 
+        /// </summary>
         public int TargetTrialNumberInSzenario { get; set; }
 
         public TrialTypeEnum TrialType { get; set; }
