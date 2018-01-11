@@ -34,7 +34,8 @@ namespace ManipAnalysis_v2
         /// </summary>
         /// <param name="path">path to the dtp file</param>
         /// <param name="trialNumber">trialNumberInSzenario of the trial</param>
-        public XMLParser (string path, int tpNumber)
+        /// <param name="trial">the trial in which to write</param>
+        public XMLParser (string path, int tpNumber, Trial trial)
         {
 
             //We don't use the trialNumberInSzenario, we use the tpNumber!
@@ -47,6 +48,7 @@ namespace ManipAnalysis_v2
                 tpTable = getTable(TPTABLEPATH);
                 targetTable = getTable(TARGETTABLEPATH);
                 loadTable = getTable(LOADTABLEPATH);
+                this.trial = trial;
             } else
             {
                 throw new Exception("Path leads to invalid document");
@@ -472,8 +474,15 @@ The following methods provide easy access to the required metadata stored in the
         {
             //Handedness can be found in 1st Entry of the TaskLevelParams as it must be set as global parameter in BKIN now
             string handednessEntry;
-            handednessEntry = getTable(TASKLEVELPARAMSPATH)[0];
-            string handedness = handednessEntry.Split(',')[1];
+            string handedness = "0";//Handedness is set to be RightHand by default unless stated otherwise
+            try {
+                handednessEntry = getTable(TASKLEVELPARAMSPATH)[0];
+                handedness = handednessEntry.Split(',')[1];
+            } catch (IndexOutOfRangeException e)
+            {
+                Console.WriteLine(e);
+                //Handedness was not set so it will stay default on 0...
+            }
             return handedness;
         }
 
@@ -565,10 +574,12 @@ The following methods provide easy access to the required metadata stored in the
         private float[] getForceFieldMatrix()
         {
             float[] matrix = { 0, 0, 0, 0 };
+            string[] forceFieldEntries = loadTable[getForceFieldColumn()].Split(',');
             for (int i = 0; i < 4; i++)
             {
                 //The first 4 entries of the loadTable represent the entries A, B, C and D for the matrix
-                string[] forceFieldEntries = loadTable[trial.TrialNumberInSzenario - 1].Split(',');
+                //string[] forceFieldEntries = loadTable[trial.TrialNumberInSzenario - 1].Split(',');
+                
                 matrix[i] = float.Parse(forceFieldEntries[i], CultureInfo.InvariantCulture);
             }
             return matrix;

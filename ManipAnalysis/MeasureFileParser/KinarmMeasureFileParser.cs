@@ -177,11 +177,15 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 //Getting the matching dtpFile for the given *.c3d file by looking at the szenarioName and adding .dtp at the end
                 //We are allowed to do this here, because all the *.c3d files belong to the same szenario, therefore use the same *.dtp to store their MetaData
-                string dtpFilePath;
-                if (ListOfdtpFilePaths.Contains(_szenarioName + ".dtp"))
+                string dtpFilePath = "";
+                for (int i = 0; i < ListOfdtpFilePaths.Count; i++)
                 {
-                    dtpFilePath = ListOfdtpFilePaths.Find(x => x.Contains(_szenarioName));
-                } else
+                    if (ListOfdtpFilePaths[i].Contains(_szenarioName + ".dtp"))
+                    {
+                        dtpFilePath = ListOfdtpFilePaths[i];
+                    }
+                }
+                if (dtpFilePath.Equals("")) 
                 {
                     dtpFilePath = null;
                     _myManipAnalysisGui.WriteToLogBox("No matching *.dtp file found for the following szenario: " + _szenarioName);
@@ -301,9 +305,14 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         //Alternatively we could also specifiy one general folder hardcoded...
 
                         //currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
-                        XMLParser parser = new XMLParser(dtpFile, tpNumber);
-                        currentTrial = parser.parseTrial();
-
+                        XMLParser parser = new XMLParser(dtpFile, tpNumber, currentTrial);
+                        if (parser != null)
+                        {
+                            currentTrial = parser.parseTrial();
+                        } else
+                        {
+                            _myManipAnalysisGui.WriteToLogBox("Parser had nullreference! :(");
+                        }
                         if (currentTrial != null)
                         {
                             if (0 < c3DReader.FramesCount && c3DReader.FramesCount < 32768)

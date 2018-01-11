@@ -1206,12 +1206,12 @@ namespace ManipAnalysis_v2
             List<string> allItems = listBox_Import_SelectedMeasureFiles.Items.Cast<string>().ToList();
             for (int i = 0; i < listBox_Import_SelectedMeasureFiles.Items.Count; i++)
             {
-                if (!(allItems[i].Contains(".dtp")))
-                {
-                    measureFiles.Add(allItems[i]);
-                } else
+                if (allItems[i].Contains(".dtp"))
                 {
                     dtpFiles.Add(allItems[i]);
+                } else
+                {
+                    measureFiles.Add(allItems[i]);
                 }
             }
             //Afterwards, call the importFunction
