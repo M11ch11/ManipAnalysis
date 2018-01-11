@@ -385,6 +385,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 }
                 */
                 // Set TargetTrialNumberInSzenario Field 
+                // I have no clue why we need this...
                 if (trialsContainer.Any())
                 {
                     foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())

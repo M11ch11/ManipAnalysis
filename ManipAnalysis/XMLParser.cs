@@ -53,7 +53,7 @@ namespace ManipAnalysis_v2
         public Trial parseTrial()
         {
             //TODO: Get the StudyName somehow?
-            //The studyName comes from the c3dReader that reads the "EXPERIMENT:STUDY" field.
+            //The studyName is already set from the c3dReader that reads the "EXPERIMENT:STUDY" field, when this method gets called.
             //TODO: trial.Target.Number richtig setzen?
             //trial.Target.Number = trial.Target.Number % 10 sollte passen.
             //trial.Target.Number gibt an, welches Target angesteuert wird:
@@ -65,6 +65,17 @@ namespace ManipAnalysis_v2
 
             if (isValidTrial())
             {
+                //We set the trial.Target.Number by dividing it by 10 and taking the rest.
+                //This was how it was set in earlier studies, as the TP_NUM, where it actually comes from (in the c3d file)
+                //Had the convention that its lowest digit decoded the target.Number...
+                //In the future that might not be the case anymore.
+                //Instead we could use the getTrialEndTargetNumber() func  
+
+
+                trial.Target.Number = getTrialEndTargetNumber();
+                //trial.Target.Number = trial.Target.Number % 10;
+
+
                 //SzenarioName eintragen
                 trial.Szenario = getSzenarioName();
 
