@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using ManipAnalysis_v2.MongoDb;
 
 namespace ManipAnalysis_v2.Tests
 {
@@ -14,10 +15,11 @@ namespace ManipAnalysis_v2.Tests
     {
         XMLParser parser;
         string path = @"C:\Users\Administrator\Desktop\BKINFiles_Szenarios\SampleDTPFiles\general_study\01_TestForAllTrials.dtp";
+        Trial t1 = new Trial();
         [TestMethod()]
         public void XMLParserTest()
         {
-            parser = new XMLParser(path, 10);
+            parser = new XMLParser(path, 10, t1);
 
             Console.WriteLine("TpTable: ");
             for (int i = 0; i < parser.tpTable.Count(); i++)
@@ -57,7 +59,7 @@ namespace ManipAnalysis_v2.Tests
         [TestMethod()]
         public void getTrialEndTargetPositionTest()
         {
-            parser = new XMLParser(path, 3);
+            parser = new XMLParser(path, 3, t1);
             for (int i = 0; i < parser.getTrialEndTargetPosition().Count(); i++)
             {
                 Console.WriteLine(parser.getTrialEndTargetPosition()[i]);
@@ -79,7 +81,7 @@ namespace ManipAnalysis_v2.Tests
         [TestMethod()]
         public void getTrialStartTargetPositionTest()
         {
-            parser = new XMLParser(path, 3);
+            parser = new XMLParser(path, 3, t1);
             for (int i = 0; i < parser.getTrialStartTargetPosition().Count(); i++)
             {
                 Console.WriteLine(parser.getTrialStartTargetPosition()[i]);
@@ -90,10 +92,45 @@ namespace ManipAnalysis_v2.Tests
         [TestMethod()]
         public void getSzenarioNameTest()
         {
-            parser = new XMLParser(path, 3);
+            parser = new XMLParser(path, 3, t1);
             Console.WriteLine(parser.getSzenarioName());
             Assert.AreEqual(parser.getSzenarioName(), "01_TestForAllTrials");
         }
+
+        [TestMethod()]
+        public void isValidTrialTest()
+        {
+            parser = new XMLParser(path, 3, t1);
+            Console.WriteLine(parser.isValidTrial());
+        }
+
+        [TestMethod()]
+        public void getForceFieldMatrixTest()
+        {
+            parser = new XMLParser(path, 21, t1);
+            float[] matrix = parser.getForceFieldMatrix();
+            for (int i = 0; i < 4; i++)
+            {
+                Console.WriteLine(matrix[i]);
+                switch (i)
+                {
+                    case 0:
+                        Assert.AreEqual(0, matrix[i]);
+                        break;
+                    case 1:
+                        Assert.AreEqual(15, matrix[i]);
+                        break;
+                    case 2:
+                        Assert.AreEqual(-15, matrix[i]);
+                        break;
+                    case 3:
+                        Assert.AreEqual(0, matrix[i]);
+                        break;
+                }
+            }
+        }
+
+
 
         //Former public methods, for testing only, now private
         //[TestMethod()]

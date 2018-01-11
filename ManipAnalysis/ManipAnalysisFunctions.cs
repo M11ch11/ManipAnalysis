@@ -1855,6 +1855,15 @@ namespace ManipAnalysis_v2
 
                 trialsContainer[trialCounter].NormalizedDataSampleRate = timeNormalizationSamples;
                 trialsContainer[trialCounter].VelocityTrimThresholdPercent = percentPeakVelocity;
+                //###
+                /* That was used for debuggin only
+                var test = trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1);
+                if (test.Count() == 0)
+                {
+                    _myManipAnalysisGui.WriteToLogBox("No matching position Status == 1 for trial: " + trialsContainer[trialCounter].TrialNumberInSzenario);
+                }
+                */
+                //###
                 trialsContainer[trialCounter].VelocityTrimThresholdForTrial =
                     trialsContainer[trialCounter].VelocityFiltered.Where(t => t.PositionStatus == 1)
                         .Max(t => Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2))) / 100.0 * percentPeakVelocity;

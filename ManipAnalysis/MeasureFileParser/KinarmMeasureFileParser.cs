@@ -339,6 +339,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                    */
                                     //For newer Imports use PositionStatus, for older ones ACH4
                                     //PositionStatus is afaik a variable that is used as a trigger and set in the trialControlBlock to give signals to the Vicon/EEG system?
+
                                     //var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
 
                                     var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;

@@ -138,7 +138,7 @@ namespace ManipAnalysis_v2
         /// StartTrials
         /// </summary>
         /// <returns>true/false</returns>
-        private bool isValidTrial()
+        public bool isValidTrial()
         {
             //StartTrials in Simulink/BKIN: 
             //Start und EndTarget ist identisch
@@ -149,11 +149,20 @@ namespace ManipAnalysis_v2
                 return false;
             //Wenn StartTarget und EndTarget identisch sind, werden keine relevanten Daten erzeugt.
             //StartTrials nutzen dies aus und können dadurch gefiltert werden.
-            } else if(Enumerable.SequenceEqual(getTrialStartTargetPosition(), getTrialEndTargetPosition())) //StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
+            } else if(getTrialStartTargetNumber() == getTrialEndTargetNumber())
             {
                 return false;
             }
             return true;
+
+            /*
+            else if(Enumerable.SequenceEqual(getTrialStartTargetPosition(), getTrialEndTargetPosition())) //StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
+            {
+                //TODO: Are startTrials really filtered?
+                return false;
+            }
+            return true;
+            */
         }
 
 
@@ -227,7 +236,7 @@ The following methods provide easy access to the required metadata stored in the
             int startTargetNumber = getTrialStartTargetNumber();
             //X-Position is always the first entry in the array split at the comma
             //To make parsing doubles possible, we need CultureInfo, for recognizing doubles with points instead of commas
-            if (startTargetNumber < 0)
+            if (startTargetNumber > 0)
             {
                 position[0] = double.Parse(targetTable[startTargetNumber - 1].Split(',')[0], CultureInfo.InvariantCulture);
                 //Y-Position is always the second entry in the array split at the comma
@@ -371,13 +380,13 @@ The following methods provide easy access to the required metadata stored in the
             if (getDFForceFieldEnabled() == 1)
             {
                 ForceFieldType = "ForceFieldDF";
-            } else if (ForceFieldMatrix[2] < 0 && ForceFieldMatrix[3] > 0)
+            } else if (ForceFieldMatrix[1] < 0 && ForceFieldMatrix[2] > 0)
             {
-                //When C < 0 && D > 0
+                //When B < 0 && C > 0
                 ForceFieldType = "ForceFieldCCW";
-            } else if (ForceFieldMatrix[2] > 0 && ForceFieldMatrix[3] < 0)
+            } else if (ForceFieldMatrix[1] > 0 && ForceFieldMatrix[2] < 0)
             {
-                //When C > 0 && D < 0!
+                //When B > 0 && C < 0!
                 ForceFieldType = "ForceFieldCW";
             } else if (true)
             {
@@ -530,7 +539,7 @@ The following methods provide easy access to the required metadata stored in the
         private string getTpTableEntry()
         {
             //The tpTable can be accessed with the tpNumber from the *.c3d TP_NUM field
-            return tpTable[tpNumber];
+            return tpTable[tpNumber - 1];
         }
 
 
@@ -571,7 +580,7 @@ The following methods provide easy access to the required metadata stored in the
         /// Delivers the A, B, C and D value of the rotational forcefield matrix in this order
         /// </summary>
         /// <returns>{A, B, C, D}</returns>
-        private float[] getForceFieldMatrix()
+        public float[] getForceFieldMatrix()
         {
             float[] matrix = { 0, 0, 0, 0 };
             string[] forceFieldEntries = loadTable[getForceFieldColumn()].Split(',');
