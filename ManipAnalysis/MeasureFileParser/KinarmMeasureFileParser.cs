@@ -77,8 +77,11 @@ namespace ManipAnalysis_v2.MeasureFileParser
         /// Measurefile data is pushed into trialsContainer with the ParseMeasureData-method
         /// </summary>
         /// <param name="zipFilepath">path to the zip file that contains c3d data</param>
+        /// <param name="dtpFilePath">list of all dtp files that were entered into the listBox in the GUI
+        /// We need all of those because we can not determine the matching dtp file from the zipfile alone, 
+        /// instead we have to unpack it first and match it with the szenarioName from the c3dfile which happens in this class.</param>
         /// <returns>true/false whether all those operations succeeded</returns>
-        public bool ParseFile(string zipFilepath)
+        public bool ParseFile(string zipFilepath, List<string> ListOfdtpFilePaths)
         {
             /*
 
@@ -90,7 +93,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
             if (zipFilepath != null)
             {
                 _measureFilePath = zipFilepath;
-                var dtpPath = getdtpPathFromZipFilePath(zipFilepath);
 
                 //Instead of returning a szenarioDefinitionType, the ParseFileInfo should now
                 //return a path to the dtp file while also writing the necessary meta data that it already does.
@@ -118,7 +120,14 @@ namespace ManipAnalysis_v2.MeasureFileParser
                     var commonFile = tempPath + @"\raw\common.c3d";
 
                     c3DReader.Open(commonFile);
+                    /*
 
+                    Here we open the so called common.c3d file. This file is located in any zipArchive that gets
+                    created from BKIN/KinArm and it contains general information about all trials that are 
+                    contained in the zipFile. *.c3d files that come from the same zip-Archive must
+                    share the same szenarioName, studyName etc...
+
+                    */
                     _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
                     _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
                     _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
@@ -128,7 +137,9 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                  c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
 
                     c3DReader.Close();
-
+                    //The ProbandID can be acquired by splitting the zipFile-Name and looking at the first split
+                    //because BKIN names their zipFiles conveniently (lucky for us I guess?)
+                    //This is no clean solution but I don't know of any better so far.
                     _probandId = fileName.Split('_')[0].Trim();
                     var datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
                                    fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
@@ -163,16 +174,30 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 }
                 */
 
+
+                //Getting the matching dtpFile for the given *.c3d file by looking at the szenarioName and adding .dtp at the end
+                //We are allowed to do this here, because all the *.c3d files belong to the same szenario, therefore use the same *.dtp to store their MetaData
+                string dtpFilePath;
+                if (ListOfdtpFilePaths.Contains(_szenarioName + ".dtp"))
+                {
+                    dtpFilePath = ListOfdtpFilePaths.Find(x => x.Contains(_szenarioName));
+                } else
+                {
+                    dtpFilePath = null;
+                    _myManipAnalysisGui.WriteToLogBox("No matching *.dtp file found for the following szenario: " + _szenarioName);
+                }
+
+
                 //Call to parseMeasureData:
                 //In this method the xmlparser is being called
-                ParseMetaData(dtpPath, _myManipAnalysisGui, _c3DFiles,
+                ParseMetaData(dtpFilePath, _myManipAnalysisGui, _c3DFiles,
                         _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
                         _szenarioName, _offset);
             }
             return retVal;
         }
 
-        private string getdtpPathFromZipFilePath(string c3dpath)
+        private string getdtpFilePath(string _szenarioName, List<string> listOfdtpFilePaths)
         {
             throw new NotImplementedException();
         }
@@ -195,7 +220,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
         /// <param name="szenarioName"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        private List<Trial>ParseMetaData(string dtpPath, ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
+        private List<Trial>ParseMetaData(string dtpFile, ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
             DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
             string groupName, string studyName, string szenarioName, Vector3 offset)
         {
@@ -222,19 +247,23 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         */
                         var frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
                         int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
-                        //The TP_NUM seems to be an ID for the trial within the szenario
+                        //The TP_NUM is an ID for the trial within the szenario (aka enumeration of all trials)
                         // -1 == Compensation of first Trial
                         var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
-                        //The TRIAL_NUM might be a distinct ID for a trial within the whole recording/proband?
-                        int targetNumber = c3DReader.GetParameter<short>("TRIAL:TP");
+                        //This is not the targetNumber but the tpNumber.
+                        //Only because of the convention that we can in most cases determine the targetNumber from the tpNumber this works...
+                        int tpNumber = c3DReader.GetParameter<short>("TRIAL:TP");
 
                         measureFileContainer.CreationTime = measureFileCreationDateTime;
                         measureFileContainer.FileHash = measureFileHash;
                         measureFileContainer.FileName = Path.GetFileName(measureFilePath);
 
                         subjectContainer.PId = probandId;
-
-                        targetContainer.Number = targetNumber;
+                        
+                        //This line does not write the target.Number! Instead it wrote the tpNumber into the EndTarget and then did some 
+                        //stupid calculations on it to determine the real target.Number. We will not do this anymore!
+                        //Instead we now get the target.Number from the *.dtp file in the XMLParser!
+                        //targetContainer.Number = targetNumber;
 
                         currentTrial.StartDateTimeOfTrialRecording = DateTime.Parse(startTime);
                         currentTrial.MeasuredForcesRaw = new List<ForceContainer>();
@@ -266,9 +295,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         //So as long as we know the general path to where dtp files are stored, we can then find the corresponding dtp file from the szenarioField.
                         //We just need to search all the dtp files in the dtplist for the one that matches the szenarioField.
                         //Alternatively we could also specifiy one general folder hardcoded...
-                        currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
-                        //XMLParser parser = new XMLParser(dtpPath, szenarioTrialNumber);
-                        //currentTrial = parser.parseTrial();
+
+                        //currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
+                        XMLParser parser = new XMLParser(dtpFile, tpNumber);
+                        currentTrial = parser.parseTrial();
 
                         if (currentTrial != null)
                         {
@@ -295,6 +325,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
                                    */
                                     //For newer Imports use PositionStatus, for older ones ACH4
+                                    //PositionStatus is afaik a variable that is used as a trigger and set in the trialControlBlock to give signals to the Vicon/EEG system?
                                     //var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
 
                                     var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;

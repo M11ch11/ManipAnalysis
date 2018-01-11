@@ -1493,6 +1493,7 @@ namespace ManipAnalysis_v2
 
                         var filename = measureFilesList.ElementAt(files);
                         
+                        
 
                         var tempFileHash = Md5.ComputeHash(filename);
 
@@ -1504,7 +1505,7 @@ namespace ManipAnalysis_v2
                             _myManipAnalysisGui.WriteProgressInfo("Parsing file...");
                             //In this if-condition the c3d data is parsed from the file filename.
                             //Here we now need to also include the proper dtp file.
-                            if (myParser.ParseFile(filename) && myParser.TrialsContainer.Count > 0)
+                            if (myParser.ParseFile(filename, dtpFilesList) && myParser.TrialsContainer.Count > 0)
                             {
                                 var trialsContainer = myParser.TrialsContainer;
                                 var taskTrialListParts = new List<List<Trial>>();

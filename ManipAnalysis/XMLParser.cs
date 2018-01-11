@@ -35,6 +35,9 @@ namespace ManipAnalysis_v2
         /// <param name="trialNumber">trialNumberInSzenario of the trial</param>
         public XMLParser (string path, int trialNumber)
         {
+
+            //We don't use the trialNumberInSzenario, we use the tpNumber!
+
             //Assertion: The Trial_Num in the c3d file can be identified and it actually represents the TrialNumberInSzenario
             document = new XmlDocument();
             if (isValidDocument(path))
@@ -75,7 +78,7 @@ namespace ManipAnalysis_v2
                 trial.Target.Number = getTrialEndTargetNumber();
                 //trial.Target.Number = trial.Target.Number % 10;
 
-
+                //Actually not necessary as this is already done in the c3d-Parsing afaik
                 //SzenarioName eintragen
                 trial.Szenario = getSzenarioName();
 
@@ -467,7 +470,7 @@ The following methods provide easy access to the required metadata stored in the
         /// <returns>0 or 1 for RightHand or LeftHand</returns>
         private string getHandedness()
         {
-            //Handedness can be found in 1st Entry of the TaskLevelParams
+            //Handedness can be found in 1st Entry of the TaskLevelParams as it must be set as global parameter in BKIN now
             string handednessEntry;
             handednessEntry = getTable(TASKLEVELPARAMSPATH)[0];
             string handedness = handednessEntry.Split(',')[1];
