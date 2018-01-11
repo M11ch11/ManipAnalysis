@@ -15,6 +15,7 @@ namespace ManipAnalysis_v2
     {
         XmlDocument document;
         Trial trial = new Trial();
+        int tpNumber;
         public string[] tpTable;
         public string[] targetTable;
         public string[] loadTable;
@@ -33,17 +34,16 @@ namespace ManipAnalysis_v2
         /// </summary>
         /// <param name="path">path to the dtp file</param>
         /// <param name="trialNumber">trialNumberInSzenario of the trial</param>
-        public XMLParser (string path, int trialNumber)
+        public XMLParser (string path, int tpNumber)
         {
 
             //We don't use the trialNumberInSzenario, we use the tpNumber!
-
-            //Assertion: The Trial_Num in the c3d file can be identified and it actually represents the TrialNumberInSzenario
+            
             document = new XmlDocument();
             if (isValidDocument(path))
             {
                 document.Load(path);
-                trial.TrialNumberInSzenario = trialNumber;
+                this.tpNumber = tpNumber;
                 tpTable = getTable(TPTABLEPATH);
                 targetTable = getTable(TARGETTABLEPATH);
                 loadTable = getTable(LOADTABLEPATH);
@@ -520,14 +520,8 @@ The following methods provide easy access to the required metadata stored in the
         /// <returns></returns>
         private string getTpTableEntry()
         {
-            //Mit der trialNumber kann der tpTable durchsucht werden (Trialnumber = Index im TpTable)
-            //Enumeration of the TrialNumberInSzenario starts at 1 so decrement it first
-            /*
-
-            WHAT TO DO WHEN TRIALNUMBERINSZENARIO IS ZERO? IS THIS POSSIBLE?
-
-            */
-            return tpTable[trial.TrialNumberInSzenario - 1];
+            //The tpTable can be accessed with the tpNumber from the *.c3d TP_NUM field
+            return tpTable[tpNumber];
         }
 
 

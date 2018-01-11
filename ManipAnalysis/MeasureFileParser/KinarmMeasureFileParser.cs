@@ -190,16 +190,17 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                 //Call to parseMeasureData:
                 //In this method the xmlparser is being called
-                ParseMetaData(dtpFilePath, _myManipAnalysisGui, _c3DFiles,
+                List<Trial> trialsCont = ParseMetaData(dtpFilePath, _myManipAnalysisGui, _c3DFiles,
                         _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
                         _szenarioName, _offset);
+                if (trialsCont.Any())
+                {
+                    TrialsContainer.AddRange(trialsCont);
+                    retVal = true;
+                }
+                
             }
             return retVal;
-        }
-
-        private string getdtpFilePath(string _szenarioName, List<string> listOfdtpFilePaths)
-        {
-            throw new NotImplementedException();
         }
 
 
@@ -249,7 +250,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
                         //The TP_NUM is an ID for the trial within the szenario (aka enumeration of all trials)
                         // -1 == Compensation of first Trial
-                        var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
+                        //var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
+                        //We don't need a -1 here, in the end we will sort the container by trialNumberInSzenario and enumerate properly anyways!
+                        //Check last block of this funct.
+                        var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM");
                         //This is not the targetNumber but the tpNumber.
                         //Only because of the convention that we can in most cases determine the targetNumber from the tpNumber this works...
                         int tpNumber = c3DReader.GetParameter<short>("TRIAL:TP");
@@ -435,7 +439,16 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         }
                     }
                 }
-
+                //set the TrialNumberInSzenario properly, because PositionControlTrials do not create *.c3d files
+                //tut they still increase the TRIAL_NUM. We don't want gaps, whenever a PositionControl or StartTrial appeared.
+                if (trialsContainer.Any())
+                {
+                    trialsContainer.Sort((x, y) => x.TrialNumberInSzenario.CompareTo(y.TrialNumberInSzenario));
+                    for (int i = 1; i < trialsContainer.Count(); i++)
+                    {
+                        trialsContainer[i].TrialNumberInSzenario = i + 1;
+                    }
+                }
                 return trialsContainer;
             }
         }
