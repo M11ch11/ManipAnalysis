@@ -2376,6 +2376,15 @@ namespace ManipAnalysis_v2
             });
         }
 
+        /// <summary>
+        /// This is a horrible method! It loops over ALL studies in the database and depending on the if clause that matches
+        /// a studies name  (which is a terrible solution as well!) it groups the trials of that study that belong to the baseline
+        /// by selecting them manually by their trialNumberInSzenario. To group the trials, they must be grouped in such a way that 
+        /// all trials in one group share the same metadata, because the helperfunction "doBaselineCalculation" is also very bad
+        /// and can not handle groups that do not share the same metadata...
+        /// I might want to improve this greatly in the future, as with automated parsing, there should be no more need for all
+        /// this hassle...
+        /// </summary>
         public void CalculateBaselines()
         {
             TaskManager.PushBack(Task.Factory.StartNew(delegate
@@ -2407,6 +2416,23 @@ namespace ManipAnalysis_v2
                     baselineFields = baselineFields.Include(t15 => t15.Id);
                     var baselinesContainer = new List<Baseline>();
                     var studys = _myDatabaseWrapper.GetStudys();
+
+                    //To use doBaselineCalculation, we must split the trials in such a way, that each group of trials that we give to 
+                    //the doBaselineCalculation() must have the same meta data, as this method can not handle groups of trials with different metadata.
+                    //Therefore we must split into the same:
+                    /*
+                    - trialtype
+                    - ForcefieldType
+                    - Handedness
+                    - Study
+                    - Group
+                    - Subject
+                    - Szenario
+                    - Target
+                    - Origin
+                    In practice it should be enough to split by trialtype, forcefieldtype and handedness,
+                    as we have to loop over study, group and subject anyway(?) and the szenario is fix (*Baseline*)
+                    */
 
                     foreach (var study in studys)
                     {
