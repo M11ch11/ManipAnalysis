@@ -2377,7 +2377,7 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
-        /// This is a horrible method! It loops over ALL studies in the database and depending on the if clause that matches
+        /// This is a horrible method! It loops over the studies that are in one dropDownEntry of ManipAnalysis in the database and depending on the if clause that matches
         /// a studies name  (which is a terrible solution as well!) it groups the trials of that study that belong to the baseline
         /// by selecting them manually by their trialNumberInSzenario. To group the trials, they must be grouped in such a way that 
         /// all trials in one group share the same metadata, because the helperfunction "doBaselineCalculation" is also very bad
@@ -2415,6 +2415,8 @@ namespace ManipAnalysis_v2
                     baselineFields = baselineFields.Include(t14 => t14.NormalizedDataSampleRate);
                     baselineFields = baselineFields.Include(t15 => t15.Id);
                     var baselinesContainer = new List<Baseline>();
+                    //GetStudys returns the name of the studies that is found in the c3d description of the trials of the study that is currently selected in the GUI
+                    //For older studies, GetStudies returns the studyName that was set in the szenarioParseDefintionFile.
                     var studys = _myDatabaseWrapper.GetStudys();
 
                     //To use doBaselineCalculation, we must split the trials in such a way, that each group of trials that we give to 
@@ -2434,6 +2436,31 @@ namespace ManipAnalysis_v2
                     as we have to loop over study, group and subject anyway(?) and the szenario is fix (*Baseline*)
                     */
 
+                    foreach (var study in studys)
+                    {
+                        var groups = _myDatabaseWrapper.GetGroups(study);
+                        foreach (var group in groups)
+                        {
+                            var baselineSzenarios = _myDatabaseWrapper.GetBaselineSzenarios(study, group);
+                            foreach (var baselineSzenario in baselineSzenarios)
+                            {
+                                var subjects = _myDatabaseWrapper.GetSubjects(study, group, baselineSzenario);
+                                foreach (var subject in subjects)
+                                {
+                                    //Do stuff
+                                    var turnDateTime = _myDatabaseWrapper.GetTurns(study, group, baselineSzenario, subject).ElementAt(0);
+                                    //baselineTrials gets filled with all trials that belong to that szenario
+                                    var baselineTrials =
+                                        _myDatabaseWrapper.GetTrials(study, group, baselineSzenario,
+                                        subject, turnDateTime, baselineFields).ToList();
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    //DEPRECATED & UNSAFE! ##############################################
                     foreach (var study in studys)
                     {
                         if (study == "Study_12_HEiKA")
@@ -3461,6 +3488,7 @@ namespace ManipAnalysis_v2
                 TaskManager.Remove(Task.CurrentId);
             }));
         }
+
 
         private List<Baseline> doBaselineCalculation(List<Trial> inputTrials)
         {

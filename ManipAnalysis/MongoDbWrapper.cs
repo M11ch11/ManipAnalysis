@@ -433,7 +433,45 @@ namespace ManipAnalysis_v2
                 return new List<string>();
             }
         }
+        /// <summary>
+        /// Returns a list of all SzenarioNames that qualifiy for a BaselineSzenario within that study and group
+        /// Qualifying for BaseLineSzenario means the szenarioName contains the word "baseline" somewhere, capitalization does not matter.
+        /// </summary>
+        /// <param name="studyName">study to search in</param>
+        /// <param name="groupName">group of the study to search in</param>
+        /// <returns></returns>
+        public IEnumerable<string> GetBaselineSzenarios(string studyName, string groupName)
+        {
+            try
+            {
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                    Builders<Trial>.Filter.Eq(t => t.Group, groupName),
+                    Builders<Trial>.Filter.Regex(t => t.Szenario, "[bB][aA][sS][eE][lL][iI][nN][eE]"));
 
+                //TicToc.Tic();
+                var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Szenario, u => new { u.Key })
+                        .ToList()
+                        .Select(t => t.Key);
+                return retVal;
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarios: " + ex);
+                return new List<string>();
+            }
+
+        }
+
+        /// <summary>
+        /// Gives an Enumerable of subjects that belong to the same study, same group and same SzenarioName
+        /// </summary>
+        /// <param name="studyName">Study to select from</param>
+        /// <param name="groupName">group to select from</param>
+        /// <param name="szenarioName">szenario to select from</param>
+        /// <returns></returns>
         public IEnumerable<SubjectContainer> GetSubjects(string studyName, string groupName, string szenarioName)
         {
             try
@@ -684,6 +722,34 @@ namespace ManipAnalysis_v2
 
             return retVal;
         }
+
+
+        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
+            SubjectContainer subject, DateTime turn, ProjectionDefinition<Trial> fields)
+        {
+            IEnumerable<Trial> retVal;
+            try
+            {
+                fields = fields.Include(t => t.TargetTrialNumberInSzenario);
+                retVal = _trialCollection
+                    .Find(
+                        t =>
+                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
+                            t.Subject == subject && t.MeasureFile.CreationTime == turn)
+                    .Project<Trial>(fields)
+                    .ToList()
+                    .OrderBy(t => t.TargetTrialNumberInSzenario);
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
+                retVal = null;
+            }
+
+            return retVal;
+        }
+
+
 
         public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials, ProjectionDefinition<Trial> fields)

@@ -81,8 +81,11 @@ namespace ManipAnalysis_v2
                 //trial.Target.Number = trial.Target.Number % 10;
 
                 //Actually not necessary as this is already done in the c3d-Parsing afaik
+                //Not used at the moment because sometimes Dexterit adds 'u' before the SzenarioName for some random reason?
+                //And I dont want to have to filter it first. The Name from the c3d file is "genauso gut"
+
                 //SzenarioName eintragen
-                trial.Szenario = getSzenarioName();
+                //trial.Szenario = getSzenarioName();
 
                 //ForceFieldType eintragen
                 setForceFieldType();
