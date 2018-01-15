@@ -2453,6 +2453,62 @@ namespace ManipAnalysis_v2
                                     var baselineTrials =
                                         _myDatabaseWrapper.GetTrials(study, group, baselineSzenario,
                                         subject, turnDateTime, baselineFields).ToList();
+                                    //Unzipping the trialdata and writing it in the trial
+                                    baselineTrials.ForEach(
+                                       t =>
+                                           t.PositionNormalized =
+                                               Gzip<List<PositionContainer>>.DeCompress(t.ZippedPositionNormalized)
+                                                   .OrderBy(u => u.TimeStamp)
+                                                   .ToList());
+                                    baselineTrials.ForEach(
+                                        t =>
+                                            t.VelocityNormalized =
+                                                Gzip<List<VelocityContainer>>.DeCompress(t.ZippedVelocityNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrials.ForEach(
+                                        t =>
+                                            t.MeasuredForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMeasuredForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    baselineTrials.ForEach(
+                                        t =>
+                                            t.MomentForcesNormalized =
+                                                Gzip<List<ForceContainer>>.DeCompress(t.ZippedMomentForcesNormalized)
+                                                    .OrderBy(u => u.TimeStamp)
+                                                    .ToList());
+                                    //group the baselineTrials into metadatagroups:
+                                    //FFCW_RH, FFCW_LH, FFCCW_RH. FFCCW_LH, FC_RH, FC_LH, NF_RH, NF_LH
+                                    var forceFieldCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
+                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+
+                                    var forceFieldCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+
+                                    var forceFieldCCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
+                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+
+                                    var forceFieldCCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+
+                                    var forceFieldDFRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
+                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+
+                                    var forceFieldDFLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+
+                                    var forceChannelRightHand = baselineTrials.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial
+                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+
+                                    var forceChannelLeftHand = baselineTrials.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+
+                                    var nullFieldRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
+                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+
+                                    var nullFieldLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
                                 }
                             }
                         }
