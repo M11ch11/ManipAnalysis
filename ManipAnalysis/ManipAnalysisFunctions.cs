@@ -2447,7 +2447,7 @@ namespace ManipAnalysis_v2
                                 var subjects = _myDatabaseWrapper.GetSubjects(study, group, baselineSzenario);
                                 foreach (var subject in subjects)
                                 {
-                                    //Do stuff
+                                    
                                     var turnDateTime = _myDatabaseWrapper.GetTurns(study, group, baselineSzenario, subject).ElementAt(0);
                                     //baselineTrials gets filled with all trials that belong to that szenario
                                     var baselineTrials =
@@ -2480,35 +2480,86 @@ namespace ManipAnalysis_v2
                                                     .ToList());
                                     //group the baselineTrials into metadatagroups:
                                     //FFCW_RH, FFCW_LH, FFCCW_RH. FFCCW_LH, FC_RH, FC_LH, NF_RH, NF_LH
+                                    //We don't have the logic for vicon trials yet, but vicon trials will probably also never be used anymore?
+                                    //If you have vicontrials somewhere, you will probably also have to add groups where you check the handedness for 
+                                    //RightHandVicon and LeftHandVicon instead of RightHand and LeftHand...
+
+                                    /*
+                                    Right now we take all trials from the baseLineSzenario.
+                                    For the future maybe we don't want all trials of the baseline that fulfill these criteria in a group
+                                    but for example only the first 6, then we just change the .Where function so that it only takes the first 6 occurences.
+                                    */
                                     var forceFieldCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
-                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
                                     var forceFieldCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
                                     var forceFieldCCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
-                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
                                     var forceFieldCCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
                                     var forceFieldDFRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
-                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
                                     var forceFieldDFLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
                                     var forceChannelRightHand = baselineTrials.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial
-                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
                                     var forceChannelLeftHand = baselineTrials.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
                                     var nullFieldRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
-                                    && t.Handedness == Trial.HandednessEnum.RightHand);
+                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
 
                                     var nullFieldLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand);
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+
+                                    //Add the groups to the baseLineContainer if they contain data.
+                                    if (forceFieldCWRightHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldCWRightHand));
+                                    }
+                                    if (forceFieldCWLeftHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldCWLeftHand));
+                                    }
+                                    if (forceFieldCCWRightHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldCCWRightHand));
+                                    }
+                                    if (forceFieldCCWLeftHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldCCWLeftHand));
+                                    }
+                                    if (forceFieldDFRightHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldDFRightHand));
+                                    }
+                                    if (forceFieldDFLeftHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceFieldDFLeftHand));
+                                    }
+                                    if (forceChannelRightHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceChannelRightHand));
+                                    }
+                                    if (forceChannelLeftHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(forceChannelLeftHand));
+                                    }
+                                    if (nullFieldRightHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(nullFieldRightHand));
+                                    }
+                                    if (nullFieldLeftHand.Any())
+                                    {
+                                        baselinesContainer.AddRange(doBaselineCalculation(nullFieldLeftHand));
+                                    }
                                 }
                             }
                         }
