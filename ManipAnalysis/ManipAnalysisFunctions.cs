@@ -2490,22 +2490,28 @@ namespace ManipAnalysis_v2
                                     but for example only the first 6, then we just change the .Where function so that it only takes the first 6 occurences.
                                     */
                                     var forceFieldCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
-                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.RightHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceFieldCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCW
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceFieldCCWRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
-                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.RightHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceFieldCCWLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldCCW
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceFieldDFRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
-                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.RightHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceFieldDFLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.ForceFieldDF
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var forceChannelRightHand = baselineTrials.Where(t => t.TrialType == Trial.TrialTypeEnum.ErrorClampTrial
                                     && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
@@ -2514,10 +2520,12 @@ namespace ManipAnalysis_v2
                                     && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
 
                                     var nullFieldRightHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
-                                    && t.Handedness == Trial.HandednessEnum.RightHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.RightHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     var nullFieldLeftHand = baselineTrials.Where(t => t.ForceFieldType == Trial.ForceFieldTypeEnum.NullField
-                                    && t.Handedness == Trial.HandednessEnum.LeftHand).ToList();
+                                    && t.Handedness == Trial.HandednessEnum.LeftHand
+                                    && t.TrialType != Trial.TrialTypeEnum.ErrorClampTrial).ToList();
 
                                     //Add the groups to the baseLineContainer if they contain data.
                                     if (forceFieldCWRightHand.Any())
@@ -3596,7 +3604,13 @@ namespace ManipAnalysis_v2
             }));
         }
 
-
+        /// <summary>
+        /// given a list of trials, this separates the trials into distinct targetNumbers and adds a new baseline for each targetNumber
+        /// (by unzipping the trials, and doing some weird calculations and stuff?.
+        /// Then returns the list of baselines
+        /// </summary>
+        /// <param name="inputTrials"></param>
+        /// <returns></returns>
         private List<Baseline> doBaselineCalculation(List<Trial> inputTrials)
         {
             var baselines = new List<Baseline>();
@@ -6808,6 +6822,14 @@ namespace ManipAnalysis_v2
             }));
         }
 
+        /// <summary>
+        /// This method loops over the selectedTrials and creates a new BaselineObject for each selectedTrial.
+        /// The selectedTrials objects can consist of more than 1 Trial but they all belong to the same target, study, group, etc...
+        /// </summary>
+        /// <param name="selectedTrials">all Trials in the Listbox from the GUI</param>
+        /// <param name="trialType">the trialsType specified in the GUI</param>
+        /// <param name="forceFieldType">the forceFieldType specified in the GUI</param>
+        /// <param name="handedness">the handedness specified in the GUI</param>
         public void RecalculateBaselines(IEnumerable<TrajectoryVelocityPlotContainer> selectedTrials,
             Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceFieldType, Trial.HandednessEnum handedness)
         {
@@ -6815,9 +6837,10 @@ namespace ManipAnalysis_v2
 
             foreach (var targetData in selectedTrials)
             {
+                //All Baselinetrials that match with the selected Trials in the GUI and the selected metadata in the GUI (trialType, FF, handedness)
                 var originalBaseline = _myDatabaseWrapper.GetBaseline(targetData.Study, targetData.Group,
                     targetData.Subject, targetData.Target, trialType, forceFieldType, handedness);
-
+                //The TurnDateTime that matches with the selected Trials in the GUI
                 var turnDateTime = GetTurnDateTime(targetData.Study, targetData.Group, targetData.Szenario,
                     targetData.Subject, targetData.Turn);
 
@@ -6837,6 +6860,21 @@ namespace ManipAnalysis_v2
                 fields = fields.Include(t14 => t14.NormalizedDataSampleRate);
                 fields = fields.Include(t15 => t15.Id);
 
+                //The trials that were specified in the listbox:
+                //As we loop over each listbox entry, a listboxentry can contain multiple trials, as long as they have the same target
+                //and the same metadata (subject, group, szenario, study, turndatetime, etc.)
+                //Example:
+                /*
+                We specify listboxentry 1 is 
+                Study: MICIE
+                Group: blocked_UNmatched
+                Szenario: 02_MICIE_baseline_V1
+                Subject: MICIE1
+                Turn: 1
+                Target: Target 01
+                Trials: Trials 1 & 3
+                --> trials will then contain the trials with TargetTrialNumberInSzenario 1 & 3 and the matching metadata.
+                */
                 var trials =
                     _myDatabaseWrapper.GetTrials(targetData.Study, targetData.Group, targetData.Szenario,
                         targetData.Subject, turnDateTime, targetData.Target, targetData.Trials, fields).ToList();
@@ -6866,10 +6904,12 @@ namespace ManipAnalysis_v2
                                 .OrderBy(u => u.TimeStamp)
                                 .ToList());
 
+                //Calculating a new baseline from the ListboxEntry
                 var baselines = doBaselineCalculation(trials).ToList();
 
                 if (baselines.Count == 1)
                 {
+                    //Setting the baselineObjects Metadata to the metadata we specified in the GUI
                     baselines[0].Id = originalBaseline.Id;
                     baselines[0].TrialType = trialType;
                     baselines[0].ForceFieldType = forceFieldType;

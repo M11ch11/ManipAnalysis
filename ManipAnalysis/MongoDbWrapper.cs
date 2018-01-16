@@ -695,7 +695,19 @@ namespace ManipAnalysis_v2
 
             return retVal;
         }
-
+        /// <summary>
+        /// Returns all trials, that belong to the same study, group, szenario, subject, turnDateTime and target and whose 
+        /// trialNumberinSzenario is within targetTrials
+        /// </summary>
+        /// <param name="studyName"></param>
+        /// <param name="groupName"></param>
+        /// <param name="szenarioName"></param>
+        /// <param name="subject"></param>
+        /// <param name="turn"></param>
+        /// <param name="target"></param>
+        /// <param name="targetTrials"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials,
             ProjectionDefinition<Trial> fields)
