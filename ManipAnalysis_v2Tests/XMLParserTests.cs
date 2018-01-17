@@ -14,7 +14,7 @@ namespace ManipAnalysis_v2.Tests
     public class XMLParserTests
     {
         XMLParser parser;
-        string path = @"C:\Users\Administrator\Desktop\BKINFiles_Szenarios\SampleDTPFiles\general_study\01_TestForAllTrials.dtp";
+        string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"TestFiles\01_TestForAllTrials.dtp");
         Trial t1 = new Trial();
         [TestMethod()]
         public void XMLParserTest()

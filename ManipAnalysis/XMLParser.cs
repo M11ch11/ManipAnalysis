@@ -183,6 +183,7 @@ namespace ManipAnalysis_v2
                 return true;
             } catch (Exception e)
             {
+                Console.WriteLine(path + e.StackTrace);
                 return false;
             }
         }
