@@ -215,7 +215,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
         /// </summary>
         /// <param name="dtpPath"></param>
         /// <param name="myManipAnalysisGui"></param>
-        /// <param name="c3DFiles"></param>
+        /// <param name="c3DFiles">ListOfPaths to c3d files</param>
         /// <param name="measureFileCreationDateTime"></param>
         /// <param name="measureFileHash"></param>
         /// <param name="measureFilePath"></param>

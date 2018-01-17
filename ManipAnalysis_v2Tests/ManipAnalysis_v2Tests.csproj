@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="C3DReaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XMLParserTests.cs" />
   </ItemGroup>
@@ -59,6 +60,10 @@
       <Project>{1D658474-766B-4FDA-8F31-11E800B47377}</Project>
       <Name>ManipAnalysis_v2</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestFiles\01_01_01.c3d" />
+    <None Include="TestFiles\01_TestForAllTrials.dtp" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
