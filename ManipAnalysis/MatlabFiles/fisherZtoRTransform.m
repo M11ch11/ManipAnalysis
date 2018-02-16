@@ -1,3 +1,4 @@
+%Raus!
 %=======================================================================%   
 %   Karlsruhe Institute of Technology (KIT)                             %
 %   Department of Sport and Sport Science                               %

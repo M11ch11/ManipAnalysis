@@ -1,3 +1,4 @@
+%Deprecated, da bereits in distanceToCurve enthalten
 %========================================================================%   
 %   Karlsruhe Institute of Technology (KIT)                              %
 %   Department of Sport and Sport Science                                %
