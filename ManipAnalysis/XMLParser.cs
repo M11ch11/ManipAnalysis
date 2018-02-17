@@ -57,13 +57,11 @@ namespace ManipAnalysis_v2
         }
         public Trial parseTrial()
         {
-            //TODO: trial.Target.Number richtig setzen?
-            //trial.Target.Number = trial.Target.Number % 10 sollte passen.
-            //trial.Target.Number gibt an, welches Target angesteuert wird:
+            
             
             if (isValidTrial())
             {
-     
+                //trial.Target.Number gibt an, welches Target angesteuert wird:
                 trial.Target.Number = getTrialEndTargetNumber();
                 
                 //SzenarioName eintragen

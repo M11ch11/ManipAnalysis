@@ -562,7 +562,7 @@ namespace ManipAnalysis_v2
                     y
                         ++)
                 {
-                    // TODO: still need to test following line ?
+                    // TODO: still need to test following line ? [from Matthias]
                     array[x, y] = GetData<T>(x + y*x);
                 }
             }
