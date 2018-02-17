@@ -93,13 +93,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
             if (zipFilepath != null)
             {
                 _measureFilePath = zipFilepath;
-
-                //Instead of returning a szenarioDefinitionType, the ParseFileInfo should now
-                //return a path to the dtp file while also writing the necessary meta data that it already does.
-                //############################################
-                //Instead of calling ParseFileInfo and searching our own assembly only do the useful stuff from ParseFileInfo!
-                //############################################
-
                 var c3DReader = new C3DReader();
 
                 try
@@ -147,7 +140,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         CultureInfo.InvariantCulture);
 
 
-                    //TODO Why do we instantiate the TrialsContainer here??
+                    //Why do we instantiate the TrialsContainer here?? I don't know, but it works, so better not touch it...
                     TrialsContainer = new List<Trial>();
                 }
                 catch (Exception
@@ -157,22 +150,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
                     c3DReader.Close();
                 }
 
-                //############################################
-                //Instead of calling ParseFileInfo and searching our own assembly only do the useful stuff from ParseFileInfo!
-                //############################################
-                /*
-                var szenarioDefinitionType = ParseFileInfo();
-
-                if (szenarioDefinitionType != null)
-                {
-                    retVal = ParseMeasureData(szenarioDefinitionType);
-                }
-                else
-                {
-                    _myManipAnalysisGui.WriteToLogBox("No szenario definition found for: " + _studyName + " - " +
-                                                      _szenarioName + ".");
-                }
-                */
 
 
                 //Getting the matching dtpFile for the given *.c3d file by looking at the szenarioName and adding .dtp at the end
@@ -185,7 +162,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         dtpFilePath = ListOfdtpFilePaths[i];
                     }
                 }
-                if (dtpFilePath.Equals("")) 
+                if (dtpFilePath.Equals(""))
                 {
                     dtpFilePath = null;
                     _myManipAnalysisGui.WriteToLogBox("No matching *.dtp file found for the following szenario: " + _szenarioName);
@@ -202,7 +179,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                     TrialsContainer.AddRange(trialsCont);
                     retVal = true;
                 }
-                
+
             }
             return retVal;
         }
@@ -210,7 +187,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
 
         /// <summary>
-        /// parseMetaDatafunction copied from the AbstractSzenarioDefinition where we replace the setMetadatafunction with the xmlParser.
+        /// Here we link in the xmlParser. This whole method was copied from some older code thereforce it might look a little bit sloppy...
         /// Therefore we also need the proper dtp file.
         /// </summary>
         /// <param name="dtpPath"></param>
@@ -225,7 +202,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
         /// <param name="szenarioName"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        private List<Trial>ParseMetaData(string dtpFile, ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
+        private List<Trial> ParseMetaData(string dtpFile, ManipAnalysisGui myManipAnalysisGui, string[] c3DFiles,
             DateTime measureFileCreationDateTime, string measureFileHash, string measureFilePath, string probandId,
             string groupName, string studyName, string szenarioName, Vector3 offset)
         {
@@ -246,20 +223,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         var originContainer = new TargetContainer();
 
                         var startTime = c3DReader.GetParameter<string[]>("TRIAL:TIME")[0];
-                        /*
-                        var eventTimes = c3DReader.GetParameter<float[]>("EVENTS:TIMES");
-                        var eventLabels = c3DReader.GetParameter<string[]>("EVENTS:LABELS");
-                        */
+
                         var frameTimeInc = 1.0f / c3DReader.Header.FrameRate;
                         int targetTrialNumber = c3DReader.GetParameter<short>("TRIAL:TP_NUM");
                         //The TP_NUM is an ID for the trial within the szenario (aka enumeration of all trials)
-                        // -1 == Compensation of first Trial
-                        //var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM") - 1;
-                        //We don't need a -1 here, in the end we will sort the container by trialNumberInSzenario and enumerate properly anyways!
                         //Check last block of this funct.
                         var szenarioTrialNumber = c3DReader.GetParameter<short>("TRIAL:TRIAL_NUM");
-                        //This is not the targetNumber but the tpNumber.
-                        //Only because of the convention that we can in most cases determine the targetNumber from the tpNumber this works...
+
                         int tpNumber = c3DReader.GetParameter<short>("TRIAL:TP");
 
                         measureFileContainer.CreationTime = measureFileCreationDateTime;
@@ -267,11 +237,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         measureFileContainer.FileName = Path.GetFileName(measureFilePath);
 
                         subjectContainer.PId = probandId;
-                        
-                        //This line does not write the target.Number! Instead it wrote the tpNumber into the EndTarget and then did some 
-                        //stupid calculations on it to determine the real target.Number. We will not do this anymore!
-                        //Instead we now get the target.Number from the *.dtp file in the XMLParser!
-                        //targetContainer.Number = targetNumber;
 
                         currentTrial.StartDateTimeOfTrialRecording = DateTime.Parse(startTime);
                         currentTrial.MeasuredForcesRaw = new List<ForceContainer>();
@@ -286,30 +251,18 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         currentTrial.Origin = originContainer;
                         currentTrial.TargetTrialNumberInSzenario = targetTrialNumber;
                         currentTrial.RawDataSampleRate = Convert.ToInt32(c3DReader.Header.FrameRate);
-                        //Maybe it makes sense to divide szenarioTrialNumber by 2 first, because in current study TRIAL_NUM gets increased by 2 instead of 1, starting by 2...
-                        //Also in study 10 DAVOS, every other trial was invalid and filtered afaik?
-                        /*
-                        It seems that positionControlTrials are immediately filtered from Dexterit?
-                        Therefore the trialNumberInSZenario should be determined by newly enumerating all trials within a szenario
-                        from 1 to end
-                        */
                         currentTrial.TrialNumberInSzenario = szenarioTrialNumber;
                         currentTrial.TrialVersion = "KINARM_1.0";
                         currentTrial.PositionOffset.X = offset.X;
                         currentTrial.PositionOffset.Y = offset.Y;
 
-                        //TODO: Insert the metadata parser instead of this method
-                        //The dtp path might be getable from the szenario field, as the szenariofield has the same name as the .dtp file.
-                        //So as long as we know the general path to where dtp files are stored, we can then find the corresponding dtp file from the szenarioField.
-                        //We just need to search all the dtp files in the dtplist for the one that matches the szenarioField.
-                        //Alternatively we could also specifiy one general folder hardcoded...
-
-                        //currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
+                        //Here we now use the xmlParser to parse metaData from the *.dtp files instead of the cumbersome szenarioParseDefinitions
                         XMLParser parser = new XMLParser(dtpFile, tpNumber, currentTrial);
                         if (parser != null)
                         {
                             currentTrial = parser.parseTrial();
-                        } else
+                        }
+                        else
                         {
                             _myManipAnalysisGui.WriteToLogBox("Parser had nullreference! :(");
                         }
@@ -325,26 +278,20 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     double timeOffset = frameTimeInc * frame;
                                     var timeStamp = DateTime.Parse(startTime).AddSeconds(timeOffset);
 
-                                    // Returns an array of all points, it is necessary to call this method in each cycle
+                                    // Returns an array of all points, it is necessary to call this method in each cycle [from Matthias!]
                                     var positionDataVector = c3DReader.ReadFrame()[0];
                                     // [0] == Right Hand
 
-                                    /*
-                                    <Event code="1" name="TRIAL_STARTED"  desc="Trial has started" />
-                                    <Event code="2" name="SUBJECT_IS_IN_FIRST_TARGET"  desc="Subject is in the first target" />
-                                    <Event code="3" name="SUBJECT_HAS_LEFT_FIRST_TARGET"  desc="Subject has left the first target" />
-                                    <Event code="4" name="SUBJECT_IS_IN_SECOND_TARGET"  desc="Subject is in the second target" />
-                                    <Event code="5" name="SUBJECT_HAS_LEFT_SECOND_TARGET"  desc="Subject has left the second target" />
-                                    <Event code="6" name="TRIAL_ENDED"  desc="Trial has ended" /> 
-                                   */
-                                    //For newer Imports use PositionStatus, for older ones ACH4
-                                    //PositionStatus is afaik a variable that is used as a trigger and set in the trialControlBlock to give signals to the Vicon/EEG system?
 
+                                    //For newer Imports use PositionStatus, for older ones ACH4[from Matthias]
+
+                                    // In the current "generalStudy"-Szenario we only use ACH4, so I don't think we need PositionStatus anymore...
+                                    //I will keep it though, just in case.
                                     //var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
-
                                     var positionStatus = Convert.ToInt32(c3DReader.AnalogData["ACH4", 0]) - 2;
 
                                     /*
+                                    [from Matthias]
                                     * Study 11 Special analog data field
                                     var forceFieldStrength = Convert.ToDouble(c3DReader.AnalogData["ACH5", 0]);
                                     currentTrial.ForceFieldMatrix[0, 0] = 0;
@@ -358,7 +305,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     positionRaw.Y = positionDataVector.Y + currentTrial.PositionOffset.Y;
                                     positionRaw.Z = positionDataVector.Z + currentTrial.PositionOffset.Z;
 
-                                    // Get analog data for this frame
+                                    // Get analog data for this frame[from Matthias]
                                     measuredForcesRaw.PositionStatus = positionStatus;
                                     measuredForcesRaw.TimeStamp = timeStamp;
                                     measuredForcesRaw.X = c3DReader.AnalogData["Right_FS_ForceX", 0];
@@ -371,7 +318,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     momentForcesRaw.Y = c3DReader.AnalogData["Right_FS_TorqueY", 0];
                                     momentForcesRaw.Z = c3DReader.AnalogData["Right_FS_TorqueZ", 0];
 
-                                    // Fill Trial
+                                    // Fill Trial[from Matthias]
                                     currentTrial.MeasuredForcesRaw.Add(measuredForcesRaw);
                                     currentTrial.MomentForcesRaw.Add(momentForcesRaw);
                                     currentTrial.PositionRaw.Add(positionRaw);
@@ -402,35 +349,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                     }
                 });
 
-                /*
-                if (!CheckTrialCount(trialsContainer.Count))
-                {
-                    myManipAnalysisGui.WriteToLogBox("Invalid TrialCount (" + trialsContainer.Count + ") in file " +
-                                                     measureFilePath + "\nSkipping File.");
-                    trialsContainer.Clear();
-                }
-                */
-
-                /*
-                // Check for valid TrialNumberInSzenario Sequence
-                if (CheckValidTrialNumberInSzenarioSequence && trialsContainer.Any())
-                {
-                    foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())
-                    {
-                        var trialNumberList =
-                            trialsContainer.Where(t => t.Szenario == szenario).Select(t => t.TrialNumberInSzenario);
-                        if (!IsValidTrialNumberInSzenarioSequence(trialNumberList))
-                        {
-                            myManipAnalysisGui.WriteToLogBox("Invalid TrialNumberInSzenario Sequence in szenario \"" +
-                                                             szenario + "\" in file " + measureFilePath + "\nSkipping File.");
-                            trialsContainer.Clear();
-                            break;
-                        }
-                    }
-                }
-                */
                 // Set TargetTrialNumberInSzenario Field 
-                // I have no clue why we need this...
+                // I have no clue why we need this... But I will let it live here for now...
                 if (trialsContainer.Any())
                 {
                     foreach (var szenario in trialsContainer.Select(t => t.Szenario).Distinct())
@@ -449,8 +369,9 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         }
                     }
                 }
-                //set the TrialNumberInSzenario properly, because PositionControlTrials do not create *.c3d files
-                //tut they still increase the TRIAL_NUM. We don't want gaps, whenever a PositionControl or StartTrial appeared.
+                //set the TrialNumberInSzenario properly, because PositionControlTrials do not create *.c3d files.
+                //They still increase the TRIAL_NUM though. We don't want gaps, whenever a PositionControl or StartTrial appeared.
+                //Therefore we enumerate TrialNumberInSzenario anew.
                 if (trialsContainer.Any())
                 {
                     trialsContainer.Sort((x, y) => x.TrialNumberInSzenario.CompareTo(y.TrialNumberInSzenario));
@@ -463,155 +384,6 @@ namespace ManipAnalysis_v2.MeasureFileParser
             }
         }
 
-
-        //NOT NEEDED ANYMORE!!
-        /// <summary>
-        /// Calls the szenarioParseDefinition with the use of the SzenarioDefinitionType which then writes the MetaData 
-        /// for a list of trials and pushes those into the TrialsContainer.
-        /// </summary>
-        /// <param name="szenarioDefinitionType">type that points to the szenarioParseDefinition that fits for the c3d-file</param>
-        /// <returns></returns>
-        private bool ParseMeasureData(Type szenarioDefinitionType)
-        {
-            var retVal = true;
-            try
-            {
-                var szenarioDefinition = (AbstractSzenarioDefinition)Activator.CreateInstance(szenarioDefinitionType);
-                //Here ParseMeasureFile in the proper SzenarioParseDefinition is being called, which then writes the metadata for a list of trials
-                //that then get pushed into the TrialsContainer
-                //It is enough to only call the general ParseMeasureFile function from AbstractSzenarioDefinition
-                //In there only change the setMetadata call to use the parser instead.
-                TrialsContainer.AddRange(szenarioDefinition.ParseMeasureFile(_myManipAnalysisGui, _c3DFiles,
-                    _measureFileCreationDateTime, _measureFileHash, _measureFilePath, _probandId, _groupName, _studyName,
-                    _szenarioName, _offset));
-            }
-            catch (Exception
-                ex)
-            {
-                _myManipAnalysisGui.WriteToLogBox("ParseMeasureData-Error: " + ex);
-                retVal = false;
-            }
-
-            return retVal;
-        }
-
-
-
-
-
-
-
-        //NOT NEEDED ANYMORE!
-        /// <summary>
-        /// creates a temporary directory where the zipfiles of the c3d archive are extracted.
-        /// reads metadata information like szenarioname, groupname, studyname etc. from the so called "common"-file (*.c3d).
-        /// If no metadata for these fields was found, replaces the information with "unknown"
-        /// 
-        /// Then searches the execution assembly for the SzenarioParseDefinitions that match the parse-file (DEPRECATED!)
-        /// 
-        /// extracts ProbandID and MeasureFileCreationDateTime from the path to the c3d file
-        /// 
-        /// </summary>
-        /// <returns>a SzenarioDefinitionType that points to the matching SzenarioParseDefinition to parse the MetaData</returns>
-        private Type ParseFileInfo()
-        {
-            Type szenarioDefinitionType = null;
-            var c3DReader = new C3DReader();
-
-            try
-            {
-                _measureFileHash = Md5.ComputeHash(_measureFilePath);
-                var fileName = Path.GetFileName(_measureFilePath);
-                var tempPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\temp";
-
-                if (Directory.Exists(tempPath))
-                {
-                    Directory.Delete(tempPath, true);
-                }
-
-                Directory.CreateDirectory(tempPath);
-                ZipFile.ExtractToDirectory(_measureFilePath, tempPath);
-
-                _c3DFiles = Directory.EnumerateFiles(tempPath + @"\raw", "*_*_*.c3d*").ToArray();
-                var commonFile = tempPath + @"\raw\common.c3d";
-
-                c3DReader.Open(commonFile);
-
-                _szenarioName = c3DReader.GetParameter<string[]>("EXPERIMENT:TASK_PROTOCOL")[0];
-                _studyName = c3DReader.GetParameter<string[]>("EXPERIMENT:STUDY")[0];
-                _groupName = c3DReader.GetParameter<string[]>("EXPERIMENT:SUBJECT_CLASSIFICATION")[0];
-                _offset.X = (c3DReader.GetParameter<float[]>("TARGET_TABLE:X")[0] -
-                             c3DReader.GetParameter<float[]>("TARGET_TABLE:X_GLOBAL")[0]) / 100.0f;
-                _offset.Y = (c3DReader.GetParameter<float[]>("TARGET_TABLE:Y")[0] -
-                             c3DReader.GetParameter<float[]>("TARGET_TABLE:Y_GLOBAL")[0]) / 100.0f;
-
-
-                //TODO: Don't use SzenarioParseDefinitions to parse metadata anymore.
-                // instead use the XMLParse with a path to the matching dtp file.
-                //Here the whole execution assembly is being traversed and searched for the szenarioParseDefinitions.
-                //These SzenarioParseDefinitions then are checked for matching szenarioName and studyName
-                //... which is tbh completely inefficient and cumbersome.
-                //Instead just use the xmlparser for that job!
-                foreach (
-                        var szenarioDefinitionIterable in
-                            Assembly.GetExecutingAssembly()
-                                .GetTypes()
-                                .Where(
-                                    t =>
-                                        !t.IsInterface && !t.IsAbstract && t.IsClass &&
-                                        t.Namespace == "ManipAnalysis_v2.SzenarioParseDefinitions"))
-                //Checking the import classes for matching szenario and study name
-                {
-                    try
-                    {
-                        if (_szenarioName == (string)szenarioDefinitionIterable.GetField("SzenarioName").GetValue(null)
-                            && _studyName == (string)szenarioDefinitionIterable.GetField("StudyName").GetValue(null))
-                        {
-                            szenarioDefinitionType = szenarioDefinitionIterable;
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-
-                if (_szenarioName == "")
-                {
-                    _szenarioName = "Unknown";
-                }
-                if (_studyName == "")
-                {
-                    _studyName = "Unknown";
-                }
-                if (_groupName == "")
-                {
-                    _groupName = "Unknown";
-                }
-
-                c3DReader.Close();
-
-                _probandId = fileName.Split('_')[0].Trim();
-                var datetime = fileName.Split('_')[1].Replace('-', '.') + " " +
-                               fileName.Split('_')[2].Replace(".zip", "").Replace('-', ':');
-                _measureFileCreationDateTime = DateTime.ParseExact(datetime, "yyyy.MM.dd HH:mm:ss",
-                    CultureInfo.InvariantCulture);
-
-
-                //TODO Why do we instantiate the TrialsContainer here??
-                TrialsContainer = new List<Trial>();
-            }
-            catch (Exception
-                ex)
-            {
-                _myManipAnalysisGui.WriteToLogBox("ParseFileInfo-Error: " + ex);
-                c3DReader.Close();
-                szenarioDefinitionType = null;
-            }
-
-            return szenarioDefinitionType;
-        }
 
     }
 }
