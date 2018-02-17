@@ -633,32 +633,6 @@ namespace ManipAnalysis_v2
 
                                     switch (statisticType)
                                     {
-                                        //TODO: Not needed anymore! Raus
-                                        case "Vector correlation fisher-z":
-                                            _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                            _myMatlabWrapper.Execute("fisherZ = fisherZTransform(vcorr);");
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                            _myMatlabWrapper.ClearWorkspace();
-                                            break;
-
-                                        //TODO: Not needde anymore! Raus!
-                                        case "Vector correlation fisher-z to r-values":
-                                            _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                                trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                            _myMatlabWrapper.Execute("fisherZ = fisherZTransform(vcorr);");
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                            _myMatlabWrapper.ClearWorkspace();
-                                            break;
-
-                                        //TODO: Raus!
-                                        case "MidMovementForce - PD":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForce;
-                                            break;
-
                                         case "MidMovementForce - PD Raw":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -670,13 +644,6 @@ namespace ManipAnalysis_v2
                                                 trialsArray[trialsArrayCounter].Statistics
                                                     .AbsolutePerpendicularDisplacement.Single(
                                                         t => t.TimeStamp == msIndex).PerpendicularDisplacement;
-                                            break;
-
-                                        //TODO: Raus!
-                                        case "PDmean - Abs":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteMeanPerpendicularDisplacement;
                                             break;
 
                                         case "PDmax - Abs":
@@ -714,14 +681,7 @@ namespace ManipAnalysis_v2
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                             break;
-
-                                        //TODO: Raus!
-                                        case "Trajectory length ratio":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics
-                                                    .AbsoluteBaselineTrajectoryLengthRatio;
-                                            break;
-
+                                            
                                         case "Enclosed area":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
@@ -732,6 +692,7 @@ namespace ManipAnalysis_v2
                                                 trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactor;
                                             break;
 
+                                            //TODO: Raus?
                                         case "ForcefieldCompenstionFactor fisher-z":
                                             _myMatlabWrapper.SetWorkspaceData("ffcf",
                                                 trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactor);
@@ -741,6 +702,7 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
+                                            //TODO: Raus?
                                         case "ForcefieldCompenstionFactor fisher-z to r-values":
                                             _myMatlabWrapper.SetWorkspaceData("ffcf",
                                                 trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactor);
@@ -756,6 +718,7 @@ namespace ManipAnalysis_v2
                                                     .ForcefieldCompenstionFactorRaw;
                                             break;
 
+                                            //TODO: Raus?
                                         case "ForcefieldCompenstionFactor Raw fisher-z":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -766,6 +729,7 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
+                                            //TODO: Raus?
                                         case "ForcefieldCompenstionFactor Raw fisher-z to r-values":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -775,24 +739,6 @@ namespace ManipAnalysis_v2
                                                 _myMatlabWrapper.GetWorkspaceData("fisherZ");
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
-
-                                            //TODO: Raus!
-                                        case "RMSE":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.RMSE;
-                                            break;
-
-                                        //TODO: Raus!
-                                        case "PredictionAngle":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
-                                            break;
-
-                                        //TODO: Raus!
-                                        case "FeedbackAngle":
-                                            statisticData[trialsArrayCounter, meanCount] =
-                                                trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
-                                            break;
                                     }
                                 }
                             }
@@ -801,14 +747,8 @@ namespace ManipAnalysis_v2
                             if (meanCount > 1)
                             {
                                 //TODO: Cleanup the statisticTypes that were removed!
-                                if (statisticType == "Vector correlation fisher-z to r-values")
-                                {
-                                    _myMatlabWrapper.Execute(
-                                        "statisticDataPlot = fisherZtoRTransform(mean(transpose(statisticData)));");
-                                    _myMatlabWrapper.Execute(
-                                        "statisticDataStd = fisherZtoRTransform(std(transpose(statisticData)));");
-                                }
-                                else if (statisticType == "ForcefieldCompenstionFactor fisher-z to r-values")
+                                
+                                if (statisticType == "ForcefieldCompenstionFactor fisher-z to r-values")
                                 {
                                     _myMatlabWrapper.Execute(
                                         "statisticDataPlot = fisherZtoRTransform(mean(transpose(statisticData)));");
@@ -830,11 +770,7 @@ namespace ManipAnalysis_v2
                             }
                             else
                             {
-                                if (statisticType == "Vector correlation fisher-z to r-values")
-                                {
-                                    _myMatlabWrapper.Execute("statisticDataPlot = fisherZtoRTransform(statisticData);");
-                                }
-                                else if (statisticType == "ForcefieldCompenstionFactor fisher-z to r-values")
+                                if (statisticType == "ForcefieldCompenstionFactor fisher-z to r-values")
                                 {
                                     _myMatlabWrapper.Execute("statisticDataPlot = fisherZtoRTransform(statisticData);");
                                 }
@@ -852,33 +788,6 @@ namespace ManipAnalysis_v2
                             {
                                 switch (statisticType)
                                 {
-                                    case "Vector correlation fisher-z":
-                                        _myMatlabWrapper.CreateStatisticFigure(
-                                            "Velocity Vector Correlation Fisher Z plot", "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length / meanCount,
-                                            0.0, 2.0, plotFit, plotErrorbars);
-                                        break;
-
-                                    case "Vector correlation fisher-z to r-values":
-                                        _myMatlabWrapper.CreateStatisticFigure(
-                                            "Velocity Vector Correlation Fisher Z to r-Values  plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]",
-                                            "Velocity Vector Correlation Fisher Z", 1, statisticData.Length / meanCount,
-                                            0.5, 1, plotFit, plotErrorbars);
-                                        break;
-
-                                    case "MidMovementForce - PD":
-                                        _myMatlabWrapper.CreateStatisticFigure("MidMovementForce PD plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Newton [N]", 1,
-                                            statisticData.Length / meanCount, -3.0, 3.0, plotFit, plotErrorbars);
-                                        break;
-
                                     case "MidMovementForce - PD Raw":
                                         _myMatlabWrapper.CreateStatisticFigure("MidMovementForce PD Raw plot",
                                             "statisticDataPlot",
@@ -892,13 +801,6 @@ namespace ManipAnalysis_v2
                                             "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "PD" + pdTime + " [m]", 1,
-                                            statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
-                                        break;
-
-                                    case "PDmean - Abs":
-                                        _myMatlabWrapper.CreateStatisticFigure("MeanPD abs plot", "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "MeanPD [m]", 1,
                                             statisticData.Length / meanCount, 0, 0.05, plotFit, plotErrorbars);
                                         break;
 
@@ -946,14 +848,6 @@ namespace ManipAnalysis_v2
                                             1, statisticData.Length / meanCount, 0.07, 0.2, plotFit, plotErrorbars);
                                         break;
 
-                                    case "Trajectory length ratio":
-                                        _myMatlabWrapper.CreateStatisticFigure("Trajectory Length Ratio plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Trajectory Length Ratio",
-                                            1, statisticData.Length / meanCount, 0.2, 1.8, plotFit, plotErrorbars);
-                                        break;
-
                                     case "Enclosed area":
                                         _myMatlabWrapper.CreateStatisticFigure("Enclosed area plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
@@ -970,7 +864,7 @@ namespace ManipAnalysis_v2
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
-
+                                    //TODO: Raus?
                                     case "ForcefieldCompenstionFactor fisher-z":
                                         _myMatlabWrapper.CreateStatisticFigure(
                                             "Forcefield Compenstion Factor fisher-z plot", "statisticDataPlot",
@@ -1016,33 +910,6 @@ namespace ManipAnalysis_v2
                                             fitEquation + "')", "statisticDataStd", "[Trial]",
                                             "Forcefield Compenstion Factor", 1, statisticData.Length / meanCount, -1.0,
                                             1.0, plotFit, plotErrorbars);
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "RMSE":
-                                        _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Root Mean Square Error",
-                                            1, statisticData.Length / meanCount, 0, 0.1, plotFit, plotErrorbars);
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "PredictionAngle":
-                                        _myMatlabWrapper.CreateStatisticFigure("Prediction Angle plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Prediction Angle",
-                                            1, statisticData.Length / meanCount, 0, 45, plotFit, plotErrorbars);
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "FeedbackAngle":
-                                        _myMatlabWrapper.CreateStatisticFigure("Feedback Angle plot",
-                                            "statisticDataPlot",
-                                            "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
-                                            fitEquation + "')", "statisticDataStd", "[Trial]", "Feedback Angle",
-                                            1, statisticData.Length / meanCount, 0, 45, plotFit, plotErrorbars);
                                         break;
                                 }
                             }
