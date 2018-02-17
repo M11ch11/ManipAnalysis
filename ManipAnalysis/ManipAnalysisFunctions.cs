@@ -671,6 +671,7 @@ namespace ManipAnalysis_v2
                                                         t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                             break;
 
+										//Raus!
                                         case "PDmean - Abs":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -713,6 +714,7 @@ namespace ManipAnalysis_v2
                                                 trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                             break;
 
+										//Raus!
                                         case "Trajectory length ratio":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -773,14 +775,18 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
+										//TODO: Raus!
                                         case "RMSE":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.RMSE;
                                             break;
+
+										//TODO: Raus!
                                         case "PredictionAngle":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
                                             break;
+										//TODO: Raus!
                                         case "FeedbackAngle":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
@@ -1009,6 +1015,7 @@ namespace ManipAnalysis_v2
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
+									//TODO: Raus!
                                     case "RMSE":
                                         _myMatlabWrapper.CreateStatisticFigure("Root Mean Square Error plot",
                                             "statisticDataPlot",
@@ -1016,6 +1023,8 @@ namespace ManipAnalysis_v2
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Root Mean Square Error",
                                             1, statisticData.Length / meanCount, 0, 0.1, plotFit, plotErrorbars);
                                         break;
+
+									//TODO: Raus!
                                     case "PredictionAngle":
                                         _myMatlabWrapper.CreateStatisticFigure("Prediction Angle plot",
                                             "statisticDataPlot",
@@ -1023,6 +1032,8 @@ namespace ManipAnalysis_v2
                                             fitEquation + "')", "statisticDataStd", "[Trial]", "Prediction Angle",
                                             1, statisticData.Length / meanCount, 0, 45, plotFit, plotErrorbars);
                                         break;
+
+									//TODO: Raus!
                                     case "FeedbackAngle":
                                         _myMatlabWrapper.CreateStatisticFigure("Feedback Angle plot",
                                             "statisticDataPlot",
@@ -1183,6 +1194,7 @@ namespace ManipAnalysis_v2
 
                                 switch (statisticType)
                                 {
+									//Raus!
                                     case "Vector correlation fisher-z":
                                         _myMatlabWrapper.SetWorkspaceData("vcorr",
                                             trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
@@ -1192,6 +1204,7 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.ClearWorkspace();
                                         break;
 
+									//Raus!
                                     case "Vector correlation fisher-z to r-values":
                                         _myMatlabWrapper.SetWorkspaceData("vcorr",
                                             trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
@@ -1217,6 +1230,7 @@ namespace ManipAnalysis_v2
                                                 .Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                         break;
 
+									//Raus!
                                     case "PDmean - Abs":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics
@@ -1258,6 +1272,7 @@ namespace ManipAnalysis_v2
                                             trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                         break;
 
+									//Raus!
                                     case "Trajectory length ratio":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics
@@ -1314,15 +1329,20 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.GetWorkspaceData("fisherZ");
                                         _myMatlabWrapper.ClearWorkspace();
                                         break;
-
+									
+									//TODO: Raus!
                                     case "RMSE":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.RMSE;
                                         break;
+
+									//TODO: Raus!
                                     case "PredictionAngle":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
                                         break;
+
+									//TODO: Raus!f
                                     case "FeedbackAngle":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
@@ -2386,6 +2406,14 @@ namespace ManipAnalysis_v2
         /// and can not handle groups that do not share the same metadata...
         /// I might want to improve this greatly in the future, as with automated parsing, there should be no more need for all
         /// this hassle...
+		/// 
+		/// 
+		/// UPDATE:
+		/// TODO: look following text...
+		/// We decided that we don't need the baseline object anymore, because we will never calculate any of the statistics against
+		/// the baselinetrials --> can we remove this whole data structure in a simple way?
+		/// 
+		/// TODO: We should remove anything that accesses a baselineObject I guess! And anything that accessed any peripherals of it I guess!
         /// </summary>
         public void CalculateBaselines()
         {
@@ -4484,6 +4512,8 @@ namespace ManipAnalysis_v2
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint180ms",
                                                    new[,] { { positionDataPoint180ms.X, positionDataPoint180ms.Y } });
                                             }
+
+											//TODO: Should never get into that exception. Therefore we should remove it!
                                             catch (Exception ex)
                                             {
                                                 _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint180ms for predicitionAndFeedbackAngle\n" + ex.ToString());
@@ -4495,6 +4525,8 @@ namespace ManipAnalysis_v2
                                                 taskMatlabWrapper.SetWorkspaceData("dataPoint350ms",
                                                     new[,] { { positionDataPoint350ms.X, positionDataPoint350ms.Y } });
                                             }
+
+											//TODO: Should never get into that exception. Therefore we should remove it!
                                             catch (Exception ex)
                                             {
                                                 _myManipAnalysisGui.WriteToLogBox("Could not determine positionDataPoint350ms for predicitionAndFeedbackAngle in Trial " + trial.TrialNumberInSzenario + " in Szenario " + trial.Szenario + "\n" + ex.ToString());
@@ -4533,47 +4565,69 @@ namespace ManipAnalysis_v2
                                                 baseline.MeasuredForces.Select(t => t.Y).ToArray());
 
                                             // Matlab statistic calculations
-                                            //VectorCorrelation raus
+                                            //TODO: VectorCorrelation raus
                                             taskMatlabWrapper.Execute(
                                                 "vector_correlation = vectorCorrelation([velocityX velocityY], [baselineVelocityX baselineVelocityY]);");
+													
                                             taskMatlabWrapper.Execute(
                                                 "enclosed_area = enclosedArea(positionX, positionY);");
+													
                                             taskMatlabWrapper.Execute(
                                                 "length_abs = trajectLength(positionX', positionY');");
-                                            //lengthRatio (wahrsch?) raus
+													
+                                            //TODO: lengthRatio raus
                                             taskMatlabWrapper.Execute(
                                                 "length_ratio = trajectLength(positionX', positionY') / trajectLength(baselinePositionX', baselinePositionY');");
+													
                                             taskMatlabWrapper.Execute(
                                                 "[distanceAbs, distance_sign_pd, distance_sign_ff] = distanceToCurve([positionX' positionY'], startPoint, endPoint, forceFieldMatrix);");
+													
                                             taskMatlabWrapper.Execute("distanceSign = distanceAbs .* distance_sign_ff;");
-                                            //MeanDistanceAbs (wahrsch?) raus
+
+                                            //TODO: MeanDistanceAbs raus
                                             taskMatlabWrapper.Execute("meanDistanceAbs = mean(distanceAbs);");
+
                                             taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+
                                             taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+
                                             taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                            //RMSE raus
+
+                                            //TODO: RMSE raus
                                             taskMatlabWrapper.Execute("rmse = rootMeanSquareError([positionX positionY], [baselinePositionX baselinePositionY]);");
-                                            //Auch raus
+
+                                            //TODO: PredictionAngle and feedbackAngle auch raus
                                             taskMatlabWrapper.Execute("[predictionAngle, feedbackAngle] = predicitionAndFeedbackAngle(startPoint, endPoint, dataPoint180ms, dataPoint350ms);");
 
 
                                             // Create StatisticContainer and fill it with calculated Matlab statistics
                                             var statisticContainer = new StatisticContainer();
+											
+											//TODO: Raus!
                                             statisticContainer.VelocityVectorCorrelation =
                                                 taskMatlabWrapper.GetWorkspaceData("vector_correlation");
+													
                                             statisticContainer.EnclosedArea =
                                                 taskMatlabWrapper.GetWorkspaceData("enclosed_area");
                                             statisticContainer.AbsoluteTrajectoryLength =
                                                 taskMatlabWrapper.GetWorkspaceData("length_abs");
+
+											//TODO: Raus!
                                             statisticContainer.AbsoluteBaselineTrajectoryLengthRatio =
                                                 taskMatlabWrapper.GetWorkspaceData("length_ratio");
+
+											//TODO: Raus!
                                             statisticContainer.AbsoluteMeanPerpendicularDisplacement =
                                                 taskMatlabWrapper.GetWorkspaceData("meanDistanceAbs");
+													
                                             statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
                                                 taskMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
                                             statisticContainer.SignedMaximalPerpendicularDisplacement =
                                                 taskMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+
+											//TODO: Raus!
                                             statisticContainer.RMSE = taskMatlabWrapper.GetWorkspaceData("rmse");
+											//TODO: gesamter Block mit Prediction/FeedbackAngle raus!
                                             try
                                             {
                                                 statisticContainer.PredictionAngle = taskMatlabWrapper.GetWorkspaceData("predictionAngle");
@@ -4630,7 +4684,7 @@ namespace ManipAnalysis_v2
                                                     t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
 
                                             // Calculate MidMovementForce
-                                            //MidMovementForce raus!
+                                            //TODO: MidMovementForce raus!
                                             var vMaxCorridor =
                                                 trial.VelocityNormalized.Where(
                                                     t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70)
@@ -4653,7 +4707,7 @@ namespace ManipAnalysis_v2
                                                     (dataPoint - 1) + ") positionY(" + (dataPoint - 1) +
                                                     ")], [positionX(" + dataPoint + ") positionY(" + dataPoint +
                                                     ")], forceFieldMatrix);");
-                                                //Gegen Baseline --> raus!
+                                                //TODO: Gegen Baseline --> raus!
                                                 taskMatlabWrapper.Execute(
                                                     "[forcePD, forcePDsign, ffSign] = pdForceDirectionLineSegment([(forceX(" +
                                                     (dataPoint - 1) + ")-baselineForceX(" + (dataPoint - 1) +
@@ -4661,13 +4715,14 @@ namespace ManipAnalysis_v2
                                                     (dataPoint - 1) + "))], [positionX(" + (dataPoint - 1) +
                                                     ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint +
                                                     ") positionY(" + dataPoint + ")], forceFieldMatrix);");
-                                                //ForceParaRaw raus? Wird eigentlich nie verwertet, nur berechnet...
+                                                //TODO: ForceParaRaw raus! Wird eigentlich nie verwertet, nur berechnet...
+														//Dann fallen afaik auch paar Skripte von Matlab raus?!
                                                 taskMatlabWrapper.Execute(
                                                     "forceParaRaw = paraForceLineSegment([forceX(" + (dataPoint - 1) +
                                                     ") forceY(" + (dataPoint - 1) + ")], [positionX(" + (dataPoint - 1) +
                                                     ") positionY(" + (dataPoint - 1) + ")], [positionX(" + dataPoint +
                                                     ") positionY(" + dataPoint + ")]);");
-                                                //Gegen Baseline -_> raus
+                                                //TODO: Gegen Baseline -_> raus
                                                 taskMatlabWrapper.Execute("forcePara = paraForceLineSegment([(forceX(" +
                                                                           (dataPoint - 1) + ")-baselineForceX(" +
                                                                           (dataPoint - 1) + ")) (forceY(" +
@@ -4680,29 +4735,34 @@ namespace ManipAnalysis_v2
 
                                                 taskMatlabWrapper.Execute(
                                                     "forcePDRaw = ffSignRaw * sqrt(forcePDRaw(1)^2 + forcePDRaw(2)^2);");
-                                                //Raus!
+														
+                                                //TODO: Raus!
                                                 taskMatlabWrapper.Execute(
                                                     "forcePD = ffSign * sqrt(forcePD(1)^2 + forcePD(2)^2);");
-                                                //Raus?
+														
+                                                //TODO: Raus!
                                                 taskMatlabWrapper.Execute(
                                                     "forceParaRaw = sqrt(forceParaRaw(1)^2 + forceParaRaw(2)^2);");
-                                                //raus
+														
+                                                //TODO: Raus!
                                                 taskMatlabWrapper.Execute(
                                                     "forcePara = sqrt(forcePara(1)^2 + forcePara(2)^2);");
-                                                //AbsoluteForces noch nötig? Falls nicht --> raus!
+														
+                                                //TODO: Wird nirgends verwendet, also raus!
                                                 taskMatlabWrapper.Execute("absoluteForceRaw = sqrt(forceX(" +
                                                                           (dataPoint - 1) + ")^2 + forceY(" +
                                                                           (dataPoint - 1) + ")^2);");
-                                                //Raus!
+                                                //TODO: Raus!
                                                 taskMatlabWrapper.Execute("absoluteForce = sqrt((forceX(" +
                                                                           (dataPoint - 1) + ")-baselineForceX(" +
                                                                           (dataPoint - 1) + "))^2 + (forceY(" +
                                                                           (dataPoint - 1) + ")-baselineForceY(" +
                                                                           (dataPoint - 1) + "))^2);");
 
-                                                //Raus!
+                                                //TODO: Raus!
                                                 perpendicularForcesForcefieldCompenstionFactor.Add(
                                                     taskMatlabWrapper.GetWorkspaceData("forcePD"));
+														
                                                 //Keep it!
                                                 perpendicularForcesRawForcefieldCompenstionFactor.Add(
                                                     taskMatlabWrapper.GetWorkspaceData("forcePDRaw"));
