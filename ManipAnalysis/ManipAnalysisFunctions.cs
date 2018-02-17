@@ -722,7 +722,6 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.SetWorkspaceData("statisticData", statisticData);
                             if (meanCount > 1)
                             {
-                                //TODO: Cleanup the statisticTypes that were removed!
                                 
                                 if (statisticType == "ForcefieldCompenstionFactor Raw fisher-z to r-values")
                                 {

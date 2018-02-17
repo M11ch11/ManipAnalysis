@@ -138,15 +138,6 @@ namespace ManipAnalysis_v2
                 return false;
             }
             return true;
-
-            /*
-            else if(Enumerable.SequenceEqual(getTrialStartTargetPosition(), getTrialEndTargetPosition())) //StartTrials shall not parse || StartTrials so far always had the Target.Number 10 but thats not a real convention as far as I know?
-            {
-                //TODO: Are startTrials really filtered?
-                return false;
-            }
-            return true;
-            */
         }
 
 
@@ -425,7 +416,7 @@ The following methods provide easy access to the required metadata stored in the
                 TrialType = "PositionControlTrial";
             } else if (false)
             {
-                // TODO When is a trial a CatchTrial?
+                // TODO: Currently there should not be CatchTrials as an independent trialType. This should be removed in the future.
                 TrialType = "CatchTrial";
             } else
             {
