@@ -57,34 +57,17 @@ namespace ManipAnalysis_v2
         }
         public Trial parseTrial()
         {
-            //TODO: Get the StudyName somehow?
-            //The studyName is already set from the c3dReader that reads the "EXPERIMENT:STUDY" field, when this method gets called.
             //TODO: trial.Target.Number richtig setzen?
             //trial.Target.Number = trial.Target.Number % 10 sollte passen.
             //trial.Target.Number gibt an, welches Target angesteuert wird:
-            //
-            //DONE: PositionControl filtern
-            //DONE: Starttrials für linke und rechte Hand rausfiltern? ### StartTrials haben egal mit welcher Hand immer selbes Start und EndTarget
-
-            //Position control kann direkt gefiltert werden über getPositionControl, PauseTrial weiß ich noch nicht...
-
+            
             if (isValidTrial())
             {
-                //We set the trial.Target.Number by dividing it by 10 and taking the rest.
-                //This was how it was set in earlier studies, as the TP_NUM, where it actually comes from (in the c3d file)
-                //Had the convention that its lowest digit decoded the target.Number...
-                //In the future that might not be the case anymore.
-                //Instead we could use the getTrialEndTargetNumber() func  
-
-
+     
                 trial.Target.Number = getTrialEndTargetNumber();
-                //trial.Target.Number = trial.Target.Number % 10;
-
-                //Actually not necessary as this is already done in the c3d-Parsing afaik
-                //Not used at the moment because sometimes Dexterit adds 'u' before the SzenarioName for some random reason?
-                //And I dont want to have to filter it first. The Name from the c3d file is "genauso gut"
-
+                
                 //SzenarioName eintragen
+                //Not needed at the moment, because we can also get the szenarioName from the c3d reader
                 //trial.Szenario = getSzenarioName();
 
                 //ForceFieldType eintragen
