@@ -14,6 +14,7 @@ namespace ManipAnalysis_v2.MongoDb
 
         public double AbsoluteTrajectoryLength { get; set; }
 
+        //TODO: Raus!
         public double AbsoluteBaselineTrajectoryLengthRatio { get; set; }
 
         public double AbsoluteMaximalPerpendicularDisplacement { get; set; }
@@ -24,6 +25,7 @@ namespace ManipAnalysis_v2.MongoDb
 
         public double SignedMaximalPerpendicularDisplacementVmax { get; set; }
 
+        //TODO: Raus!
         public double AbsoluteMeanPerpendicularDisplacement { get; set; }
 
         public double EnclosedArea { get; set; }
