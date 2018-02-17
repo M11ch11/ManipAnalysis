@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ManipAnalysis_v2.MongoDb;
 
+//WE DONT USE THIS ANYMORE I BELIEVE!
 namespace ManipAnalysis_v2.SzenarioParseDefinitions
 {
     internal abstract class AbstractSzenarioDefinition
@@ -73,7 +74,7 @@ namespace ManipAnalysis_v2.SzenarioParseDefinitions
                     currentTrial.PositionOffset.X = offset.X;
                     currentTrial.PositionOffset.Y = offset.Y;
 
-                    //TODO: Insert the metadata parser instead of this method
+                    
                     currentTrial = SetTrialMetadata(myManipAnalysisGui, currentTrial);
                     //XMLParser parser = new XMLParser(path, szenarioTrialNumber);
                     //currentTrial = parser.parseTrial();
