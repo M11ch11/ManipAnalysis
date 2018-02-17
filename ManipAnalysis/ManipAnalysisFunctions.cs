@@ -1064,31 +1064,7 @@ namespace ManipAnalysis_v2
 
                                 switch (statisticType)
                                 {
-                                    //TODO: Raus!
-                                    case "Vector correlation fisher-z":
-                                        _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                            trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                        _myMatlabWrapper.Execute("fisherZ = fisherZTransform(vcorr);");
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                        _myMatlabWrapper.ClearWorkspace();
-                                        break;
-                                    //TODO: Raus!
-                                    case "Vector correlation fisher-z to r-values":
-                                        _myMatlabWrapper.SetWorkspaceData("vcorr",
-                                            trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
-                                        _myMatlabWrapper.Execute("fisherZ = fisherZTransform(vcorr);");
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            _myMatlabWrapper.GetWorkspaceData("fisherZ");
-                                        _myMatlabWrapper.ClearWorkspace();
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "MidMovementForce - PD":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForce;
-                                        break;
-
+                                    
                                     case "MidMovementForce - PD Raw":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForceRaw;
@@ -1099,14 +1075,7 @@ namespace ManipAnalysis_v2
                                             trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement
                                                 .Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                         break;
-
-                                    //TODO: Raus!
-                                    case "PDmean - Abs":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics
-                                                .AbsoluteMeanPerpendicularDisplacement;
-                                        break;
-
+                                        
                                     case "PDmax - Abs":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics
@@ -1141,14 +1110,7 @@ namespace ManipAnalysis_v2
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                         break;
-
-                                    //TODO: Raus!
-                                    case "Trajectory length ratio":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics
-                                                .AbsoluteBaselineTrajectoryLengthRatio;
-                                        break;
-
+                                        
                                     case "Enclosed area":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
@@ -1198,24 +1160,6 @@ namespace ManipAnalysis_v2
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             _myMatlabWrapper.GetWorkspaceData("fisherZ");
                                         _myMatlabWrapper.ClearWorkspace();
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "RMSE":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics.RMSE;
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "PredictionAngle":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics.PredictionAngle;
-                                        break;
-
-                                    //TODO: Raus!
-                                    case "FeedbackAngle":
-                                        statisticData[subjectCounter, trialsArrayCounter] =
-                                            trialsArray[trialsArrayCounter].Statistics.FeedbackAngle;
                                         break;
                                 }
                             }
