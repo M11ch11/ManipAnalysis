@@ -30,14 +30,18 @@ namespace ManipAnalysis_v2.MongoDb
 
         public double EnclosedArea { get; set; }
 
+        //TODO: Raus!
         public double RMSE { get; set; }
 
+        //TODO: Raus!
         public double ParallelMidMovementForce { get; set; }
 
+        //TODO: Raus!
         public double PerpendicularMidMovementForce { get; set; }
 
         public double PerpendicularMidMovementForceRaw { get; set; }
 
+        //TODO: Raus!
         public double AbsoluteMidMovementForce { get; set; }
 
         public double ForcefieldCompenstionFactor { get; set; }

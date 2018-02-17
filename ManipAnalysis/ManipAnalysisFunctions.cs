@@ -633,7 +633,7 @@ namespace ManipAnalysis_v2
 
                                     switch (statisticType)
                                     {
-                                        //Not needed anymore! Raus
+                                        //TODO: Not needed anymore! Raus
                                         case "Vector correlation fisher-z":
                                             _myMatlabWrapper.SetWorkspaceData("vcorr",
                                                 trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
@@ -643,7 +643,7 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
-                                        //Not needde anymore! Raus!
+                                        //TODO: Not needde anymore! Raus!
                                         case "Vector correlation fisher-z to r-values":
                                             _myMatlabWrapper.SetWorkspaceData("vcorr",
                                                 trialsArray[trialsArrayCounter].Statistics.VelocityVectorCorrelation);
@@ -653,6 +653,7 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
+                                        //TODO: Raus!
                                         case "MidMovementForce - PD":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForce;
@@ -1214,6 +1215,7 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.ClearWorkspace();
                                         break;
 
+                                    //TODO: Raus!
                                     case "MidMovementForce - PD":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForce;
@@ -4674,9 +4676,12 @@ namespace ManipAnalysis_v2
                                                     t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70)
                                                     .Select(t => t.TimeStamp)
                                                     .ToList();
+                                            //TODO: Raus!
                                             var perpendicularForcesMidMovementForce = new List<double>();
                                             var perpendicularForcesRawMidMovementForce = new List<double>();
+                                            //TODO: Raus!
                                             var parallelForcesMidMovementForce = new List<double>();
+                                            //TODO: Raus!
                                             var absoluteForcesMidMovementForce = new List<double>();
 
                                             //TODO: Raus!
@@ -4763,17 +4768,22 @@ namespace ManipAnalysis_v2
                                                     parallelForcesMidMovementForce.Add(
                                                         taskMatlabWrapper.GetWorkspaceData("forcePara"));
 
+                                                    //TODO: Raus!
                                                     absoluteForcesMidMovementForce.Add(
                                                         taskMatlabWrapper.GetWorkspaceData("absoluteForce"));
                                                 }
                                             }
 
+                                            //TODO: Raus!
                                             statisticContainer.PerpendicularMidMovementForce =
                                                 perpendicularForcesMidMovementForce.Average();
+
                                             statisticContainer.PerpendicularMidMovementForceRaw =
                                                 perpendicularForcesRawMidMovementForce.Average();
+                                            //TODO: Raus!
                                             statisticContainer.ParallelMidMovementForce =
                                                 parallelForcesMidMovementForce.Average();
+                                            //TODO: Raus!
                                             statisticContainer.AbsoluteMidMovementForce =
                                                 absoluteForcesMidMovementForce.Average();
 
