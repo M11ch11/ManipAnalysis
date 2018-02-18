@@ -1198,11 +1198,6 @@ namespace ManipAnalysis_v2
                 Convert.ToInt32(textBox_Import_NewSampleCount.Text));
         }
 
-        private void button_CalculateBaselines_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.CalculateBaselines();
-        }
-
         private void button_CalculateStatistics_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.CalculateStatistics();
@@ -1212,7 +1207,6 @@ namespace ManipAnalysis_v2
         {
             button_DataManipulation_EnsureIndexes_Click(sender, e);
             button_ImportMeasureFiles_Click(sender, e);
-            button_CalculateBaselines_Click(sender, e);
             button_CalculateStatistics_Click(sender, e);
         }
 

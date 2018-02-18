@@ -138,7 +138,6 @@ namespace ManipAnalysis_v2
             this.textBox_Import_PercentPeakVelocity = new System.Windows.Forms.TextBox();
             this.button_Import_ClearMeasureFileList = new System.Windows.Forms.Button();
             this.groupBox_Import_CalculationsImport = new System.Windows.Forms.GroupBox();
-            this.button_Import_CalculateBaselines = new System.Windows.Forms.Button();
             this.button_Import_AutoImport = new System.Windows.Forms.Button();
             this.button_Import_ImportMeasureFiles = new System.Windows.Forms.Button();
             this.button_Import_CalculateStatistics = new System.Windows.Forms.Button();
@@ -160,6 +159,19 @@ namespace ManipAnalysis_v2
             this.listBox_Import_SelectedMeasureFiles = new System.Windows.Forms.ListBox();
             this.button_Import_SelectMeasureFiles = new System.Windows.Forms.Button();
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
+            this.tabControl_Debug = new System.Windows.Forms.TabControl();
+            this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
+            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
+            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
+            this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
+            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
+            this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
+            this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
+            this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
             this.tabPage_Impressum = new System.Windows.Forms.TabPage();
             this.label_Impressum_Text = new System.Windows.Forms.Label();
             this.pictureBox_Impressum_KITLogo = new System.Windows.Forms.PictureBox();
@@ -173,19 +185,6 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
-            this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
-            this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
-            this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
-            this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
-            this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
-            this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
-            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
-            this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
-            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
-            this.tabControl_Debug = new System.Windows.Forms.TabControl();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -199,11 +198,11 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_TimeNormalization.SuspendLayout();
             this.groupBox_Import_ButterworthFilter.SuspendLayout();
             this.tabPage_Debug.SuspendLayout();
+            this.tabControl_Debug.SuspendLayout();
+            this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
+            this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
             this.tabPage_Impressum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).BeginInit();
-            this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
-            this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
-            this.tabControl_Debug.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -1384,7 +1383,6 @@ namespace ManipAnalysis_v2
             // 
             // groupBox_Import_CalculationsImport
             // 
-            this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateBaselines);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_AutoImport);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_ImportMeasureFiles);
             this.groupBox_Import_CalculationsImport.Controls.Add(this.button_Import_CalculateStatistics);
@@ -1394,16 +1392,6 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_CalculationsImport.TabIndex = 36;
             this.groupBox_Import_CalculationsImport.TabStop = false;
             this.groupBox_Import_CalculationsImport.Text = "Calculations / Import";
-            // 
-            // button_Import_CalculateBaselines
-            // 
-            this.button_Import_CalculateBaselines.Location = new System.Drawing.Point(7, 95);
-            this.button_Import_CalculateBaselines.Name = "button_Import_CalculateBaselines";
-            this.button_Import_CalculateBaselines.Size = new System.Drawing.Size(149, 23);
-            this.button_Import_CalculateBaselines.TabIndex = 37;
-            this.button_Import_CalculateBaselines.Text = "Calculate baselines";
-            this.button_Import_CalculateBaselines.UseVisualStyleBackColor = true;
-            this.button_Import_CalculateBaselines.Click += new System.EventHandler(this.button_CalculateBaselines_Click);
             // 
             // button_Import_AutoImport
             // 
@@ -1417,7 +1405,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Import_ImportMeasureFiles
             // 
-            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(7, 66);
+            this.button_Import_ImportMeasureFiles.Location = new System.Drawing.Point(9, 66);
             this.button_Import_ImportMeasureFiles.Name = "button_Import_ImportMeasureFiles";
             this.button_Import_ImportMeasureFiles.Size = new System.Drawing.Size(149, 23);
             this.button_Import_ImportMeasureFiles.TabIndex = 35;
@@ -1427,7 +1415,7 @@ namespace ManipAnalysis_v2
             // 
             // button_Import_CalculateStatistics
             // 
-            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(7, 124);
+            this.button_Import_CalculateStatistics.Location = new System.Drawing.Point(9, 95);
             this.button_Import_CalculateStatistics.Name = "button_Import_CalculateStatistics";
             this.button_Import_CalculateStatistics.Size = new System.Drawing.Size(149, 23);
             this.button_Import_CalculateStatistics.TabIndex = 0;
@@ -1607,6 +1595,146 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
             // 
+            // tabControl_Debug
+            // 
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
+            this.tabControl_Debug.Location = new System.Drawing.Point(3, 3);
+            this.tabControl_Debug.Name = "tabControl_Debug";
+            this.tabControl_Debug.SelectedIndex = 0;
+            this.tabControl_Debug.Size = new System.Drawing.Size(727, 631);
+            this.tabControl_Debug.TabIndex = 61;
+            // 
+            // tabPage_Debug_MatlabAndLogs
+            // 
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
+            this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
+            this.tabPage_Debug_MatlabAndLogs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_MatlabAndLogs.Size = new System.Drawing.Size(719, 605);
+            this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
+            this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
+            this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_ShowMatlabFiles
+            // 
+            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
+            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
+            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
+            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
+            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
+            // 
+            // button_Debug_ShowMatlabWindow
+            // 
+            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(6, 12);
+            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
+            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
+            this.button_Debug_ShowMatlabWindow.Text = "Show MATLAB window";
+            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
+            // 
+            // button_Debug_ShowMatlabWorkspace
+            // 
+            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(6, 41);
+            this.button_Debug_ShowMatlabWorkspace.Name = "button_Debug_ShowMatlabWorkspace";
+            this.button_Debug_ShowMatlabWorkspace.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabWorkspace.TabIndex = 4;
+            this.button_Debug_ShowMatlabWorkspace.Text = "Show MATLAB workspace";
+            this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
+            // 
+            // button_Debug_SaveLogToFile
+            // 
+            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 178);
+            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
+            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_SaveLogToFile.TabIndex = 8;
+            this.button_Debug_SaveLogToFile.Text = "Save log to file";
+            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
+            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
+            // 
+            // tabPage_Debug_DatabaseManipulation
+            // 
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropStatistics);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_EnsureIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_DropDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
+            this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_DatabaseManipulation.Size = new System.Drawing.Size(719, 605);
+            this.tabPage_Debug_DatabaseManipulation.TabIndex = 1;
+            this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
+            this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
+            // 
+            // button_DataManipulation_DropStatistics
+            // 
+            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
+            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
+            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropStatistics.TabIndex = 66;
+            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
+            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
+            // 
+            // button_DataManipulation_CompactDatabase
+            // 
+            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
+            this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
+            this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_CompactDatabase.TabIndex = 65;
+            this.button_DataManipulation_CompactDatabase.Text = "Compact database";
+            this.button_DataManipulation_CompactDatabase.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_CompactDatabase.Click += new System.EventHandler(this.button_DataManipulation_CompactDatabase_Click);
+            // 
+            // button_DataManipulation_DropIndexes
+            // 
+            this.button_DataManipulation_DropIndexes.Location = new System.Drawing.Point(17, 75);
+            this.button_DataManipulation_DropIndexes.Name = "button_DataManipulation_DropIndexes";
+            this.button_DataManipulation_DropIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropIndexes.TabIndex = 64;
+            this.button_DataManipulation_DropIndexes.Text = "Drop indexes";
+            this.button_DataManipulation_DropIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropIndexes.Click += new System.EventHandler(this.button_DataManipulation_DropIndexes_Click);
+            // 
+            // button_DataManipulation_RebuildIndexes
+            // 
+            this.button_DataManipulation_RebuildIndexes.Location = new System.Drawing.Point(17, 46);
+            this.button_DataManipulation_RebuildIndexes.Name = "button_DataManipulation_RebuildIndexes";
+            this.button_DataManipulation_RebuildIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_RebuildIndexes.TabIndex = 63;
+            this.button_DataManipulation_RebuildIndexes.Text = "Rebuild indexes";
+            this.button_DataManipulation_RebuildIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_RebuildIndexes.Click += new System.EventHandler(this.button_DataManipulation_RebuildIndexes_Click);
+            // 
+            // button_DataManipulation_EnsureIndexes
+            // 
+            this.button_DataManipulation_EnsureIndexes.Location = new System.Drawing.Point(17, 17);
+            this.button_DataManipulation_EnsureIndexes.Name = "button_DataManipulation_EnsureIndexes";
+            this.button_DataManipulation_EnsureIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_EnsureIndexes.TabIndex = 62;
+            this.button_DataManipulation_EnsureIndexes.Text = "Ensure indexes";
+            this.button_DataManipulation_EnsureIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_EnsureIndexes.Click += new System.EventHandler(this.button_DataManipulation_EnsureIndexes_Click);
+            // 
+            // button_Debug_DropDatabase
+            // 
+            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 225);
+            this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
+            this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_Debug_DropDatabase.TabIndex = 61;
+            this.button_Debug_DropDatabase.Text = "Drop database";
+            this.button_Debug_DropDatabase.UseVisualStyleBackColor = true;
+            this.button_Debug_DropDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
+            // 
             // tabPage_Impressum
             // 
             this.tabPage_Impressum.Controls.Add(this.label_Impressum_Text);
@@ -1718,146 +1846,6 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
-            // tabPage_Debug_DatabaseManipulation
-            // 
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropStatistics);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_EnsureIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_DropDatabase);
-            this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
-            this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_Debug_DatabaseManipulation.Size = new System.Drawing.Size(719, 605);
-            this.tabPage_Debug_DatabaseManipulation.TabIndex = 1;
-            this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
-            this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
-            // 
-            // button_Debug_DropDatabase
-            // 
-            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 225);
-            this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
-            this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
-            this.button_Debug_DropDatabase.TabIndex = 61;
-            this.button_Debug_DropDatabase.Text = "Drop database";
-            this.button_Debug_DropDatabase.UseVisualStyleBackColor = true;
-            this.button_Debug_DropDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
-            // 
-            // button_DataManipulation_EnsureIndexes
-            // 
-            this.button_DataManipulation_EnsureIndexes.Location = new System.Drawing.Point(17, 17);
-            this.button_DataManipulation_EnsureIndexes.Name = "button_DataManipulation_EnsureIndexes";
-            this.button_DataManipulation_EnsureIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_EnsureIndexes.TabIndex = 62;
-            this.button_DataManipulation_EnsureIndexes.Text = "Ensure indexes";
-            this.button_DataManipulation_EnsureIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_EnsureIndexes.Click += new System.EventHandler(this.button_DataManipulation_EnsureIndexes_Click);
-            // 
-            // button_DataManipulation_RebuildIndexes
-            // 
-            this.button_DataManipulation_RebuildIndexes.Location = new System.Drawing.Point(17, 46);
-            this.button_DataManipulation_RebuildIndexes.Name = "button_DataManipulation_RebuildIndexes";
-            this.button_DataManipulation_RebuildIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_RebuildIndexes.TabIndex = 63;
-            this.button_DataManipulation_RebuildIndexes.Text = "Rebuild indexes";
-            this.button_DataManipulation_RebuildIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_RebuildIndexes.Click += new System.EventHandler(this.button_DataManipulation_RebuildIndexes_Click);
-            // 
-            // button_DataManipulation_DropIndexes
-            // 
-            this.button_DataManipulation_DropIndexes.Location = new System.Drawing.Point(17, 75);
-            this.button_DataManipulation_DropIndexes.Name = "button_DataManipulation_DropIndexes";
-            this.button_DataManipulation_DropIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_DropIndexes.TabIndex = 64;
-            this.button_DataManipulation_DropIndexes.Text = "Drop indexes";
-            this.button_DataManipulation_DropIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DropIndexes.Click += new System.EventHandler(this.button_DataManipulation_DropIndexes_Click);
-            // 
-            // button_DataManipulation_CompactDatabase
-            // 
-            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
-            this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
-            this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_CompactDatabase.TabIndex = 65;
-            this.button_DataManipulation_CompactDatabase.Text = "Compact database";
-            this.button_DataManipulation_CompactDatabase.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_CompactDatabase.Click += new System.EventHandler(this.button_DataManipulation_CompactDatabase_Click);
-            // 
-            // button_DataManipulation_DropStatistics
-            // 
-            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
-            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
-            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_DropStatistics.TabIndex = 66;
-            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
-            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
-            // 
-            // tabPage_Debug_MatlabAndLogs
-            // 
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
-            this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
-            this.tabPage_Debug_MatlabAndLogs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_Debug_MatlabAndLogs.Size = new System.Drawing.Size(719, 605);
-            this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
-            this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
-            this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
-            // 
-            // button_Debug_SaveLogToFile
-            // 
-            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 178);
-            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
-            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_SaveLogToFile.TabIndex = 8;
-            this.button_Debug_SaveLogToFile.Text = "Save log to file";
-            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
-            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
-            // 
-            // button_Debug_ShowMatlabWorkspace
-            // 
-            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(6, 41);
-            this.button_Debug_ShowMatlabWorkspace.Name = "button_Debug_ShowMatlabWorkspace";
-            this.button_Debug_ShowMatlabWorkspace.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabWorkspace.TabIndex = 4;
-            this.button_Debug_ShowMatlabWorkspace.Text = "Show MATLAB workspace";
-            this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
-            // 
-            // button_Debug_ShowMatlabWindow
-            // 
-            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(6, 12);
-            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
-            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
-            this.button_Debug_ShowMatlabWindow.Text = "Show MATLAB window";
-            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
-            // 
-            // button_Debug_ShowMatlabFiles
-            // 
-            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
-            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
-            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
-            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
-            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
-            // 
-            // tabControl_Debug
-            // 
-            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
-            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
-            this.tabControl_Debug.Location = new System.Drawing.Point(3, 3);
-            this.tabControl_Debug.Name = "tabControl_Debug";
-            this.tabControl_Debug.SelectedIndex = 0;
-            this.tabControl_Debug.Size = new System.Drawing.Size(727, 631);
-            this.tabControl_Debug.TabIndex = 61;
-            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1897,12 +1885,12 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_ButterworthFilter.ResumeLayout(false);
             this.groupBox_Import_ButterworthFilter.PerformLayout();
             this.tabPage_Debug.ResumeLayout(false);
+            this.tabControl_Debug.ResumeLayout(false);
+            this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
+            this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
             this.tabPage_Impressum.ResumeLayout(false);
             this.tabPage_Impressum.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).EndInit();
-            this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
-            this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
-            this.tabControl_Debug.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2063,7 +2051,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_Handedness;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_ForceField;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_TrialType;
-        private System.Windows.Forms.Button button_Import_CalculateBaselines;
         private System.Windows.Forms.TabControl tabControl_Debug;
         private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
         private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
