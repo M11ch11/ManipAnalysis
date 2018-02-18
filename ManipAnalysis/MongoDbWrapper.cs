@@ -515,9 +515,11 @@ namespace ManipAnalysis_v2
         //Alternatively we probably have to hardcode the targets as a targetlist or smth...
         //Or maybe we could add the coordinates of the target in the GUI, as the GUI pulls from the TargetContainers anyways.
         //And then parse the GUI Information to the drawCircles function...
-		//
-		//We should use MyManipAnalysisFunctions.GetTargets I guess?!
-		//Also check what happens, if we try to plot data that comes from different study, group, szenario, subjects!!
+        //
+        //We should use MyManipAnalysisFunctions.GetTargets I guess?!
+        //Also check what happens, if we try to plot data that comes from different study, group, szenario, subjects!!
+
+        /* Not being used right now...
         public List<TargetContainer> getTargetContainers(string studyName)
         {
             var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName));
@@ -529,6 +531,28 @@ namespace ManipAnalysis_v2
                         .Distinct()
                         .Select(t => t.Key);
             return retVal.ToList();
+        }
+        */
+
+        public List<TargetContainer> getTargetContainers(string studyName, string groupName, string szenarioName, SubjectContainer subject)
+        {
+            var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                    Builders<Trial>.Filter.Eq(t => t.Group, groupName),
+                    Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject));
+            var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Target, u => new { u.Key })
+                        .ToList()
+                        .Distinct()
+                        .Select(t => t.Key);
+            return retVal.ToList();
+        }
+
+        public List<TargetContainer> getTargetContainersFromTrajectoryVelocityPlotContainer(Container.TrajectoryVelocityPlotContainer container)
+        {
+            return getTargetContainers(container.Study, container.Group, container.Szenario, container.Subject);
         }
 
         public IEnumerable<int> GetTargets(string studyName, string groupName, string szenarioName,
