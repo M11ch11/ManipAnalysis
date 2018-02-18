@@ -206,9 +206,6 @@ namespace ManipAnalysis_v2
             C3DParameterSize = (int) (reader.BaseStream.Position - position);
         }
 
-        public Parameter()
-        {
-        }
 
         public bool IsScalar { get; set; }
 
@@ -230,7 +227,7 @@ namespace ManipAnalysis_v2
             }
             Length *= GetSize(_paramType);
 
-            // TODO ?
+            // "todo" [from Matthias], but I dont know what..? Works fine so far...
             _vectorData = new byte[Length];
             reader.Read(_vectorData, 0, Length);
         }
@@ -239,7 +236,7 @@ namespace ManipAnalysis_v2
         {
             _vectorData = new byte[GetSize(_paramType)];
             reader.Read(_vectorData, 0, GetSize(_paramType));
-            // TODO ?
+            // "todo" [from Matthias], but I dont know what...? Works fine so far...
         }
 
         private static Type GetType(sbyte c3dDataType)
@@ -307,6 +304,7 @@ namespace ManipAnalysis_v2
             writer.Write(_vectorData);
         }
 
+        //TODO: Remove because it is not used?
         public void SetData<T>(T data)
         {
             //T ret;
@@ -545,6 +543,7 @@ namespace ManipAnalysis_v2
             return ret;
         }
 
+        //TODO: Remove this function, because it is not used anyways?
         private T[,] Get2DArray<T>()
         {
             if (_dimensions.Length != 2)

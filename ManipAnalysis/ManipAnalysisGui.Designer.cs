@@ -904,7 +904,6 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Sorted = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.TabIndex = 15;
-            this.comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedIndexChanged += new System.EventHandler(this.comboBox_DescriptiveStatistic1_DataTypeSelect_SelectedIndexChanged);
             // 
             // button_DescriptiveStatistic1_PlotMeanStd
             // 
