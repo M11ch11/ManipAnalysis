@@ -173,13 +173,8 @@
     <Compile Include="ArrayComparer.cs" />
     <Compile Include="C3dHeader.cs" />
     <Compile Include="C3dReader.cs" />
-    <Compile Include="Container\BaselineDataContainer.cs" />
-    <Compile Include="Container\DataContainer.cs" />
-    <Compile Include="Container\MeasureDataContainer.cs" />
     <Compile Include="Container\StatisticPlotContainer.cs" />
-    <Compile Include="Container\SzenarioMeanTimeDataContainer.cs" />
     <Compile Include="Container\TrajectoryVelocityPlotContainer.cs" />
-    <Compile Include="Container\VelocityDataContainer.cs" />
     <Compile Include="DoubleConverter.cs" />
     <Compile Include="Gzip.cs" />
     <Compile Include="MeasureFileParser\KinarmMeasureFileParser.cs" />
