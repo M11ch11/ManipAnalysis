@@ -768,7 +768,7 @@ namespace ManipAnalysis_v2
                                             statisticData.Length / meanCount, 0, 0.002, plotFit, plotErrorbars);
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw":
+                                    case "ForcefieldCompensationFactor Raw":
                                         _myMatlabWrapper.CreateStatisticFigure(
                                             "Forcefield Compenstion Factor Raw plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
@@ -777,7 +777,7 @@ namespace ManipAnalysis_v2
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw fisher-z":
+                                    case "ForcefieldCompensationFactor Raw fisher-z":
                                         _myMatlabWrapper.CreateStatisticFigure(
                                             "Forcefield Compenstion Factor Raw fisher-z plot", "statisticDataPlot",
                                             "fit(transpose([1:1:length(statisticDataPlot)]),transpose(statisticDataPlot),'" +
@@ -786,7 +786,7 @@ namespace ManipAnalysis_v2
                                             1.0, plotFit, plotErrorbars);
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw fisher-z to r-values":
+                                    case "ForcefieldCompensationFactor Raw fisher-z to r-values":
                                         _myMatlabWrapper.CreateStatisticFigure(
                                             "Forcefield Compenstion Factor Raw fisher-z to r-values plot",
                                             "statisticDataPlot",
