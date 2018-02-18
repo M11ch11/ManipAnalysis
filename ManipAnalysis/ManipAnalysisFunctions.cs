@@ -2310,8 +2310,8 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
-
-                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
+                        //TODO: Improve before using this function!
+                        //_myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
 
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
@@ -2327,8 +2327,8 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionFiltered);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
-
-                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
+                        //TODO: Improve before using this function!
+                        //_myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
@@ -2343,8 +2343,8 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionRaw);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
-
-                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
+                        //TODO: Improve before using this function!
+                        //_myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {

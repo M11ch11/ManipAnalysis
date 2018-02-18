@@ -510,7 +510,9 @@ namespace ManipAnalysis_v2
                 return new List<DateTime>();
             }
         }
-
+        //TODO: Try to improve the runtime of this function, so it does not take 5 mins to run!
+        //We could filter more by listing from the selectedTrials and checking...
+        //Alternatively we probably have to hardcode the targets as a targetlist or smth...
         public List<TargetContainer> getTargetContainers(string studyName)
         {
             var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName));
