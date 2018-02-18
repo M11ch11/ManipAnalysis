@@ -216,35 +216,6 @@ namespace ManipAnalysis_v2
             }
         }
 
-        private void button_PlotBaseline_Click(object sender, EventArgs e)
-        {
-            var trialTypes = new List<Trial.TrialTypeEnum>();
-            var forceFields = new List<Trial.ForceFieldTypeEnum>();
-            var handedness = new List<Trial.HandednessEnum>();
-            var targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
-
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
-            {
-                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
-            {
-                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
-            {
-                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
-            }
-
-            _manipAnalysisFunctions.PlotTrajectoryBaseline(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets, trialTypes, forceFields, handedness);
-        }
 
         public void EnableTabPages(bool enable)
         {
@@ -1689,126 +1660,6 @@ namespace ManipAnalysis_v2
             }
         }
 
-        private void tabPage_Others_Enter(object sender, EventArgs e)
-        {
-            listBox_OtherStatistics_TrialType.Items.Clear();
-            listBox_OtherStatistics_ForceField.Items.Clear();
-            listBox_OtherStatistics_Handedness.Items.Clear();
-
-            listBox_OtherStatistics_TrialType.Items.AddRange(Enum.GetNames(typeof (Trial.TrialTypeEnum)));
-            listBox_OtherStatistics_ForceField.Items.AddRange(Enum.GetNames(typeof (Trial.ForceFieldTypeEnum)));
-            listBox_OtherStatistics_Handedness.Items.AddRange(Enum.GetNames(typeof (Trial.HandednessEnum)));
-
-            for (var listboxIndex = 0; listboxIndex < listBox_OtherStatistics_TrialType.Items.Count; listboxIndex++)
-            {
-                listBox_OtherStatistics_TrialType.SetSelected(listboxIndex, true);
-            }
-
-            for (var listboxIndex = 0; listboxIndex < listBox_OtherStatistics_ForceField.Items.Count; listboxIndex++)
-            {
-                listBox_OtherStatistics_ForceField.SetSelected(listboxIndex, true);
-            }
-
-            for (var listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Handedness.Items.Count; listboxIndex++)
-            {
-                listBox_OtherStatistics_Handedness.SetSelected(listboxIndex, true);
-            }
-
-            comboBox_Others_Study.Items.Clear();
-            comboBox_Others_Group.Items.Clear();
-            comboBox_Others_Szenario.Items.Clear();
-            comboBox_Others_Subject.Items.Clear();
-            comboBox_Others_Turn.Items.Clear();
-
-            var studyNames = _manipAnalysisFunctions.GetStudys();
-            if (studyNames.Any())
-            {
-                comboBox_Others_Study.Items.AddRange(studyNames.ToArray());
-                if (comboBox_Others_Study.Items.Count > 0)
-                {
-                    comboBox_Others_Study.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_Others_Study_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_Others_Group.Items.Clear();
-            comboBox_Others_Szenario.Items.Clear();
-            comboBox_Others_Subject.Items.Clear();
-            comboBox_Others_Turn.Items.Clear();
-
-            var groupNames = _manipAnalysisFunctions.GetGroups(comboBox_Others_Study.SelectedItem.ToString());
-            if (groupNames.Any())
-            {
-                comboBox_Others_Group.Items.AddRange(groupNames.ToArray());
-                if (comboBox_Others_Group.Items.Count > 0)
-                {
-                    comboBox_Others_Group.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_Others_Group_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_Others_Szenario.Items.Clear();
-            comboBox_Others_Subject.Items.Clear();
-            comboBox_Others_Turn.Items.Clear();
-
-            var study = comboBox_Others_Study.SelectedItem.ToString();
-            var group = comboBox_Others_Group.SelectedItem.ToString();
-
-            var szenarioNames = _manipAnalysisFunctions.GetSzenarios(study, group);
-            if (szenarioNames.Any())
-            {
-                comboBox_Others_Szenario.Items.AddRange(szenarioNames.ToArray());
-                if (comboBox_Others_Szenario.Items.Count > 0)
-                {
-                    comboBox_Others_Szenario.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_Others_Szenario_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_Others_Subject.Items.Clear();
-            comboBox_Others_Turn.Items.Clear();
-
-            var study = comboBox_Others_Study.SelectedItem.ToString();
-            var group = comboBox_Others_Group.SelectedItem.ToString();
-            var szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-
-            var subjectNames = _manipAnalysisFunctions.GetSubjects(study, group, szenario);
-            if (subjectNames.Any())
-            {
-                comboBox_Others_Subject.Items.AddRange(subjectNames.ToArray());
-                if (comboBox_Others_Subject.Items.Count > 0)
-                {
-                    comboBox_Others_Subject.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void comboBox_Others_Subject_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox_Others_Turn.Items.Clear();
-
-            var study = comboBox_Others_Study.SelectedItem.ToString();
-            var group = comboBox_Others_Group.SelectedItem.ToString();
-            var szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-            var subject = (SubjectContainer) comboBox_Others_Subject.SelectedItem;
-
-            var turnNames = _manipAnalysisFunctions.GetTurns(study, group, szenario, subject);
-            if (turnNames.Any())
-            {
-                comboBox_Others_Turn.Items.AddRange(turnNames.ToArray());
-                if (comboBox_Others_Turn.Items.Count > 0)
-                {
-                    comboBox_Others_Turn.SelectedIndex = 0;
-                }
-            }
-        }
-
         private void tabPage_VisualizationExport_Enter(object sender, EventArgs e)
         {
             WriteProgressInfo("Loading...");
@@ -1870,51 +1721,7 @@ namespace ManipAnalysis_v2
             }
             WriteProgressInfo("Ready");
         }
-
-        private void button_Others_ExportBaseline_Click(object sender, EventArgs e)
-        {
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save trajectory / velocity file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." +
-                                      DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." +
-                                      DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem +
-                                      "-TrajectoryBaselineData";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                WriteToLogBox("Unimplemented!");
-            }
-        }
-
-        private void button_Others_ExportSzenarioMeanTimes_Click(object sender, EventArgs e)
-        {
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save mean-time file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." +
-                                      DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." +
-                                      DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem +
-                                      "-SzenarioMeanTimeData";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                _manipAnalysisFunctions.ExportSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(),
-                    comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(),
-                    (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                    Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)),
-                    saveFileDialog.FileName);
-            }
-        }
-
+        
         private void button_Import_ClearMeasureFileList_Click(object sender, EventArgs e)
         {
             listBox_Import_SelectedMeasureFiles.Items.Clear();
@@ -1969,66 +1776,7 @@ namespace ManipAnalysis_v2
                 WriteToLogBox("No Databases available!");
             }
         }
-
-        private void button_Others_PlotSzenarioMeanTimes_Click(object sender, EventArgs e)
-        {
-            _manipAnalysisFunctions.PlotSzenarioMeanTimes(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(), comboBox_Others_Szenario.SelectedItem.ToString(),
-                (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                Convert.ToInt32(comboBox_Others_Turn.SelectedItem.ToString().Substring("Turn".Length)));
-        }
-
-        private void button_Others_ExportVelocityBaseline_Click(object sender, EventArgs e)
-        {
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Reset();
-            saveFileDialog.Title = @"Save trajectory / velocity file";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = @"DataFiles (*.csv)|.csv";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.FileName = DateTime.Now.Year.ToString("0000") + "." + DateTime.Now.Month.ToString("00") + "." +
-                                      DateTime.Now.Day.ToString("00") + "-" + DateTime.Now.Hour.ToString("00") + "." +
-                                      DateTime.Now.Minute.ToString("00") + "-" + comboBox_Others_Subject.SelectedItem +
-                                      "-VelocityBaselineData";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                WriteToLogBox("Unimplemented!");
-            }
-        }
-
-        private void button_Others_PlotVelocityBaseline_Click(object sender, EventArgs e)
-        {
-            var trialTypes = new List<Trial.TrialTypeEnum>();
-            var forceFields = new List<Trial.ForceFieldTypeEnum>();
-            var handedness = new List<Trial.HandednessEnum>();
-            var targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
-
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
-            {
-                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
-            {
-                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
-            {
-                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
-            }
-
-            _manipAnalysisFunctions.PlotVelocityBaselines(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets, trialTypes, forceFields, handedness);
-        }
-
-
+        
         private void button_DataManipulation_EnsureIndexes_Click(object sender, EventArgs e)
         {
             _manipAnalysisFunctions.EnsureIndexes();
@@ -2053,59 +1801,7 @@ namespace ManipAnalysis_v2
         {
             _manipAnalysisFunctions.DropStatistics();
         }
-
-        private void button_Others_PlotForceBaseline_Click(object sender, EventArgs e)
-        {
-            var trialTypes = new List<Trial.TrialTypeEnum>();
-            var forceFields = new List<Trial.ForceFieldTypeEnum>();
-            var handedness = new List<Trial.HandednessEnum>();
-            var targets =
-                listBox_OtherStatistics_Targets.SelectedItems.Cast<string>()
-                    .Select(t => Convert.ToInt32(t.Substring(7, 2)))
-                    .ToArray();
-
-            foreach (string item in listBox_OtherStatistics_TrialType.SelectedItems)
-            {
-                trialTypes.Add((Trial.TrialTypeEnum) Enum.Parse(typeof (Trial.TrialTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_ForceField.SelectedItems)
-            {
-                forceFields.Add((Trial.ForceFieldTypeEnum) Enum.Parse(typeof (Trial.ForceFieldTypeEnum), item));
-            }
-
-            foreach (string item in listBox_OtherStatistics_Handedness.SelectedItems)
-            {
-                handedness.Add((Trial.HandednessEnum) Enum.Parse(typeof (Trial.HandednessEnum), item));
-            }
-
-            _manipAnalysisFunctions.PlotForceBaselines(comboBox_Others_Study.SelectedItem.ToString(),
-                comboBox_Others_Group.SelectedItem.ToString(), (SubjectContainer) comboBox_Others_Subject.SelectedItem,
-                targets, trialTypes, forceFields, handedness);
-        }
-
-        private void comboBox_Others_Turn_SelectedValueChanged(object sender, EventArgs e)
-        {
-            listBox_OtherStatistics_Targets.Items.Clear();
-
-            var study = comboBox_Others_Study.SelectedItem.ToString();
-            var group = comboBox_Others_Group.SelectedItem.ToString();
-            var szenario = comboBox_Others_Szenario.SelectedItem.ToString();
-            var subject = (SubjectContainer) comboBox_Others_Subject.SelectedItem;
-
-            var targets = _manipAnalysisFunctions.GetTargets(study, group, szenario, subject);
-
-            if (targets.Any())
-            {
-                listBox_OtherStatistics_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
-
-                for (var listboxIndex = 0; listboxIndex < listBox_OtherStatistics_Targets.Items.Count; listboxIndex++)
-                {
-                    listBox_OtherStatistics_Targets.SetSelected(listboxIndex, true);
-                }
-            }
-        }
-
+        
         private void tabPage_Debug_BaselineRecalculation_Enter(object sender, EventArgs e)
         {
             listBox_BaselineRecalculation_TrialType.Items.Clear();
