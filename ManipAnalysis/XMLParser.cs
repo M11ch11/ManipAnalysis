@@ -440,9 +440,6 @@ The following methods provide easy access to the required metadata stored in the
                 case ("PositionControlTrial"):
                     trial.TrialType = Trial.TrialTypeEnum.PositionControlTrial;
                     break;
-                case ("CatchTrial"):
-                    trial.TrialType = Trial.TrialTypeEnum.CatchTrial;
-                    break;
                 case ("Standardtrial"):
                     trial.TrialType = Trial.TrialTypeEnum.StandardTrial;
                     break;
