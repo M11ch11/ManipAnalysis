@@ -9,7 +9,6 @@ using ManipAnalysis_v2.Container;
 using ManipAnalysis_v2.MeasureFileParser;
 using ManipAnalysis_v2.MongoDb;
 using MongoDB.Driver;
-using ManipAnalysis_v2.SzenarioParseDefinitions;
 
 namespace ManipAnalysis_v2
 {

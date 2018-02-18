@@ -6,7 +6,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using ManipAnalysis_v2.MongoDb;
-using ManipAnalysis_v2.SzenarioParseDefinitions;
 using System.Threading.Tasks;
 
 namespace ManipAnalysis_v2.MeasureFileParser
