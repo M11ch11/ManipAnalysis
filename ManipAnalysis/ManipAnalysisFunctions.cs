@@ -2310,6 +2310,8 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
+                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
+
                         if (study == "Study_12_HEiKA")
                         {
                             _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);

@@ -1642,7 +1642,7 @@ namespace ManipAnalysis_v2
                 }
 
                 _manipAnalysisFunctions.PlotTrajectoryVelocityForce(
-                    listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(),
+                    listBox_TrajectoryVelocity_SelectedTrials.Items.Cast<TrajectoryVelocityPlotContainer>(), //Diese Zeile will ich!
                     comboBox_TrajectoryVelocity_IndividualMean.SelectedItem.ToString(),
                     comboBox_TrajectoryVelocity_TrajectoryVelocity.SelectedItem.ToString(), trialTypes, forceFields,
                     handedness, checkBox_TrajectoryVelocity_ShowForceVectors.Checked,

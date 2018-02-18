@@ -367,6 +367,23 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public void DrawTargets(System.Collections.Generic.List<MongoDb.TargetContainer> targets)
+        {
+            try {
+                foreach (var target in targets)
+                {
+                    Execute("drawCircle(" + target.Radius.ToString(CultureInfo.InvariantCulture).Replace(',', '.')
+                        + ", " + target.XPos.ToString(CultureInfo.InvariantCulture).Replace(',', '.')
+                        + ", " + target.YPos.ToString(CultureInfo.InvariantCulture).Replace(',', '.')
+                        + ");");
+                }
+            } catch (Exception ex)
+            {
+                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
+            }
+        }
+
+
         public void DrawTargetsCenterOut8(double diameter, double radius, double centerX, double centerY)
         {
             var diameterString = diameter.ToString(CultureInfo.InvariantCulture).Replace(',', '.');

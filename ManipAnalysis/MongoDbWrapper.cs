@@ -511,6 +511,18 @@ namespace ManipAnalysis_v2
             }
         }
 
+        public List<TargetContainer> getTargetContainers(string studyName)
+        {
+            var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName));
+            var retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.Target, u => new { u.Key })
+                        .ToList()
+                        .Select(t => t.Key);
+            return retVal.ToList();
+        }
+
         public IEnumerable<int> GetTargets(string studyName, string groupName, string szenarioName,
             SubjectContainer subject)
         {
