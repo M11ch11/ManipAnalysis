@@ -2220,7 +2220,6 @@ namespace ManipAnalysis_v2
                                             statisticContainer.ForcefieldCompenstionFactorRaw =
                                                 taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
 
-                                            //Noch mal drüber schauen, wie man am besten die BaselineID entfernt, wenn sie überhaupt noch nötig ist.
                                             // Set Metadata and upload to Database
                                             trial.Statistics = statisticContainer;
                                             
