@@ -1443,6 +1443,7 @@ namespace ManipAnalysis_v2
             var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
             var subject = (SubjectContainer) listBox_TrajectoryVelocity_Subjects.SelectedItem;
 
+			//TODO: Look at this!
             var targets = _manipAnalysisFunctions.GetTargets(study, group, szenario, subject);
             var trials = _manipAnalysisFunctions.GetTrials(study, group, szenario, subject);
 
@@ -1581,7 +1582,7 @@ namespace ManipAnalysis_v2
                                                 canBeUpdated = true;
                                             }
                                         }
-
+										//TODO: Here we could add the targetcontainer information to be added to the Items probably...
                                         if (!canBeUpdated)
                                         {
                                             listBox_TrajectoryVelocity_SelectedTrials.Items.Add(

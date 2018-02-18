@@ -515,6 +515,9 @@ namespace ManipAnalysis_v2
         //Alternatively we probably have to hardcode the targets as a targetlist or smth...
         //Or maybe we could add the coordinates of the target in the GUI, as the GUI pulls from the TargetContainers anyways.
         //And then parse the GUI Information to the drawCircles function...
+		//
+		//We should use MyManipAnalysisFunctions.GetTargets I guess?!
+		//Also check what happens, if we try to plot data that comes from different study, group, szenario, subjects!!
         public List<TargetContainer> getTargetContainers(string studyName)
         {
             var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName));
