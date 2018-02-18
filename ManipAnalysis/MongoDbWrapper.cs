@@ -11,8 +11,6 @@ namespace ManipAnalysis_v2
     {
         private readonly ManipAnalysisGui _myManipAnalysisGui;
 
-        private IMongoCollection<Baseline> _baselineCollection;
-
         private string _connectionString;
 
         private MongoClient _mongoClient;
@@ -81,7 +79,6 @@ namespace ManipAnalysis_v2
             {
                 _mongoDatabase = _mongoClient.GetDatabase(database);
                 _trialCollection = _mongoDatabase.GetCollection<Trial>("Trial");
-                _baselineCollection = _mongoDatabase.GetCollection<Baseline>("Baseline");
                 _szenarioMeanTimeCollection = _mongoDatabase.GetCollection<SzenarioMeanTime>("SzenarioMeanTime");
             }
             catch (Exception ex)
@@ -228,26 +225,6 @@ namespace ManipAnalysis_v2
 
                 #endregion
 
-                #region BaselineCollection indexes
-
-                /*
-                 * GetBaseline
-                 */
-                var baselineCollectionKeys = Builders<Baseline>.IndexKeys
-                    .Ascending(t => t.Study)
-                    .Ascending(t => t.Group)
-                    .Ascending(t => t.Subject)
-                    .Ascending(t => t.Target.Number);
-                options = new CreateIndexOptions {Unique = false, Sparse = true, Name = "GetBaseline"};
-                _baselineCollection.Indexes.CreateOne(baselineCollectionKeys, options);
-
-                // MeasureFileHash
-                baselineCollectionKeys = Builders<Baseline>.IndexKeys.Ascending(t => t.MeasureFile.FileHash);
-                options = new CreateIndexOptions {Unique = false, Sparse = false, Name = "MeasureFileHash"};
-                _baselineCollection.Indexes.CreateOne(baselineCollectionKeys, options);
-
-                #endregion
-
                 #region SzenarioMeanTimeCollection indexes
 
                 /*
@@ -294,7 +271,6 @@ namespace ManipAnalysis_v2
             try
             {
                 _trialCollection.Indexes.DropAll();
-                _baselineCollection.Indexes.DropAll();
                 _szenarioMeanTimeCollection.Indexes.DropAll();
             }
             catch (Exception ex)
@@ -323,18 +299,6 @@ namespace ManipAnalysis_v2
                 _mongoDatabase.DropCollection("SzenarioMeanTime");
                 _mongoDatabase.DropCollection("Baseline");
                 _mongoDatabase.DropCollection("Trial");
-            }
-            catch (Exception ex)
-            {
-                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
-            }
-        }
-
-        public void DropBaselines()
-        {
-            try
-            {
-                _mongoDatabase.DropCollection("Baseline");
             }
             catch (Exception ex)
             {
@@ -849,12 +813,6 @@ namespace ManipAnalysis_v2
             _szenarioMeanTimeCollection.InsertMany(szenarioMeanTimes);
         }
 
-        public void Insert(IEnumerable<Baseline> baselines)
-        {
-            // No try-catch-Block since ManipAnalysisFunctions is handling this
-            _baselineCollection.InsertMany(baselines);
-        }
-
         public void RemoveMeasureFile(MeasureFileContainer measureFile)
         {
             try
@@ -862,7 +820,6 @@ namespace ManipAnalysis_v2
                 _trialCollection.DeleteMany(Builders<Trial>.Filter.Eq(t => t.MeasureFile, measureFile));
                 _szenarioMeanTimeCollection.DeleteMany(Builders<SzenarioMeanTime>.Filter.Eq(t => t.MeasureFile,
                     measureFile));
-                _baselineCollection.DeleteMany(Builders<Baseline>.Filter.Eq(t => t.MeasureFile, measureFile));
             }
             catch (Exception
                 ex)

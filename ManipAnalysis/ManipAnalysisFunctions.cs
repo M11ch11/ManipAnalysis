@@ -1971,62 +1971,7 @@ namespace ManipAnalysis_v2
                 }
             });
         }
-
-        public void CompressBaselineData(List<Baseline> baselinesContainer)
-        {
-            Parallel.For(0, baselinesContainer.Count, baselineCounter =>
-            {
-                if (baselinesContainer[baselineCounter].MeasuredForces != null)
-                {
-                    var data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MeasuredForces);
-                    lock (baselinesContainer)
-                    {
-                        baselinesContainer[baselineCounter].ZippedMeasuredForces = data;
-                        baselinesContainer[baselineCounter].MeasuredForces = null;
-                    }
-                }
-                if (baselinesContainer[baselineCounter].MomentForces != null)
-                {
-                    var data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].MomentForces);
-                    lock (baselinesContainer)
-                    {
-                        baselinesContainer[baselineCounter].ZippedMomentForces = data;
-                        baselinesContainer[baselineCounter].MomentForces = null;
-                    }
-                }
-                if (baselinesContainer[baselineCounter].NominalForces != null)
-                {
-                    var data = Gzip<List<ForceContainer>>.Compress(baselinesContainer[baselineCounter].NominalForces);
-                    lock (baselinesContainer)
-                    {
-                        baselinesContainer[baselineCounter].ZippedNominalForces = data;
-                        baselinesContainer[baselineCounter].NominalForces = null;
-                    }
-                }
-                if (baselinesContainer[baselineCounter].Position != null)
-                {
-                    var data = Gzip<List<PositionContainer>>.Compress(baselinesContainer[baselineCounter].Position);
-                    lock (baselinesContainer)
-                    {
-                        baselinesContainer[baselineCounter].ZippedPosition = data;
-                        baselinesContainer[baselineCounter].Position = null;
-                    }
-                }
-                if (baselinesContainer[baselineCounter].Velocity != null)
-                {
-                    var data = Gzip<List<VelocityContainer>>.Compress(baselinesContainer[baselineCounter].Velocity);
-                    lock (baselinesContainer)
-                    {
-                        baselinesContainer[baselineCounter].ZippedVelocity = data;
-                        baselinesContainer[baselineCounter].Velocity = null;
-                    }
-                }
-            });
-        }
-                             
         
-
-
         public void CalculateStatistics()
         {
             TaskManager.PushBack(Task.Factory.StartNew(delegate
@@ -2057,7 +2002,7 @@ namespace ManipAnalysis_v2
                     statisticFields = statisticFields.Include(t14 => t14.ForceFieldMatrix);
 
                     var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
-                    var baselineBuffer = new List<Baseline>();
+
                     var cpuCount = Environment.ProcessorCount;
 
                     if (trialList.Count > 0)
