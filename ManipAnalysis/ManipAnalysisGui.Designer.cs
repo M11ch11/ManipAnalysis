@@ -160,46 +160,6 @@ namespace ManipAnalysis_v2
             this.listBox_Import_SelectedMeasureFiles = new System.Windows.Forms.ListBox();
             this.button_Import_SelectMeasureFiles = new System.Windows.Forms.Button();
             this.tabPage_Debug = new System.Windows.Forms.TabPage();
-            this.tabControl_Debug = new System.Windows.Forms.TabControl();
-            this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
-            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
-            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
-            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
-            this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
-            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
-            this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
-            this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
-            this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
-            this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
-            this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
-            this.tabPage_Debug_BaselineRecalculation = new System.Windows.Forms.TabPage();
-            this.comboBox_BaselineRecalculation_Target = new System.Windows.Forms.ComboBox();
-            this.button_BaselineRecalculation_RecalculateBaselines = new System.Windows.Forms.Button();
-            this.comboBox_BaselineRecalculation_Turn = new System.Windows.Forms.ComboBox();
-            this.comboBox_BaselineRecalculation_Group = new System.Windows.Forms.ComboBox();
-            this.comboBox_BaselineRecalculation_Subject = new System.Windows.Forms.ComboBox();
-            this.label_BaselineRecalculation_Handedness = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_ForceField = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_TrialType = new System.Windows.Forms.Label();
-            this.listBox_BaselineRecalculation_Handedness = new System.Windows.Forms.ListBox();
-            this.listBox_BaselineRecalculation_ForceField = new System.Windows.Forms.ListBox();
-            this.listBox_BaselineRecalculation_TrialType = new System.Windows.Forms.ListBox();
-            this.label_BaselineRecalculation_Targets = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_Turn = new System.Windows.Forms.Label();
-            this.button_BaselineRecalculation_AddAll = new System.Windows.Forms.Button();
-            this.button_BaselineRecalculation_ClearAll = new System.Windows.Forms.Button();
-            this.button_BaselineRecalculation_ClearSelected = new System.Windows.Forms.Button();
-            this.listBox_BaselineRecalculation_SelectedTrials = new System.Windows.Forms.ListBox();
-            this.button_BaselineRecalculation_AddSelected = new System.Windows.Forms.Button();
-            this.label_BaselineRecalculation_Trials = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_Subject = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_Szenario = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_Group = new System.Windows.Forms.Label();
-            this.label_BaselineRecalculation_Study = new System.Windows.Forms.Label();
-            this.listBox_BaselineRecalculation_Trials = new System.Windows.Forms.ListBox();
-            this.comboBox_BaselineRecalculation_Szenario = new System.Windows.Forms.ComboBox();
-            this.comboBox_BaselineRecalculation_Study = new System.Windows.Forms.ComboBox();
             this.tabPage_Impressum = new System.Windows.Forms.TabPage();
             this.label_Impressum_Text = new System.Windows.Forms.Label();
             this.pictureBox_Impressum_KITLogo = new System.Windows.Forms.PictureBox();
@@ -213,6 +173,19 @@ namespace ManipAnalysis_v2
             this.button_ClearLog = new System.Windows.Forms.Button();
             this.listBox_LogBox = new System.Windows.Forms.ListBox();
             this.checkBox_Cancel = new System.Windows.Forms.CheckBox();
+            this.tabPage_Debug_DatabaseManipulation = new System.Windows.Forms.TabPage();
+            this.button_Debug_DropDatabase = new System.Windows.Forms.Button();
+            this.button_DataManipulation_EnsureIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_RebuildIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_DropIndexes = new System.Windows.Forms.Button();
+            this.button_DataManipulation_CompactDatabase = new System.Windows.Forms.Button();
+            this.button_DataManipulation_DropStatistics = new System.Windows.Forms.Button();
+            this.tabPage_Debug_MatlabAndLogs = new System.Windows.Forms.TabPage();
+            this.button_Debug_SaveLogToFile = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabWorkspace = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabWindow = new System.Windows.Forms.Button();
+            this.button_Debug_ShowMatlabFiles = new System.Windows.Forms.Button();
+            this.tabControl_Debug = new System.Windows.Forms.TabControl();
             this.tabControl.SuspendLayout();
             this.tabPage_Start.SuspendLayout();
             this.tabPage_VisualizationExport.SuspendLayout();
@@ -226,12 +199,11 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_TimeNormalization.SuspendLayout();
             this.groupBox_Import_ButterworthFilter.SuspendLayout();
             this.tabPage_Debug.SuspendLayout();
-            this.tabControl_Debug.SuspendLayout();
-            this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
-            this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
-            this.tabPage_Debug_BaselineRecalculation.SuspendLayout();
             this.tabPage_Impressum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).BeginInit();
+            this.tabPage_Debug_DatabaseManipulation.SuspendLayout();
+            this.tabPage_Debug_MatlabAndLogs.SuspendLayout();
+            this.tabControl_Debug.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -1635,433 +1607,6 @@ namespace ManipAnalysis_v2
             this.tabPage_Debug.Text = "Debug";
             this.tabPage_Debug.UseVisualStyleBackColor = true;
             // 
-            // tabControl_Debug
-            // 
-            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
-            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
-            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_BaselineRecalculation);
-            this.tabControl_Debug.Location = new System.Drawing.Point(3, 3);
-            this.tabControl_Debug.Name = "tabControl_Debug";
-            this.tabControl_Debug.SelectedIndex = 0;
-            this.tabControl_Debug.Size = new System.Drawing.Size(727, 631);
-            this.tabControl_Debug.TabIndex = 61;
-            // 
-            // tabPage_Debug_MatlabAndLogs
-            // 
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
-            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
-            this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
-            this.tabPage_Debug_MatlabAndLogs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_Debug_MatlabAndLogs.Size = new System.Drawing.Size(719, 605);
-            this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
-            this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
-            this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
-            // 
-            // button_Debug_ShowMatlabFiles
-            // 
-            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
-            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
-            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
-            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
-            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
-            // 
-            // button_Debug_ShowMatlabWindow
-            // 
-            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(6, 12);
-            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
-            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
-            this.button_Debug_ShowMatlabWindow.Text = "Show MATLAB window";
-            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
-            // 
-            // button_Debug_ShowMatlabWorkspace
-            // 
-            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(6, 41);
-            this.button_Debug_ShowMatlabWorkspace.Name = "button_Debug_ShowMatlabWorkspace";
-            this.button_Debug_ShowMatlabWorkspace.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_ShowMatlabWorkspace.TabIndex = 4;
-            this.button_Debug_ShowMatlabWorkspace.Text = "Show MATLAB workspace";
-            this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
-            this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
-            // 
-            // button_Debug_SaveLogToFile
-            // 
-            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 178);
-            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
-            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
-            this.button_Debug_SaveLogToFile.TabIndex = 8;
-            this.button_Debug_SaveLogToFile.Text = "Save log to file";
-            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
-            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
-            // 
-            // tabPage_Debug_DatabaseManipulation
-            // 
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropStatistics);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_EnsureIndexes);
-            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_DropDatabase);
-            this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
-            this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_Debug_DatabaseManipulation.Size = new System.Drawing.Size(719, 605);
-            this.tabPage_Debug_DatabaseManipulation.TabIndex = 1;
-            this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
-            this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
-            // 
-            // button_DataManipulation_DropStatistics
-            // 
-            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
-            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
-            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_DropStatistics.TabIndex = 66;
-            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
-            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
-            // 
-            // button_DataManipulation_CompactDatabase
-            // 
-            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
-            this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
-            this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_CompactDatabase.TabIndex = 65;
-            this.button_DataManipulation_CompactDatabase.Text = "Compact database";
-            this.button_DataManipulation_CompactDatabase.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_CompactDatabase.Click += new System.EventHandler(this.button_DataManipulation_CompactDatabase_Click);
-            // 
-            // button_DataManipulation_DropIndexes
-            // 
-            this.button_DataManipulation_DropIndexes.Location = new System.Drawing.Point(17, 75);
-            this.button_DataManipulation_DropIndexes.Name = "button_DataManipulation_DropIndexes";
-            this.button_DataManipulation_DropIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_DropIndexes.TabIndex = 64;
-            this.button_DataManipulation_DropIndexes.Text = "Drop indexes";
-            this.button_DataManipulation_DropIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_DropIndexes.Click += new System.EventHandler(this.button_DataManipulation_DropIndexes_Click);
-            // 
-            // button_DataManipulation_RebuildIndexes
-            // 
-            this.button_DataManipulation_RebuildIndexes.Location = new System.Drawing.Point(17, 46);
-            this.button_DataManipulation_RebuildIndexes.Name = "button_DataManipulation_RebuildIndexes";
-            this.button_DataManipulation_RebuildIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_RebuildIndexes.TabIndex = 63;
-            this.button_DataManipulation_RebuildIndexes.Text = "Rebuild indexes";
-            this.button_DataManipulation_RebuildIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_RebuildIndexes.Click += new System.EventHandler(this.button_DataManipulation_RebuildIndexes_Click);
-            // 
-            // button_DataManipulation_EnsureIndexes
-            // 
-            this.button_DataManipulation_EnsureIndexes.Location = new System.Drawing.Point(17, 17);
-            this.button_DataManipulation_EnsureIndexes.Name = "button_DataManipulation_EnsureIndexes";
-            this.button_DataManipulation_EnsureIndexes.Size = new System.Drawing.Size(129, 23);
-            this.button_DataManipulation_EnsureIndexes.TabIndex = 62;
-            this.button_DataManipulation_EnsureIndexes.Text = "Ensure indexes";
-            this.button_DataManipulation_EnsureIndexes.UseVisualStyleBackColor = true;
-            this.button_DataManipulation_EnsureIndexes.Click += new System.EventHandler(this.button_DataManipulation_EnsureIndexes_Click);
-            // 
-            // button_Debug_DropDatabase
-            // 
-            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 225);
-            this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
-            this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
-            this.button_Debug_DropDatabase.TabIndex = 61;
-            this.button_Debug_DropDatabase.Text = "Drop database";
-            this.button_Debug_DropDatabase.UseVisualStyleBackColor = true;
-            this.button_Debug_DropDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
-            // 
-            // tabPage_Debug_BaselineRecalculation
-            // 
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Target);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_RecalculateBaselines);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Turn);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Group);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Subject);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Handedness);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_ForceField);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_TrialType);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_Handedness);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_ForceField);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_TrialType);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Targets);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Turn);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_AddAll);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_ClearAll);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_ClearSelected);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_SelectedTrials);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.button_BaselineRecalculation_AddSelected);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Trials);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Subject);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Szenario);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Group);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.label_BaselineRecalculation_Study);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.listBox_BaselineRecalculation_Trials);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Szenario);
-            this.tabPage_Debug_BaselineRecalculation.Controls.Add(this.comboBox_BaselineRecalculation_Study);
-            this.tabPage_Debug_BaselineRecalculation.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_Debug_BaselineRecalculation.Name = "tabPage_Debug_BaselineRecalculation";
-            this.tabPage_Debug_BaselineRecalculation.Size = new System.Drawing.Size(719, 605);
-            this.tabPage_Debug_BaselineRecalculation.TabIndex = 2;
-            this.tabPage_Debug_BaselineRecalculation.Text = "Baseline Recalculation";
-            this.tabPage_Debug_BaselineRecalculation.UseVisualStyleBackColor = true;
-            this.tabPage_Debug_BaselineRecalculation.Enter += new System.EventHandler(this.tabPage_Debug_BaselineRecalculation_Enter);
-            // 
-            // comboBox_BaselineRecalculation_Target
-            // 
-            this.comboBox_BaselineRecalculation_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Target.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Target.Location = new System.Drawing.Point(68, 146);
-            this.comboBox_BaselineRecalculation_Target.Name = "comboBox_BaselineRecalculation_Target";
-            this.comboBox_BaselineRecalculation_Target.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Target.Sorted = true;
-            this.comboBox_BaselineRecalculation_Target.TabIndex = 94;
-            // 
-            // button_BaselineRecalculation_RecalculateBaselines
-            // 
-            this.button_BaselineRecalculation_RecalculateBaselines.Location = new System.Drawing.Point(406, 541);
-            this.button_BaselineRecalculation_RecalculateBaselines.Name = "button_BaselineRecalculation_RecalculateBaselines";
-            this.button_BaselineRecalculation_RecalculateBaselines.Size = new System.Drawing.Size(304, 52);
-            this.button_BaselineRecalculation_RecalculateBaselines.TabIndex = 93;
-            this.button_BaselineRecalculation_RecalculateBaselines.Text = "Recalculate baselines";
-            this.button_BaselineRecalculation_RecalculateBaselines.UseVisualStyleBackColor = true;
-            this.button_BaselineRecalculation_RecalculateBaselines.Click += new System.EventHandler(this.button_BaselineRecalculation_RecalculateBaselines_Click);
-            // 
-            // comboBox_BaselineRecalculation_Turn
-            // 
-            this.comboBox_BaselineRecalculation_Turn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Turn.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Turn.Location = new System.Drawing.Point(68, 119);
-            this.comboBox_BaselineRecalculation_Turn.Name = "comboBox_BaselineRecalculation_Turn";
-            this.comboBox_BaselineRecalculation_Turn.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Turn.Sorted = true;
-            this.comboBox_BaselineRecalculation_Turn.TabIndex = 92;
-            this.comboBox_BaselineRecalculation_Turn.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Turn_SelectedIndexChanged);
-            // 
-            // comboBox_BaselineRecalculation_Group
-            // 
-            this.comboBox_BaselineRecalculation_Group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Group.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Group.Location = new System.Drawing.Point(68, 38);
-            this.comboBox_BaselineRecalculation_Group.Name = "comboBox_BaselineRecalculation_Group";
-            this.comboBox_BaselineRecalculation_Group.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Group.Sorted = true;
-            this.comboBox_BaselineRecalculation_Group.TabIndex = 91;
-            this.comboBox_BaselineRecalculation_Group.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Group_SelectedIndexChanged);
-            // 
-            // comboBox_BaselineRecalculation_Subject
-            // 
-            this.comboBox_BaselineRecalculation_Subject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Subject.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Subject.Location = new System.Drawing.Point(68, 65);
-            this.comboBox_BaselineRecalculation_Subject.Name = "comboBox_BaselineRecalculation_Subject";
-            this.comboBox_BaselineRecalculation_Subject.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Subject.Sorted = true;
-            this.comboBox_BaselineRecalculation_Subject.TabIndex = 90;
-            this.comboBox_BaselineRecalculation_Subject.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Subject_SelectedIndexChanged);
-            // 
-            // label_BaselineRecalculation_Handedness
-            // 
-            this.label_BaselineRecalculation_Handedness.AutoSize = true;
-            this.label_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(549, 448);
-            this.label_BaselineRecalculation_Handedness.Name = "label_BaselineRecalculation_Handedness";
-            this.label_BaselineRecalculation_Handedness.Size = new System.Drawing.Size(70, 13);
-            this.label_BaselineRecalculation_Handedness.TabIndex = 89;
-            this.label_BaselineRecalculation_Handedness.Text = "Handedness:";
-            // 
-            // label_BaselineRecalculation_ForceField
-            // 
-            this.label_BaselineRecalculation_ForceField.AutoSize = true;
-            this.label_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(385, 448);
-            this.label_BaselineRecalculation_ForceField.Name = "label_BaselineRecalculation_ForceField";
-            this.label_BaselineRecalculation_ForceField.Size = new System.Drawing.Size(59, 13);
-            this.label_BaselineRecalculation_ForceField.TabIndex = 88;
-            this.label_BaselineRecalculation_ForceField.Text = "Force field:";
-            // 
-            // label_BaselineRecalculation_TrialType
-            // 
-            this.label_BaselineRecalculation_TrialType.AutoSize = true;
-            this.label_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 448);
-            this.label_BaselineRecalculation_TrialType.Name = "label_BaselineRecalculation_TrialType";
-            this.label_BaselineRecalculation_TrialType.Size = new System.Drawing.Size(53, 13);
-            this.label_BaselineRecalculation_TrialType.TabIndex = 87;
-            this.label_BaselineRecalculation_TrialType.Text = "Trial type:";
-            // 
-            // listBox_BaselineRecalculation_Handedness
-            // 
-            this.listBox_BaselineRecalculation_Handedness.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_Handedness.Location = new System.Drawing.Point(552, 466);
-            this.listBox_BaselineRecalculation_Handedness.Name = "listBox_BaselineRecalculation_Handedness";
-            this.listBox_BaselineRecalculation_Handedness.Size = new System.Drawing.Size(158, 69);
-            this.listBox_BaselineRecalculation_Handedness.TabIndex = 86;
-            // 
-            // listBox_BaselineRecalculation_ForceField
-            // 
-            this.listBox_BaselineRecalculation_ForceField.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_ForceField.Location = new System.Drawing.Point(388, 466);
-            this.listBox_BaselineRecalculation_ForceField.Name = "listBox_BaselineRecalculation_ForceField";
-            this.listBox_BaselineRecalculation_ForceField.Size = new System.Drawing.Size(158, 69);
-            this.listBox_BaselineRecalculation_ForceField.TabIndex = 85;
-            // 
-            // listBox_BaselineRecalculation_TrialType
-            // 
-            this.listBox_BaselineRecalculation_TrialType.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_TrialType.Location = new System.Drawing.Point(224, 466);
-            this.listBox_BaselineRecalculation_TrialType.Name = "listBox_BaselineRecalculation_TrialType";
-            this.listBox_BaselineRecalculation_TrialType.Size = new System.Drawing.Size(158, 69);
-            this.listBox_BaselineRecalculation_TrialType.TabIndex = 84;
-            // 
-            // label_BaselineRecalculation_Targets
-            // 
-            this.label_BaselineRecalculation_Targets.AutoSize = true;
-            this.label_BaselineRecalculation_Targets.Location = new System.Drawing.Point(21, 149);
-            this.label_BaselineRecalculation_Targets.Name = "label_BaselineRecalculation_Targets";
-            this.label_BaselineRecalculation_Targets.Size = new System.Drawing.Size(41, 13);
-            this.label_BaselineRecalculation_Targets.TabIndex = 83;
-            this.label_BaselineRecalculation_Targets.Text = "Target:";
-            // 
-            // label_BaselineRecalculation_Turn
-            // 
-            this.label_BaselineRecalculation_Turn.AutoSize = true;
-            this.label_BaselineRecalculation_Turn.Location = new System.Drawing.Point(30, 122);
-            this.label_BaselineRecalculation_Turn.Name = "label_BaselineRecalculation_Turn";
-            this.label_BaselineRecalculation_Turn.Size = new System.Drawing.Size(32, 13);
-            this.label_BaselineRecalculation_Turn.TabIndex = 80;
-            this.label_BaselineRecalculation_Turn.Text = "Turn:";
-            // 
-            // button_BaselineRecalculation_AddAll
-            // 
-            this.button_BaselineRecalculation_AddAll.Location = new System.Drawing.Point(224, 570);
-            this.button_BaselineRecalculation_AddAll.Name = "button_BaselineRecalculation_AddAll";
-            this.button_BaselineRecalculation_AddAll.Size = new System.Drawing.Size(85, 23);
-            this.button_BaselineRecalculation_AddAll.TabIndex = 79;
-            this.button_BaselineRecalculation_AddAll.Text = "Add all";
-            this.button_BaselineRecalculation_AddAll.UseVisualStyleBackColor = true;
-            this.button_BaselineRecalculation_AddAll.Click += new System.EventHandler(this.button_BaselineRecalculation_AddAll_Click);
-            // 
-            // button_BaselineRecalculation_ClearAll
-            // 
-            this.button_BaselineRecalculation_ClearAll.Location = new System.Drawing.Point(315, 570);
-            this.button_BaselineRecalculation_ClearAll.Name = "button_BaselineRecalculation_ClearAll";
-            this.button_BaselineRecalculation_ClearAll.Size = new System.Drawing.Size(85, 23);
-            this.button_BaselineRecalculation_ClearAll.TabIndex = 78;
-            this.button_BaselineRecalculation_ClearAll.Text = "Clear all";
-            this.button_BaselineRecalculation_ClearAll.UseVisualStyleBackColor = true;
-            this.button_BaselineRecalculation_ClearAll.Click += new System.EventHandler(this.button_BaselineRecalculation_ClearAll_Click);
-            // 
-            // button_BaselineRecalculation_ClearSelected
-            // 
-            this.button_BaselineRecalculation_ClearSelected.Location = new System.Drawing.Point(315, 541);
-            this.button_BaselineRecalculation_ClearSelected.Name = "button_BaselineRecalculation_ClearSelected";
-            this.button_BaselineRecalculation_ClearSelected.Size = new System.Drawing.Size(85, 23);
-            this.button_BaselineRecalculation_ClearSelected.TabIndex = 77;
-            this.button_BaselineRecalculation_ClearSelected.Text = "Clear selected";
-            this.button_BaselineRecalculation_ClearSelected.UseVisualStyleBackColor = true;
-            this.button_BaselineRecalculation_ClearSelected.Click += new System.EventHandler(this.button_BaselineRecalculation_ClearSelected_Click);
-            // 
-            // listBox_BaselineRecalculation_SelectedTrials
-            // 
-            this.listBox_BaselineRecalculation_SelectedTrials.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_SelectedTrials.Location = new System.Drawing.Point(224, 11);
-            this.listBox_BaselineRecalculation_SelectedTrials.Name = "listBox_BaselineRecalculation_SelectedTrials";
-            this.listBox_BaselineRecalculation_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_BaselineRecalculation_SelectedTrials.Size = new System.Drawing.Size(489, 433);
-            this.listBox_BaselineRecalculation_SelectedTrials.Sorted = true;
-            this.listBox_BaselineRecalculation_SelectedTrials.TabIndex = 76;
-            // 
-            // button_BaselineRecalculation_AddSelected
-            // 
-            this.button_BaselineRecalculation_AddSelected.Location = new System.Drawing.Point(224, 541);
-            this.button_BaselineRecalculation_AddSelected.Name = "button_BaselineRecalculation_AddSelected";
-            this.button_BaselineRecalculation_AddSelected.Size = new System.Drawing.Size(85, 23);
-            this.button_BaselineRecalculation_AddSelected.TabIndex = 75;
-            this.button_BaselineRecalculation_AddSelected.Text = "Add selected";
-            this.button_BaselineRecalculation_AddSelected.UseVisualStyleBackColor = true;
-            this.button_BaselineRecalculation_AddSelected.Click += new System.EventHandler(this.button_BaselineRecalculation_AddSelected_Click);
-            // 
-            // label_BaselineRecalculation_Trials
-            // 
-            this.label_BaselineRecalculation_Trials.AutoSize = true;
-            this.label_BaselineRecalculation_Trials.Location = new System.Drawing.Point(21, 381);
-            this.label_BaselineRecalculation_Trials.Name = "label_BaselineRecalculation_Trials";
-            this.label_BaselineRecalculation_Trials.Size = new System.Drawing.Size(41, 13);
-            this.label_BaselineRecalculation_Trials.TabIndex = 74;
-            this.label_BaselineRecalculation_Trials.Text = "Trial(s):";
-            // 
-            // label_BaselineRecalculation_Subject
-            // 
-            this.label_BaselineRecalculation_Subject.AutoSize = true;
-            this.label_BaselineRecalculation_Subject.Location = new System.Drawing.Point(16, 68);
-            this.label_BaselineRecalculation_Subject.Name = "label_BaselineRecalculation_Subject";
-            this.label_BaselineRecalculation_Subject.Size = new System.Drawing.Size(46, 13);
-            this.label_BaselineRecalculation_Subject.TabIndex = 73;
-            this.label_BaselineRecalculation_Subject.Text = "Subject:";
-            // 
-            // label_BaselineRecalculation_Szenario
-            // 
-            this.label_BaselineRecalculation_Szenario.AutoSize = true;
-            this.label_BaselineRecalculation_Szenario.Location = new System.Drawing.Point(11, 95);
-            this.label_BaselineRecalculation_Szenario.Name = "label_BaselineRecalculation_Szenario";
-            this.label_BaselineRecalculation_Szenario.Size = new System.Drawing.Size(51, 13);
-            this.label_BaselineRecalculation_Szenario.TabIndex = 72;
-            this.label_BaselineRecalculation_Szenario.Text = "Szenario:";
-            // 
-            // label_BaselineRecalculation_Group
-            // 
-            this.label_BaselineRecalculation_Group.AutoSize = true;
-            this.label_BaselineRecalculation_Group.Location = new System.Drawing.Point(25, 41);
-            this.label_BaselineRecalculation_Group.Name = "label_BaselineRecalculation_Group";
-            this.label_BaselineRecalculation_Group.Size = new System.Drawing.Size(39, 13);
-            this.label_BaselineRecalculation_Group.TabIndex = 71;
-            this.label_BaselineRecalculation_Group.Text = "Group:";
-            // 
-            // label_BaselineRecalculation_Study
-            // 
-            this.label_BaselineRecalculation_Study.AutoSize = true;
-            this.label_BaselineRecalculation_Study.Location = new System.Drawing.Point(25, 14);
-            this.label_BaselineRecalculation_Study.Name = "label_BaselineRecalculation_Study";
-            this.label_BaselineRecalculation_Study.Size = new System.Drawing.Size(37, 13);
-            this.label_BaselineRecalculation_Study.TabIndex = 70;
-            this.label_BaselineRecalculation_Study.Text = "Study:";
-            // 
-            // listBox_BaselineRecalculation_Trials
-            // 
-            this.listBox_BaselineRecalculation_Trials.FormattingEnabled = true;
-            this.listBox_BaselineRecalculation_Trials.Location = new System.Drawing.Point(68, 173);
-            this.listBox_BaselineRecalculation_Trials.Name = "listBox_BaselineRecalculation_Trials";
-            this.listBox_BaselineRecalculation_Trials.ScrollAlwaysVisible = true;
-            this.listBox_BaselineRecalculation_Trials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_BaselineRecalculation_Trials.Size = new System.Drawing.Size(150, 420);
-            this.listBox_BaselineRecalculation_Trials.Sorted = true;
-            this.listBox_BaselineRecalculation_Trials.TabIndex = 69;
-            // 
-            // comboBox_BaselineRecalculation_Szenario
-            // 
-            this.comboBox_BaselineRecalculation_Szenario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Szenario.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Szenario.Location = new System.Drawing.Point(68, 92);
-            this.comboBox_BaselineRecalculation_Szenario.Name = "comboBox_BaselineRecalculation_Szenario";
-            this.comboBox_BaselineRecalculation_Szenario.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Szenario.Sorted = true;
-            this.comboBox_BaselineRecalculation_Szenario.TabIndex = 67;
-            this.comboBox_BaselineRecalculation_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Szenario_SelectedIndexChanged);
-            // 
-            // comboBox_BaselineRecalculation_Study
-            // 
-            this.comboBox_BaselineRecalculation_Study.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_BaselineRecalculation_Study.FormattingEnabled = true;
-            this.comboBox_BaselineRecalculation_Study.Location = new System.Drawing.Point(68, 11);
-            this.comboBox_BaselineRecalculation_Study.Name = "comboBox_BaselineRecalculation_Study";
-            this.comboBox_BaselineRecalculation_Study.Size = new System.Drawing.Size(150, 21);
-            this.comboBox_BaselineRecalculation_Study.Sorted = true;
-            this.comboBox_BaselineRecalculation_Study.TabIndex = 66;
-            this.comboBox_BaselineRecalculation_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaselineRecalculation_Study_SelectedIndexChanged);
-            // 
             // tabPage_Impressum
             // 
             this.tabPage_Impressum.Controls.Add(this.label_Impressum_Text);
@@ -2173,6 +1718,146 @@ namespace ManipAnalysis_v2
             this.checkBox_Cancel.UseVisualStyleBackColor = true;
             this.checkBox_Cancel.CheckedChanged += new System.EventHandler(this.checkBox_Cancel_CheckedChanged);
             // 
+            // tabPage_Debug_DatabaseManipulation
+            // 
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropStatistics);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_CompactDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_DropIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_RebuildIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_DataManipulation_EnsureIndexes);
+            this.tabPage_Debug_DatabaseManipulation.Controls.Add(this.button_Debug_DropDatabase);
+            this.tabPage_Debug_DatabaseManipulation.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_DatabaseManipulation.Name = "tabPage_Debug_DatabaseManipulation";
+            this.tabPage_Debug_DatabaseManipulation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_DatabaseManipulation.Size = new System.Drawing.Size(719, 605);
+            this.tabPage_Debug_DatabaseManipulation.TabIndex = 1;
+            this.tabPage_Debug_DatabaseManipulation.Text = "Database Manipulation";
+            this.tabPage_Debug_DatabaseManipulation.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_DropDatabase
+            // 
+            this.button_Debug_DropDatabase.Location = new System.Drawing.Point(17, 225);
+            this.button_Debug_DropDatabase.Name = "button_Debug_DropDatabase";
+            this.button_Debug_DropDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_Debug_DropDatabase.TabIndex = 61;
+            this.button_Debug_DropDatabase.Text = "Drop database";
+            this.button_Debug_DropDatabase.UseVisualStyleBackColor = true;
+            this.button_Debug_DropDatabase.Click += new System.EventHandler(this.button_Debug_InitialiseDatabase_Click);
+            // 
+            // button_DataManipulation_EnsureIndexes
+            // 
+            this.button_DataManipulation_EnsureIndexes.Location = new System.Drawing.Point(17, 17);
+            this.button_DataManipulation_EnsureIndexes.Name = "button_DataManipulation_EnsureIndexes";
+            this.button_DataManipulation_EnsureIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_EnsureIndexes.TabIndex = 62;
+            this.button_DataManipulation_EnsureIndexes.Text = "Ensure indexes";
+            this.button_DataManipulation_EnsureIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_EnsureIndexes.Click += new System.EventHandler(this.button_DataManipulation_EnsureIndexes_Click);
+            // 
+            // button_DataManipulation_RebuildIndexes
+            // 
+            this.button_DataManipulation_RebuildIndexes.Location = new System.Drawing.Point(17, 46);
+            this.button_DataManipulation_RebuildIndexes.Name = "button_DataManipulation_RebuildIndexes";
+            this.button_DataManipulation_RebuildIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_RebuildIndexes.TabIndex = 63;
+            this.button_DataManipulation_RebuildIndexes.Text = "Rebuild indexes";
+            this.button_DataManipulation_RebuildIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_RebuildIndexes.Click += new System.EventHandler(this.button_DataManipulation_RebuildIndexes_Click);
+            // 
+            // button_DataManipulation_DropIndexes
+            // 
+            this.button_DataManipulation_DropIndexes.Location = new System.Drawing.Point(17, 75);
+            this.button_DataManipulation_DropIndexes.Name = "button_DataManipulation_DropIndexes";
+            this.button_DataManipulation_DropIndexes.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropIndexes.TabIndex = 64;
+            this.button_DataManipulation_DropIndexes.Text = "Drop indexes";
+            this.button_DataManipulation_DropIndexes.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropIndexes.Click += new System.EventHandler(this.button_DataManipulation_DropIndexes_Click);
+            // 
+            // button_DataManipulation_CompactDatabase
+            // 
+            this.button_DataManipulation_CompactDatabase.Location = new System.Drawing.Point(17, 196);
+            this.button_DataManipulation_CompactDatabase.Name = "button_DataManipulation_CompactDatabase";
+            this.button_DataManipulation_CompactDatabase.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_CompactDatabase.TabIndex = 65;
+            this.button_DataManipulation_CompactDatabase.Text = "Compact database";
+            this.button_DataManipulation_CompactDatabase.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_CompactDatabase.Click += new System.EventHandler(this.button_DataManipulation_CompactDatabase_Click);
+            // 
+            // button_DataManipulation_DropStatistics
+            // 
+            this.button_DataManipulation_DropStatistics.Location = new System.Drawing.Point(17, 129);
+            this.button_DataManipulation_DropStatistics.Name = "button_DataManipulation_DropStatistics";
+            this.button_DataManipulation_DropStatistics.Size = new System.Drawing.Size(129, 23);
+            this.button_DataManipulation_DropStatistics.TabIndex = 66;
+            this.button_DataManipulation_DropStatistics.Text = "Drop Statistics";
+            this.button_DataManipulation_DropStatistics.UseVisualStyleBackColor = true;
+            this.button_DataManipulation_DropStatistics.Click += new System.EventHandler(this.button_DataManipulation_DropStatistics_Click);
+            // 
+            // tabPage_Debug_MatlabAndLogs
+            // 
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabFiles);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWindow);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_ShowMatlabWorkspace);
+            this.tabPage_Debug_MatlabAndLogs.Controls.Add(this.button_Debug_SaveLogToFile);
+            this.tabPage_Debug_MatlabAndLogs.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Debug_MatlabAndLogs.Name = "tabPage_Debug_MatlabAndLogs";
+            this.tabPage_Debug_MatlabAndLogs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Debug_MatlabAndLogs.Size = new System.Drawing.Size(719, 605);
+            this.tabPage_Debug_MatlabAndLogs.TabIndex = 0;
+            this.tabPage_Debug_MatlabAndLogs.Text = "Matlab & Logs";
+            this.tabPage_Debug_MatlabAndLogs.UseVisualStyleBackColor = true;
+            // 
+            // button_Debug_SaveLogToFile
+            // 
+            this.button_Debug_SaveLogToFile.Location = new System.Drawing.Point(6, 178);
+            this.button_Debug_SaveLogToFile.Name = "button_Debug_SaveLogToFile";
+            this.button_Debug_SaveLogToFile.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_SaveLogToFile.TabIndex = 8;
+            this.button_Debug_SaveLogToFile.Text = "Save log to file";
+            this.button_Debug_SaveLogToFile.UseVisualStyleBackColor = true;
+            this.button_Debug_SaveLogToFile.Click += new System.EventHandler(this.button_Debug_SaveLogToFile_Click);
+            // 
+            // button_Debug_ShowMatlabWorkspace
+            // 
+            this.button_Debug_ShowMatlabWorkspace.Location = new System.Drawing.Point(6, 41);
+            this.button_Debug_ShowMatlabWorkspace.Name = "button_Debug_ShowMatlabWorkspace";
+            this.button_Debug_ShowMatlabWorkspace.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabWorkspace.TabIndex = 4;
+            this.button_Debug_ShowMatlabWorkspace.Text = "Show MATLAB workspace";
+            this.button_Debug_ShowMatlabWorkspace.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabWorkspace.Click += new System.EventHandler(this.button_ShowMatlabWorkspace_Click);
+            // 
+            // button_Debug_ShowMatlabWindow
+            // 
+            this.button_Debug_ShowMatlabWindow.Location = new System.Drawing.Point(6, 12);
+            this.button_Debug_ShowMatlabWindow.Name = "button_Debug_ShowMatlabWindow";
+            this.button_Debug_ShowMatlabWindow.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabWindow.TabIndex = 2;
+            this.button_Debug_ShowMatlabWindow.Text = "Show MATLAB window";
+            this.button_Debug_ShowMatlabWindow.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabWindow.Click += new System.EventHandler(this.button_ShowMatlabWindow_Click);
+            // 
+            // button_Debug_ShowMatlabFiles
+            // 
+            this.button_Debug_ShowMatlabFiles.Location = new System.Drawing.Point(6, 70);
+            this.button_Debug_ShowMatlabFiles.Name = "button_Debug_ShowMatlabFiles";
+            this.button_Debug_ShowMatlabFiles.Size = new System.Drawing.Size(178, 23);
+            this.button_Debug_ShowMatlabFiles.TabIndex = 9;
+            this.button_Debug_ShowMatlabFiles.Text = "Show MATLAB files";
+            this.button_Debug_ShowMatlabFiles.UseVisualStyleBackColor = true;
+            this.button_Debug_ShowMatlabFiles.Click += new System.EventHandler(this.button_Debug_ShowMatlabFiles_Click);
+            // 
+            // tabControl_Debug
+            // 
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_MatlabAndLogs);
+            this.tabControl_Debug.Controls.Add(this.tabPage_Debug_DatabaseManipulation);
+            this.tabControl_Debug.Location = new System.Drawing.Point(3, 3);
+            this.tabControl_Debug.Name = "tabControl_Debug";
+            this.tabControl_Debug.SelectedIndex = 0;
+            this.tabControl_Debug.Size = new System.Drawing.Size(727, 631);
+            this.tabControl_Debug.TabIndex = 61;
+            // 
             // ManipAnalysisGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2212,14 +1897,12 @@ namespace ManipAnalysis_v2
             this.groupBox_Import_ButterworthFilter.ResumeLayout(false);
             this.groupBox_Import_ButterworthFilter.PerformLayout();
             this.tabPage_Debug.ResumeLayout(false);
-            this.tabControl_Debug.ResumeLayout(false);
-            this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
-            this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
-            this.tabPage_Debug_BaselineRecalculation.ResumeLayout(false);
-            this.tabPage_Debug_BaselineRecalculation.PerformLayout();
             this.tabPage_Impressum.ResumeLayout(false);
             this.tabPage_Impressum.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Impressum_KITLogo)).EndInit();
+            this.tabPage_Debug_DatabaseManipulation.ResumeLayout(false);
+            this.tabPage_Debug_MatlabAndLogs.ResumeLayout(false);
+            this.tabControl_Debug.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2234,8 +1917,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ListBox listBox_Import_SelectedMeasureFiles;
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Button button_Debug_ShowMatlabWindow;
-        private System.Windows.Forms.Button button_Debug_ShowMatlabWorkspace;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Trials;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Subject;
         private System.Windows.Forms.Label label_DescriptiveStatistic1_Szenario;
@@ -2301,7 +1982,6 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.Label label_Import_FilterOrder;
         private System.Windows.Forms.GroupBox groupBox_Import_CalculationsImport;
         private System.Windows.Forms.Button button_Import_CalculateStatistics;
-        private System.Windows.Forms.Button button_Debug_SaveLogToFile;
         private System.Windows.Forms.Label label_Log;
         private System.Windows.Forms.Button button_Import_AutoImport;
         private System.Windows.Forms.Button button_ClearLog;
@@ -2356,26 +2036,15 @@ namespace ManipAnalysis_v2
                 GetSubDirectories(ref directoriesList, di);
             }
         }
-        private System.Windows.Forms.TabControl tabControl_Debug;
-        private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
-        private System.Windows.Forms.TabPage tabPage_Debug_DatabaseManipulation;
-        private System.Windows.Forms.TabPage tabPage_Debug_BaselineRecalculation;
-        private System.Windows.Forms.Button button_Debug_DropDatabase;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowForceVectors;
         private System.Windows.Forms.CheckBox checkBox_TrajectoryVelocity_ShowPDForceVectors;
         private System.Windows.Forms.Label label_Import_CutoffFreqForceForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqPositionPosition;
         private System.Windows.Forms.TextBox textBox_Import_CutoffFreqForce;
         private System.Windows.Forms.Label label_Import_CutoffFreqForce;
-        private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
         private System.Windows.Forms.CheckBox checkBox_Cancel;
         private System.Windows.Forms.Label label_Start_ServerIP;
         private System.Windows.Forms.ComboBox comboBox_Start_DatabaseServer;
-        private System.Windows.Forms.Button button_DataManipulation_EnsureIndexes;
-        private System.Windows.Forms.Button button_DataManipulation_RebuildIndexes;
-        private System.Windows.Forms.Button button_DataManipulation_DropIndexes;
-        private System.Windows.Forms.Button button_DataManipulation_CompactDatabase;
-        private System.Windows.Forms.Button button_DataManipulation_DropStatistics;
         private System.Windows.Forms.Label label_TrajectoryVelocity_Handedness;
         private System.Windows.Forms.Label label_TrajectoryVelocity_ForceField;
         private System.Windows.Forms.Label label_TrajectoryVelocity_TrialType;
@@ -2395,32 +2064,19 @@ namespace ManipAnalysis_v2
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_ForceField;
         private System.Windows.Forms.ListBox listBox_DescriptiveStatistic2_TrialType;
         private System.Windows.Forms.Button button_Import_CalculateBaselines;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Turn;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Group;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Subject;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Handedness;
-        private System.Windows.Forms.Label label_BaselineRecalculation_ForceField;
-        private System.Windows.Forms.Label label_BaselineRecalculation_TrialType;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Handedness;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_ForceField;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_TrialType;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Targets;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Turn;
-        private System.Windows.Forms.Button button_BaselineRecalculation_AddAll;
-        private System.Windows.Forms.Button button_BaselineRecalculation_ClearAll;
-        private System.Windows.Forms.Button button_BaselineRecalculation_ClearSelected;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_SelectedTrials;
-        private System.Windows.Forms.Button button_BaselineRecalculation_AddSelected;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Trials;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Subject;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Szenario;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Group;
-        private System.Windows.Forms.Label label_BaselineRecalculation_Study;
-        private System.Windows.Forms.ListBox listBox_BaselineRecalculation_Trials;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Szenario;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Study;
-        private System.Windows.Forms.Button button_BaselineRecalculation_RecalculateBaselines;
-        private System.Windows.Forms.ComboBox comboBox_BaselineRecalculation_Target;
+        private System.Windows.Forms.TabControl tabControl_Debug;
+        private System.Windows.Forms.TabPage tabPage_Debug_MatlabAndLogs;
+        private System.Windows.Forms.Button button_Debug_ShowMatlabFiles;
+        private System.Windows.Forms.Button button_Debug_ShowMatlabWindow;
+        private System.Windows.Forms.Button button_Debug_ShowMatlabWorkspace;
+        private System.Windows.Forms.Button button_Debug_SaveLogToFile;
+        private System.Windows.Forms.TabPage tabPage_Debug_DatabaseManipulation;
+        private System.Windows.Forms.Button button_DataManipulation_DropStatistics;
+        private System.Windows.Forms.Button button_DataManipulation_CompactDatabase;
+        private System.Windows.Forms.Button button_DataManipulation_DropIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_RebuildIndexes;
+        private System.Windows.Forms.Button button_DataManipulation_EnsureIndexes;
+        private System.Windows.Forms.Button button_Debug_DropDatabase;
     }
 }
 

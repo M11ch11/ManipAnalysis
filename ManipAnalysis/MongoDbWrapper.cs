@@ -789,35 +789,6 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
-            SubjectContainer subject, DateTime turn, IEnumerable<int> szenarioTrials,
-            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
-            IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Trial> fields)
-        {
-            IEnumerable<Trial> retVal;
-            try
-            {
-                fields = fields.Include(t => t.TargetTrialNumberInSzenario);
-                retVal = _trialCollection
-                    .Find(
-                        t =>
-                            t.Study == studyName && t.Group == groupName && t.Szenario == szenarioName &&
-                            t.Subject == subject && t.MeasureFile.CreationTime == turn &&
-                            szenarioTrials.Contains(t.TrialNumberInSzenario) && trialTypes.Contains(t.TrialType) &&
-                            forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
-                    .Project<Trial>(fields)
-                    .ToList()
-                    .OrderBy(t => t.TargetTrialNumberInSzenario);
-            }
-            catch (Exception ex)
-            {
-                _myManipAnalysisGui.WriteToLogBox(ex.ToString());
-                retVal = null;
-            }
-
-            return retVal;
-        }
-
         public void UpdateTrialStatisticsAndBaselineId(Trial trial)
         {
             var filter = Builders<Trial>.Filter.Eq(t => t.Id, trial.Id);
@@ -826,14 +797,7 @@ namespace ManipAnalysis_v2
                     .Set(t => t.BaselineObjectId, trial.BaselineObjectId);
             _trialCollection.FindOneAndUpdate(filter, update);
         }
-
-        public void UpdateTrialBaselineId(Trial trial)
-        {
-            var filter = Builders<Trial>.Filter.Eq(t => t.Id, trial.Id);
-            var update = Builders<Trial>.Update.Set(t => t.BaselineObjectId, trial.BaselineObjectId);
-            _trialCollection.FindOneAndUpdate(filter, update);
-        }
-
+        
         public void UpdateBaseline(Baseline baseline)
         {
             var filter = Builders<Baseline>.Filter.Eq(t => t.Id, baseline.Id);
@@ -872,40 +836,7 @@ namespace ManipAnalysis_v2
                 return null;
             }
         }
-
-        public IEnumerable<Baseline> GetBaseline(string study, string group, SubjectContainer subject, int[] targets,
-            IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
-            IEnumerable<Trial.HandednessEnum> handedness, ProjectionDefinition<Baseline> baselineFields)
-        {
-            try
-            {
-                return _baselineCollection
-                    .Find(
-                        t =>
-                            t.Study == study && t.Group == group && t.Subject == subject &&
-                            targets.Contains(t.Target.Number) && trialTypes.Contains(t.TrialType) &&
-                            forceFields.Contains(t.ForceFieldType) && handedness.Contains(t.Handedness))
-                    .Project<Baseline>(baselineFields)
-                    .ToList();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public Baseline GetBaseline(ObjectId objectId)
-        {
-            try
-            {
-                return _baselineCollection.Find(t => t.Id == objectId).First<Baseline>();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
+        
         public IEnumerable<SzenarioMeanTime> GetSzenarioMeanTime(string study, string group, string szenario,
             SubjectContainer subject, DateTime turn)
         {
