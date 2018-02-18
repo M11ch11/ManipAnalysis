@@ -105,8 +105,6 @@ namespace ManipAnalysis_v2.MongoDb
 
         public ObjectId Id { get; set; }
 
-        public ObjectId BaselineObjectId { get; set; }
-
         public string Study { get; set; }
 
         public string Group { get; set; }

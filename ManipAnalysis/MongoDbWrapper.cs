@@ -789,25 +789,12 @@ namespace ManipAnalysis_v2
             return retVal;
         }
 
-        public void UpdateTrialStatisticsAndBaselineId(Trial trial)
+        public void UpdateTrialStatistics(Trial trial)
         {
             var filter = Builders<Trial>.Filter.Eq(t => t.Id, trial.Id);
             var update =
-                Builders<Trial>.Update.Set(t => t.ZippedStatistics, trial.ZippedStatistics)
-                    .Set(t => t.BaselineObjectId, trial.BaselineObjectId);
+                Builders<Trial>.Update.Set(t => t.ZippedStatistics, trial.ZippedStatistics);
             _trialCollection.FindOneAndUpdate(filter, update);
-        }
-        
-        public void UpdateBaseline(Baseline baseline)
-        {
-            var filter = Builders<Baseline>.Filter.Eq(t => t.Id, baseline.Id);
-            var update =
-                Builders<Baseline>.Update.Set(t => t.ZippedMeasuredForces, baseline.ZippedMeasuredForces)
-                    .Set(t => t.ZippedMomentForces, baseline.ZippedMomentForces)
-                    .Set(t => t.ZippedNominalForces, baseline.ZippedNominalForces)
-                    .Set(t => t.ZippedPosition, baseline.ZippedPosition)
-                    .Set(t => t.ZippedVelocity, baseline.ZippedVelocity);
-            _baselineCollection.FindOneAndUpdate(filter, update);
         }
 
         public IEnumerable<Trial> GetTrialsWithoutStatistics(ProjectionDefinition<Trial> statisticFields)
@@ -818,25 +805,6 @@ namespace ManipAnalysis_v2
                 .ToList();
         }
 
-        public Baseline GetBaseline(string study, string group, SubjectContainer subject, int targetNumber,
-            Trial.TrialTypeEnum trialType, Trial.ForceFieldTypeEnum forceField, Trial.HandednessEnum handedness)
-        {
-            try
-            {
-                return _baselineCollection
-                    .Find(
-                        t =>
-                            t.Study == study && t.Group == group && t.Subject == subject &&
-                            t.Target.Number == targetNumber && t.TrialType == trialType &&
-                            t.ForceFieldType == forceField && t.Handedness == handedness)
-                    .First<Baseline>();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-        
         public IEnumerable<SzenarioMeanTime> GetSzenarioMeanTime(string study, string group, string szenario,
             SubjectContainer subject, DateTime turn)
         {
@@ -906,13 +874,6 @@ namespace ManipAnalysis_v2
         public void DropStatistics()
         {
             var filter = Builders<Trial>.Filter.Ne(t => t.ZippedStatistics, null);
-            var update = Builders<Trial>.Update.Set(t => t.ZippedStatistics, null);
-            _trialCollection.UpdateMany(filter, update);
-        }
-
-        public void DropStatistics(Baseline baseline)
-        {
-            var filter = Builders<Trial>.Filter.Eq(t => t.BaselineObjectId, baseline.Id);
             var update = Builders<Trial>.Update.Set(t => t.ZippedStatistics, null);
             _trialCollection.UpdateMany(filter, update);
         }
