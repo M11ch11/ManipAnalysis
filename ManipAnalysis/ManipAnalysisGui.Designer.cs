@@ -888,33 +888,23 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
-            "FeedbackAngle",
-            "ForcefieldCompenstionFactor",
-            "ForcefieldCompenstionFactor fisher-z",
-            "ForcefieldCompenstionFactor fisher-z to r-values",
-            "ForcefieldCompenstionFactor Raw",
-            "ForcefieldCompenstionFactor Raw fisher-z",
-            "ForcefieldCompenstionFactor Raw fisher-z to r-values",
-            "MidMovementForce - PD",
+            "ForcefieldCompensationFactor Raw",
+            "ForcefieldCompensationFactor Raw fisher-z",
+            "ForcefieldCompensationFactor Raw fisher-z to r-values",
             "MidMovementForce - PD Raw",
             "PD - Abs",
             "PD - Sign",
             "PDmax - Abs",
             "PDmax - Sign",
-            "PDmean - Abs",
             "PDVmax - Abs",
             "PDVmax - Sign",
-            "PredictionAngle",
-            "RMSE",
-            "Trajectory length abs",
-            "Trajectory length ratio",
-            "Vector correlation fisher-z",
-            "Vector correlation fisher-z to r-values"});
+            "Trajectory length abs"});
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Name = "comboBox_DescriptiveStatistic1_DataTypeSelect";
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Size = new System.Drawing.Size(196, 21);
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.Sorted = true;
             this.comboBox_DescriptiveStatistic1_DataTypeSelect.TabIndex = 15;
+            this.comboBox_DescriptiveStatistic1_DataTypeSelect.SelectedIndexChanged += new System.EventHandler(this.comboBox_DescriptiveStatistic1_DataTypeSelect_SelectedIndexChanged);
             // 
             // button_DescriptiveStatistic1_PlotMeanStd
             // 
@@ -1205,28 +1195,17 @@ namespace ManipAnalysis_v2
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.FormattingEnabled = true;
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Items.AddRange(new object[] {
             "Enclosed area",
-            "FeedbackAngle",
-            "ForcefieldCompenstionFactor",
-            "ForcefieldCompenstionFactor fisher-z",
-            "ForcefieldCompenstionFactor fisher-z to r-values",
-            "ForcefieldCompenstionFactor Raw",
-            "ForcefieldCompenstionFactor Raw fisher-z",
-            "ForcefieldCompenstionFactor Raw fisher-z to r-values",
-            "MidMovementForce - PD",
+            "ForcefieldCompensationFactor Raw",
+            "ForcefieldCompensationFactor Raw fisher-z",
+            "ForcefieldCompensationFactor Raw fisher-z to r-values",
             "MidMovementForce - PD Raw",
             "PD - Abs",
             "PD - Sign",
             "PDmax - Abs",
             "PDmax - Sign",
-            "PDmean - Abs",
             "PDVmax - Abs",
             "PDVmax - Sign",
-            "PredictionAngle",
-            "RMSE",
-            "Trajectory length abs",
-            "Trajectory length ratio",
-            "Vector correlation fisher-z",
-            "Vector correlation fisher-z to r-values"});
+            "Trajectory length abs"});
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Location = new System.Drawing.Point(409, 542);
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Name = "comboBox_DescriptiveStatistic2_DataTypeSelect";
             this.comboBox_DescriptiveStatistic2_DataTypeSelect.Size = new System.Drawing.Size(196, 21);

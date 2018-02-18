@@ -2141,5 +2141,10 @@ namespace ManipAnalysis_v2
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
+
+        private void comboBox_DescriptiveStatistic1_DataTypeSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
