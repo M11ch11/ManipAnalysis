@@ -2310,28 +2310,9 @@ namespace ManipAnalysis_v2
                             fields = fields.Include(t1 => t1.ZippedPositionNormalized);
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot normalized");
                         }
+
                         _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
 
-                        if (study == "Study_12_HEiKA")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 7")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 08")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 09")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 10")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Filtered")
                     {
@@ -2347,26 +2328,7 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot filtered");
                         }
 
-                        if (study == "Study_12_HEiKA")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 7")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 08")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 09")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 10")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
+                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
                     }
                     else if (trajectoryVelocityForce == "Trajectory - Raw")
                     {
@@ -2382,26 +2344,7 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.CreateTrajectoryFigure("Trajectory plot raw");
                         }
 
-                        if (study == "Study_12_HEiKA")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 7")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 08")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut3(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 09")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
-                        else if (study == "Study 10")
-                        {
-                            _myMatlabWrapper.DrawTargetsCenterOut8(0.003, 0.1, 0, 0);
-                        }
+                        _myMatlabWrapper.DrawTargets(_myDatabaseWrapper.getTargetContainers(study));
                     }
                     else if (trajectoryVelocityForce == "Force - Normalized")
                     {

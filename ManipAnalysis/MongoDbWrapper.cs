@@ -519,6 +519,7 @@ namespace ManipAnalysis_v2
                         .Match(filter)
                         .Group(t => t.Target, u => new { u.Key })
                         .ToList()
+                        .Distinct()
                         .Select(t => t.Key);
             return retVal.ToList();
         }
