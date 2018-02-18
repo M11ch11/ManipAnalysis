@@ -297,7 +297,6 @@ namespace ManipAnalysis_v2
             try
             {
                 _mongoDatabase.DropCollection("SzenarioMeanTime");
-                _mongoDatabase.DropCollection("Baseline");
                 _mongoDatabase.DropCollection("Trial");
             }
             catch (Exception ex)
@@ -396,37 +395,6 @@ namespace ManipAnalysis_v2
                 _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarios: " + ex);
                 return new List<string>();
             }
-        }
-        /// <summary>
-        /// Returns a list of all SzenarioNames that qualifiy for a BaselineSzenario within that study and group
-        /// Qualifying for BaseLineSzenario means the szenarioName contains the word "baseline" somewhere, capitalization does not matter.
-        /// </summary>
-        /// <param name="studyName">study to search in</param>
-        /// <param name="groupName">group of the study to search in</param>
-        /// <returns></returns>
-        public IEnumerable<string> GetBaselineSzenarios(string studyName, string groupName)
-        {
-            try
-            {
-                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
-                    Builders<Trial>.Filter.Eq(t => t.Group, groupName),
-                    Builders<Trial>.Filter.Regex(t => t.Szenario, "[bB][aA][sS][eE][lL][iI][nN][eE]"));
-
-                //TicToc.Tic();
-                var retVal =
-                    _trialCollection.Aggregate()
-                        .Match(filter)
-                        .Group(t => t.Szenario, u => new { u.Key })
-                        .ToList()
-                        .Select(t => t.Key);
-                return retVal;
-            }
-            catch (Exception ex)
-            {
-                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarios: " + ex);
-                return new List<string>();
-            }
-
         }
 
         /// <summary>
