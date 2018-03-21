@@ -78,19 +78,19 @@ namespace ManipAnalysis_v2
                 setTrialHandedness();
 
 
-                //Koordinaten des StartTargets eintragen (Offset, der im KinarmMeasureFileParser bestimmt wird, muss noch abgezogen werden)
-                trial.Origin.XPos = getTrialStartTargetPosition()[0] / 100.0f - trial.PositionOffset.X;
-                trial.Origin.YPos = getTrialStartTargetPosition()[1] / 100.0f - trial.PositionOffset.Y;
-                trial.Origin.ZPos = getTrialStartTargetPosition()[2] / 100.0f - trial.PositionOffset.Z;
+                //Koordinaten des StartTargets eintragen
+                trial.Origin.XPos = getTrialStartTargetPosition()[0] / 100.0f;
+                trial.Origin.YPos = getTrialStartTargetPosition()[1] / 100.0f;
+                trial.Origin.ZPos = getTrialStartTargetPosition()[2] / 100.0f;
 
                 //Radius des StartTargets eintragen
                 //trial.Origin.Radius = getTrialStartTargetRadius() / 2.0f / 100.0f; in some studies the ManipRadius was halfed, but it should not be so I think...
                 trial.Origin.Radius = getTrialStartTargetRadius() / 100.0f;
 
-                //Koordinaten des EndTargets eintragen (Offset, der im KinarmMeasureFileParser bestimmt wird, muss noch abgezogen werden)
-                trial.Target.XPos = getTrialEndTargetPosition()[0] / 100.0f - trial.PositionOffset.X;
-                trial.Target.YPos = getTrialEndTargetPosition()[1] / 100.0f - trial.PositionOffset.Y;
-                trial.Target.ZPos = getTrialEndTargetPosition()[2] / 100.0f - trial.PositionOffset.Z;
+                //Koordinaten des EndTargets eintragen
+                trial.Target.XPos = getTrialEndTargetPosition()[0] / 100.0f;
+                trial.Target.YPos = getTrialEndTargetPosition()[1] / 100.0f;
+                trial.Target.ZPos = getTrialEndTargetPosition()[2] / 100.0f;
 
                 //Radius des EndTargets eintragen
                 //trial.Target.Radius = getTrialEndTargetRadius() / 2.0f / 100.0f; in some studies the ManipRadius was halfed, but it should not be so I think...
