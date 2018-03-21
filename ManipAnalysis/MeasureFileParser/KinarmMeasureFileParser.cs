@@ -378,7 +378,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                 if (trialsContainer.Any())
                 {
                     trialsContainer.Sort((x, y) => x.TrialNumberInSzenario.CompareTo(y.TrialNumberInSzenario));
-                    for (int i = 1; i < trialsContainer.Count(); i++)
+                    for (int i = 0; i < trialsContainer.Count(); i++)
                     {
                         trialsContainer[i].TrialNumberInSzenario = i + 1;
                     }
