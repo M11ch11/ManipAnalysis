@@ -132,18 +132,9 @@ namespace ManipAnalysis_v2.Tests
             }
         }
 
-        [TestMethod()]
-        public void getForceFieldColumnTest()
-        {
-            parser = new XMLParser(path, tpNumber, t1);
-            int loadColumn = parser.getForceFieldColumn();
-            Console.WriteLine(loadColumn);
-            Assert.AreEqual(3, loadColumn);
-        }
-
-
-
         //Former public methods, for testing only, now private
+
+
         //[TestMethod()]
         //public void getForceFieldMatrixTest()
         //{
@@ -154,5 +145,17 @@ namespace ManipAnalysis_v2.Tests
         //        Console.WriteLine(matrix[i]);
         //    }
         //}
+
+
+        /*
+        [TestMethod()]
+        public void getForceFieldColumnTest()
+        {
+            parser = new XMLParser(path, tpNumber, t1);
+            int loadColumn = parser.getForceFieldColumn();
+            Console.WriteLine(loadColumn);
+            Assert.AreEqual(3, loadColumn);
+        }
+        */
     }
 }
