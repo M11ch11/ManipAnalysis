@@ -532,7 +532,9 @@ namespace ManipAnalysis_v2
                         else
                         {
                             var statisticData = new double[trialList.Count, selectedTrialsList.Count];
-                            var meanCount = 0;
+                            var meanCount = 0; //Represents the counter for the trials in the selectedTrialsList.
+
+                            //Filling the statisticData array with the proper Statistic from the DB
                             for (; meanCount < selectedTrialsList.Count & !TaskManager.Cancel; meanCount++)
                             {
                                 var tempStatisticPlotContainer = selectedTrialsList.ElementAt(meanCount);
@@ -797,7 +799,7 @@ namespace ManipAnalysis_v2
                                         break;
                                 }
                             }
-                            else
+                            else //Export file
                             {
                                 var cache = new List<string>();
                                 var meanDataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);

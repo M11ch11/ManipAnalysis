@@ -284,6 +284,10 @@ namespace ManipAnalysis_v2.MeasureFileParser
 
                                     //For newer Imports use PositionStatus, for older ones ACH4[from Matthias]
 
+                                    //TODO: Somehow the positionStatus is not written anymore?!
+                                    //TODO: The positionStatus is not written anymore in the c3d file!
+                                    //This is needed for the TimeNormalization though!!
+
                                     // In the current "generalStudy"-Szenario we only use ACH4, so I don't think we need PositionStatus anymore...
                                     //I will keep it though, just in case.
                                     //var positionStatus = Convert.ToInt32(c3DReader.AnalogData["PositionStatus", 0]) - 2;
@@ -298,13 +302,13 @@ namespace ManipAnalysis_v2.MeasureFileParser
                                     currentTrial.ForceFieldMatrix[1, 0] = forceFieldStrength;
                                     currentTrial.ForceFieldMatrix[1, 1] = 0;
                                     */
-                                    positionRaw.PositionStatus = positionStatus;
+                                    positionRaw.PositionStatus= positionStatus;
                                     positionRaw.TimeStamp = timeStamp;
                                     positionRaw.X = positionDataVector.X + currentTrial.PositionOffset.X;
                                     positionRaw.Y = positionDataVector.Y + currentTrial.PositionOffset.Y;
                                     positionRaw.Z = positionDataVector.Z + currentTrial.PositionOffset.Z;
 
-                                    // Get analog data for this frame[from Matthias]
+                                    // Get analog data for this frame[comment from Matthias]
                                     measuredForcesRaw.PositionStatus = positionStatus;
                                     measuredForcesRaw.TimeStamp = timeStamp;
                                     measuredForcesRaw.X = c3DReader.AnalogData["Right_FS_ForceX", 0];

@@ -137,6 +137,16 @@ namespace ManipAnalysis_v2
             {
                 return false;
             }
+
+            //TODO: Remove after it is not needed anymore!
+            //This was used, because for some weird reason, the familiarization scenario had a different format in its .dtp file than any other scenario...
+            //Also we do not need the familiarization in ManipAnalysis anyways so it does not matter.
+            //#####################
+            if (getSzenarioName().Contains("familiarization"))
+            {
+                return false;
+            }
+            //#####################
             return true;
         }
 
@@ -512,6 +522,10 @@ The following methods provide easy access to the required metadata stored in the
         private string getTpTableEntry()
         {
             //The tpTable can be accessed with the tpNumber from the *.c3d TP_NUM field
+            if (tpNumber >= 40 && tpNumber <= 50)
+            {
+
+            }
             return tpTable[tpNumber - 1];
         }
 
@@ -542,9 +556,14 @@ The following methods provide easy access to the required metadata stored in the
         /// Delivers the index in the loadTable for the given trial
         /// </summary>
         /// <returns></returns>
-        private int getForceFieldColumn()
+        public int getForceFieldColumn()
         {
             string ForceFieldColumn = getTpTableEntry().Split(',')[4];
+            //TODO: Remove
+            if (ForceFieldColumn == "4")
+            {
+
+            }
             return int.Parse(ForceFieldColumn);
         }
 
@@ -556,13 +575,18 @@ The following methods provide easy access to the required metadata stored in the
         public float[] getForceFieldMatrix()
         {
             float[] matrix = { 0, 0, 0, 0 };
-            string[] forceFieldEntries = loadTable[getForceFieldColumn()].Split(',');
+            string[] forceFieldEntries = loadTable[getForceFieldColumn() - 1].Split(',');
             for (int i = 0; i < 4; i++)
             {
                 //The first 4 entries of the loadTable represent the entries A, B, C and D for the matrix
                 //string[] forceFieldEntries = loadTable[trial.TrialNumberInSzenario - 1].Split(',');
                 
                 matrix[i] = float.Parse(forceFieldEntries[i], CultureInfo.InvariantCulture);
+            }
+            //TODO: Remove
+            if (matrix[1] <= 0 || matrix[2] >= 0)
+            {
+
             }
             return matrix;
         }

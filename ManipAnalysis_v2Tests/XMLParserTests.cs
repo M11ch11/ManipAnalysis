@@ -14,12 +14,14 @@ namespace ManipAnalysis_v2.Tests
     public class XMLParserTests
     {
         XMLParser parser;
-        string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"TestFiles\01_TestForAllTrials.dtp");
+        //string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"TestFiles\01_TestForAllTrials.dtp");
+        string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"TestFiles\03_MICIE_blocked_V1.dtp");
         Trial t1 = new Trial();
+        int tpNumber = 41;
         [TestMethod()]
         public void XMLParserTest()
         {
-            parser = new XMLParser(path, 10, t1);
+            parser = new XMLParser(path, tpNumber, t1);
 
             Console.WriteLine("TpTable: ");
             for (int i = 0; i < parser.tpTable.Count(); i++)
@@ -92,22 +94,22 @@ namespace ManipAnalysis_v2.Tests
         [TestMethod()]
         public void getSzenarioNameTest()
         {
-            parser = new XMLParser(path, 3, t1);
+            parser = new XMLParser(path, tpNumber, t1);
             Console.WriteLine(parser.getSzenarioName());
-            Assert.AreEqual(parser.getSzenarioName(), "01_TestForAllTrials");
+            Assert.AreEqual(parser.getSzenarioName(), "03_MICIE_blocked_V1");
         }
 
         [TestMethod()]
         public void isValidTrialTest()
         {
-            parser = new XMLParser(path, 3, t1);
+            parser = new XMLParser(path, tpNumber, t1);
             Console.WriteLine(parser.isValidTrial());
         }
 
         [TestMethod()]
         public void getForceFieldMatrixTest()
         {
-            parser = new XMLParser(path, 21, t1);
+            parser = new XMLParser(path, tpNumber, t1);
             float[] matrix = parser.getForceFieldMatrix();
             for (int i = 0; i < 4; i++)
             {
@@ -118,16 +120,25 @@ namespace ManipAnalysis_v2.Tests
                         Assert.AreEqual(0, matrix[i]);
                         break;
                     case 1:
-                        Assert.AreEqual(15, matrix[i]);
+                        Assert.AreEqual(22, matrix[i]);
                         break;
                     case 2:
-                        Assert.AreEqual(-15, matrix[i]);
+                        Assert.AreEqual(-22, matrix[i]);
                         break;
                     case 3:
                         Assert.AreEqual(0, matrix[i]);
                         break;
                 }
             }
+        }
+
+        [TestMethod()]
+        public void getForceFieldColumnTest()
+        {
+            parser = new XMLParser(path, tpNumber, t1);
+            int loadColumn = parser.getForceFieldColumn();
+            Console.WriteLine(loadColumn);
+            Assert.AreEqual(3, loadColumn);
         }
 
 
