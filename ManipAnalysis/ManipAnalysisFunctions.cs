@@ -131,17 +131,7 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetSzenarios(study, group);
         }
 
-        /// <summary>
-        ///     Gets all szenarios from database of a given study, group and subject
-        /// </summary>
-        /// <param name="study"></param>
-        /// <param name="group"></param>
-        /// <param name="subject"></param>
-        /// <returns></returns>
-        public IEnumerable<string> GetSzenarios(string study, string group, SubjectContainer subject)
-        {
-            return _myDatabaseWrapper.GetSzenarios(study, group, subject);
-        }
+        
 
         /// <summary>
         ///     Gets all subjects from database of a given study, group and szenario
@@ -155,35 +145,7 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetSubjects(study, group, szenario);
         }
 
-        /// <summary>
-        ///     Gets all subjects from database of a given study and group
-        /// </summary>
-        /// <param name="study"></param>
-        /// <param name="group"></param>
-        /// <returns></returns>
-        public IEnumerable<SubjectContainer> GetSubjects(string study, string group)
-        {
-            return _myDatabaseWrapper.GetSubjects(study, group);
-        }
-
-        /// <summary>
-        ///     Gets all turns from database of a given study, group, szenario and subject
-        /// </summary>
-        /// <param name="study"></param>
-        /// <param name="group"></param>
-        /// <param name="szenario"></param>
-        /// <param name="subject"></param>
-        /// <returns></returns>
-        public IEnumerable<string> GetTurns(string study, string group, string szenario, SubjectContainer subject)
-        {
-            var turnList = new List<string>();
-            var turns = _myDatabaseWrapper.GetTurns(study, group, szenario, subject).Count();
-            for (var turn = 1; turn <= turns; turn++)
-            {
-                turnList.Add("Turn " + turn);
-            }
-            return turnList;
-        }
+        
 
         /// <summary>
         ///     Gets all turns from database of a given study, szenario and subject and group-array
@@ -267,14 +229,8 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetTurns(study, group, szenario, subject).ElementAt(turn - 1);
         }
 
-        /// <summary>
-        ///     Deletes all data from a given measure-file-id from the database
-        /// </summary>
-        /// <param name="measureFileId"></param>
-        public void DeleteMeasureFile(int measureFileId)
-        {
-        }
-
+       
+        //TODO: What is supposed to happen here, why do we not use them anymore?
         public void PlotSzenarioMeanTimes(string study, string group, string szenario, SubjectContainer subject,
             int turn)
         {
@@ -312,6 +268,7 @@ namespace ManipAnalysis_v2
             }));
         }
 
+        //TODO: What is supposed to happen here, why do we not use them anymore?
         public void ExportSzenarioMeanTimes(string study, string group, string szenario, SubjectContainer subject,
             int turn, string fileName)
         {
@@ -505,6 +462,7 @@ namespace ManipAnalysis_v2
                     forceFields, handedness).Select(t => "Trial " + t.ToString("000"));
         }
 
+        //TODO: Check it all!
         public void PlotExportDescriptiveStatistic1(IEnumerable<StatisticPlotContainer> selectedTrials,
             string statisticType, string fitEquation, int pdTime, bool plotFit, bool plotErrorbars, string fileName)
         {
@@ -879,6 +837,7 @@ namespace ManipAnalysis_v2
             }));
         }
 
+        //TODO: Check it all!
         public void ExportDescriptiveStatistic2Data(IEnumerable<StatisticPlotContainer> selectedTrials,
             string statisticType, string fileName, int pdTime)
         {
@@ -1104,7 +1063,7 @@ namespace ManipAnalysis_v2
             }));
         }
 
-       
+       //TODO: Check it all!
         public void ImportMeasureFiles(List<string> measureFilesList, List<string> dtpFilesList, int samplesPerSecond, int butterFilterOrder,
             int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
             int timeNormalizationSamples)
@@ -1973,6 +1932,7 @@ namespace ManipAnalysis_v2
             });
         }
         
+        //TODO: Check it all!
         public void CalculateStatistics()
         {
             TaskManager.PushBack(Task.Factory.StartNew(delegate

@@ -424,10 +424,10 @@ The following methods provide easy access to the required metadata stored in the
             } else if(getPositionControlEnabled() == 1)
             {
                 TrialType = "PositionControlTrial";
-            } else if (false)
-            {
-                // TODO: Currently there should not be CatchTrials as an independent trialType. This should be removed in the future.
-                TrialType = "CatchTrial";
+            //} else if (false)
+            //{
+            //    // TODO: Currently there should not be CatchTrials as an independent trialType. This should be removed in the future.
+            //    TrialType = "CatchTrial";
             } else
             {
                 TrialType = "StandardTrial";

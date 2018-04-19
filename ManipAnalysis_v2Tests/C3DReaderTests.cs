@@ -17,6 +17,7 @@ namespace ManipAnalysis_v2.Tests
         [TestMethod()]
         public void ReadFrameTest()
         {
+            //TODO: Implement Tests to check the c3dReader for correctness!
             Assert.Fail();
         }
     }
