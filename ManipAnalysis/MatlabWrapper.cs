@@ -155,70 +155,6 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void CreateMeanTimeFigure()
-        {
-            try
-            {
-                Execute("figure");
-                Execute("set(gcf,'Name','Mean time plot','NumberTitle','off');");
-                Execute("grid on");
-                Execute("hold all");
-                Execute("xlabel('[Target]');");
-                Execute("ylabel('Movement time [s]');");
-                Execute("axis([0 18 0.2 1.4]);");
-                Execute("axis manual;");
-                Execute(
-                    "set(gca,'YGrid','on','YTick',0.2:0.1:1.4,'XTick',1:1:17,'XTickLabel',{'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', 'Mean'});");
-            }
-            catch (Exception
-                ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
-        public void CreateForcefieldCompensationIndexFigure(int trials)
-        {
-            try
-            {
-                Execute("figure");
-                Execute("set(gcf,'Name','Forcefield compensation index','NumberTitle','off');");
-                Execute("grid on");
-                Execute("hold all");
-                Execute("xlabel('[Errorclamp trial]');");
-                Execute("ylabel('Compensation [%]');");
-                Execute("axis([0 " + (trials + 1) + " 0 250]);");
-                Execute("axis manual;");
-                Execute("set(gca,'YGrid','on','YTick',0:25:250,'XTick',1:1:" + trials + ");");
-            }
-            catch (Exception
-                ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
-        public void CreateLearningIndexFigure(int setCount)
-        {
-            try
-            {
-                Execute("figure");
-                Execute("set(gcf,'Name','Learning index plot','NumberTitle','off');");
-                Execute("grid on");
-                Execute("hold all");
-                Execute("xlabel('[Set]');");
-                Execute("ylabel('Learning index');");
-                Execute("axis([0 " + (setCount + 1) + " -1.0 1.0]);");
-                Execute("axis manual;");
-                Execute("set(gca,'YGrid','on','YTick',-1.0:0.2:1.0,'XTick',1:1:" + setCount + ");");
-            }
-            catch (Exception
-                ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
         public void CreateStatisticFigure(string figureName, string dataVar, string fitVar, string stdVar,
             string xAxisLabel, string yAxisLabel, double xNegLimit, double xPosLimit, double yNegLimit, double yPosLimit,
             bool plotFit, bool plotErrorBars)
@@ -474,52 +410,11 @@ namespace ManipAnalysis_v2
             }
         }
 
-        public void PlotMeanTimeErrorBar(string xVar, string yVar, string stdVar)
-        {
-            try
-            {
-                Execute("errorbar(" + xVar + ", " + yVar + ", " + stdVar +
-                        ", 'Marker', 'x', 'MarkerSize', 10, 'Color', [0.4 0.4 0.4], 'LineWidth', 2, 'LineStyle', 'none');");
-            }
-            catch (Exception ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
         public void Plot(string xVar, string yVar, string color, int lineWidth)
         {
             try
             {
                 Execute("plot(" + xVar + "," + yVar + ",'Color','" + color + "','LineWidth'," + lineWidth + ")");
-            }
-            catch (Exception ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-
-        /*
-        public void Plot(string xVar, string yVar, string zVar, string color, int lineWidth)
-        {
-            try
-            {
-                Execute("plot3(" + xVar + "," + yVar + "," + zVar + ",'Color','" + color + "','LineWidth'," +
-                        lineWidth +
-                        ")");
-            }
-            catch (Exception ex)
-            {
-                _manipAnalysisGui.WriteToLogBox("Matlab error: " + ex);
-            }
-        }
-        */
-
-        public void Plot(string xVar, int lineWidth)
-        {
-            try
-            {
-                Execute("plot(" + xVar + ",'LineWidth'," + lineWidth + ")");
             }
             catch (Exception ex)
             {

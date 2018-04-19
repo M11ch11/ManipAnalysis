@@ -781,23 +781,6 @@ namespace ManipAnalysis_v2
                 .ToList();
         }
 
-        public IEnumerable<SzenarioMeanTime> GetSzenarioMeanTime(string study, string group, string szenario,
-            SubjectContainer subject, DateTime turn)
-        {
-            try
-            {
-                return _szenarioMeanTimeCollection
-                    .Find(
-                        t =>
-                            t.Study == study && t.Group == group && t.Szenario == szenario && t.Subject == subject &&
-                            t.MeasureFile.CreationTime == turn)
-                    .ToList();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
 
         public bool CheckIfMeasureFileHashExists(string measureFileHash)
         {

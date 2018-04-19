@@ -1323,7 +1323,7 @@ namespace ManipAnalysis_v2
                 }
                 catch (Exception ex)
                 {
-                    _myManipAnalysisGui.WriteToLogBox("Could not filter Trial " + trialsContainer[trialCounter].TrialNumberInSzenario);
+                    _myManipAnalysisGui.WriteToLogBox("Could not filter Trial " + trialsContainer[trialCounter].TrialNumberInSzenario + ex.ToString());
                 }
             }
 
