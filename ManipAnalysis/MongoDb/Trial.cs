@@ -73,6 +73,9 @@ namespace ManipAnalysis_v2.MongoDb
 
         public List<VelocityContainer> VelocityNormalized;
 
+        //All the non zipped Lists/Containers are filled during statistic Calculation, however before uploading into the db, the non zipped variables are set to null to save memory.
+        //Therefore, in the db, every non zipped entry is null!
+
         public byte[] ZippedMeasuredForcesFiltered;
 
         public byte[] ZippedMeasuredForcesNormalized;
