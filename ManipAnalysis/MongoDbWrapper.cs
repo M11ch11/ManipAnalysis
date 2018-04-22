@@ -773,6 +773,11 @@ namespace ManipAnalysis_v2
             _trialCollection.FindOneAndUpdate(filter, update);
         }
 
+        /// <summary>
+        /// Returns all trials from the currently selected study in the database, that do not have a their statistical parameters calculated yet.
+        /// </summary>
+        /// <param name="statisticFields">Projection, that selects, which attributes of the trials without statistics are to be selected</param>
+        /// <returns>All trials that have no statistical parameters with the attributes that are selected via statisticFields.</returns>
         public IEnumerable<Trial> GetTrialsWithoutStatistics(ProjectionDefinition<Trial> statisticFields)
         {
             return _trialCollection

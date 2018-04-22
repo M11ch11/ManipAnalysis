@@ -1883,17 +1883,19 @@ namespace ManipAnalysis_v2
                     statisticFields = statisticFields.Include(t13 => t13.Handedness);
                     statisticFields = statisticFields.Include(t14 => t14.ForceFieldMatrix);
 
+                    //Triallist contains ALL Trials from the (whole) current study that do not have their statistical parameters calculated yet.
                     var trialList = _myDatabaseWrapper.GetTrialsWithoutStatistics(statisticFields).ToList();
 
                     var cpuCount = Environment.ProcessorCount;
 
-                    if (trialList.Count > 0)
+                    if (trialList.Count > 0) //Falls count <= 0, existieren keine Trials ohne Statistik.
                     {
                         var taskTrialListParts = new List<List<Trial>>();
                         var threadCount = 0;
 
                         if (trialList.Count > cpuCount)
                         {
+                            //Creates a sublist in the taskTrialListParts-List for each core, our computer has, for parallelization.
                             for (var cpuCounter = 0; cpuCounter < cpuCount; cpuCounter++)
                             {
                                 taskTrialListParts.Add(new List<Trial>());
@@ -1901,7 +1903,7 @@ namespace ManipAnalysis_v2
 
                             var trialCounter = 0;
                             var listCounter = 0;
-                            while (trialCounter < trialList.Count)
+                            while (trialCounter < trialList.Count) // This while loop distributes the statisticless trials evenly on the sublists for the parallelization
                             {
                                 taskTrialListParts[listCounter].Add(trialList[trialCounter]);
                                 trialCounter++;
@@ -1914,14 +1916,14 @@ namespace ManipAnalysis_v2
 
                             threadCount = cpuCount;
                         }
-                        else
+                        else // Wenn zu wenige Trials für Parallelisierung, dann nur eine große Subliste und nur 1 Thread...
                         {
                             taskTrialListParts.Add(trialList);
                             threadCount = 1;
                         }
 
                         var calculatingTasks = new List<Task>();
-
+                        //Ausführen der Statistikparameter Berechnung für die einzelnen Threads/Sublisten
                         for (var i = 0; i < threadCount; i++)
                         {
                             var tempTaskTrialList = taskTrialListParts.ElementAt(i).ToList();
@@ -1944,7 +1946,7 @@ namespace ManipAnalysis_v2
                                         {
                                             Thread.Sleep(100);
                                         }
-
+                                        //Entpacken der gezippten Werte
                                         
                                             trial.PositionNormalized =
                                                 Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized)
@@ -1962,12 +1964,13 @@ namespace ManipAnalysis_v2
 
                                             taskMatlabWrapper.ClearWorkspace();
 
+                                            //No Idea what this is needed for...
                                             DateTime startTimeStamp = trial.PositionNormalized.Select(u => u.TimeStamp).Min();
                                             
                                             taskMatlabWrapper.SetWorkspaceData("startPoint",
-                                                new[,] { { trial.Origin.XPos, trial.Origin.YPos } });
+                                                new[,] { { trial.Origin.XPos, trial.Origin.YPos } }); //StartPoint is the center of the Starting Target
                                             taskMatlabWrapper.SetWorkspaceData("endPoint",
-                                                new[,] { { trial.Target.XPos, trial.Target.YPos } });
+                                                new[,] { { trial.Target.XPos, trial.Target.YPos } }); //EndPoint is the center of the End Target
                                             taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix",
                                                 trial.ForceFieldMatrix);
                                             taskMatlabWrapper.SetWorkspaceData("positionX",
