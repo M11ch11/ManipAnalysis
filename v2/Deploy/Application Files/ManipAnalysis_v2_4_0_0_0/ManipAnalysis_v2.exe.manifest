@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="3.0.0.25" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ManipAnalysis_v2.exe" version="4.0.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6163.31209" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6696.35129" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="996864">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6163.31209" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="561664">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6696.35129" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>/HwFLJdPaRvTSgwUYqIQvd3GBllcX6rMXpYbUzYM6bg=</dsig:DigestValue>
+        <dsig:DigestValue>bVf66xbgKhIezFLKnGf670X4W06IP33vk0iIGlRAJUI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -111,13 +111,13 @@
       <dsig:DigestValue>1SR2HBfPDeqUEJ8/zazS7LZ1UBFf+eAwf3jAUFVBnv4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ManipAnalysis_v2.pdb" size="978432">
+  <file name="ManipAnalysis_v2.pdb" size="439808">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>1Yvl/kZ0Sn5UQB4LnzkIq1+MZ/X2/ijN8Tx+ZS+Aj2w=</dsig:DigestValue>
+      <dsig:DigestValue>fLgUPqXmVifGnf0+B7qNg3cjT8LE2AdkLK9QSALTf84=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ManipIcon.ico" size="51262">
@@ -156,22 +156,22 @@
       <dsig:DigestValue>+952dKDqjx+ZRNlFv6HKnlVUR4z3kXvleJKqhWM10aE=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\fisherZtoRTransform.m" size="1352">
+  <file name="MatlabFiles\fisherZtoRTransform.m" size="1360">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>VHeE12EmIdGnCRlENlIs6yqpuHxO1i35giaRtqYevi4=</dsig:DigestValue>
+      <dsig:DigestValue>muO9NG/Hq9p2RW+U7UH4z51tIQB6XtjTaOtrCXHQZy0=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\fisherZTransform.m" size="1340">
+  <file name="MatlabFiles\fisherZTransform.m" size="1348">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>PZ2Js8nCAxy/eaZ3XSt1rOTJ++Kyw3x6Z/KJemWeSro=</dsig:DigestValue>
+      <dsig:DigestValue>8DOiF50CFas3B+rOjWXmw5sHaOdcWVqhcpPwXVgSLsM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\forceCompensationFactor.m" size="3844">
@@ -183,22 +183,22 @@
       <dsig:DigestValue>U6/M4ETu4Vt7K5Vi5QvlmNy9dwpZU4seCuKkDYbdqxw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\numDiff.m" size="2403">
+  <file name="MatlabFiles\numDiff.m" size="2421">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>FwwpkQJqKoQQJjI95gYPWWnNzy5h147n6L0fagnTiPE=</dsig:DigestValue>
+      <dsig:DigestValue>g4BGhOjcuQ/OiYobUqES2ZBi/XBNGs9SFIowEhYIX9s=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\paraForceLineSegment.m" size="1996">
+  <file name="MatlabFiles\paraForceLineSegment.m" size="2045">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>bauqKKCth5O8B9SnAqw263Dx0VlNSrzQ+K0Ae+0kLMM=</dsig:DigestValue>
+      <dsig:DigestValue>op11zrkNJZC9Dlii2mNW7fbDS/N1u/fp0Kn/iJkvuxs=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\pdForceDirectionLineSegment.m" size="3749">
@@ -210,22 +210,22 @@
       <dsig:DigestValue>2OpKNuv9sjLOe6Gyby+Hg6jNpn8KtSDNSFY+w9z3hI4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\predicitionAndFeedbackAngle.m" size="4544">
+  <file name="MatlabFiles\predicitionAndFeedbackAngle.m" size="4567">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>RafcXZgmd59j2UWULrCBoJvTeDFpLRliPcj9k2zXveM=</dsig:DigestValue>
+      <dsig:DigestValue>EIiB1KqXwxdhsD8fX3gl/U35OMQPhyrs4Ep1UKTl7q8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\rootMeanSquareError.m" size="1855">
+  <file name="MatlabFiles\rootMeanSquareError.m" size="1878">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>NuESHfK8u/y1XgptcaHLUSycVHf1e3zrrZ48kvWxlnA=</dsig:DigestValue>
+      <dsig:DigestValue>U7uiU0I78IPMz1OKIzvsjyW4wEYhiIrZ8CiwpWp8eZw=</dsig:DigestValue>
     </hash>
   </file>
   <file name="MatlabFiles\showMatlabCommandWindow.m" size="1225">
@@ -246,22 +246,22 @@
       <dsig:DigestValue>ILFFV5oQdwM2CQ/SQRo7O/IXeF0l/70JbUN2/DYNpio=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\trajectLength.m" size="2243">
+  <file name="MatlabFiles\trajectLength.m" size="2270">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>ptjjcz10Y+DgCSnGPjiiLM2zlOXcH/18voiFyZZp5kI=</dsig:DigestValue>
+      <dsig:DigestValue>/LY/8VZQE47IO9/DtV77+v3D6aISwC3hxWT53Y58dZs=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="MatlabFiles\vectorCorrelation.m" size="466">
+  <file name="MatlabFiles\vectorCorrelation.m" size="493">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>Y4pETb1KA6ikiH/d5La+y9h9t4CMtVXCfrqbYf42YcY=</dsig:DigestValue>
+      <dsig:DigestValue>K7wO+Jmufb1uVqd7ryp1SdhWZ2LGS3cPgaFZ1D/34F4=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

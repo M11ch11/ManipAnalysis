@@ -1,3 +1,4 @@
+%Brauchen wir nicht mehr!
 function [corr] = vectorCorrelation(trialData,baselineData)
 
 mean_trialData = mean(trialData);

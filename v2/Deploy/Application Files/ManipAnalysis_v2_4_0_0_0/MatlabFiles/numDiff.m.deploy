@@ -13,7 +13,7 @@
 %   numDiff.m for ManipAnalysis
 %   
 %   Description                                                     
-%   This function calculates the numeric differentiation (velocity).
+%   This function calculates the numeric differentiation (the result is the velocity).
 %
 %   Arguments
 %   - Input:
