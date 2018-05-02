@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis_v2", "ManipAnalysis\ManipAnalysis_v2.csproj", "{1D658474-766B-4FDA-8F31-11E800B47377}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis", "ManipAnalysis\ManipAnalysis.csproj", "{1D658474-766B-4FDA-8F31-11E800B47377}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis_v2Tests", "ManipAnalysis_v2Tests\ManipAnalysis_v2Tests.csproj", "{0FB3DD75-AC4E-403D-9E4F-10F2729530A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManipAnalysis_Tests", "ManipAnalysis_v2Tests\ManipAnalysis_Tests.csproj", "{0FB3DD75-AC4E-403D-9E4F-10F2729530A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

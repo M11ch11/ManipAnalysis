@@ -56,9 +56,9 @@
     <Compile Include="XMLParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ManipAnalysis\ManipAnalysis_v2.csproj">
+    <ProjectReference Include="..\ManipAnalysis\ManipAnalysis.csproj">
       <Project>{1D658474-766B-4FDA-8F31-11E800B47377}</Project>
-      <Name>ManipAnalysis_v2</Name>
+      <Name>ManipAnalysis</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
