@@ -8,5 +8,10 @@ namespace ManipAnalysis_v2
         {
             InitializeComponent();
         }
+
+        private void label_loading_Click(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }

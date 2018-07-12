@@ -43,8 +43,9 @@
             this.label_loading.Name = "label_loading";
             this.label_loading.Size = new System.Drawing.Size(372, 210);
             this.label_loading.TabIndex = 0;
-            this.label_loading.Text = "ManipAnalysis v2 loading ...";
+            this.label_loading.Text = "ManipAnalysis v4 loading ...";
             this.label_loading.UseWaitCursor = true;
+            this.label_loading.Click += new System.EventHandler(this.label_loading_Click);
             // 
             // ManipAnalysisSplash
             // 

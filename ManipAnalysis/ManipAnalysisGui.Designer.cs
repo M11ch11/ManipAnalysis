@@ -308,7 +308,7 @@ namespace ManipAnalysis_v2
             this.label_Start_ManipAnalysis.Name = "label_Start_ManipAnalysis";
             this.label_Start_ManipAnalysis.Size = new System.Drawing.Size(304, 39);
             this.label_Start_ManipAnalysis.TabIndex = 0;
-            this.label_Start_ManipAnalysis.Text = "ManipAnalysis v2";
+            this.label_Start_ManipAnalysis.Text = "ManipAnalysis v4";
             // 
             // tabPage_VisualizationExport
             // 
