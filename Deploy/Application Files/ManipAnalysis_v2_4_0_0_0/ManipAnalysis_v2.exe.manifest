@@ -4,7 +4,7 @@
   <description asmv2:iconFile="ManipIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6696.35129" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6767.40898" language="neutral" processorArchitecture="msil" />
     <commandLine file="ManipAnalysis_v2.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="561664">
-      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6696.35129" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ManipAnalysis_v2.exe" size="562176">
+      <assemblyIdentity name="ManipAnalysis_v2" version="2.0.6767.40898" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>bVf66xbgKhIezFLKnGf670X4W06IP33vk0iIGlRAJUI=</dsig:DigestValue>
+        <dsig:DigestValue>VOSjMUMtZUnL+Dl+5VuC7UMehqlPeTjWO1hKI5r4iYA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -111,13 +111,13 @@
       <dsig:DigestValue>1SR2HBfPDeqUEJ8/zazS7LZ1UBFf+eAwf3jAUFVBnv4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ManipAnalysis_v2.pdb" size="439808">
+  <file name="ManipAnalysis_v2.pdb" size="441856">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>fLgUPqXmVifGnf0+B7qNg3cjT8LE2AdkLK9QSALTf84=</dsig:DigestValue>
+      <dsig:DigestValue>Z8iyFgcf9pJgT1DTK52FYkYSXRrYWRKrwmg6A8bt00M=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ManipIcon.ico" size="51262">
