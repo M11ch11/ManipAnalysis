@@ -33,13 +33,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://alx-wo.github.io/ManipAnalysis/v2/Deploy/</InstallUrl>
+    <InstallUrl>http://alx-wo.github.io/ManipAnalysis/Deploy/</InstallUrl>
     <ProductName>ManipAnalysis v2</ProductName>
     <PublisherName>Karlsruhe Institute of Technology</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>4.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
