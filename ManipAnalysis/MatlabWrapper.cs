@@ -209,10 +209,13 @@ namespace ManipAnalysis_v2
                 Execute("xlabel('Displacement [m]');");
                 Execute("ylabel('Displacement [m]');");
                 //Execute("set(gca,'YDir','rev'); "); // Old BioMotionBot Bug
-                Execute("set(gca, 'XTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(gca, 'YTick', [-0.1 -0.05 0 0.05 0.1]);");
-                Execute("set(gca, 'YTickLabel', {'-0.1', '-0.05', '0', '0.05', '0.1'});");
+                Execute("set(gca, 'XTick', [-0.2 -0.15 -0.1 -0.05 0 0.05 0.1 0.15 0.2]);");
+                Execute("set(gca, 'YTick', [-0.2 -0.15 -0.1 -0.05 0 0.05 0.1 0.15 0.2]);");
+                Execute("set(gca, 'YTickLabel', {'-0.2', '-0.15', '-0.1', '-0.05', '0', '0.05', '0.1' '0.15', '0.2'});");
                 Execute("set(gca,'PlotBoxAspectRatio',[1 1 1]);");
+                //Here I change the zoomfactor via Matlab code, because Matlab can not zoom out further than its original axis size if you use only the GUI...
+                Execute("xlim([-0.2 0.2]);");
+                Execute("ylim([-0.2 0.2]);");
             }
             catch (Exception
                 ex)
