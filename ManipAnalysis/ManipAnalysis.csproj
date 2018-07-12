@@ -23,7 +23,7 @@
     <SccProvider>
     </SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Administrator\Desktop\Deploy\</PublishUrl>
+    <PublishUrl>C:\Users\Administrator\Desktop\CodersLair\SourceCode\ManipAnalysis_Alx-Wo\Deploy\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -33,13 +33,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://Alx-Wo.github.io/ManipAnalysis/v2/Deploy/</InstallUrl>
+    <InstallUrl>http://alx-wo.github.io/ManipAnalysis/v2/Deploy/</InstallUrl>
     <ProductName>ManipAnalysis v2</ProductName>
     <PublisherName>Karlsruhe Institute of Technology</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>4.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
