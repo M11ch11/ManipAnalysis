@@ -518,14 +518,14 @@ namespace ManipAnalysis_v2
                                             break;
 
 
-                                        case "ForcefieldCompenstionFactor Raw":
+                                        case "ForcefieldCompensationFactor Raw":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics
                                                     .ForcefieldCompenstionFactorRaw;
                                             break;
 
                                             
-                                        case "ForcefieldCompenstionFactor Raw fisher-z":
+                                        case "ForcefieldCompensationFactor Raw fisher-z":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
                                                     .ForcefieldCompenstionFactorRaw);
@@ -536,7 +536,7 @@ namespace ManipAnalysis_v2
                                             break;
 
                                             
-                                        case "ForcefieldCompenstionFactor Raw fisher-z to r-values":
+                                        case "ForcefieldCompensationFactor Raw fisher-z to r-values":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
                                                     .ForcefieldCompenstionFactorRaw);
@@ -553,7 +553,7 @@ namespace ManipAnalysis_v2
                             if (meanCount > 1)
                             {
                                 
-                                if (statisticType == "ForcefieldCompenstionFactor Raw fisher-z to r-values")
+                                if (statisticType == "ForcefieldCompensationFactor Raw fisher-z to r-values")
                                 {
                                     _myMatlabWrapper.Execute(
                                         "statisticDataPlot = fisherZtoRTransform(mean(transpose(statisticData)));");
@@ -568,7 +568,7 @@ namespace ManipAnalysis_v2
                             }
                             else
                             {
-                                if (statisticType == "ForcefieldCompenstionFactor Raw fisher-z to r-values")
+                                if (statisticType == "ForcefieldCompensationFactor Raw fisher-z to r-values")
                                 {
                                     _myMatlabWrapper.Execute("statisticDataPlot = fisherZtoRTransform(statisticData);");
                                 }
@@ -882,12 +882,12 @@ namespace ManipAnalysis_v2
                                             trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw":
+                                    case "ForcefieldCompensationFactor Raw":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactorRaw;
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw fisher-z":
+                                    case "ForcefieldCompensationFactor Raw fisher-z":
                                         _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                             trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactorRaw);
                                         _myMatlabWrapper.Execute("fisherZ = fisherZTransform(ffcfraw);");
@@ -896,7 +896,7 @@ namespace ManipAnalysis_v2
                                         _myMatlabWrapper.ClearWorkspace();
                                         break;
 
-                                    case "ForcefieldCompenstionFactor Raw fisher-z to r-values":
+                                    case "ForcefieldCompensationFactor Raw fisher-z to r-values":
                                         _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                             trialsArray[trialsArrayCounter].Statistics.ForcefieldCompenstionFactorRaw);
                                         _myMatlabWrapper.Execute("fisherZ = fisherZTransform(ffcfraw);");
@@ -911,7 +911,7 @@ namespace ManipAnalysis_v2
                         _myMatlabWrapper.SetWorkspaceData("statisticData", statisticData);
                         if (trialList.Count > 1)
                         {
-                            if (statisticType == "ForcefieldCompenstionFactor Raw fisher-z to r-values")
+                            if (statisticType == "ForcefieldCompensationFactor Raw fisher-z to r-values")
                             {
                                 _myMatlabWrapper.Execute(
                                     "statisticDataMean = transpose(fisherZtoRTransform(mean(transpose(statisticData))));");
@@ -927,7 +927,7 @@ namespace ManipAnalysis_v2
                         }
                         else
                         {
-                            if (statisticType == "ForcefieldCompenstionFactor Raw fisher-z to r-values")
+                            if (statisticType == "ForcefieldCompensationFactor Raw fisher-z to r-values")
                             {
                                 _myMatlabWrapper.Execute("statisticDataMean = fisherZtoRTransform(statisticData);");
                             }
