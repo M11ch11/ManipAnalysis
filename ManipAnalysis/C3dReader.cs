@@ -136,7 +136,7 @@ namespace ManipAnalysis_v2
             //_dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
 
             NumberOfPointsInFrame = GetParameter<short>("POINT:USED");
-            FramesCount = GetParameter<short>("POINT:FRAMES");
+            FramesCount = GetParameter<int>("POINT:FRAMES");
             _pointScale = GetParameter<float>("POINT:SCALE");
             _pointRate = GetParameter<float>("POINT:RATE");
 

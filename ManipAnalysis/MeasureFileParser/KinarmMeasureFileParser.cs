@@ -267,7 +267,8 @@ namespace ManipAnalysis_v2.MeasureFileParser
                         }
                         if (currentTrial != null)
                         {
-                            if (0 < c3DReader.FramesCount && c3DReader.FramesCount < 32768)
+                            //if (0 < c3DReader.FramesCount && c3DReader.FramesCount < 32768)
+                            if (0 < c3DReader.FramesCount)
                             {
                                 for (var frame = 0; frame < c3DReader.FramesCount; frame++)
                                 {
