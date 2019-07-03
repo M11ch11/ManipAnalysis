@@ -53,7 +53,14 @@ namespace ManipAnalysis_v2
             {
                 throw new Exception("Path leads to invalid document");
             }
-            
+            /*
+            document.Load(path);
+            this.tpNumber = tpNumber;
+            tpTable = getTable(TPTABLEPATH);
+            targetTable = getTable(TARGETTABLEPATH);
+            loadTable = getTable(LOADTABLEPATH);
+            this.trial = trial;
+            */
         }
         public Trial parseTrial()
         {
@@ -142,7 +149,7 @@ namespace ManipAnalysis_v2
             //This was used, because for some weird reason, the familiarization scenario had a different format in its .dtp file than any other scenario...
             //Also we do not need the familiarization in ManipAnalysis anyways so it does not matter.
             //#####################
-            if (getSzenarioName().Contains("familiarization"))
+            if ((getSzenarioName().Contains("familiarization")) || (getSzenarioName().Contains("Familiarization")))
             {
                 return false;
             }
