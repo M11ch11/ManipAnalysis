@@ -13,6 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+// DEBUG messages
+using System.Diagnostics;
+
+
 namespace ManipAnalysis_v2
 {
     public class C3DReader : IDisposable
@@ -130,13 +134,17 @@ namespace ManipAnalysis_v2
                 _pointsLabels.Insert(i, label);
             }
 
+            
+            _dataStart = 512* sizeof(byte) * (Header.DataStart - 1);
+            //new _dataStart = 512* (Header.DataStart - 1);
 
-            _dataStart = 512*(Header.DataStart - 1);
             // Parameter Section Data Start Value doesnt work
-            //_dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
+            // _dataStart = 512 * (GetParameter<Int16>("POINT:DATA_START") - 1);
 
             NumberOfPointsInFrame = GetParameter<short>("POINT:USED");
-            FramesCount = GetParameter<int>("POINT:FRAMES");
+            FramesCount = GetParameter<ushort>("POINT:FRAMES");
+            Debug.WriteLine("read POINT:FRAMES: " + FramesCount.ToString() + " in: " + _c3DFile);
+
             _pointScale = GetParameter<float>("POINT:SCALE");
             _pointRate = GetParameter<float>("POINT:RATE");
 

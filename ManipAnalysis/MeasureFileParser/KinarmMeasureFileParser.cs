@@ -326,7 +326,7 @@ namespace ManipAnalysis_v2.MeasureFileParser
                             }
                             else
                             {
-                                throw new Exception("Illegal C3D Frame count. Value must be between 0 and 32767, was " + c3DReader.FramesCount);
+                                throw new Exception("Illegal C3D Frame count. Value must be between 0 and 32767, was " + c3DReader.FramesCount+", file:"+ measureFileContainer.FileName);
                             }
 
                             if (currentTrial.MeasuredForcesRaw.Count == 0)

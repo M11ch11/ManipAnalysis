@@ -494,6 +494,10 @@ namespace ManipAnalysis_v2
             {
                 ret = (T) (object) BitConverter.ToInt16(_vectorData, i*sizeof (short));
             }
+            else if (typeof (T) == typeof (ushort))
+            {
+                ret = (T) (object) BitConverter.ToUInt16(_vectorData, i * sizeof(ushort));
+            }
             else if (typeof (T) == typeof (float))
             {
                 ret = (T) (object) BitConverter.ToSingle(_vectorData, i*sizeof (float));
@@ -501,6 +505,12 @@ namespace ManipAnalysis_v2
             else if (typeof (T) == typeof (string))
             {
                 ret = (T) (object) DataToString();
+            }
+
+            //// new
+            else if (typeof(T) == typeof(int))
+            {
+                ret = (T)(object)i;
             }
 
             //
@@ -521,6 +531,10 @@ namespace ManipAnalysis_v2
             else if (typeof (T) == typeof (short[]))
             {
                 ret = (T) (object) Get1DArray<short>();
+            }
+            else if (typeof(T) == typeof(ushort[]))
+            {
+                ret = (T)(object)Get1DArray<ushort>();
             }
             else if (typeof (T) == typeof (float[]))
             {
