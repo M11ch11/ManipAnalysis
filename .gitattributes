@@ -20,3 +20,8 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# deploy 
+*.manifest binary
+*.application binary
+*.deploy binary
