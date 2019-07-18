@@ -503,7 +503,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_Targets.Name = "listBox_TrajectoryVelocity_Targets";
             this.listBox_TrajectoryVelocity_Targets.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Targets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_Targets.Size = new System.Drawing.Size(150, 108);
+            this.listBox_TrajectoryVelocity_Targets.Size = new System.Drawing.Size(201, 108);
             this.listBox_TrajectoryVelocity_Targets.Sorted = true;
             this.listBox_TrajectoryVelocity_Targets.TabIndex = 45;
             // 
@@ -514,7 +514,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_Turns.Name = "listBox_TrajectoryVelocity_Turns";
             this.listBox_TrajectoryVelocity_Turns.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Turns.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_Turns.Size = new System.Drawing.Size(150, 43);
+            this.listBox_TrajectoryVelocity_Turns.Size = new System.Drawing.Size(201, 43);
             this.listBox_TrajectoryVelocity_Turns.Sorted = true;
             this.listBox_TrajectoryVelocity_Turns.TabIndex = 43;
             this.listBox_TrajectoryVelocity_Turns.SelectedIndexChanged += new System.EventHandler(this.listBox_TrajectoryVelocity_Turns_SelectedIndexChanged);
@@ -571,10 +571,10 @@ namespace ManipAnalysis_v2
             // listBox_TrajectoryVelocity_SelectedTrials
             // 
             this.listBox_TrajectoryVelocity_SelectedTrials.FormattingEnabled = true;
-            this.listBox_TrajectoryVelocity_SelectedTrials.Location = new System.Drawing.Point(227, 12);
+            this.listBox_TrajectoryVelocity_SelectedTrials.Location = new System.Drawing.Point(278, 12);
             this.listBox_TrajectoryVelocity_SelectedTrials.Name = "listBox_TrajectoryVelocity_SelectedTrials";
             this.listBox_TrajectoryVelocity_SelectedTrials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(489, 433);
+            this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(438, 433);
             this.listBox_TrajectoryVelocity_SelectedTrials.Sorted = true;
             this.listBox_TrajectoryVelocity_SelectedTrials.TabIndex = 34;
             // 
@@ -651,7 +651,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_Subjects.Name = "listBox_TrajectoryVelocity_Subjects";
             this.listBox_TrajectoryVelocity_Subjects.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Subjects.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_Subjects.Size = new System.Drawing.Size(150, 95);
+            this.listBox_TrajectoryVelocity_Subjects.Size = new System.Drawing.Size(201, 95);
             this.listBox_TrajectoryVelocity_Subjects.Sorted = true;
             this.listBox_TrajectoryVelocity_Subjects.TabIndex = 26;
             this.listBox_TrajectoryVelocity_Subjects.SelectedIndexChanged += new System.EventHandler(this.listBox_TrajectoryVelocity_Subjects_SelectedIndexChanged);
@@ -662,7 +662,7 @@ namespace ManipAnalysis_v2
             this.comboBox_TrajectoryVelocity_Szenario.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_Szenario.Location = new System.Drawing.Point(71, 140);
             this.comboBox_TrajectoryVelocity_Szenario.Name = "comboBox_TrajectoryVelocity_Szenario";
-            this.comboBox_TrajectoryVelocity_Szenario.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_TrajectoryVelocity_Szenario.Size = new System.Drawing.Size(201, 21);
             this.comboBox_TrajectoryVelocity_Szenario.Sorted = true;
             this.comboBox_TrajectoryVelocity_Szenario.TabIndex = 25;
             this.comboBox_TrajectoryVelocity_Szenario.SelectedIndexChanged += new System.EventHandler(this.comboBox_TrajectoryVelocity_Szenario_SelectedIndexChanged);
@@ -673,7 +673,7 @@ namespace ManipAnalysis_v2
             this.comboBox_TrajectoryVelocity_Study.FormattingEnabled = true;
             this.comboBox_TrajectoryVelocity_Study.Location = new System.Drawing.Point(71, 12);
             this.comboBox_TrajectoryVelocity_Study.Name = "comboBox_TrajectoryVelocity_Study";
-            this.comboBox_TrajectoryVelocity_Study.Size = new System.Drawing.Size(150, 21);
+            this.comboBox_TrajectoryVelocity_Study.Size = new System.Drawing.Size(201, 21);
             this.comboBox_TrajectoryVelocity_Study.Sorted = true;
             this.comboBox_TrajectoryVelocity_Study.TabIndex = 24;
             this.comboBox_TrajectoryVelocity_Study.SelectedIndexChanged += new System.EventHandler(this.comboBox_TrajectoryVelocity_Study_SelectedIndexChanged);
@@ -685,7 +685,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_Groups.Name = "listBox_TrajectoryVelocity_Groups";
             this.listBox_TrajectoryVelocity_Groups.ScrollAlwaysVisible = true;
             this.listBox_TrajectoryVelocity_Groups.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox_TrajectoryVelocity_Groups.Size = new System.Drawing.Size(150, 95);
+            this.listBox_TrajectoryVelocity_Groups.Size = new System.Drawing.Size(201, 95);
             this.listBox_TrajectoryVelocity_Groups.Sorted = true;
             this.listBox_TrajectoryVelocity_Groups.TabIndex = 23;
             this.listBox_TrajectoryVelocity_Groups.SelectedIndexChanged += new System.EventHandler(this.listBox_TrajectoryVelocity_Groups_SelectedIndexChanged);
