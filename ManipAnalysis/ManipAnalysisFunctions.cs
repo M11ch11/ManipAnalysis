@@ -170,12 +170,11 @@ namespace ManipAnalysis_v2
         ///     Gets all targets from database of a given study and szenario
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> GetTargets(string studyName, string groupName, string szenarioName,
+        public IEnumerable<int> GetTargets(string studyName, string groupName, string szenarioName,
             SubjectContainer subject)
         {
             return
-                _myDatabaseWrapper.GetTargets(studyName, groupName, szenarioName, subject)
-                    .Select(t => "Target " + t.ToString("00"));
+                _myDatabaseWrapper.GetTargets(studyName, groupName, szenarioName, subject);
         }
 
         /// <summary>
@@ -188,6 +187,20 @@ namespace ManipAnalysis_v2
             return
                 _myDatabaseWrapper.GetTargetTrials(studyName, groupName, szenarioName, subject)
                     .Select(t => "Trial " + t.ToString("000"));
+        }
+
+        /// <summary>
+        ///     Gets all trials from database of a given study and szenario, targets
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetSzenarioTrials(string studyName, string groupName, string szenarioName, int target,
+            SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields,
+            IEnumerable<Trial.HandednessEnum> handedness)
+        {
+            return
+                _myDatabaseWrapper.GetSzenarioTrials(studyName, groupName, szenarioName, target,
+        subject, trialTypes, forceFields, handedness)
+        .Select(t => "Trial " + t.ToString("000"));
         }
 
         /// <summary>

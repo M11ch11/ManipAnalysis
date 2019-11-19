@@ -573,12 +573,12 @@ namespace ManipAnalysis_v2
                         .ToList()
                         .Select(t => t.Key);
                 //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetTargets(string studyName, string groupName, string szenarioName, SubjectContainer subject)");
-
                 return retVal;
             }
             catch (Exception ex)
             {
                 _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetTargets: " + ex);
+                //return new List<TargetContainer>();
                 return new List<int>();
             }
         }
@@ -643,6 +643,47 @@ namespace ManipAnalysis_v2
 
             return retVal;
         }
+
+        // TODO replace w/ commented section
+        public IEnumerable<int> GetSzenarioTrials(string studyName, string groupName, string szenarioName, int target, 
+        SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes,
+        IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
+        {
+           return GetSzenarioTrials(studyName, groupName, szenarioName,
+           subject, trialTypes, forceFields, handedness);
+            /*
+            IEnumerable<int> retVal;
+            try
+            {
+                var filter = Builders<Trial>.Filter.And(Builders<Trial>.Filter.Eq(t => t.Study, studyName),
+                    Builders<Trial>.Filter.Eq(t => t.Group, groupName),
+                    Builders<Trial>.Filter.Eq(t => t.Szenario, szenarioName),
+                    //Builders<Trial>.Filter.Eq(t => t.Target.Number, target),
+                    Builders<Trial>.Filter.Eq(t => t.Subject, subject),
+                    Builders<Trial>.Filter.In(t => t.TrialType, trialTypes),
+                    Builders<Trial>.Filter.In(t => t.ForceFieldType, forceFields),
+                    Builders<Trial>.Filter.In(t => t.Handedness, handedness));
+
+                //TicToc.Tic();
+                retVal =
+                    _trialCollection.Aggregate()
+                        .Match(filter)
+                        .Group(t => t.TrialNumberInSzenario, u => new { u.Key })
+                        .ToList()
+                        .Select(t => t.Key);
+                //_myManipAnalysisGui.WriteToLogBox(TicToc.Toc() + "ms \t" + "GetSzenarioTrials(string studyName, string szenarioName, IEnumerable<Trial.TrialTypeEnum> trialTypes, IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)");
+            }
+            catch (Exception ex)
+            {
+                _myManipAnalysisGui.WriteToLogBox("MongoDbwrapper::GetSzenarioTrials: " + ex);
+                return new List<int>();
+            }
+
+            return retVal;
+            */
+        }
+
+
 
         public IEnumerable<Trial> GetTrials(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, DateTime turn, int target, IEnumerable<int> targetTrials,
