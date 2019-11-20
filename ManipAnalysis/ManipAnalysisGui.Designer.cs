@@ -506,6 +506,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_Targets.Size = new System.Drawing.Size(201, 108);
             this.listBox_TrajectoryVelocity_Targets.Sorted = true;
             this.listBox_TrajectoryVelocity_Targets.TabIndex = 45;
+            this.listBox_TrajectoryVelocity_Targets.SelectedIndexChanged += new System.EventHandler(this.listBox_TrajectoryVelocity_Targets_SelectedIndexChanged);
             // 
             // listBox_TrajectoryVelocity_Turns
             // 

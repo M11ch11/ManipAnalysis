@@ -204,6 +204,28 @@ namespace ManipAnalysis_v2
         }
 
         /// <summary>
+        /// returns trial number in respective target instead of overall trial number
+        /// </summary>
+        /// <param name="studyName"></param>
+        /// <param name="groupName"></param>
+        /// <param name="szenarioName"></param>
+        /// <param name="target"></param>
+        /// <param name="subject"></param>
+        /// <param name="trialTypes"></param>
+        /// <param name="forceFields"></param>
+        /// <param name="handedness"></param>
+        /// <param name="trialNumberInSzenario"></param>
+        /// <returns></returns>
+        public IEnumerable<int> GetTargetTrialNumberInSzenario(string studyName, string groupName, string szenarioName, int target,
+            SubjectContainer subject, int trialNumberInSzenario)
+        {
+            return _myDatabaseWrapper.GetSzenarioTrialsTrialNumber(studyName, groupName, szenarioName, target,
+                subject,  trialNumberInSzenario);
+
+        }
+
+
+        /// <summary>
         ///     Checks wether a raw-measure-file-hash already exists in database
         /// </summary>
         /// <param name="hash"></param>
@@ -2189,6 +2211,12 @@ namespace ManipAnalysis_v2
                     List<TargetContainer> targetsToDraw = new List<TargetContainer>();
                     foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
                     {
+                        for (int t=0; t < container.Trials.Count; t++)
+                        {
+                            container.Trials[t] =  GetTargetTrialNumberInSzenario(container.Study, container.Group, container.Szenario, container.Target,
+                                container.Subject, container.Trials[t]).FirstOrDefault();
+                        }
+
                         targetsToDraw = targetsToDraw.Union(_myDatabaseWrapper.getTargetContainersFromTrajectoryVelocityPlotContainer(container)).ToList();
                     }
 

@@ -1285,11 +1285,11 @@ namespace ManipAnalysis_v2
 
             //TODO: Go on here: mh inserted analogously to descr. stats - filters trials
             listBox_TrajectoryVelocity_TrialType.SelectedIndexChanged +=
-                listBox_TrajectoryVelocity_Turns_SelectedIndexChanged;
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
             listBox_TrajectoryVelocity_ForceField.SelectedIndexChanged +=
-                listBox_TrajectoryVelocity_Turns_SelectedIndexChanged;
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
             listBox_TrajectoryVelocity_Handedness.SelectedIndexChanged +=
-                listBox_TrajectoryVelocity_Turns_SelectedIndexChanged;
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
 
             comboBox_TrajectoryVelocity_Study.Items.Clear();
             listBox_TrajectoryVelocity_Groups.Items.Clear();
@@ -1410,7 +1410,7 @@ namespace ManipAnalysis_v2
             var groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
             var subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
-            var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<int>().ToArray();
+            //var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<int>().ToArray();
 
             string[] turnIntersect = null;
 
@@ -1459,18 +1459,10 @@ namespace ManipAnalysis_v2
 
             if (targets.Any())
             {
-                //listBox_TrajectoryVelocity_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
                 List<string> targets_strings = new List<string>();
                 foreach (int tt in targets)
                 {
-                    string ttn = "";
-                    if (tt < 10) {
-                        ttn = "0" + tt.ToString();
-                    } else
-                    {
-                        ttn = tt.ToString();
-                    }
-                    targets_strings.Add("Target " + ttn);
+                    targets_strings.Add("Target " + tt.ToString("00"));
                 }
                 listBox_TrajectoryVelocity_Targets.Items.AddRange(targets_strings.OrderBy(t => t).ToArray());
                 if (listBox_TrajectoryVelocity_Targets.Items.Count > 0)
@@ -1478,7 +1470,20 @@ namespace ManipAnalysis_v2
                     listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
                 }
             }
+        }
 
+
+        // TODO: need for selected_targets_change??
+        private void listBox_TrajectoryVelocity_Targets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WriteProgressInfo("Loading...");
+            listBox_TrajectoryVelocity_Trials.Items.Clear();
+
+            var study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
+            var group = listBox_TrajectoryVelocity_Groups.SelectedItem.ToString();
+            var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
+            var subject = (SubjectContainer)listBox_TrajectoryVelocity_Subjects.SelectedItem;
+            var targets = new List<int>();
             var trialTypes = new List<Trial.TrialTypeEnum>();
             var forceFields = new List<Trial.ForceFieldTypeEnum>();
             var handedness = new List<Trial.HandednessEnum>();
@@ -1497,13 +1502,21 @@ namespace ManipAnalysis_v2
             {
                 handedness.Add((Trial.HandednessEnum)Enum.Parse(typeof(Trial.HandednessEnum), item));
             }
-            // TODO: smth with intersected?? -> just try if basis works
 
-            string temptarget = listBox_TrajectoryVelocity_Targets.SelectedItem.ToString(); 
-            temptarget = temptarget.Substring(temptarget.LastIndexOf(' ') + 1);
-            int target = Convert.ToInt32(temptarget);
-            var trials = _manipAnalysisFunctions.GetSzenarioTrials(study, group, szenario, target, subject, trialTypes, forceFields, handedness);
-            
+            List<string> trials = new List<string>();
+            foreach (string target_item in listBox_TrajectoryVelocity_Targets.SelectedItems)
+            {
+                targets.Add(Convert.ToInt32(target_item.Substring(target_item.LastIndexOf(' ') + 1)));
+                trials.AddRange(_manipAnalysisFunctions.GetSzenarioTrials(study, group, szenario, targets.Last(), subject, trialTypes, forceFields, handedness));
+
+            }
+
+
+
+
+
+
+
             if (trials.Any())
             {
                 listBox_TrajectoryVelocity_Trials.Items.AddRange(trials.OrderBy(t => t).ToArray());
@@ -1513,7 +1526,10 @@ namespace ManipAnalysis_v2
                 }
             }
             WriteProgressInfo("Ready.");
+
         }
+
+
 
         private void button_TrajectoryVelocity_AddSelected_Click(object sender, EventArgs e)
         {
@@ -1525,8 +1541,7 @@ namespace ManipAnalysis_v2
                 var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
                 var subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 var turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
-                //var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
-                var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<TargetContainer>().ToArray();
+                var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 var trials = listBox_TrajectoryVelocity_Trials.SelectedItems.Cast<string>().ToArray();
 
                 foreach (var group in groups)
@@ -1595,8 +1610,7 @@ namespace ManipAnalysis_v2
                 var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
                 var subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
                 var turns = listBox_TrajectoryVelocity_Turns.SelectedItems.Cast<string>().ToArray();
-                //var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
-                var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<TargetContainer>().ToArray();
+                var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<string>().ToArray();
                 var trials = listBox_TrajectoryVelocity_Trials.Items.Cast<string>().ToArray();
 
                 foreach (var group in groups)
@@ -1863,5 +1877,7 @@ namespace ManipAnalysis_v2
         {
             // nop
         }
+
+
     }
 }
