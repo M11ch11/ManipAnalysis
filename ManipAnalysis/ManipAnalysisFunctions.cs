@@ -131,7 +131,7 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetSzenarios(study, group);
         }
 
-        
+
 
         /// <summary>
         ///     Gets all subjects from database of a given study, group and szenario
@@ -145,7 +145,7 @@ namespace ManipAnalysis_v2
             return _myDatabaseWrapper.GetSubjects(study, group, szenario);
         }
 
-        
+
 
         /// <summary>
         ///     Gets all turns from database of a given study, szenario and subject and group-array
@@ -220,7 +220,7 @@ namespace ManipAnalysis_v2
             SubjectContainer subject, int trialNumberInSzenario)
         {
             return _myDatabaseWrapper.GetSzenarioTrialsTrialNumber(studyName, groupName, szenarioName, target,
-                subject,  trialNumberInSzenario);
+                subject, trialNumberInSzenario);
 
         }
 
@@ -408,7 +408,7 @@ namespace ManipAnalysis_v2
                 TaskManager.Remove(Task.CurrentId);
             }));
         }
-        
+
         public IEnumerable<string> GetTrialsOfSzenario(string studyName, string groupName, string szenarioName,
             SubjectContainer subject, IEnumerable<Trial.TrialTypeEnum> trialTypes,
             IEnumerable<Trial.ForceFieldTypeEnum> forceFields, IEnumerable<Trial.HandednessEnum> handedness)
@@ -546,7 +546,7 @@ namespace ManipAnalysis_v2
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                             break;
-                                            
+
                                         case "Enclosed area":
                                             statisticData[trialsArrayCounter, meanCount] =
                                                 trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
@@ -559,7 +559,7 @@ namespace ManipAnalysis_v2
                                                     .ForcefieldCompenstionFactorRaw;
                                             break;
 
-                                            
+
                                         case "ForcefieldCompensationFactor Raw fisher-z":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -570,7 +570,7 @@ namespace ManipAnalysis_v2
                                             _myMatlabWrapper.ClearWorkspace();
                                             break;
 
-                                            
+
                                         case "ForcefieldCompensationFactor Raw fisher-z to r-values":
                                             _myMatlabWrapper.SetWorkspaceData("ffcfraw",
                                                 trialsArray[trialsArrayCounter].Statistics
@@ -587,7 +587,7 @@ namespace ManipAnalysis_v2
                             _myMatlabWrapper.SetWorkspaceData("statisticData", statisticData);
                             if (meanCount > 1)
                             {
-                                
+
                                 if (statisticType == "ForcefieldCompensationFactor Raw fisher-z to r-values")
                                 {
                                     _myMatlabWrapper.Execute(
@@ -865,7 +865,7 @@ namespace ManipAnalysis_v2
 
                                 switch (statisticType)
                                 {
-                                    
+
                                     case "MidMovementForce - PD Raw":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.PerpendicularMidMovementForceRaw;
@@ -876,7 +876,7 @@ namespace ManipAnalysis_v2
                                             trialsArray[trialsArrayCounter].Statistics.AbsolutePerpendicularDisplacement
                                                 .Single(t => t.TimeStamp == msIndex).PerpendicularDisplacement;
                                         break;
-                                        
+
                                     case "PDmax - Abs":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics
@@ -911,7 +911,7 @@ namespace ManipAnalysis_v2
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.AbsoluteTrajectoryLength;
                                         break;
-                                        
+
                                     case "Enclosed area":
                                         statisticData[subjectCounter, trialsArrayCounter] =
                                             trialsArray[trialsArrayCounter].Statistics.EnclosedArea;
@@ -1019,7 +1019,7 @@ namespace ManipAnalysis_v2
             }));
         }
 
-       //TODO: Check it all!
+        //TODO: Check it all!
         public void ImportMeasureFiles(List<string> measureFilesList, List<string> dtpFilesList, int samplesPerSecond, int butterFilterOrder,
             int butterFilterCutOffPosition, int butterFilterCutOffForce, int percentPeakVelocity,
             int timeNormalizationSamples)
@@ -1058,8 +1058,8 @@ namespace ManipAnalysis_v2
                         _myManipAnalysisGui.SetProgressBarValue(100.0 / measureFilesList.Count * files);
 
                         var filename = measureFilesList.ElementAt(files);
-                        
-                        
+
+
 
                         var tempFileHash = Md5.ComputeHash(filename);
 
@@ -1113,7 +1113,8 @@ namespace ManipAnalysis_v2
                                     _myManipAnalysisGui.WriteProgressInfo("Processing data...");
                                     calculatingTasks.Add(Task.Factory.StartNew(delegate
                                     {
-                                        try {
+                                        try
+                                        {
                                             var taskTrialList = tempTaskTrialList;
                                             var taskMatlabWrapper = tempMatlabWrapper;
 
@@ -1130,7 +1131,8 @@ namespace ManipAnalysis_v2
                                                 calculatingTasks.Remove(calculatingTasks.First(t => t.Id == Task.CurrentId));
                                             }
                                         }
-                                        catch (Exception ex) {
+                                        catch (Exception ex)
+                                        {
                                             _myManipAnalysisGui.WriteToLogBox("Exception: " + ex.ToString());
                                         }
                                     }));
@@ -1140,10 +1142,10 @@ namespace ManipAnalysis_v2
                                 {
                                     Thread.Sleep(500);
                                 }
-                                
+
                                 _myManipAnalysisGui.WriteProgressInfo("Calculating szenario mean times...");
                                 var szenarioMeanTimesContainer = CalculateSzenarioMeanTimes(trialsContainer);
-                                
+
                                 _myManipAnalysisGui.WriteProgressInfo("Compressing data...");
                                 CompressTrialData(trialsContainer);
 
@@ -1203,7 +1205,8 @@ namespace ManipAnalysis_v2
 
             for (var trialCounter = 0; trialCounter < trialsContainer.Count; trialCounter++)
             {
-                try {
+                try
+                {
                     myMatlabWrapper.SetWorkspaceData("force_actual_x",
                         trialsContainer[trialCounter].MeasuredForcesRaw.Select(t => t.X).ToArray());
                     myMatlabWrapper.SetWorkspaceData("force_actual_y",
@@ -1887,7 +1890,7 @@ namespace ManipAnalysis_v2
                 }
             });
         }
-        
+
         //TODO: Check it all!
         public void CalculateStatistics()
         {
@@ -1982,173 +1985,173 @@ namespace ManipAnalysis_v2
                                             Thread.Sleep(100);
                                         }
                                         //Entpacken der gezippten Werte
-                                        
-                                            trial.PositionNormalized =
-                                                Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized)
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
-                                            trial.VelocityNormalized =
-                                                Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized)
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
-                                            trial.MeasuredForcesNormalized =
-                                                Gzip<List<ForceContainer>>.DeCompress(
-                                                    trial.ZippedMeasuredForcesNormalized)
-                                                    .OrderBy(t => t.TimeStamp)
-                                                    .ToList();
 
-                                            taskMatlabWrapper.ClearWorkspace();
+                                        trial.PositionNormalized =
+                                            Gzip<List<PositionContainer>>.DeCompress(trial.ZippedPositionNormalized)
+                                                .OrderBy(t => t.TimeStamp)
+                                                .ToList();
+                                        trial.VelocityNormalized =
+                                            Gzip<List<VelocityContainer>>.DeCompress(trial.ZippedVelocityNormalized)
+                                                .OrderBy(t => t.TimeStamp)
+                                                .ToList();
+                                        trial.MeasuredForcesNormalized =
+                                            Gzip<List<ForceContainer>>.DeCompress(
+                                                trial.ZippedMeasuredForcesNormalized)
+                                                .OrderBy(t => t.TimeStamp)
+                                                .ToList();
 
-                                            //No Idea what this is needed for...
-                                            DateTime startTimeStamp = trial.PositionNormalized.Select(u => u.TimeStamp).Min();
-                                            
-                                            taskMatlabWrapper.SetWorkspaceData("startPoint",
-                                                new[,] { { trial.Origin.XPos, trial.Origin.YPos } }); //StartPoint is the center of the Starting Target
-                                            taskMatlabWrapper.SetWorkspaceData("endPoint",
-                                                new[,] { { trial.Target.XPos, trial.Target.YPos } }); //EndPoint is the center of the End Target
-                                            taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix",
-                                                trial.ForceFieldMatrix);
-                                            taskMatlabWrapper.SetWorkspaceData("positionX",
-                                                trial.PositionNormalized.Select(t => t.X).ToArray());
-                                            taskMatlabWrapper.SetWorkspaceData("positionY",
-                                                trial.PositionNormalized.Select(t => t.Y).ToArray());
-                                            taskMatlabWrapper.SetWorkspaceData("velocityX",
-                                                trial.VelocityNormalized.Select(t => t.X).ToArray());
-                                            taskMatlabWrapper.SetWorkspaceData("velocityY",
-                                                trial.VelocityNormalized.Select(t => t.Y).ToArray());
-                                            taskMatlabWrapper.SetWorkspaceData("forceX",
-                                                trial.MeasuredForcesNormalized.Select(t => t.X).ToArray());
-                                            taskMatlabWrapper.SetWorkspaceData("forceY",
-                                                trial.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
+                                        taskMatlabWrapper.ClearWorkspace();
 
-                                            
-                                            // Matlab statistic calculations
+                                        //No Idea what this is needed for...
+                                        DateTime startTimeStamp = trial.PositionNormalized.Select(u => u.TimeStamp).Min();
+
+                                        taskMatlabWrapper.SetWorkspaceData("startPoint",
+                                            new[,] { { trial.Origin.XPos, trial.Origin.YPos } }); //StartPoint is the center of the Starting Target
+                                        taskMatlabWrapper.SetWorkspaceData("endPoint",
+                                            new[,] { { trial.Target.XPos, trial.Target.YPos } }); //EndPoint is the center of the End Target
+                                        taskMatlabWrapper.SetWorkspaceData("forceFieldMatrix",
+                                            trial.ForceFieldMatrix);
+                                        taskMatlabWrapper.SetWorkspaceData("positionX",
+                                            trial.PositionNormalized.Select(t => t.X).ToArray());
+                                        taskMatlabWrapper.SetWorkspaceData("positionY",
+                                            trial.PositionNormalized.Select(t => t.Y).ToArray());
+                                        taskMatlabWrapper.SetWorkspaceData("velocityX",
+                                            trial.VelocityNormalized.Select(t => t.X).ToArray());
+                                        taskMatlabWrapper.SetWorkspaceData("velocityY",
+                                            trial.VelocityNormalized.Select(t => t.Y).ToArray());
+                                        taskMatlabWrapper.SetWorkspaceData("forceX",
+                                            trial.MeasuredForcesNormalized.Select(t => t.X).ToArray());
+                                        taskMatlabWrapper.SetWorkspaceData("forceY",
+                                            trial.MeasuredForcesNormalized.Select(t => t.Y).ToArray());
+
+
+                                        // Matlab statistic calculations
+                                        taskMatlabWrapper.Execute(
+                                            "enclosed_area = enclosedArea(positionX, positionY);");
+                                        taskMatlabWrapper.Execute(
+                                            "length_abs = trajectLength(positionX', positionY');");
+                                        taskMatlabWrapper.Execute(
+                                            "[distanceAbs, distance_sign_pd, distance_sign_ff] = distanceToCurve([positionX' positionY'], startPoint, endPoint, forceFieldMatrix);");
+                                        taskMatlabWrapper.Execute("distanceSign = distanceAbs .* distance_sign_ff;");
+                                        taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
+                                        taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
+                                        taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
+                                        // Create StatisticContainer and fill it with calculated Matlab statistics
+                                        var statisticContainer = new StatisticContainer();
+
+
+                                        statisticContainer.EnclosedArea =
+                                            taskMatlabWrapper.GetWorkspaceData("enclosed_area");
+                                        statisticContainer.AbsoluteTrajectoryLength =
+                                            taskMatlabWrapper.GetWorkspaceData("length_abs");
+                                        statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
+                                            taskMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
+                                        statisticContainer.SignedMaximalPerpendicularDisplacement =
+                                            taskMatlabWrapper.GetWorkspaceData("maxDistanceSign");
+                                        // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
+                                        double[,] absolutePerpendicularDisplacement =
+                                            taskMatlabWrapper.GetWorkspaceData("distanceAbs");
+                                        double[,] signedPerpendicularDisplacement =
+                                            taskMatlabWrapper.GetWorkspaceData("distanceSign");
+
+                                        for (var perpendicularDisplacementCounter = 0;
+                                            perpendicularDisplacementCounter <
+                                            trial.PositionNormalized.Select(t => t.TimeStamp).Count();
+                                            perpendicularDisplacementCounter++)
+                                        {
+                                            var absolute = new PerpendicularDisplacementContainer();
+                                            var signed = new PerpendicularDisplacementContainer();
+
+                                            absolute.PerpendicularDisplacement =
+                                                absolutePerpendicularDisplacement[
+                                                    perpendicularDisplacementCounter, 0];
+                                            absolute.TimeStamp =
+                                                trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
+
+                                            signed.PerpendicularDisplacement =
+                                                signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
+                                            signed.TimeStamp =
+                                                trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
+
+                                            statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
+                                            statisticContainer.SignedPerpendicularDisplacement.Add(signed);
+                                        }
+
+                                        // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
+                                        var maxVtime =
+                                            trial.VelocityNormalized.First(
+                                                t =>
+                                                    Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) ==
+                                                    trial.VelocityNormalized.Max(
+                                                        u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2))))
+                                                .TimeStamp;
+                                        statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax =
+                                            statisticContainer.AbsolutePerpendicularDisplacement.First(
+                                                t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+                                        statisticContainer.SignedMaximalPerpendicularDisplacementVmax =
+                                            statisticContainer.SignedPerpendicularDisplacement.First(
+                                                t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
+
+                                        // Calculate MidMovementForce
+
+                                        var vMaxCorridor =
+                                            trial.VelocityNormalized.Where(
+                                                t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70)
+                                                .Select(t => t.TimeStamp)
+                                                .ToList();
+
+                                        var perpendicularForcesRawMidMovementForce = new List<double>();
+
+
+
+                                        var perpendicularForcesRawForcefieldCompenstionFactor = new List<double>();
+
+                                        for (var dataPoint = 2;
+                                            dataPoint <= trial.PositionNormalized.Count;
+                                            dataPoint++)
+                                        {
                                             taskMatlabWrapper.Execute(
-                                                "enclosed_area = enclosedArea(positionX, positionY);");
-                                            taskMatlabWrapper.Execute(
-                                                "length_abs = trajectLength(positionX', positionY');");
-                                            taskMatlabWrapper.Execute(
-                                                "[distanceAbs, distance_sign_pd, distance_sign_ff] = distanceToCurve([positionX' positionY'], startPoint, endPoint, forceFieldMatrix);");
-                                            taskMatlabWrapper.Execute("distanceSign = distanceAbs .* distance_sign_ff;");
-                                            taskMatlabWrapper.Execute("maxDistanceAbs = max(distanceAbs);");
-                                            taskMatlabWrapper.Execute("[~, posDistanceSign] = max(abs(distanceSign));");
-                                            taskMatlabWrapper.Execute("maxDistanceSign = distanceSign(posDistanceSign);");
-                                            // Create StatisticContainer and fill it with calculated Matlab statistics
-                                            var statisticContainer = new StatisticContainer();
+                                                "[forcePDRaw, forcePDsignRaw, ffSignRaw] = pdForceDirectionLineSegment([forceX(" +
+                                                (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" +
+                                                (dataPoint - 1) + ") positionY(" + (dataPoint - 1) +
+                                                ")], [positionX(" + dataPoint + ") positionY(" + dataPoint +
+                                                ")], forceFieldMatrix);");
 
-                                            
-                                            statisticContainer.EnclosedArea =
-                                                taskMatlabWrapper.GetWorkspaceData("enclosed_area");
-                                            statisticContainer.AbsoluteTrajectoryLength =
-                                                taskMatlabWrapper.GetWorkspaceData("length_abs");
-                                            statisticContainer.AbsoluteMaximalPerpendicularDisplacement =
-                                                taskMatlabWrapper.GetWorkspaceData("maxDistanceAbs");
-                                            statisticContainer.SignedMaximalPerpendicularDisplacement =
-                                                taskMatlabWrapper.GetWorkspaceData("maxDistanceSign");
-                                            // Fill StatisticContainer with Abs and Sign PerpendicularDisplacement array
-                                            double[,] absolutePerpendicularDisplacement =
-                                                taskMatlabWrapper.GetWorkspaceData("distanceAbs");
-                                            double[,] signedPerpendicularDisplacement =
-                                                taskMatlabWrapper.GetWorkspaceData("distanceSign");
+                                            taskMatlabWrapper.Execute(
+                                                "forcePDRaw = ffSignRaw * sqrt(forcePDRaw(1)^2 + forcePDRaw(2)^2);");
+                                            //Keep it!
+                                            perpendicularForcesRawForcefieldCompenstionFactor.Add(
+                                                taskMatlabWrapper.GetWorkspaceData("forcePDRaw"));
 
-                                            for (var perpendicularDisplacementCounter = 0;
-                                                perpendicularDisplacementCounter <
-                                                trial.PositionNormalized.Select(t => t.TimeStamp).Count();
-                                                perpendicularDisplacementCounter++)
+                                            if (
+                                                vMaxCorridor.Contains(
+                                                    trial.PositionNormalized[dataPoint - 2].TimeStamp))
                                             {
-                                                var absolute = new PerpendicularDisplacementContainer();
-                                                var signed = new PerpendicularDisplacementContainer();
-
-                                                absolute.PerpendicularDisplacement =
-                                                    absolutePerpendicularDisplacement[
-                                                        perpendicularDisplacementCounter, 0];
-                                                absolute.TimeStamp =
-                                                    trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
-
-                                                signed.PerpendicularDisplacement =
-                                                    signedPerpendicularDisplacement[perpendicularDisplacementCounter, 0];
-                                                signed.TimeStamp =
-                                                    trial.PositionNormalized[perpendicularDisplacementCounter].TimeStamp;
-
-                                                statisticContainer.AbsolutePerpendicularDisplacement.Add(absolute);
-                                                statisticContainer.SignedPerpendicularDisplacement.Add(signed);
-                                            }
-
-                                            // Calculate and fill Absolute/Signed MaximalPerpendicularDisplacementVmax
-                                            var maxVtime =
-                                                trial.VelocityNormalized.First(
-                                                    t =>
-                                                        Math.Sqrt(Math.Pow(t.X, 2) + Math.Pow(t.Y, 2)) ==
-                                                        trial.VelocityNormalized.Max(
-                                                            u => Math.Sqrt(Math.Pow(u.X, 2) + Math.Pow(u.Y, 2))))
-                                                    .TimeStamp;
-                                            statisticContainer.AbsoluteMaximalPerpendicularDisplacementVmax =
-                                                statisticContainer.AbsolutePerpendicularDisplacement.First(
-                                                    t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
-                                            statisticContainer.SignedMaximalPerpendicularDisplacementVmax =
-                                                statisticContainer.SignedPerpendicularDisplacement.First(
-                                                    t => t.TimeStamp == maxVtime).PerpendicularDisplacement;
-
-                                            // Calculate MidMovementForce
-                                            
-                                            var vMaxCorridor =
-                                                trial.VelocityNormalized.Where(
-                                                    t => (t.TimeStamp - maxVtime).TotalMilliseconds < 70)
-                                                    .Select(t => t.TimeStamp)
-                                                    .ToList();
-                                            
-                                            var perpendicularForcesRawMidMovementForce = new List<double>();
-                                            
-                                            
-
-                                            var perpendicularForcesRawForcefieldCompenstionFactor = new List<double>();
-
-                                            for (var dataPoint = 2;
-                                                dataPoint <= trial.PositionNormalized.Count;
-                                                dataPoint++)
-                                            {
-                                                taskMatlabWrapper.Execute(
-                                                    "[forcePDRaw, forcePDsignRaw, ffSignRaw] = pdForceDirectionLineSegment([forceX(" +
-                                                    (dataPoint - 1) + ") forceY(" + (dataPoint - 1) + ")], [positionX(" +
-                                                    (dataPoint - 1) + ") positionY(" + (dataPoint - 1) +
-                                                    ")], [positionX(" + dataPoint + ") positionY(" + dataPoint +
-                                                    ")], forceFieldMatrix);");
-                                                
-                                                taskMatlabWrapper.Execute(
-                                                    "forcePDRaw = ffSignRaw * sqrt(forcePDRaw(1)^2 + forcePDRaw(2)^2);");
-                                                //Keep it!
-                                                perpendicularForcesRawForcefieldCompenstionFactor.Add(
+                                                //ForcePDRaw behalten!
+                                                perpendicularForcesRawMidMovementForce.Add(
                                                     taskMatlabWrapper.GetWorkspaceData("forcePDRaw"));
-
-                                                if (
-                                                    vMaxCorridor.Contains(
-                                                        trial.PositionNormalized[dataPoint - 2].TimeStamp))
-                                                {
-                                                    //ForcePDRaw behalten!
-                                                    perpendicularForcesRawMidMovementForce.Add(
-                                                        taskMatlabWrapper.GetWorkspaceData("forcePDRaw"));
-                                                }
                                             }
-                                            statisticContainer.PerpendicularMidMovementForceRaw =
-                                                perpendicularForcesRawMidMovementForce.Average();
-                                            //Keep
-                                            taskMatlabWrapper.SetWorkspaceData("forcePDRawArray",
-                                                perpendicularForcesRawForcefieldCompenstionFactor.ToArray());
-                                            //Keep
-                                            taskMatlabWrapper.Execute(
-                                                "forceCompFactorRaw = forceCompensationFactor(forcePDRawArray, velocityX, velocityY, forceFieldMatrix);");
-                                            statisticContainer.ForcefieldCompenstionFactorRaw =
-                                                taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
+                                        }
+                                        statisticContainer.PerpendicularMidMovementForceRaw =
+                                            perpendicularForcesRawMidMovementForce.Average();
+                                        //Keep
+                                        taskMatlabWrapper.SetWorkspaceData("forcePDRawArray",
+                                            perpendicularForcesRawForcefieldCompenstionFactor.ToArray());
+                                        //Keep
+                                        taskMatlabWrapper.Execute(
+                                            "forceCompFactorRaw = forceCompensationFactor(forcePDRawArray, velocityX, velocityY, forceFieldMatrix);");
+                                        statisticContainer.ForcefieldCompenstionFactorRaw =
+                                            taskMatlabWrapper.GetWorkspaceData("forceCompFactorRaw");
 
-                                            // Set Metadata and upload to Database
-                                            trial.Statistics = statisticContainer;
-                                            
+                                        // Set Metadata and upload to Database
+                                        trial.Statistics = statisticContainer;
 
-                                            CompressTrialData(new List<Trial> { trial });
-                                            _myDatabaseWrapper.UpdateTrialStatistics(trial);
 
-                                            _myManipAnalysisGui.SetProgressBarValue(100.0 / trialList.Count * ++counter);
-                                        
+                                        CompressTrialData(new List<Trial> { trial });
+                                        _myDatabaseWrapper.UpdateTrialStatistics(trial);
+
+                                        _myManipAnalysisGui.SetProgressBarValue(100.0 / trialList.Count * ++counter);
+
 
                                     }
                                 }
@@ -2211,10 +2214,18 @@ namespace ManipAnalysis_v2
                     List<TargetContainer> targetsToDraw = new List<TargetContainer>();
                     foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
                     {
-                        for (int t=0; t < container.Trials.Count; t++)
+                        for (int t = 0; t < container.Trials.Count; t++)
                         {
-                            container.Trials[t] =  GetTargetTrialNumberInSzenario(container.Study, container.Group, container.Szenario, container.Target,
-                                container.Subject, container.Trials[t]).FirstOrDefault();
+                            //System.Diagnostics.Debug.WriteLine("TrialNoBefore: " + container.Trials[t].ToString());
+                            var temp = GetTargetTrialNumberInSzenario(container.Study, container.Group, container.Szenario, container.Target,
+                                container.Subject, container.Trials[t]);
+                            if (temp.Count() != 1)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Trial Count = " + temp.Count().ToString());
+                            }
+
+                            container.Trials[t] = temp.Last();
+                            //System.Diagnostics.Debug.WriteLine("TrialNoAfter: " + container.Trials[t].ToString());
                         }
 
                         targetsToDraw = targetsToDraw.Union(_myDatabaseWrapper.getTargetContainersFromTrajectoryVelocityPlotContainer(container)).ToList();
