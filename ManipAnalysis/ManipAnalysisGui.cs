@@ -673,6 +673,7 @@ namespace ManipAnalysis_v2
                 listBox_DescriptiveStatistic1_Handedness.SetSelected(listboxIndex, true);
             }
 
+            // TODO: ugly, but ok -> use analogously for left most tab in gui
             listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged +=
                 listBox_DescriptiveStatistic1_Turns_SelectedIndexChanged;
             listBox_DescriptiveStatistic1_ForceField.SelectedIndexChanged +=
@@ -1281,6 +1282,15 @@ namespace ManipAnalysis_v2
                 listBox_TrajectoryVelocity_Handedness.SetSelected(listboxIndex, true);
             }
 
+
+            //TODO: Go on here: mh inserted analogously to descr. stats - filters trials
+            listBox_TrajectoryVelocity_TrialType.SelectedIndexChanged +=
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
+            listBox_TrajectoryVelocity_ForceField.SelectedIndexChanged +=
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
+            listBox_TrajectoryVelocity_Handedness.SelectedIndexChanged +=
+                listBox_TrajectoryVelocity_Targets_SelectedIndexChanged;
+
             comboBox_TrajectoryVelocity_Study.Items.Clear();
             listBox_TrajectoryVelocity_Groups.Items.Clear();
             comboBox_TrajectoryVelocity_Szenario.Items.Clear();
@@ -1400,6 +1410,7 @@ namespace ManipAnalysis_v2
             var groups = listBox_TrajectoryVelocity_Groups.SelectedItems.Cast<string>().ToArray();
             var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
             var subjects = listBox_TrajectoryVelocity_Subjects.SelectedItems.Cast<SubjectContainer>().ToArray();
+            //var targets = listBox_TrajectoryVelocity_Targets.SelectedItems.Cast<int>().ToArray();
 
             string[] turnIntersect = null;
 
@@ -1437,24 +1448,74 @@ namespace ManipAnalysis_v2
             WriteProgressInfo("Loading...");
             listBox_TrajectoryVelocity_Targets.Items.Clear();
             listBox_TrajectoryVelocity_Trials.Items.Clear();
-
+             
             var study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
             var group = listBox_TrajectoryVelocity_Groups.SelectedItem.ToString();
             var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
             var subject = (SubjectContainer) listBox_TrajectoryVelocity_Subjects.SelectedItem;
 
 			//TODO: Look at this!
-            var targets = _manipAnalysisFunctions.GetTargets(study, group, szenario, subject);
-            var trials = _manipAnalysisFunctions.GetTrials(study, group, szenario, subject);
+            var targets =  _manipAnalysisFunctions.GetTargets(study, group, szenario, subject);
 
             if (targets.Any())
             {
-                listBox_TrajectoryVelocity_Targets.Items.AddRange(targets.OrderBy(t => t).ToArray());
+                List<string> targets_strings = new List<string>();
+                foreach (int tt in targets)
+                {
+                    targets_strings.Add("Target " + tt.ToString("00"));
+                }
+                listBox_TrajectoryVelocity_Targets.Items.AddRange(targets_strings.OrderBy(t => t).ToArray());
                 if (listBox_TrajectoryVelocity_Targets.Items.Count > 0)
                 {
                     listBox_TrajectoryVelocity_Targets.SelectedIndex = 0;
                 }
             }
+        }
+
+
+        // TODO: need for selected_targets_change??
+        private void listBox_TrajectoryVelocity_Targets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WriteProgressInfo("Loading...");
+            listBox_TrajectoryVelocity_Trials.Items.Clear();
+
+            var study = comboBox_TrajectoryVelocity_Study.SelectedItem.ToString();
+            var group = listBox_TrajectoryVelocity_Groups.SelectedItem.ToString();
+            var szenario = comboBox_TrajectoryVelocity_Szenario.SelectedItem.ToString();
+            var subject = (SubjectContainer)listBox_TrajectoryVelocity_Subjects.SelectedItem;
+            var targets = new List<int>();
+            var trialTypes = new List<Trial.TrialTypeEnum>();
+            var forceFields = new List<Trial.ForceFieldTypeEnum>();
+            var handedness = new List<Trial.HandednessEnum>();
+
+            foreach (string item in listBox_TrajectoryVelocity_TrialType.SelectedItems)
+            {
+                trialTypes.Add((Trial.TrialTypeEnum)Enum.Parse(typeof(Trial.TrialTypeEnum), item));
+            }
+
+            foreach (string item in listBox_TrajectoryVelocity_ForceField.SelectedItems)
+            {
+                forceFields.Add((Trial.ForceFieldTypeEnum)Enum.Parse(typeof(Trial.ForceFieldTypeEnum), item));
+            }
+
+            foreach (string item in listBox_TrajectoryVelocity_Handedness.SelectedItems)
+            {
+                handedness.Add((Trial.HandednessEnum)Enum.Parse(typeof(Trial.HandednessEnum), item));
+            }
+
+            List<string> trials = new List<string>();
+            foreach (string target_item in listBox_TrajectoryVelocity_Targets.SelectedItems)
+            {
+                targets.Add(Convert.ToInt32(target_item.Substring(target_item.LastIndexOf(' ') + 1)));
+                trials.AddRange(_manipAnalysisFunctions.GetSzenarioTrials(study, group, szenario, targets.Last(), subject, trialTypes, forceFields, handedness));
+
+            }
+
+
+
+
+
+
 
             if (trials.Any())
             {
@@ -1465,7 +1526,10 @@ namespace ManipAnalysis_v2
                 }
             }
             WriteProgressInfo("Ready.");
+
         }
+
+
 
         private void button_TrajectoryVelocity_AddSelected_Click(object sender, EventArgs e)
         {
@@ -1504,7 +1568,7 @@ namespace ManipAnalysis_v2
                                                 listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                                subject, turn, target, trials))
+                                                subject, turn, target.ToString(), trials))
                                             {
                                                 typeof (ListBox).InvokeMember("RefreshItems",
                                                     BindingFlags.NonPublic | BindingFlags.Instance |
@@ -1518,14 +1582,14 @@ namespace ManipAnalysis_v2
                                         {
                                             listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
                                                 new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                    turn, target, trials));
+                                                    turn, target.ToString(), trials));
                                         }
                                     }
                                     else
                                     {
                                         listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
                                             new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                                target, trials));
+                                                target.ToString(), trials));
                                     }
                                 }
                             }
@@ -1573,7 +1637,7 @@ namespace ManipAnalysis_v2
                                                 listBox_TrajectoryVelocity_SelectedTrials.Items)
                                         {
                                             if (temp.UpdateTrajectoryVelocityPlotContainer(study, group, szenario,
-                                                subject, turn, target, trials))
+                                                subject, turn, target.ToString(), trials))
                                             {
                                                 typeof (ListBox).InvokeMember("RefreshItems",
                                                     BindingFlags.NonPublic | BindingFlags.Instance |
@@ -1587,14 +1651,14 @@ namespace ManipAnalysis_v2
                                         {
                                             listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
                                                 new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                    turn, target, trials));
+                                                    turn, target.ToString(), trials));
                                         }
                                     }
                                     else
                                     {
                                         listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
                                             new TrajectoryVelocityPlotContainer(study, group, szenario, subject, turn,
-                                                target, trials));
+                                                target.ToString(), trials));
                                     }
                                 }
                             }
@@ -1808,6 +1872,12 @@ namespace ManipAnalysis_v2
         private delegate void ProgressLabelCallback(string text);
 
         private delegate void TabControlCallback(bool enable);
-        
+
+        private void listBox_DescriptiveStatistic1_TrialType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // nop
+        }
+
+
     }
 }
