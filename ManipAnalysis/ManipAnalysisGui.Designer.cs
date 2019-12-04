@@ -578,6 +578,7 @@ namespace ManipAnalysis_v2
             this.listBox_TrajectoryVelocity_SelectedTrials.Size = new System.Drawing.Size(438, 433);
             this.listBox_TrajectoryVelocity_SelectedTrials.Sorted = true;
             this.listBox_TrajectoryVelocity_SelectedTrials.TabIndex = 34;
+            this.listBox_TrajectoryVelocity_SelectedTrials.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox_TrajectoryVelocity_SelectedTrials_MouseMove);
             // 
             // button_TrajectoryVelocity_AddSelected
             // 
@@ -783,7 +784,6 @@ namespace ManipAnalysis_v2
             this.listBox_DescriptiveStatistic1_TrialType.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox_DescriptiveStatistic1_TrialType.Size = new System.Drawing.Size(158, 69);
             this.listBox_DescriptiveStatistic1_TrialType.TabIndex = 65;
-            this.listBox_DescriptiveStatistic1_TrialType.SelectedIndexChanged += new System.EventHandler(this.listBox_DescriptiveStatistic1_TrialType_SelectedIndexChanged);
             // 
             // checkBox_DescriptiveStatistic1_PlotFit
             // 

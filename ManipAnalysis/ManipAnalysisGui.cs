@@ -1717,19 +1717,66 @@ namespace ManipAnalysis_v2
                                                 canBeUpdated = true;
                                             }
                                         }
-                                        //TODO: Here we could add the targetcontainer information to be added to the Items probably...
-                                        if (!canBeUpdated)
-                                        {
-                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
-                                                new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                            turn, target.ToString(), trials));
-                                        }
+                                            //TODO: Here we could add the targetcontainer information to be added to the Items probably...
+                                            if (!canBeUpdated)
+                                            {
+                                                List<string> temp_trials = new List<string>();
+                                                for (int tr_idx = 0; tr_idx < trials.Length; tr_idx++)
+                                                {
+                                                    if (is_trial_eligible(study, group, szenario, target, subject, trialTypes, forceFields, handedness, trials[tr_idx]))
+                                                    {
+                                                        temp_trials.Add(trials[tr_idx]);
+                                                    }
+
+                                                }
+                                                string[] temp_trials_array = temp_trials.ToArray<string>();
+                                                if (temp_trials_array.Count() > 0)
+                                                {
+                                                    listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                                    new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
+                                                        turn, target.ToString(), temp_trials_array));
+                                                }
+                                            }
+
+                                            //List<string> temp_trials = new List<string>();
+                                            //for (int tr_idx = 0; tr_idx < trials.Length; tr_idx++)
+                                            //{
+                                            //    if (is_trial_eligible(study, group, szenario, target, subject, trialTypes, forceFields, handedness, trials[tr_idx]))
+                                            //    {
+                                            //        temp_trials.Add(trials[tr_idx]);
+                                            //    }
+
+                                            //}
+                                            //string[] temp_trials_array = temp_trials.ToArray<string>();
+                                            //if (temp_trials_array.Count() > 0)
+                                            //{
+                                            //    listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                            //    new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
+                                            //        turn, target.ToString(), temp_trials_array));
+                                            //}
+                                        
                                     }
                                     else
                                     {
-                                        listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                        //listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
+                                        //    new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
+                                        //                    turn, target.ToString(), trials));
+                                        List<string> temp_trials = new List<string>();
+                                        for (int tr_idx = 0; tr_idx < trials.Length; tr_idx++)
+                                        {
+                                            if (is_trial_eligible(study, group, szenario, target, subject, trialTypes, forceFields, handedness, trials[tr_idx]))
+                                            {
+                                                temp_trials.Add(trials[tr_idx]);
+                                            }
+
+                                        }
+                                        string[] temp_trials_array = temp_trials.ToArray<string>();
+                                        if (temp_trials_array.Count() > 0)
+                                        {
+                                            listBox_TrajectoryVelocity_SelectedTrials.Items.Add(
                                             new TrajectoryVelocityPlotContainer(study, group, szenario, subject,
-                                                            turn, target.ToString(), trials));
+                                                turn, target.ToString(), temp_trials_array));
+                                        }
                                     }
                                 }
                             }
@@ -1959,11 +2006,27 @@ namespace ManipAnalysis_v2
 
         private delegate void TabControlCallback(bool enable);
 
-        private void listBox_DescriptiveStatistic1_TrialType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // nop
-        }
+        private ToolTip toolTip = new ToolTip();
 
+        private void listBox_TrajectoryVelocity_SelectedTrials_MouseMove(object sender, MouseEventArgs e)
+        {
+            int index = listBox_TrajectoryVelocity_SelectedTrials.IndexFromPoint(new Point(e.X, e.Y));
+
+            if (index != -1 && index < listBox_TrajectoryVelocity_SelectedTrials.Items.Count)
+            {
+               if (!toolTip.GetToolTip(listBox_TrajectoryVelocity_SelectedTrials).Equals(listBox_TrajectoryVelocity_SelectedTrials.Items[index].ToString()))
+                {
+                    toolTip.SetToolTip(listBox_TrajectoryVelocity_SelectedTrials, listBox_TrajectoryVelocity_SelectedTrials.Items[index].ToString());
+                    toolTip.Show(toolTip.GetToolTip(listBox_TrajectoryVelocity_SelectedTrials), (ListBox)sender, e.X, e.Y);
+                }
+            }
+            else
+            {
+                toolTip.SetToolTip(this.listBox_TrajectoryVelocity_SelectedTrials, string.Empty);
+                toolTip.Hide(listBox_TrajectoryVelocity_SelectedTrials);
+                toolTip.RemoveAll();                
+            }
+        }
 
     }
 }

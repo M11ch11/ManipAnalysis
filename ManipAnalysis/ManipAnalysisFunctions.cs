@@ -2212,22 +2212,26 @@ namespace ManipAnalysis_v2
 
                     //Traversing the trajectoryVelocityPlotContainers and adding each containers targets into a List (distinct!)
                     List<TargetContainer> targetsToDraw = new List<TargetContainer>();
+
+                    List<List<int>> orig_trial_numbers = new List<List<int>>();
+
                     foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
                     {
+                        List<int> temp_orig_trial_number = new List<int>();
                         for (int t = 0; t < container.Trials.Count; t++)
                         {
-                            //System.Diagnostics.Debug.WriteLine("TrialNoBefore: " + container.Trials[t].ToString());
+                            System.Diagnostics.Debug.WriteLine("TrialNoBefore: " + container.Trials[t].ToString());
                             var temp = GetTargetTrialNumberInSzenario(container.Study, container.Group, container.Szenario, container.Target,
                                 container.Subject, container.Trials[t]);
                             if (temp.Count() != 1)
                             {
                                 System.Diagnostics.Debug.WriteLine("Trial Count = " + temp.Count().ToString());
                             }
-
+                            temp_orig_trial_number.Add(container.Trials[t]);
                             container.Trials[t] = temp.Last();
-                            //System.Diagnostics.Debug.WriteLine("TrialNoAfter: " + container.Trials[t].ToString());
+                            System.Diagnostics.Debug.WriteLine("TrialNoAfter: " + container.Trials[t].ToString());
                         }
-
+                        orig_trial_numbers.Add(temp_orig_trial_number);
                         targetsToDraw = targetsToDraw.Union(_myDatabaseWrapper.getTargetContainersFromTrajectoryVelocityPlotContainer(container)).ToList();
                     }
 
@@ -3073,7 +3077,16 @@ namespace ManipAnalysis_v2
                             }
                         }
                     }
+                    int cc = 0;
+                    foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
+                {
+                    for (int t = 0; t < container.Trials.Count; t++)
+                    {
+                            container.Trials[t] = orig_trial_numbers.ElementAt(cc)[t];
+                    }
+                        cc++;
                 }
+            }
                 catch (Exception ex)
                 {
                     _myManipAnalysisGui.WriteToLogBox(ex.ToString());
@@ -3098,6 +3111,33 @@ namespace ManipAnalysis_v2
                     var selectedTrialsList = selectedTrials.ToList();
                     double sumOfAllTrials = selectedTrialsList.Sum(t => t.Trials.Count);
                     double processedTrialsCount = 0;
+
+
+                    //List<TargetContainer> targetsToDraw = new List<TargetContainer>();
+
+                    List<List<int>> orig_trial_numbers = new List<List<int>>();
+
+                    foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
+                    {
+                        List<int> temp_orig_trial_number = new List<int>();
+                        for (int t = 0; t < container.Trials.Count; t++)
+                        {
+                            System.Diagnostics.Debug.WriteLine("TrialNoBefore: " + container.Trials[t].ToString());
+                            var temp = GetTargetTrialNumberInSzenario(container.Study, container.Group, container.Szenario, container.Target,
+                                container.Subject, container.Trials[t]);
+                            if (temp.Count() != 1)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Trial Count = " + temp.Count().ToString());
+                            }
+                            temp_orig_trial_number.Add(container.Trials[t]);
+                            container.Trials[t] = temp.Last();
+                            System.Diagnostics.Debug.WriteLine("TrialNoAfter: " + container.Trials[t].ToString());
+                        }
+                        orig_trial_numbers.Add(temp_orig_trial_number);
+                        //targetsToDraw = targetsToDraw.Union(_myDatabaseWrapper.getTargetContainersFromTrajectoryVelocityPlotContainer(container)).ToList();
+                    }
+
+
 
                     var fields = Builders<Trial>.Projection.Include(t => t.ForceFieldMatrix);
                     var dataFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
@@ -4059,6 +4099,16 @@ namespace ManipAnalysis_v2
                     }
 
                     dataFileWriter.Close();
+
+                    int cc = 0;
+                    foreach (TrajectoryVelocityPlotContainer container in selectedTrials)
+                    {
+                        for (int t = 0; t < container.Trials.Count; t++)
+                        {
+                            container.Trials[t] = orig_trial_numbers.ElementAt(cc)[t];
+                        }
+                        cc++;
+                    }
                 }
                 catch (Exception ex)
                 {
